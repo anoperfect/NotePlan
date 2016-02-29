@@ -37,23 +37,6 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"notecell"];
     
     self.navigationController.navigationBar.backgroundColor = [UIColor themeColor];
-    
-    NSString *urlString = @"http://www.qq.com";
-    NSURL *url = [NSURL URLWithString:urlString];
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:0 timeoutInterval:5.0f];
-    [request setHTTPMethod:@"GET"];
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        
-        NSLog(@"idx : %zd", [NSThread threadIndex]);
-        
-        NSLog(@"%@", data);
-        
-        
-    }];
-    
-        NSLog(@"1 idx : %zd", [NSThread threadIndex]);
 }
 
 
