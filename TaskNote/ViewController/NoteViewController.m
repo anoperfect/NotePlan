@@ -37,6 +37,9 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"notecell"];
     
     self.navigationController.navigationBar.backgroundColor = [UIColor themeColor];
+    
+    
+    
 }
 
 
