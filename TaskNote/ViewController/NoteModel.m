@@ -8,7 +8,15 @@
 
 #import "NoteModel.h"
 
+
+@interface NoteModel ()
+
+@end
+
+
 @implementation NoteModel
+
+
 
 @end
 
