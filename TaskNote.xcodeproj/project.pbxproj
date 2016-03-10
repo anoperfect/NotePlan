@@ -31,7 +31,6 @@
 		B5B2A3E51C78B64F001EAE52 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3E41C78B64F001EAE52 /* NoteViewController.m */; };
 		B5B2A3EF1C78C917001EAE52 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3EE1C78C917001EAE52 /* NoteCell.m */; };
 		B5B2A3F21C78CA68001EAE52 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3F11C78CA68001EAE52 /* NoteModel.m */; };
-		B5C5FB831C7CB22600117F39 /* note.json in Resources */ = {isa = PBXBuildFile; fileRef = B5C5FB821C7CB22600117F39 /* note.json */; };
 		B5C5FB871C7D67C900117F39 /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C5FB861C7D67C900117F39 /* NSThread+Util.m */; };
 		B5F24BC81C4A94370027DAB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BC71C4A94370027DAB2 /* main.m */; };
 		B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BCA1C4A94370027DAB2 /* AppDelegate.m */; };
@@ -101,7 +100,6 @@
 		B5B2A3EE1C78C917001EAE52 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = ViewController/NoteCell.m; sourceTree = "<group>"; };
 		B5B2A3F01C78CA68001EAE52 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = ViewController/NoteModel.h; sourceTree = "<group>"; };
 		B5B2A3F11C78CA68001EAE52 /* NoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteModel.m; path = ViewController/NoteModel.m; sourceTree = "<group>"; };
-		B5C5FB821C7CB22600117F39 /* note.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = note.json; path = json/note.json; sourceTree = "<group>"; };
 		B5C5FB851C7D67C900117F39 /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSThread+Util.h"; path = "Reuse/NSThread/NSThread+Util.h"; sourceTree = "<group>"; };
 		B5C5FB861C7D67C900117F39 /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSThread+Util.m"; path = "Reuse/NSThread/NSThread+Util.m"; sourceTree = "<group>"; };
 		B5F24BC21C4A94370027DAB2 /* TaskNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,6 +151,23 @@
 				9B6DC56FE167B8B8A5FE76F8 /* libPods.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B564D0901C910E9000E903B6 /* copy */ = {
+			isa = PBXGroup;
+			children = (
+				B564D0911C910EAA00E903B6 /* oschina */,
+			);
+			name = copy;
+			sourceTree = "<group>";
+		};
+		B564D0911C910EAA00E903B6 /* oschina */ = {
+			isa = PBXGroup;
+			children = (
+				B5F24C041C5915170027DAB2 /* SwipableViewController */,
+				B5B2A3951C78AD28001EAE52 /* Categories */,
+			);
+			name = oschina;
 			sourceTree = "<group>";
 		};
 		B595C25F1C7829EB0087744D /* ViewPublic */ = {
@@ -209,13 +224,13 @@
 			path = FontAwesome;
 			sourceTree = "<group>";
 		};
-		B5B2A3D01C78B16F001EAE52 /* Reuse */ = {
+		B5B2A3D01C78B16F001EAE52 /* Reuse1 */ = {
 			isa = PBXGroup;
 			children = (
+				B564D0901C910E9000E903B6 /* copy */,
 				B5C5FB841C7D671900117F39 /* NSThread */,
-				B5F24C041C5915170027DAB2 /* SwipableViewController */,
 			);
-			name = Reuse;
+			name = Reuse1;
 			sourceTree = "<group>";
 		};
 		B5B2A3E61C78C73A001EAE52 /* Note */ = {
@@ -227,7 +242,6 @@
 				B5B2A3EE1C78C917001EAE52 /* NoteCell.m */,
 				B5B2A3F01C78CA68001EAE52 /* NoteModel.h */,
 				B5B2A3F11C78CA68001EAE52 /* NoteModel.m */,
-				B5C5FB821C7CB22600117F39 /* note.json */,
 			);
 			name = Note;
 			sourceTree = "<group>";
@@ -305,8 +319,7 @@
 		B5F24BC41C4A94370027DAB2 /* TaskNote */ = {
 			isa = PBXGroup;
 			children = (
-				B5B2A3951C78AD28001EAE52 /* Categories */,
-				B5B2A3D01C78B16F001EAE52 /* Reuse */,
+				B5B2A3D01C78B16F001EAE52 /* Reuse1 */,
 				B595C25F1C7829EB0087744D /* ViewPublic */,
 				B5F24BF41C4A9D940027DAB2 /* ViewController */,
 				B5F24BC91C4A94370027DAB2 /* AppDelegate.h */,
@@ -453,7 +466,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5C5FB831C7CB22600117F39 /* note.json in Resources */,
 				B5F24BD91C4A94370027DAB2 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
