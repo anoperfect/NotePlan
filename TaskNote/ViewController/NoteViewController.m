@@ -9,9 +9,13 @@
 #import "NoteViewController.h"
 #import "UIColor+Util.h"
 #import "NSThread+Util.h"
+#import "NoteCell.h"
+#import "NoteModel.h"
+
+
 @interface NoteViewController ()
 
-
+@property (nonatomic, assign) NoteListType  type;
 
 
 @end
@@ -23,7 +27,8 @@
     
     self = [super init];
     
-    NSLog(@"type:%zd", type);
+    self.type = type;
+    NSLog(@"type:%zd", self.type);
     
     
     return self;
@@ -33,10 +38,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.view setBackgroundColor:[UIColor clearColor]];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"notecell"];
     
-    self.navigationController.navigationBar.backgroundColor = [UIColor themeColor];
     
     
     
@@ -49,7 +52,7 @@
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"notecell" forIndexPath:indexPath];
+    NoteCell *cell = [tableView dequeueReusableCellWithIdentifier:@"notecell" forIndexPath:indexPath];
     
     
     
@@ -75,6 +78,50 @@
     
     
 }
+
+
+//implement super method.
+- (NSString*)generateURL:(NSInteger)page
+{
+    NSString *URLString =
+            [NSString stringWithFormat:@"%@/noteplan/token=%@&&type=%zd&&page=%zd",
+                                        CONFIG_ROOT_SERVER,
+                                        @"abc",
+                                        self.type,
+                                        self.page];
+    
+    return URLString;
+}
+
+
+//public.
+- (void)parseRemoteContent:(NSData*)data
+{
+    //将内容解析后加载到数据数组objects中.
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", dataString);
+    
+    //暂时使用测试数据.
+    NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"note" ofType:@"json" inDirectory:@"json"];
+    templatePath = @"/Users/Ben/Workspace/NotePlan/TaskNote/Resources/json/note.json";
+    NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:nil];
+    NSLog(@"template : %@", template);
+    
+    data = [NSData dataWithContentsOfFile:templatePath];
+    dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", dataString);
+    
+    if(nil == data) {
+        NSLog(@"data nil.");
+        return;
+    }
+    
+    NSArray* arrayNotes =[NoteModel notesFromData:data];
+    if(nil != arrayNotes) {
+        [self.objects addObjectsFromArray:arrayNotes];
+    }
+}
+
 
 
 

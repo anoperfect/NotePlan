@@ -30,4 +30,10 @@
 @property (nonatomic, strong) NSString *task;
 
 
+
+
+
++ (NoteModel*)noteFromDict:(NSDictionary*)dict;
++ (NSArray*)notesFromData:(NSData *)data;
+
 @end

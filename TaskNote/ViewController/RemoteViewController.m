@@ -39,10 +39,14 @@
     [super viewDidLoad];
     
     self.tableView.backgroundColor = [UIColor themeColor];
+    [self.view setBackgroundColor:[UIColor clearColor]];
+    self.navigationController.navigationBar.backgroundColor = [UIColor themeColor];
     
     _lastCell = [[TableViewLastCell alloc] init];
     [_lastCell setStatus1:TableViewLastCellStatusNotVisible];
     self.tableView.tableFooterView = _lastCell;
+    
+    [self performSelector:@selector(refresh) withObject:nil afterDelay:1.f];
 }
 
 
@@ -88,30 +92,50 @@
 
 
 //public.
-- (NSArray*)parseRemoteContent:(NSObject*)content {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
-    
-    
-    return array;
+- (void)parseRemoteContent:(NSData*)data
+{
+    NSLog(@"Need override.");
+    return ;
 }
 
 
 - (void)loadMore {
+    //获取网络请求地址. 具体实现由继承类重载.
+    NSString *URLString = [self generateURL:self.page];
+    NSLog(@"URLString : %@", URLString);
+    
+    //网络请求.
+    NSURL *url = [NSURL URLWithString:URLString];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:0 timeoutInterval:10.f];
+    [request setHTTPMethod:@"GET"];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError){
+                               if(!connectionError) {
+                                   [self parseRemoteContent:data];
+                                   [self.tableView reloadData];
+                               }
+                               else {
+                                   
+                               }
+    }];
+    
+    
+    
+    
     
     
 }
 
 
 - (void)refresh {
-    
-    
+    self.page = 1;
+    [self loadMore];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     self.tableView.separatorColor = [UIColor separatorColor];
-//    return [self.objects count];
-    return 0;
+    return [self.objects count];
 }
 
 

@@ -28,7 +28,9 @@
 		B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C01C9110FD00E903B6 /* HorizonalTableViewController.m */; };
 		B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C21C9110FD00E903B6 /* SwipableViewController.m */; };
 		B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C41C9110FD00E903B6 /* TitleBarView.m */; };
-		B564D0DE1C9110FD00E903B6 /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C71C9110FD00E903B6 /* NSThread+Util.m */; };
+		B564D0EA1C912FFA00E903B6 /* note.json in Resources */ = {isa = PBXBuildFile; fileRef = B564D0E91C912FFA00E903B6 /* note.json */; };
+		B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0ED1C91681700E903B6 /* NSThread+Util.m */; };
+		B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0F01C91686700E903B6 /* NSObject+Util.m */; };
 		B595C25B1C7813E90087744D /* RemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25A1C7813E90087744D /* RemoteViewController.m */; };
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B5B2A3E51C78B64F001EAE52 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3E41C78B64F001EAE52 /* NoteViewController.m */; };
@@ -96,8 +98,11 @@
 		B564D0C21C9110FD00E903B6 /* SwipableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipableViewController.m; sourceTree = "<group>"; };
 		B564D0C31C9110FD00E903B6 /* TitleBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TitleBarView.h; sourceTree = "<group>"; };
 		B564D0C41C9110FD00E903B6 /* TitleBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleBarView.m; sourceTree = "<group>"; };
-		B564D0C61C9110FD00E903B6 /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
-		B564D0C71C9110FD00E903B6 /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
+		B564D0E91C912FFA00E903B6 /* note.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.json; sourceTree = "<group>"; };
+		B564D0EC1C91681700E903B6 /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
+		B564D0ED1C91681700E903B6 /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
+		B564D0EF1C91686700E903B6 /* NSObject+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Util.h"; sourceTree = "<group>"; };
+		B564D0F01C91686700E903B6 /* NSObject+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Util.m"; sourceTree = "<group>"; };
 		B595C2591C7813E90087744D /* RemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteViewController.h; path = ViewController/RemoteViewController.h; sourceTree = "<group>"; };
 		B595C25A1C7813E90087744D /* RemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteViewController.m; path = ViewController/RemoteViewController.m; sourceTree = "<group>"; };
 		B595C25C1C7829E10087744D /* TableViewLastCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewLastCell.h; path = ViewPublic/TableViewLastCell.h; sourceTree = "<group>"; };
@@ -163,7 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				B564D0941C9110FD00E903B6 /* Copy */,
-				B564D0C51C9110FD00E903B6 /* NSThread */,
+				B564D0EB1C91681700E903B6 /* Extension */,
 			);
 			path = Reuse1;
 			sourceTree = "<group>";
@@ -247,13 +252,31 @@
 			path = SwipableViewController;
 			sourceTree = "<group>";
 		};
-		B564D0C51C9110FD00E903B6 /* NSThread */ = {
+		B564D0E71C912FFA00E903B6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B564D0C61C9110FD00E903B6 /* NSThread+Util.h */,
-				B564D0C71C9110FD00E903B6 /* NSThread+Util.m */,
+				B564D0E81C912FFA00E903B6 /* json */,
 			);
-			path = NSThread;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B564D0E81C912FFA00E903B6 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				B564D0E91C912FFA00E903B6 /* note.json */,
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
+		B564D0EB1C91681700E903B6 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B564D0EC1C91681700E903B6 /* NSThread+Util.h */,
+				B564D0ED1C91681700E903B6 /* NSThread+Util.m */,
+				B564D0EF1C91686700E903B6 /* NSObject+Util.h */,
+				B564D0F01C91686700E903B6 /* NSObject+Util.m */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		B595C25F1C7829EB0087744D /* ViewPublic */ = {
@@ -356,6 +379,7 @@
 		B5F24BC51C4A94370027DAB2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B564D0E71C912FFA00E903B6 /* Resources */,
 				B5F24BC61C4A94370027DAB2 /* Info.plist */,
 				B5F24BC71C4A94370027DAB2 /* main.m */,
 			);
@@ -477,6 +501,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5F24BD91C4A94370027DAB2 /* Images.xcassets in Resources */,
+				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,9 +579,9 @@
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
 				B5B2A3F21C78CA68001EAE52 /* NoteModel.m in Sources */,
 				B595C25B1C7813E90087744D /* RemoteViewController.m in Sources */,
-				B564D0DE1C9110FD00E903B6 /* NSThread+Util.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
+				B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */,
 				B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
 				B564D0CC1C9110FD00E903B6 /* UIImage+FontAwesome.m in Sources */,
@@ -570,6 +595,7 @@
 				B564D0C81C9110FD00E903B6 /* AFHTTPRequestOperationManager+Util.m in Sources */,
 				B564D0D11C9110FD00E903B6 /* NSTextAttachment+Util.m in Sources */,
 				B564D0D41C9110FD00E903B6 /* UIColor+Util.m in Sources */,
+				B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */,
 				B5F24BF31C4A9D7D0027DAB2 /* CreateViewController.m in Sources */,
 				B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */,
 			);

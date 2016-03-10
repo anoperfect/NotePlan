@@ -7,7 +7,7 @@
 //
 
 #import "NoteModel.h"
-
+#import "NSObject+Util.h"
 
 @interface NoteModel ()
 
@@ -17,59 +17,91 @@
 @implementation NoteModel
 
 
-
-@end
-
-
-
-#if 0
-
-
-
-
++ (NoteModel*)noteFromDict:(NSDictionary*)dict
 {
-    "noteplans": {
-        "uid" : 100,
-        "type": 1,
-        "count": 18,
-        "version": 667,
-        "status": 0
-    },
-    "data": {
-        "notes":[
-            {
-                "id" : 1,
-                "durationFrom" : "10",
-                "durationTo" : "1",
-                "task" : "学习objective-c 一个小时",
-                "commitDate" : "2016-01-01 00:00:00",
-                "isShareToSquare" : true,
-                "isLocal" : false,
-                "status" : 10,
-                "comments": 111
-            },
-            {
-                "id" : 1,
-                "durationFrom" : "10",
-                "durationTo" : "1",
-                "task" : "学习objective-c 一个小时",
-                "commitDate" : "2016-01-01 00:00:00",
-                "isShareToSquare" : true,
-                "isLocal" : false,
-                "status" : 10,
-                "comments": 111
-            }
-        ]
-    },
-    "page": {
-        "title": "当前任务",
-        "page": 1
-    },
-    "code": 200,
-    "success": true,
-    "message": ""
+    NoteModel *model = [[NoteModel alloc] init];
+    
+    
+    
+    
+    
+    
+    
+    
+    return model;
 }
 
 
++ (NSArray*)notesFromData:(NSData *)data
+{
+    NSMutableArray *arrayNotes = [[NSMutableArray alloc] init];
+    
+    NSError *error;
+    id obj;
+    NSArray *array;
+    NSDictionary *dict;
+    obj = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    if(nil != error || nil == obj) {
+        NSLog(@"1remote data error.");
+        goto finish;
+    }
+    
+    if(![obj isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"2remote data error.");
+        [NSObject objectClassTest:obj];
+        goto finish;
+    }
+    
+    dict = (NSDictionary*)obj;
+    obj = dict[@"data"];
+    if(![obj isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"3remote data error.");
+        [NSObject objectClassTest:obj];
+        goto finish;
+    }
+    
+    dict = (NSDictionary*)obj;
+    obj = dict[@"notes"];
+    if(![obj isKindOfClass:[NSArray class]]) {
+        NSLog(@"3remote data error.");
+        [NSObject objectClassTest:obj];
+        goto finish;
+    }
+    
+    array = (NSArray*)obj;
+    
+    NSInteger numberInArray = [array count];
+    NSInteger numberAdd = 0;
+    for(obj in array) {
+        if(![obj isKindOfClass:[NSDictionary class]]) {
+            NSLog(@"4remote data error.");
+            [NSObject objectClassTest:obj];
+            continue;
+        }
+        
+        NoteModel *model = [NoteModel noteFromDict:dict];
+        if(nil != model) {
+            [arrayNotes addObject:model];
+            numberAdd ++;
+        }
+        else {
+            
+        }
+    }
+    
+    if(0 == numberInArray) {
+        NSLog(@"No note data.");
+    }
+    else if(numberInArray == numberAdd) {
+        NSLog(@"successfully add %zd object.", numberInArray);
+    }
+    else {
+        NSLog(@"%zd total, parsed %zd.", numberInArray, numberAdd);
+    }
 
-#endif
+finish:
+    return [NSArray arrayWithArray:arrayNotes];
+}
+
+@end
+

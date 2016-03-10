@@ -8,13 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+
+#define CONFIG_ROOT_SERVER  @"http://49.51.9.147/noteplan/api"
+
+
+
+
+
 @interface RemoteViewController : UITableViewController
 
 
 
 
 @property (nonatomic,strong)NSMutableArray *objects;
-
+@property (nonatomic, assign) NSInteger     page;
 
 
 
@@ -25,7 +32,7 @@
 
 
 //public.
-- (NSArray*)parseRemoteContent:(NSObject*)content;
+- (void)parseRemoteContent:(NSData*)data;
 - (void)loadMore;
 - (void)refresh;
 
