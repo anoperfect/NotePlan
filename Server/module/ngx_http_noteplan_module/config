@@ -1,1 +1,4 @@
 ngx_add_on_name=ngx_http_noteplan_module
+HTTP_AUX_FILTER_MODULES="$HTTP_AUX_FILTER_MODULES ngx_http_noteplan_module"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_noteplan_module.c"
+CORE_LIBS="$CORE_LIBS -lmysqlclient"
