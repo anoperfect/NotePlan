@@ -1,6 +1,6 @@
 //
 //  NSThread.m
-//  TaskNote
+//  NoteTask
 //
 //  Created by Ben on 16/2/24.
 //  Copyright © 2016年 Ben. All rights reserved.

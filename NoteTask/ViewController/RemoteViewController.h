@@ -1,6 +1,6 @@
 //
 //  RemoteViewController.h
-//  TaskNote
+//  NoteTask
 //
 //  Created by Ben on 16/2/20.
 //  Copyright (c) 2016年 Ben. All rights reserved.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-#define CONFIG_ROOT_SERVER  @"http://49.51.9.147/noteplan/api"
+#define CONFIG_ROOT_SERVER  @"http://49.51.9.147/NoteTask/api"
 
 
 

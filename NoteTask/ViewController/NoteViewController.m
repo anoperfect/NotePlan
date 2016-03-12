@@ -1,6 +1,6 @@
 //
 //  NoteViewController.m
-//  TaskNote
+//  NoteTask
 //
 //  Created by Ben on 16/1/24.
 //  Copyright (c) 2016年 Ben. All rights reserved.
@@ -84,7 +84,7 @@
 - (NSString*)generateURL:(NSInteger)page
 {
     NSString *URLString =
-            [NSString stringWithFormat:@"%@/noteplan/token=%@&&type=%zd&&page=%zd",
+            [NSString stringWithFormat:@"%@/NoteTask/token=%@&&type=%zd&&page=%zd",
                                         CONFIG_ROOT_SERVER,
                                         @"abc",
                                         self.type,
@@ -103,7 +103,7 @@
     
     //暂时使用测试数据.
     NSString *templatePath = [[NSBundle mainBundle] pathForResource:@"note" ofType:@"json" inDirectory:@"json"];
-    templatePath = @"/Users/Ben/Workspace/NotePlan/TaskNote/Resources/json/note.json";
+    templatePath = @"/Users/Ben/Workspace/NoteTask/NoteTask/Resources/json/note.json";
     NSString *template = [NSString stringWithContentsOfFile:templatePath encoding:NSUTF8StringEncoding error:nil];
     NSLog(@"template : %@", template);
     

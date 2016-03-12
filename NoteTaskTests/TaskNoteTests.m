@@ -1,6 +1,6 @@
 //
-//  TaskNoteTests.m
-//  TaskNoteTests
+//  NoteTaskTests.m
+//  NoteTaskTests
 //
 //  Created by Ben on 16/1/16.
 //  Copyright (c) 2016年 Ben. All rights reserved.
@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-@interface TaskNoteTests : XCTestCase
+@interface NoteTaskTests : XCTestCase
 
 @end
 
-@implementation TaskNoteTests
+@implementation NoteTaskTests
 
 - (void)setUp {
     [super setUp];
