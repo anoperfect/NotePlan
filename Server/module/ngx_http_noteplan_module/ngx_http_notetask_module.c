@@ -1,49 +1,48 @@
 /*
-    noteplan nginx module. 
+    notetask nginx module. 
     It's based on taobao tengine team spec about Write nginx module. 
-
-
+    
 */
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
 //#include <ngx_thread.h>
-
+#include <inttypes.h>
 #define ENTER 
 #include "mysql/mysql.h"
 typedef struct
 {
-        ngx_str_t hello_string;
-        //ngx_int_t hello_counter;
-}ngx_http_hello_loc_conf_t;
+        ngx_str_t notetask_string;
+        //ngx_int_t notetask_counter;
+}ngx_http_notetask_loc_conf_t;
 
-static ngx_int_t ngx_http_hello_init(ngx_conf_t *cf);
+static ngx_int_t ngx_http_notetask_init(ngx_conf_t *cf);
 
-static void *ngx_http_hello_create_loc_conf(ngx_conf_t *cf);
+static void *ngx_http_notetask_create_loc_conf(ngx_conf_t *cf);
 
-static char *ngx_http_hello_string(ngx_conf_t *cf, ngx_command_t *cmd,
+static char *ngx_http_notetask_string(ngx_conf_t *cf, ngx_command_t *cmd,
         void *conf);
 
-//static char *ngx_http_hello_counter(ngx_conf_t *cf, ngx_command_t *cmd,
+//static char *ngx_http_notetask_counter(ngx_conf_t *cf, ngx_command_t *cmd,
         //void *conf);
 
-static ngx_command_t ngx_http_hello_commands[] = {
+static ngx_command_t ngx_http_notetask_commands[] = {
    {
-                ngx_string("hello_string"),
+                ngx_string("notetask_string"),
                 NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS|NGX_CONF_TAKE1,
-                ngx_http_hello_string,
+                ngx_http_notetask_string,
                 NGX_HTTP_LOC_CONF_OFFSET,
-                offsetof(ngx_http_hello_loc_conf_t, hello_string),
+                offsetof(ngx_http_notetask_loc_conf_t, notetask_string),
                 NULL },
 
 #if 0
         
         {
-                ngx_string("hello_counter"),
+                ngx_string("notetask_counter"),
                 NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
-                ngx_http_hello_counter,
+                ngx_http_notetask_counter,
                 NGX_HTTP_LOC_CONF_OFFSET,
-                offsetof(ngx_http_hello_loc_conf_t, hello_counter),
+                offsetof(ngx_http_notetask_loc_conf_t, notetask_counter),
                 NULL },
 #endif
 
@@ -52,11 +51,11 @@ static ngx_command_t ngx_http_hello_commands[] = {
 
 
 /*
-static u_char ngx_hello_default_string[] = "Default String: Hello, world!";
+static u_char ngx_notetask_default_string[] = "Default String: Hello, world!";
 */
-static ngx_http_module_t ngx_http_hello_module_ctx = {
+static ngx_http_module_t ngx_http_notetask_module_ctx = {
         NULL,                          /* preconfiguration */
-        ngx_http_hello_init,           /* postconfiguration */
+        ngx_http_notetask_init,           /* postconfiguration */
 
         NULL,                          /* create main configuration */
         NULL,                          /* init main configuration */
@@ -64,15 +63,15 @@ static ngx_http_module_t ngx_http_hello_module_ctx = {
         NULL,                          /* create server configuration */
         NULL,                          /* merge server configuration */
 
-        ngx_http_hello_create_loc_conf, /* create location configuration */
+        ngx_http_notetask_create_loc_conf, /* create location configuration */
         NULL                            /* merge location configuration */
 };
 
 
-ngx_module_t ngx_http_hello_module = {
+ngx_module_t ngx_http_notetask_module = {
         NGX_MODULE_V1,
-        &ngx_http_hello_module_ctx,    /* module context */
-        ngx_http_hello_commands,       /* module directives */
+        &ngx_http_notetask_module_ctx,    /* module context */
+        ngx_http_notetask_commands,       /* module directives */
         NGX_HTTP_MODULE,               /* module type */
         NULL,                          /* init master */
         NULL,                          /* init module */
@@ -103,7 +102,7 @@ int query_result_to_cstring(const char* path, char res_string[], size_t size, ng
         char server[] = "localhost";
         char user[] = "root";
         char password[] = "mysql@ubuntu";
-        char database[] = "noteplan";
+        char database[] = "notetask";
     
         kconn = mysql_init(NULL);
     
@@ -116,16 +115,16 @@ int query_result_to_cstring(const char* path, char res_string[], size_t size, ng
             ret = -1;
             goto finish;
         }
-	    else {
+            else {
             PRINTF_DEBUG("mysql connect OK [%d].\n", getpid());
             kconnected = 1;
-	    }
+            }
     }
 
     //根据请求的path, 组合查询语句.
     #define LEN_QUERY_STRING (1024)
     char query_string[LEN_QUERY_STRING];
-    snprintf(query_string, LEN_QUERY_STRING, "%s", "select * from np"); 
+    snprintf(query_string, LEN_QUERY_STRING, "%s", "select * from notetask"); 
 
     int ret_query = mysql_query(kconn, query_string);
     kquery_times ++;
@@ -159,8 +158,8 @@ int query_result_to_cstring(const char* path, char res_string[], size_t size, ng
     const char* message = "";
     len += snprintf(res_string, size-len, 
             "{"
-                "\"noteplans\":{"
-                    "\"uid\":%lld,"
+                "\"notetasks\":{"
+                    "\"uid\":%"PRIu64","
                     "\"type\":%d,"
                     "\"count\":%d,"
                     "\"version\":%d,"
@@ -256,51 +255,51 @@ finish:
 
 
 static ngx_int_t
-ngx_http_hello_handler(ngx_http_request_t *r)
+ngx_http_notetask_handler(ngx_http_request_t *r)
 {ENTER
         ngx_int_t    rc;
         ngx_buf_t   *b;
         ngx_chain_t  out;
-        ngx_http_hello_loc_conf_t* my_conf;
+        ngx_http_notetask_loc_conf_t* my_conf;
 
 #define LEN_RESPONSE_STRING (1024*1024)
-        u_char ngx_hello_string[LEN_RESPONSE_STRING] = {0};
+        u_char ngx_notetask_string[LEN_RESPONSE_STRING] = {0};
         ngx_uint_t content_length = 0;
 
-        ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0, "n1gx_http_hello_handler is called!");
+        ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0, "n1gx_http_notetask_handler is called!");
 
-        my_conf = ngx_http_get_module_loc_conf(r, ngx_http_hello_module);
-        if (my_conf->hello_string.len == 0 )
+        my_conf = ngx_http_get_module_loc_conf(r, ngx_http_notetask_module);
+        if (my_conf->notetask_string.len == 0 )
         {
-                ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0, "hello_string is empty!");
+                ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0, "notetask_string is empty!");
                 return NGX_DECLINED;
         }
 
 #if 0
-        if (my_conf->hello_counter == NGX_CONF_UNSET
-                || my_conf->hello_counter == 0)
+        if (my_conf->notetask_counter == NGX_CONF_UNSET
+                || my_conf->notetask_counter == 0)
         {
-                ngx_sprintf(ngx_hello_string, "%s", my_conf->hello_string.data);
+                ngx_sprintf(ngx_notetask_string, "%s", my_conf->notetask_string.data);
         }
         else
         {
-                ngx_sprintf(ngx_hello_string, "%s Visited Times:%d", my_conf->hello_string.data,
-                        ++ngx_hello_visited_times);
+                ngx_sprintf(ngx_notetask_string, "%s Visited Times:%d", my_conf->notetask_string.data,
+                        ++ngx_notetask_visited_times);
         }
 #endif
 
         setbuf(stdout, NULL);
-        char s[LEN_RESPONSE_STRING]; s[0] = '\0';
+        //char s[LEN_RESPONSE_STRING]; s[0] = '\0';
         int total_times = 1;//100*1024;
         struct timeval tvs;
         struct timeval tve;
         gettimeofday(&tvs, NULL);
         while(total_times --) {
             static int ktest_times = 0;
-            query_result_to_cstring("/", (char*)ngx_hello_string, LEN_RESPONSE_STRING, r);
+            query_result_to_cstring("/", (char*)ngx_notetask_string, LEN_RESPONSE_STRING, r);
             ktest_times ++;
             if(0 == ktest_times % 10240) {
-                printf(".%d %d\n", strlen((char*)ngx_hello_string), ktest_times);
+                printf(".%zd %d\n", strlen((char*)ngx_notetask_string), ktest_times);
             }
         }
         gettimeofday(&tve, NULL);
@@ -312,12 +311,12 @@ ngx_http_hello_handler(ngx_http_request_t *r)
             PRINTF_DEBUG("%ld.%06ld", tve.tv_sec-tvs.tv_sec-1, usec+1000000);
         }
 
-        PRINTF_DEBUG("hello_string:%s", ngx_hello_string);
-        content_length = ngx_strlen(ngx_hello_string);
-        PRINTF_DEBUG("[%d]\n", content_length);
+        PRINTF_DEBUG("notetask_string:%s", ngx_notetask_string);
+        content_length = ngx_strlen(ngx_notetask_string);
+        PRINTF_DEBUG("[%zd]\n", content_length);
 
         /* we response to 'GET' and 'HEAD' requests only */
-        if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
+        if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD|NGX_HTTP_POST))) {
                 return NGX_HTTP_NOT_ALLOWED;
         }
 
@@ -355,8 +354,8 @@ ngx_http_hello_handler(ngx_http_request_t *r)
         out.next = NULL;
 
         /* adjust the pointers of the buffer */
-        b->pos = ngx_hello_string;
-        b->last = ngx_hello_string + content_length;
+        b->pos = ngx_notetask_string;
+        b->last = ngx_notetask_string + content_length;
         b->memory = 1;    /* this buffer is in memory */
         b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
@@ -375,70 +374,63 @@ ngx_http_hello_handler(ngx_http_request_t *r)
         return ngx_http_output_filter(r, &out);
 }
 
-static void *ngx_http_hello_create_loc_conf(ngx_conf_t *cf)
+static void *ngx_http_notetask_create_loc_conf(ngx_conf_t *cf)
 {
-        ngx_http_hello_loc_conf_t* local_conf = NULL;
-        local_conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_hello_loc_conf_t));
+        ngx_http_notetask_loc_conf_t* local_conf = NULL;
+        local_conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_notetask_loc_conf_t));
         if (local_conf == NULL)
         {
                 return NULL;
         }
 
-        ngx_str_null(&local_conf->hello_string);
-        //local_conf->hello_counter = NGX_CONF_UNSET;
+        ngx_str_null(&local_conf->notetask_string);
+        //local_conf->notetask_counter = NGX_CONF_UNSET;
 
         return local_conf;
 }
 
 /*
-static char *ngx_http_hello_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+static char *ngx_http_notetask_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
-        ngx_http_hello_loc_conf_t* prev = parent;
-        ngx_http_hello_loc_conf_t* conf = child;
-
-        ngx_conf_merge_str_value(conf->hello_string, prev->hello_string, ngx_hello_default_string);
-        ngx_conf_merge_value(conf->hello_counter, prev->hello_counter, 0);
-
+        ngx_http_notetask_loc_conf_t* prev = parent;
+        ngx_http_notetask_loc_conf_t* conf = child;
+        ngx_conf_merge_str_value(conf->notetask_string, prev->notetask_string, ngx_notetask_default_string);
+        ngx_conf_merge_value(conf->notetask_counter, prev->notetask_counter, 0);
         return NGX_CONF_OK;
 }*/
 
 static char *
-ngx_http_hello_string(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_http_notetask_string(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
 
-        ngx_http_hello_loc_conf_t* local_conf;
+        ngx_http_notetask_loc_conf_t* local_conf;
 
 
         local_conf = conf;
         char* rv = ngx_conf_set_str_slot(cf, cmd, conf);
 
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "hello_string:%s", local_conf->hello_string.data);
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "notetask_string:%s", local_conf->notetask_string.data);
 
         return rv;
 }
 
 
 #if 0
-static char *ngx_http_hello_counter(ngx_conf_t *cf, ngx_command_t *cmd,
+static char *ngx_http_notetask_counter(ngx_conf_t *cf, ngx_command_t *cmd,
         void *conf)
 {
-        ngx_http_hello_loc_conf_t* local_conf;
-
+        ngx_http_notetask_loc_conf_t* local_conf;
         local_conf = conf;
-
         char* rv = NULL;
-
         rv = ngx_conf_set_flag_slot(cf, cmd, conf);
-
-
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "hello_counter:%d", local_conf->hello_counter);
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "notetask_counter:%d", local_conf->notetask_counter);
         return rv;
 }
 #endif
 
 
 static ngx_int_t
-ngx_http_hello_init(ngx_conf_t *cf)
+ngx_http_notetask_init(ngx_conf_t *cf)
 {
         ngx_http_handler_pt        *h;
         ngx_http_core_main_conf_t  *cmcf;
@@ -450,7 +442,7 @@ ngx_http_hello_init(ngx_conf_t *cf)
                 return NGX_ERROR;
         }
 
-        *h = ngx_http_hello_handler;
+        *h = ngx_http_notetask_handler;
 
         return NGX_OK;
 }
