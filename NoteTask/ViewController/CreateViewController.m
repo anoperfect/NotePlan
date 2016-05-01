@@ -5,7 +5,7 @@
 //  Created by Ben on 16/1/16.
 //  Copyright (c) 2016年 Ben. All rights reserved.
 //
-
+#import "TaskItemView.h"
 #import "CreateViewController.h"
 
 
@@ -28,6 +28,12 @@
 
 @property (nonatomic, strong) NSArray *arrayLabelStrings ;
 @property (nonatomic, strong) NSMutableArray *arrayLabels;
+
+
+
+
+
+@property (nonatomic, strong) TaskItemView *inputItem;
 
 @end
 
