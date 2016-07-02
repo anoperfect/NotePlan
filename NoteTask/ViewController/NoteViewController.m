@@ -13,7 +13,9 @@
 #import "NoteModel.h"
 
 
-@interface NoteViewController ()
+#import "AFNetworking.h"
+#import "TTTAttributedLabel.h"
+@interface NoteViewController () <TTTAttributedLabelDelegate>
 
 @property (nonatomic, assign) NoteListType  type;
 
@@ -40,13 +42,8 @@
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"notecell"];
     
-    
-    
-    
+
 }
-
-
-
 
 
 

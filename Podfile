@@ -1,19 +1,23 @@
 platform :ios, '7.0'
-inhibit_all_warnings!
-source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
 
-pod 'AFOnoResponseSerializer'
+target 'NoteTask' do
+
+pod 'CocoaAsyncSocket'
 pod 'SDWebImage'
 pod 'SSKeychain'
 pod 'ReactiveCocoa'
 pod 'GPUImage'
 pod 'MBProgressHUD'
-pod 'RESideMenu'
 pod 'Reachability'
 pod 'TTTAttributedLabel'
-pod 'GRMustache'
-pod 'TOWebViewController'
+pod 'AFNetworking'
+pod 'YYModel'
+pod 'YYText'
+pod 'YYWebImage'
+pod 'YYCache'
+pod 'MJExtension'
 pod 'MJRefresh'
-pod 'TBXML'
-pod 'DateTools'
-pod 'CocoaAsyncSocket'
+pod 'pop', '~> 1.0'
+
+end

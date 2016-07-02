@@ -12,6 +12,6 @@
 @interface NSDate (Util)
 
 + (instancetype)dateFromString:(NSString *)string;
-- (NSString *)weekdayString;
+//- (NSString *)weekdayString;
 
 @end

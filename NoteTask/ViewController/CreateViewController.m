@@ -50,6 +50,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self setupSubviews];
+    
 }
 
 
