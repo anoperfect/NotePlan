@@ -8,8 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		06BCD40F01D9418D196B09D5 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */; };
+		B53959261D27F55200FB5408 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53959251D27F55200FB5408 /* NoteViewController.m */; };
+		B53959281D28101500FB5408 /* NoteBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = B53959271D28101500FB5408 /* NoteBackground.png */; };
+		B539592C1D28112F00FB5408 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B539592B1D28112F00FB5408 /* NoteModel.m */; };
+		B539592E1D28137400FB5408 /* Note1.json in Resources */ = {isa = PBXBuildFile; fileRef = B539592D1D28137400FB5408 /* Note1.json */; };
+		B53959301D29524700FB5408 /* NoteBackground1.png in Resources */ = {isa = PBXBuildFile; fileRef = B539592F1D29524700FB5408 /* NoteBackground1.png */; };
 		B559B5681CD61DE30028BAAD /* TaskItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B559B5671CD61DE30028BAAD /* TaskItemView.m */; };
 		B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B55E9D791C9B09B000F581F5 /* FrameLayout.m */; };
+		B560A51B1D2A07380019F871 /* apic321.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B560A51A1D2A07380019F871 /* apic321.jpg */; };
 		B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09B1C9110FD00E903B6 /* FAImageView.m */; };
 		B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09D1C9110FD00E903B6 /* NSString+FontAwesome.m */; };
 		B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09F1C9110FD00E903B6 /* UIFont+FontAwesome.m */; };
@@ -40,9 +46,6 @@
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
-		B5B2A3E51C78B64F001EAE52 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3E41C78B64F001EAE52 /* NoteViewController.m */; };
-		B5B2A3EF1C78C917001EAE52 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3EE1C78C917001EAE52 /* NoteCell.m */; };
-		B5B2A3F21C78CA68001EAE52 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A3F11C78CA68001EAE52 /* NoteModel.m */; };
 		B5F24BC81C4A94370027DAB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BC71C4A94370027DAB2 /* main.m */; };
 		B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BCA1C4A94370027DAB2 /* AppDelegate.m */; };
 		B5F24BE81C4A94370027DAB2 /* NoteTask.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BE71C4A94370027DAB2 /* NoteTask.m */; };
@@ -62,10 +65,18 @@
 
 /* Begin PBXFileReference section */
 		234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B53959241D27F55200FB5408 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = Source/NoteViewController.h; sourceTree = "<group>"; };
+		B53959251D27F55200FB5408 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteViewController.m; path = Source/NoteViewController.m; sourceTree = "<group>"; };
+		B53959271D28101500FB5408 /* NoteBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoteBackground.png; sourceTree = "<group>"; };
+		B539592A1D28112F00FB5408 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = Source/NoteModel.h; sourceTree = "<group>"; };
+		B539592B1D28112F00FB5408 /* NoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteModel.m; path = Source/NoteModel.m; sourceTree = "<group>"; };
+		B539592D1D28137400FB5408 /* Note1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Note1.json; sourceTree = "<group>"; };
+		B539592F1D29524700FB5408 /* NoteBackground1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground1.png; path = Source/NoteBackground1.png; sourceTree = "<group>"; };
 		B559B5661CD61DE30028BAAD /* TaskItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskItemView.h; path = ViewController/TaskItemView.h; sourceTree = "<group>"; };
 		B559B5671CD61DE30028BAAD /* TaskItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskItemView.m; path = ViewController/TaskItemView.m; sourceTree = "<group>"; };
 		B55E9D781C9B09B000F581F5 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameLayout.h; path = ../../../../Kukuku/Extension/FrameLayout.h; sourceTree = "<group>"; };
 		B55E9D791C9B09B000F581F5 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameLayout.m; path = ../../../../Kukuku/Extension/FrameLayout.m; sourceTree = "<group>"; };
+		B560A51A1D2A07380019F871 /* apic321.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = apic321.jpg; sourceTree = "<group>"; };
 		B564D09A1C9110FD00E903B6 /* FAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAImageView.h; sourceTree = "<group>"; };
 		B564D09B1C9110FD00E903B6 /* FAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAImageView.m; sourceTree = "<group>"; };
 		B564D09C1C9110FD00E903B6 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
@@ -123,12 +134,6 @@
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
 		B5A26BD21D22140E00B1F629 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuButton.m; path = Source/MenuButton.m; sourceTree = "<group>"; };
 		B5A26BD41D22153F00B1F629 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		B5B2A3E31C78B64F001EAE52 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = ViewController/NoteViewController.h; sourceTree = "<group>"; };
-		B5B2A3E41C78B64F001EAE52 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteViewController.m; path = ViewController/NoteViewController.m; sourceTree = "<group>"; };
-		B5B2A3ED1C78C917001EAE52 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = ViewController/NoteCell.h; sourceTree = "<group>"; };
-		B5B2A3EE1C78C917001EAE52 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = ViewController/NoteCell.m; sourceTree = "<group>"; };
-		B5B2A3F01C78CA68001EAE52 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = ViewController/NoteModel.h; sourceTree = "<group>"; };
-		B5B2A3F11C78CA68001EAE52 /* NoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteModel.m; path = ViewController/NoteModel.m; sourceTree = "<group>"; };
 		B5F24BC21C4A94370027DAB2 /* NoteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5F24BC61C4A94370027DAB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5F24BC71C4A94370027DAB2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -179,6 +184,19 @@
 				EFF321B046173F5FFC694801 /* Pods-NoteTask.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		B53959291D28110400FB5408 /* Note */ = {
+			isa = PBXGroup;
+			children = (
+				B560A51A1D2A07380019F871 /* apic321.jpg */,
+				B53959241D27F55200FB5408 /* NoteViewController.h */,
+				B53959251D27F55200FB5408 /* NoteViewController.m */,
+				B539592A1D28112F00FB5408 /* NoteModel.h */,
+				B539592B1D28112F00FB5408 /* NoteModel.m */,
+				B539592D1D28137400FB5408 /* Note1.json */,
+			);
+			name = Note;
 			sourceTree = "<group>";
 		};
 		B564D0931C9110FD00E903B6 /* Reuse1 */ = {
@@ -319,12 +337,6 @@
 		B5B2A3E61C78C73A001EAE52 /* Note */ = {
 			isa = PBXGroup;
 			children = (
-				B5B2A3E31C78B64F001EAE52 /* NoteViewController.h */,
-				B5B2A3E41C78B64F001EAE52 /* NoteViewController.m */,
-				B5B2A3ED1C78C917001EAE52 /* NoteCell.h */,
-				B5B2A3EE1C78C917001EAE52 /* NoteCell.m */,
-				B5B2A3F01C78CA68001EAE52 /* NoteModel.h */,
-				B5B2A3F11C78CA68001EAE52 /* NoteModel.m */,
 			);
 			name = Note;
 			sourceTree = "<group>";
@@ -375,12 +387,15 @@
 		B5C20A3E1D20D20300CE52E4 /* Attent */ = {
 			isa = PBXGroup;
 			children = (
+				B53959271D28101500FB5408 /* NoteBackground.png */,
+				B539592F1D29524700FB5408 /* NoteBackground1.png */,
 				B56B62671D2124A4005A2242 /* RootViewController.h */,
 				B56B62681D2124A4005A2242 /* RootViewController.m */,
 				B56B62691D2124A4005A2242 /* SummaryInRoot.h */,
 				B56B626A1D2124A4005A2242 /* SummaryInRoot.m */,
 				B5A26BD11D22140E00B1F629 /* MenuButton.h */,
 				B5A26BD21D22140E00B1F629 /* MenuButton.m */,
+				B53959291D28110400FB5408 /* Note */,
 			);
 			name = Attent;
 			sourceTree = "<group>";
@@ -557,8 +572,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */,
+				B560A51B1D2A07380019F871 /* apic321.jpg in Resources */,
+				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,
+				B53959281D28101500FB5408 /* NoteBackground.png in Resources */,
+				B539592E1D28137400FB5408 /* Note1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,13 +649,13 @@
 				B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */,
 				B5F24BFA1C5630890027DAB2 /* TabBarViewController.m in Sources */,
 				B564D0CD1C9110FD00E903B6 /* NSDate+Util.m in Sources */,
+				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */,
-				B5B2A3E51C78B64F001EAE52 /* NoteViewController.m in Sources */,
 				B564D0D51C9110FD00E903B6 /* UIImage+Util.m in Sources */,
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
-				B5B2A3F21C78CA68001EAE52 /* NoteModel.m in Sources */,
 				B595C25B1C7813E90087744D /* RemoteViewController.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
+				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
 				B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */,
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
@@ -647,7 +666,6 @@
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,
 				B564D0CC1C9110FD00E903B6 /* UIImage+FontAwesome.m in Sources */,
 				B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */,
-				B5B2A3EF1C78C917001EAE52 /* NoteCell.m in Sources */,
 				B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
 				B564D0D01C9110FD00E903B6 /* NSString+Util.m in Sources */,

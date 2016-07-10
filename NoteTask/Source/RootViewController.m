@@ -5,12 +5,12 @@
 //  Created by Ben on 16/6/27.
 //  Copyright © 2016年 Ben. All rights reserved.
 //
-
+#import "NoteViewController.h"
 #import "RootViewController.h"
 #import "SummaryInRoot.h"
 #import "FrameSplite.h"
 #import "MenuButton.h"
-
+#import "UIColor+Util.h"
 
 
 @interface RootViewController ()
@@ -43,7 +43,7 @@
     [self generateMenus];
     
     //UI.
-    self.view.backgroundColor = [UIColor blackColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBarHidden = YES;
     
     //上面的简介.
@@ -55,19 +55,25 @@
     //菜单的数据.
     [self buildMenus];
     
-    
-    
     [self buildSettingButtons];
     
-    
-    
     [self buildSubViewController];
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(100 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//    
+//        NSString *className = @"NoteViewController";
+//        Class class = NSClassFromString(className);
+//        if (class) {
+//            UIViewController *ctrl = class.new;
+//            ctrl.title = @"Note";
+//            [self.navigationController pushViewController:ctrl animated:YES];
+//        }
+//
+//    });
 }
 
 
-
-
-- (void)viewWillLayoutSubviews
+- (void)viewWillLayoutSubviews1
 {
     CGSize size = self.view.bounds.size;
     
@@ -160,20 +166,95 @@
     frameLayer.size.width = layerWidth;
     line.frame = frameLayer;
     [self.view.layer addSublayer:line];
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 
+
+- (void)viewWillLayoutSubviews
+{
+    CGSize size = self.view.bounds.size;
+    
+    FrameSplite *f = [[FrameSplite alloc] initWithSize:size];
+    [f frameSplite:FRAMESPLITE_NAME_MAIN
+                to:@[@"summary", @"menus", @"settings"]
+   withPercentages:@[@(0.62), @(0.18), @(0.2)]];
+    
+    _summary.frame =[f frameSpliteGet:@"summary"];
+    
+    [f frameSpliteEqual:@"menus" to:@[@"menusLine1"]];
+    
+    [f frameSpliteEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
+
+    for(UIButton *button in _buttons) {
+        NSString *name = [NSString stringWithFormat:@"button%zd", button.tag - 100 + 1];
+        button.frame = [f frameSpliteGet:name];
+    }
+    
+    _settingView.frame = [f frameSpliteGet:@"settings"];
+    
+    //    NSLog(@"f : \n%@", f);
+    
+    NSMutableArray *layers = [[NSMutableArray alloc] init];
+    
+    for(CALayer *layer in self.view.layer.sublayers) {
+        if([layer valueForKey:@"menuButtonLayer"]) {
+            [layers addObject:layer];
+        }
+    }
+    
+    [layers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
+    
+    UIColor *layerColor = [UIColor whiteColor];
+    CGFloat layerWidth = 0.5;
+    
+    //add menuButtons border line.
+    CGRect frameLayer ;
+    CALayer * line;
+    
+    line = [CALayer layer];
+    [line setValue:@100 forKey:@"menuButtonLayer"];
+    line.backgroundColor = layerColor.CGColor;
+    frameLayer = [f frameSpliteGet:@"menusLine1"];
+    frameLayer.size.height = layerWidth;
+    line.frame = frameLayer;
+    [self.view.layer addSublayer:line];
+    
+    line = [CALayer layer];
+    [line setValue:@100 forKey:@"menuButtonLayer"];
+    line.backgroundColor = layerColor.CGColor;
+    frameLayer = [f frameSpliteGet:@"menusLine1"];
+    frameLayer.origin.y += frameLayer.size.height;
+    frameLayer.size.height = layerWidth;
+    line.frame = frameLayer;
+    [self.view.layer addSublayer:line];
+    
+    line = [CALayer layer];
+    [line setValue:@100 forKey:@"menuButtonLayer"];
+    line.backgroundColor = layerColor.CGColor;
+    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer.origin.x = frameLayer.size.width / 3;
+    frameLayer.size.width = layerWidth;
+    line.frame = frameLayer;
+    [self.view.layer addSublayer:line];
+    
+    line = [CALayer layer];
+    [line setValue:@100 forKey:@"menuButtonLayer"];
+    line.backgroundColor = layerColor.CGColor;
+    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer.origin.x = frameLayer.size.width / 3 * 2;
+    frameLayer.size.width = layerWidth;
+    line.frame = frameLayer;
+    [self.view.layer addSublayer:line];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBarHidden = YES;
+}
 
 
 - (void)generateMenus
@@ -187,6 +268,7 @@
     data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Task", @"title":@"任务", @"imageName":@"Task"}];
     [_menus addObject:data];
     
+#if 0
     data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Diary", @"title":@"日记", @"imageName":@"Diary"}];
     [_menus addObject:data];
     
@@ -204,13 +286,12 @@
     
     data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Login", @"title":@"登录", @"imageName":@"Login"}];
     [_menus addObject:data];
+#endif
     
     data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Advertising", @"title":@"广告", @"imageName":@"Advertising"}];
     [_menus addObject:data];
     
     _selectedIndex = 0;
-    
-    
 }
 
 
@@ -223,6 +304,7 @@
     
     for(NSInteger idx = 0; idx < menuCount; idx ++) {
         MenuButton *button = [[MenuButton alloc] init];
+        [button addTarget:self action:@selector(clickMenu:) forControlEvents:UIControlEventTouchDown];
         button.tag = idx + 100;
         [self.view addSubview:button];
         [_buttons addObject:button];
@@ -235,6 +317,38 @@
 }
 
 
+- (void)clickMenu:(MenuButton*)button
+{
+    NSInteger idx = button.tag - 100;
+    MenuButtonData *data = _menus[idx];
+
+    for(MenuButton *buttonTraversal in _buttons) {
+        BOOL equal = [buttonTraversal isEqual:button];
+        if(equal) {
+            buttonTraversal.backgroundColor = [UIColor colorWithHex:0x009ed3 alpha:1.0];
+        }
+        else {
+            buttonTraversal.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:1.0];
+        }
+    }
+    
+    if([data.title isEqualToString:@"笔记"]) {
+        Class class = NSClassFromString(@"NoteViewController");
+        if(class) {
+            UIViewController *ctrl = class.new;
+            ctrl.title = data.title;
+            [self.navigationController pushViewController:ctrl animated:YES];
+        }
+        
+        return ;
+    }
+    
+    
+    
+}
+
+
+
 - (void)layoutMenus
 {
 
@@ -245,6 +359,7 @@
 {
     _settingView = [[UIView alloc] init];
     _settingView.tag = 3;
+    _settingView.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:0.8];
     
     [self.view addSubview:_settingView];
     
