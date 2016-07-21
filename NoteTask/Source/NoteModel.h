@@ -23,7 +23,8 @@
 @interface NoteModel : NSObject
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *image;
-@property (nonatomic, strong) NSMutableArray *paragraphs;
+//@property (nonatomic, strong) NSMutableArray *paragraphs;
+@property (nonatomic, strong) NSString *content;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *date;
 @property (nonatomic, strong) NSString *modify;
@@ -35,9 +36,9 @@
 
 - (instancetype)initWithJsonData:(NSData*)jsonData;
 - (NSData*)toJsonData;
-- (NSString*)contents;
+//- (NSString*)contents;
 
-- (void)storeToLocal;
+//- (void)storeToLocal;
 
 
 

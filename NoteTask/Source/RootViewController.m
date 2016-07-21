@@ -8,7 +8,7 @@
 #import "NoteViewController.h"
 #import "RootViewController.h"
 #import "SummaryInRoot.h"
-#import "FrameSplite.h"
+
 #import "MenuButton.h"
 #import "UIColor+Util.h"
 
@@ -39,12 +39,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //UIpConfig的初始化暂时放这边.
+    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"color.json"];
+    NSData *data = [NSData dataWithContentsOfFile:resPath];
+    
+    
+    NSArray<ColorItem*> * colorItems = [[UIpConfig sharedUIpConfig] colorItemsParseFromJsonData:data];
+    [[UIpConfig sharedUIpConfig] updateUIpConfigColorItems:colorItems];
+    
     //数据部分.
     [self generateMenus];
     
     //UI.
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBarHidden = YES;
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = @"";
+    self.navigationItem.backBarButtonItem = backItem;
     
     //上面的简介.
     _summary = [[SummaryInRoot alloc] init];
@@ -289,6 +301,7 @@
 #endif
     
     data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Advertising", @"title":@"广告", @"imageName":@"Advertising"}];
+    data = [[MenuButtonData alloc] initWithDictionary:@{ @"name":@"Advertising", @"title":@"设置", @"imageName":@"Setting"}];
     [_menus addObject:data];
     
     _selectedIndex = 0;

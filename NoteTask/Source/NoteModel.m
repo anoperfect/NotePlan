@@ -26,7 +26,9 @@ static NSInteger kno = 0;
     kno ++;
     
     self.title = [NSString stringWithFormat:@"title%zd中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁", kno];
- 
+    self.content = [NSString stringWithFormat:@"内容%zd中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁", kno];
+    
+    
     
     
     

@@ -1,0 +1,45 @@
+[
+{
+"name" : "CustomBackground",
+"title" : "通用背景颜色",
+"enableCustmize" : true,
+"colorstringDefault" : "#e1eaeb",
+"colornightstringDefault" : "#e1eaeb"
+},
+
+{
+"name" : "MenuBackground",
+"title" : "菜单按钮背景颜色",
+"enableCustmize" : true,
+"colorstringDefault" : "#1e2324",
+"colornightstringDefault" : "#1e2324"
+},
+
+{
+ "name" : "NavigationBackText",
+ "title" : "返回菜单颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#1e2324",
+ "colornightstringDefault" : "#1e2324"
+},
+ 
+{
+ "name" : "NoteCellBackground0",
+ "title" : "Note行0",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eaeb",
+ "colornightstringDefault" : "#e1eaeb"
+},
+
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+}
+ 
+ 
+ 
+ 
+]

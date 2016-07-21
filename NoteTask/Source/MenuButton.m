@@ -62,7 +62,7 @@
     [self setTitle:data.title forState:UIControlStateNormal];
     [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self setImage:[UIImage imageNamed:data.imageName] forState:UIControlStateNormal];
-    self.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:1.0];
+    self.backgroundColor = [UIColor colorWithName:@"MenuBackground"];
     
     self.titleLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;

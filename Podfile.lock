@@ -21,6 +21,9 @@ PODS:
     - CocoaAsyncSocket/RunLoop
   - CocoaAsyncSocket/GCD (7.4.3)
   - CocoaAsyncSocket/RunLoop (7.4.3)
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
   - GPUImage (0.1.7)
   - MBProgressHUD (0.9.1)
   - MJExtension (3.0.10)
@@ -52,6 +55,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworking
   - CocoaAsyncSocket
+  - FMDB
   - GPUImage
   - MBProgressHUD
   - MJExtension
@@ -70,6 +74,7 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   CocoaAsyncSocket: a18c75dca4b08723628a0bacca6e94803d90be91
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   MJExtension: d86aacb740c87519d20e3cca55b6fa4be6cc7548
@@ -86,6 +91,6 @@ SPEC CHECKSUMS:
   YYText: ac09660c9ccd9b817f409a20caa6f5587444d2ae
   YYWebImage: 8da75a611fd0d2e0f58a273f9ca0bc731614cb0d
 
-PODFILE CHECKSUM: b58e939d8a4c7b78c8b2dd2110db4f41f6e07f98
+PODFILE CHECKSUM: e33b30b8c33afb6fc53b54da408b3041a9d30003
 
 COCOAPODS: 1.0.0

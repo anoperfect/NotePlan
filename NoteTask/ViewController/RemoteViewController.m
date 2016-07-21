@@ -128,8 +128,8 @@
 
 - (void)loadMore {
     //获取网络请求地址. 具体实现由继承类重载.
-    NSString *URLString = [self generateURL:self.page];
-    NSLog(@"URLString1 : %@", URLString);
+    //NSString *URLString = [self generateURL:self.page];
+    //NSLog(@"URLString1 : %@", URLString);
     
     [self startReload1];
     

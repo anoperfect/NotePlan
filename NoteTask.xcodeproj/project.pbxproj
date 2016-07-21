@@ -11,11 +11,13 @@
 		B53959261D27F55200FB5408 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53959251D27F55200FB5408 /* NoteViewController.m */; };
 		B53959281D28101500FB5408 /* NoteBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = B53959271D28101500FB5408 /* NoteBackground.png */; };
 		B539592C1D28112F00FB5408 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B539592B1D28112F00FB5408 /* NoteModel.m */; };
-		B539592E1D28137400FB5408 /* Note1.json in Resources */ = {isa = PBXBuildFile; fileRef = B539592D1D28137400FB5408 /* Note1.json */; };
+		B539592E1D28137400FB5408 /* Note0.json in Resources */ = {isa = PBXBuildFile; fileRef = B539592D1D28137400FB5408 /* Note0.json */; };
 		B53959301D29524700FB5408 /* NoteBackground1.png in Resources */ = {isa = PBXBuildFile; fileRef = B539592F1D29524700FB5408 /* NoteBackground1.png */; };
-		B559B5681CD61DE30028BAAD /* TaskItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = B559B5671CD61DE30028BAAD /* TaskItemView.m */; };
+		B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */; };
+		B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */; };
 		B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B55E9D791C9B09B000F581F5 /* FrameLayout.m */; };
 		B560A51B1D2A07380019F871 /* apic321.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B560A51A1D2A07380019F871 /* apic321.jpg */; };
+		B56282B71D3C4960003FBBED /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B56282B61D3C4960003FBBED /* JSDropDownMenu.m */; };
 		B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09B1C9110FD00E903B6 /* FAImageView.m */; };
 		B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09D1C9110FD00E903B6 /* NSString+FontAwesome.m */; };
 		B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09F1C9110FD00E903B6 /* UIFont+FontAwesome.m */; };
@@ -41,16 +43,21 @@
 		B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B62681D2124A4005A2242 /* RootViewController.m */; };
 		B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B626A1D2124A4005A2242 /* SummaryInRoot.m */; };
 		B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */; };
-		B56B6A881D2171A9005A2242 /* FrameSplite.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B6A871D2171A9005A2242 /* FrameSplite.m */; };
-		B595C25B1C7813E90087744D /* RemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25A1C7813E90087744D /* RemoteViewController.m */; };
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
+		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
+		B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
+		B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C561E21D3942BF00F1EF82 /* NoteFilter.m */; };
+		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
+		B5E5FA871D3799E8000A648D /* Note1.json in Resources */ = {isa = PBXBuildFile; fileRef = B5E5FA861D3799E8000A648D /* Note1.json */; };
+		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
+		B5E9D0AF1D33F09100395CF0 /* FrameSplite.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */; };
+		B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B11D33F28000395CF0 /* UIpConfig.m */; };
+		B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */; };
 		B5F24BC81C4A94370027DAB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BC71C4A94370027DAB2 /* main.m */; };
 		B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BCA1C4A94370027DAB2 /* AppDelegate.m */; };
 		B5F24BE81C4A94370027DAB2 /* NoteTask.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BE71C4A94370027DAB2 /* NoteTask.m */; };
-		B5F24BF31C4A9D7D0027DAB2 /* CreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BF21C4A9D7D0027DAB2 /* CreateViewController.m */; };
-		B5F24BFA1C5630890027DAB2 /* TabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BF91C5630890027DAB2 /* TabBarViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,16 +74,20 @@
 		234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53959241D27F55200FB5408 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = Source/NoteViewController.h; sourceTree = "<group>"; };
 		B53959251D27F55200FB5408 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteViewController.m; path = Source/NoteViewController.m; sourceTree = "<group>"; };
-		B53959271D28101500FB5408 /* NoteBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoteBackground.png; sourceTree = "<group>"; };
+		B53959271D28101500FB5408 /* NoteBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground.png; path = ../NoteBackground.png; sourceTree = "<group>"; };
 		B539592A1D28112F00FB5408 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = Source/NoteModel.h; sourceTree = "<group>"; };
 		B539592B1D28112F00FB5408 /* NoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteModel.m; path = Source/NoteModel.m; sourceTree = "<group>"; };
-		B539592D1D28137400FB5408 /* Note1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Note1.json; sourceTree = "<group>"; };
-		B539592F1D29524700FB5408 /* NoteBackground1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground1.png; path = Source/NoteBackground1.png; sourceTree = "<group>"; };
-		B559B5661CD61DE30028BAAD /* TaskItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskItemView.h; path = ViewController/TaskItemView.h; sourceTree = "<group>"; };
-		B559B5671CD61DE30028BAAD /* TaskItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskItemView.m; path = ViewController/TaskItemView.m; sourceTree = "<group>"; };
+		B539592D1D28137400FB5408 /* Note0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Note0.json; sourceTree = "<group>"; };
+		B539592F1D29524700FB5408 /* NoteBackground1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground1.png; path = ../Source/NoteBackground1.png; sourceTree = "<group>"; };
+		B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteDetailViewController.h; path = Source/NoteDetailViewController.h; sourceTree = "<group>"; };
+		B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteDetailViewController.m; path = Source/NoteDetailViewController.m; sourceTree = "<group>"; };
+		B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCreateViewController.h; path = Source/NoteCreateViewController.h; sourceTree = "<group>"; };
+		B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCreateViewController.m; path = Source/NoteCreateViewController.m; sourceTree = "<group>"; };
 		B55E9D781C9B09B000F581F5 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameLayout.h; path = ../../../../Kukuku/Extension/FrameLayout.h; sourceTree = "<group>"; };
 		B55E9D791C9B09B000F581F5 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameLayout.m; path = ../../../../Kukuku/Extension/FrameLayout.m; sourceTree = "<group>"; };
-		B560A51A1D2A07380019F871 /* apic321.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = apic321.jpg; sourceTree = "<group>"; };
+		B560A51A1D2A07380019F871 /* apic321.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = apic321.jpg; path = ../apic321.jpg; sourceTree = "<group>"; };
+		B56282B51D3C4960003FBBED /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
+		B56282B61D3C4960003FBBED /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
 		B564D09A1C9110FD00E903B6 /* FAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAImageView.h; sourceTree = "<group>"; };
 		B564D09B1C9110FD00E903B6 /* FAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAImageView.m; sourceTree = "<group>"; };
 		B564D09C1C9110FD00E903B6 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
@@ -125,15 +136,27 @@
 		B56B62691D2124A4005A2242 /* SummaryInRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SummaryInRoot.h; path = Source/SummaryInRoot.h; sourceTree = "<group>"; };
 		B56B626A1D2124A4005A2242 /* SummaryInRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SummaryInRoot.m; path = Source/SummaryInRoot.m; sourceTree = "<group>"; };
 		B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.Storyboard; sourceTree = "<group>"; };
-		B56B6A861D2171A9005A2242 /* FrameSplite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSplite.h; sourceTree = "<group>"; };
-		B56B6A871D2171A9005A2242 /* FrameSplite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameSplite.m; sourceTree = "<group>"; };
-		B595C2591C7813E90087744D /* RemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteViewController.h; path = ViewController/RemoteViewController.h; sourceTree = "<group>"; };
-		B595C25A1C7813E90087744D /* RemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteViewController.m; path = ViewController/RemoteViewController.m; sourceTree = "<group>"; };
 		B595C25C1C7829E10087744D /* TableViewLastCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewLastCell.h; path = ViewPublic/TableViewLastCell.h; sourceTree = "<group>"; };
 		B595C25D1C7829E10087744D /* TableViewLastCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableViewLastCell.m; path = ViewPublic/TableViewLastCell.m; sourceTree = "<group>"; };
+		B59AB7201D34A5B40067C4B2 /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
+		B59AB7211D34A5B40067C4B2 /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
+		B59AB7231D35450A0067C4B2 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIpConfigDB.json; sourceTree = "<group>"; };
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
 		B5A26BD21D22140E00B1F629 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuButton.m; path = Source/MenuButton.m; sourceTree = "<group>"; };
 		B5A26BD41D22153F00B1F629 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B5C561E11D3942BF00F1EF82 /* NoteFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteFilter.h; path = Source/NoteFilter.h; sourceTree = "<group>"; };
+		B5C561E21D3942BF00F1EF82 /* NoteFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteFilter.m; path = Source/NoteFilter.m; sourceTree = "<group>"; };
+		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
+		B5E5FA861D3799E8000A648D /* Note1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Note1.json; path = Source/Note1.json; sourceTree = "<group>"; };
+		B5E9D0A31D32815500395CF0 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = Source/NoteCell.h; sourceTree = "<group>"; };
+		B5E9D0A41D32815500395CF0 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = Source/NoteCell.m; sourceTree = "<group>"; };
+		B5E9D0AC1D33F09100395CF0 /* FrameSplite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSplite.h; sourceTree = "<group>"; };
+		B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameSplite.m; sourceTree = "<group>"; };
+		B5E9D0B01D33F28000395CF0 /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
+		B5E9D0B11D33F28000395CF0 /* UIpConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIpConfig.m; sourceTree = "<group>"; };
+		B5E9D0B41D33F2FF00395CF0 /* NSLogn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSLogn.h; sourceTree = "<group>"; };
+		B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSLogn.m; sourceTree = "<group>"; };
 		B5F24BC21C4A94370027DAB2 /* NoteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5F24BC61C4A94370027DAB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5F24BC71C4A94370027DAB2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -142,10 +165,6 @@
 		B5F24BE11C4A94370027DAB2 /* NoteTask.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteTask.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5F24BE61C4A94370027DAB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5F24BE71C4A94370027DAB2 /* NoteTask.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NoteTask.m; sourceTree = "<group>"; };
-		B5F24BF11C4A9D7D0027DAB2 /* CreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateViewController.h; path = ViewController/CreateViewController.h; sourceTree = "<group>"; };
-		B5F24BF21C4A9D7D0027DAB2 /* CreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CreateViewController.m; path = ViewController/CreateViewController.m; sourceTree = "<group>"; };
-		B5F24BF81C5630890027DAB2 /* TabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarViewController.h; path = ViewController/TabBarViewController.h; sourceTree = "<group>"; };
-		B5F24BF91C5630890027DAB2 /* TabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TabBarViewController.m; path = ViewController/TabBarViewController.m; sourceTree = "<group>"; };
 		D0AD07579C14373FE62CF39A /* Pods-NoteTask.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteTask.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask.debug.xcconfig"; sourceTree = "<group>"; };
 		EFF321B046173F5FFC694801 /* Pods-NoteTask.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteTask.release.xcconfig"; path = "Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,22 +208,40 @@
 		B53959291D28110400FB5408 /* Note */ = {
 			isa = PBXGroup;
 			children = (
-				B560A51A1D2A07380019F871 /* apic321.jpg */,
 				B53959241D27F55200FB5408 /* NoteViewController.h */,
 				B53959251D27F55200FB5408 /* NoteViewController.m */,
+				B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */,
+				B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */,
+				B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */,
+				B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */,
 				B539592A1D28112F00FB5408 /* NoteModel.h */,
 				B539592B1D28112F00FB5408 /* NoteModel.m */,
-				B539592D1D28137400FB5408 /* Note1.json */,
+				B5C561E11D3942BF00F1EF82 /* NoteFilter.h */,
+				B5C561E21D3942BF00F1EF82 /* NoteFilter.m */,
+				B5E9D0A31D32815500395CF0 /* NoteCell.h */,
+				B5E9D0A41D32815500395CF0 /* NoteCell.m */,
+				B539592D1D28137400FB5408 /* Note0.json */,
+				B5E5FA861D3799E8000A648D /* Note1.json */,
 			);
 			name = Note;
 			sourceTree = "<group>";
 		};
-		B564D0931C9110FD00E903B6 /* Reuse1 */ = {
+		B55A834A1D3DC83C00814DE3 /* Vandor */ = {
+			isa = PBXGroup;
+			children = (
+				B56282B51D3C4960003FBBED /* JSDropDownMenu.h */,
+				B56282B61D3C4960003FBBED /* JSDropDownMenu.m */,
+			);
+			name = Vandor;
+			sourceTree = "<group>";
+		};
+		B564D0931C9110FD00E903B6 /* Reuse0 */ = {
 			isa = PBXGroup;
 			children = (
 				B564D0941C9110FD00E903B6 /* Copy */,
 				B564D0EB1C91681700E903B6 /* Extension */,
 			);
+			name = Reuse0;
 			path = Reuse1;
 			sourceTree = "<group>";
 		};
@@ -290,6 +327,9 @@
 			children = (
 				B564D0E81C912FFA00E903B6 /* json */,
 				B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */,
+				B53959271D28101500FB5408 /* NoteBackground.png */,
+				B539592F1D29524700FB5408 /* NoteBackground1.png */,
+				B560A51A1D2A07380019F871 /* apic321.jpg */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -298,6 +338,7 @@
 			isa = PBXGroup;
 			children = (
 				B564D0E91C912FFA00E903B6 /* note.json */,
+				B5CC2B441D366B410013D236 /* color.json */,
 			);
 			path = json;
 			sourceTree = "<group>";
@@ -315,16 +356,6 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		B56B6A851D2171A9005A2242 /* FrameSplite */ = {
-			isa = PBXGroup;
-			children = (
-				B56B6A861D2171A9005A2242 /* FrameSplite.h */,
-				B56B6A871D2171A9005A2242 /* FrameSplite.m */,
-			);
-			name = FrameSplite;
-			path = ../../FrameSplite;
-			sourceTree = "<group>";
-		};
 		B595C25F1C7829EB0087744D /* ViewPublic */ = {
 			isa = PBXGroup;
 			children = (
@@ -334,70 +365,75 @@
 			name = ViewPublic;
 			sourceTree = "<group>";
 		};
-		B5B2A3E61C78C73A001EAE52 /* Note */ = {
+		B59AB71F1D34A5A60067C4B2 /* DBData */ = {
 			isa = PBXGroup;
 			children = (
+				B59AB7201D34A5B40067C4B2 /* DBData.h */,
+				B59AB7211D34A5B40067C4B2 /* DBData.m */,
 			);
-			name = Note;
-			sourceTree = "<group>";
-		};
-		B5B2A3EA1C78C79E001EAE52 /* DIary */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = DIary;
-			sourceTree = "<group>";
-		};
-		B5B2A3EB1C78C7AD001EAE52 /* Create */ = {
-			isa = PBXGroup;
-			children = (
-				B559B5661CD61DE30028BAAD /* TaskItemView.h */,
-				B559B5671CD61DE30028BAAD /* TaskItemView.m */,
-				B5F24BF21C4A9D7D0027DAB2 /* CreateViewController.m */,
-				B5F24BF11C4A9D7D0027DAB2 /* CreateViewController.h */,
-			);
-			name = Create;
-			sourceTree = "<group>";
-		};
-		B5B2A3F31C795A1C001EAE52 /* pub */ = {
-			isa = PBXGroup;
-			children = (
-				B5F24BF81C5630890027DAB2 /* TabBarViewController.h */,
-				B5F24BF91C5630890027DAB2 /* TabBarViewController.m */,
-				B595C2591C7813E90087744D /* RemoteViewController.h */,
-				B595C25A1C7813E90087744D /* RemoteViewController.m */,
-			);
-			name = pub;
-			sourceTree = "<group>";
-		};
-		B5B2A3F41C795A97001EAE52 /* Square */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Square;
-			sourceTree = "<group>";
-		};
-		B5B2A3F51C795ACC001EAE52 /* Me */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Me;
+			path = DBData;
 			sourceTree = "<group>";
 		};
 		B5C20A3E1D20D20300CE52E4 /* Attent */ = {
 			isa = PBXGroup;
 			children = (
-				B53959271D28101500FB5408 /* NoteBackground.png */,
-				B539592F1D29524700FB5408 /* NoteBackground1.png */,
+				B5E9D0A71D3288AD00395CF0 /* Root */,
+				B53959291D28110400FB5408 /* Note */,
+			);
+			name = Attent;
+			sourceTree = "<group>";
+		};
+		B5E9D0A71D3288AD00395CF0 /* Root */ = {
+			isa = PBXGroup;
+			children = (
 				B56B62671D2124A4005A2242 /* RootViewController.h */,
 				B56B62681D2124A4005A2242 /* RootViewController.m */,
 				B56B62691D2124A4005A2242 /* SummaryInRoot.h */,
 				B56B626A1D2124A4005A2242 /* SummaryInRoot.m */,
 				B5A26BD11D22140E00B1F629 /* MenuButton.h */,
 				B5A26BD21D22140E00B1F629 /* MenuButton.m */,
-				B53959291D28110400FB5408 /* Note */,
 			);
-			name = Attent;
+			name = Root;
+			sourceTree = "<group>";
+		};
+		B5E9D0AA1D33F09100395CF0 /* Reuse1 */ = {
+			isa = PBXGroup;
+			children = (
+				B59AB71F1D34A5A60067C4B2 /* DBData */,
+				B5E9D0B31D33F2F400395CF0 /* NSLogn */,
+				B5E9D0AB1D33F09100395CF0 /* FrameSplite */,
+				B5E9D0AE1D33F09100395CF0 /* UIpConfig */,
+			);
+			name = Reuse1;
+			path = ../../Reuse1;
+			sourceTree = "<group>";
+		};
+		B5E9D0AB1D33F09100395CF0 /* FrameSplite */ = {
+			isa = PBXGroup;
+			children = (
+				B5E9D0AC1D33F09100395CF0 /* FrameSplite.h */,
+				B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */,
+			);
+			path = FrameSplite;
+			sourceTree = "<group>";
+		};
+		B5E9D0AE1D33F09100395CF0 /* UIpConfig */ = {
+			isa = PBXGroup;
+			children = (
+				B5E9D0B01D33F28000395CF0 /* UIpConfig.h */,
+				B5E9D0B11D33F28000395CF0 /* UIpConfig.m */,
+				B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */,
+			);
+			path = UIpConfig;
+			sourceTree = "<group>";
+		};
+		B5E9D0B31D33F2F400395CF0 /* NSLogn */ = {
+			isa = PBXGroup;
+			children = (
+				B5E9D0B41D33F2FF00395CF0 /* NSLogn.h */,
+				B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */,
+			);
+			path = NSLogn;
 			sourceTree = "<group>";
 		};
 		B5F24BB91C4A94370027DAB2 = {
@@ -423,13 +459,14 @@
 		B5F24BC41C4A94370027DAB2 /* NoteTask */ = {
 			isa = PBXGroup;
 			children = (
-				B56B6A851D2171A9005A2242 /* FrameSplite */,
-				B564D0931C9110FD00E903B6 /* Reuse1 */,
+				B5E9D0AA1D33F09100395CF0 /* Reuse1 */,
+				B564D0931C9110FD00E903B6 /* Reuse0 */,
 				B595C25F1C7829EB0087744D /* ViewPublic */,
 				B5F24BF41C4A9D940027DAB2 /* ViewController */,
 				B5F24BC91C4A94370027DAB2 /* AppDelegate.h */,
 				B5F24BCA1C4A94370027DAB2 /* AppDelegate.m */,
 				B5F24BC51C4A94370027DAB2 /* Supporting Files */,
+				B55A834A1D3DC83C00814DE3 /* Vandor */,
 			);
 			path = NoteTask;
 			sourceTree = "<group>";
@@ -440,6 +477,7 @@
 				B5A26BD41D22153F00B1F629 /* Images.xcassets */,
 				B564D0E71C912FFA00E903B6 /* Resources */,
 				B5F24BC61C4A94370027DAB2 /* Info.plist */,
+				B59AB7231D35450A0067C4B2 /* PrefixHeader.pch */,
 				B5F24BC71C4A94370027DAB2 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -466,12 +504,6 @@
 			isa = PBXGroup;
 			children = (
 				B5C20A3E1D20D20300CE52E4 /* Attent */,
-				B5B2A3F31C795A1C001EAE52 /* pub */,
-				B5B2A3E61C78C73A001EAE52 /* Note */,
-				B5B2A3EA1C78C79E001EAE52 /* DIary */,
-				B5B2A3EB1C78C7AD001EAE52 /* Create */,
-				B5B2A3F41C795A97001EAE52 /* Square */,
-				B5B2A3F51C795ACC001EAE52 /* Me */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -575,9 +607,12 @@
 				B560A51B1D2A07380019F871 /* apic321.jpg in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
+				B5E5FA871D3799E8000A648D /* Note1.json in Resources */,
+				B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,
 				B53959281D28101500FB5408 /* NoteBackground.png in Resources */,
-				B539592E1D28137400FB5408 /* Note1.json in Resources */,
+				B539592E1D28137400FB5408 /* Note0.json in Resources */,
+				B5CC2B451D366B410013D236 /* color.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,13 +682,13 @@
 				B564D0CF1C9110FD00E903B6 /* NSString+pinyin.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,
 				B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */,
-				B5F24BFA1C5630890027DAB2 /* TabBarViewController.m in Sources */,
 				B564D0CD1C9110FD00E903B6 /* NSDate+Util.m in Sources */,
+				B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */,
 				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */,
 				B564D0D51C9110FD00E903B6 /* UIImage+Util.m in Sources */,
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
-				B595C25B1C7813E90087744D /* RemoteViewController.m in Sources */,
+				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
 				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
@@ -661,22 +696,26 @@
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
 				B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
-				B56B6A881D2171A9005A2242 /* FrameSplite.m in Sources */,
 				B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */,
+				B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */,
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,
 				B564D0CC1C9110FD00E903B6 /* UIImage+FontAwesome.m in Sources */,
 				B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */,
 				B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
 				B564D0D01C9110FD00E903B6 /* NSString+Util.m in Sources */,
+				B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */,
 				B564D0D21C9110FD00E903B6 /* UIBarButtonItem+Badge.m in Sources */,
 				B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */,
 				B564D0D11C9110FD00E903B6 /* NSTextAttachment+Util.m in Sources */,
+				B5E9D0AF1D33F09100395CF0 /* FrameSplite.m in Sources */,
+				B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */,
+				B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */,
 				B564D0D41C9110FD00E903B6 /* UIColor+Util.m in Sources */,
 				B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */,
+				B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */,
 				B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */,
-				B559B5681CD61DE30028BAAD /* TaskItemView.m in Sources */,
-				B5F24BF31C4A9D7D0027DAB2 /* CreateViewController.m in Sources */,
+				B56282B71D3C4960003FBBED /* JSDropDownMenu.m in Sources */,
 				B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,7 +827,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_HEADERS_RUN_UNIFDEF = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ben.$(PRODUCT_NAME:rfc1034identifier)";
@@ -804,7 +845,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_HEADERS_RUN_UNIFDEF = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ben.$(PRODUCT_NAME:rfc1034identifier)";
