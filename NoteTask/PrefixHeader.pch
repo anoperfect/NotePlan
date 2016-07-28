@@ -26,4 +26,28 @@
 
 
 
+
+#import "YYText/YYText.h"
+#import <YYText/YYLabel.h>
+#import <YYText/YYTextView.h>
+#import <YYText/YYTextAttribute.h>
+#import <YYText/YYTextArchiver.h>
+#import <YYText/YYTextParser.h>
+#import <YYText/YYTextUtilities.h>
+#import <YYText/YYTextRunDelegate.h>
+#import <YYText/YYTextRubyAnnotation.h>
+#import <YYText/NSAttributedString+YYText.h>
+#import <YYText/NSParagraphStyle+YYText.h>
+#import <YYText/UIPasteboard+YYText.h>
+#import <YYText/YYTextLayout.h>
+#import <YYText/YYTextLine.h>
+#import <YYText/YYTextInput.h>
+#import <YYText/YYTextDebugOption.h>
+#import <YYText/YYTextContainerView.h>
+#import <YYText/YYTextSelectionView.h>
+#import <YYText/YYTextMagnifier.h>
+#import <YYText/YYTextEffectWindow.h>
+#import <YYText/YYTextKeyboardManager.h>
+
+
 #endif /* PrefixHeader_pch */

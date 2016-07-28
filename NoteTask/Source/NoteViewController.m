@@ -331,6 +331,12 @@
 }
 
 
+- (void)noteCreate
+{
+    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithCreateNoteModel];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 
 //关于筛选.
 - (NSInteger)numberOfColumnsInMenu:(JSDropDownMenu *)menu {

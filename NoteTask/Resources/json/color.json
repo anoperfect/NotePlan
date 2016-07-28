@@ -37,7 +37,70 @@
  "enableCustmize" : true,
  "colorstringDefault" : "#e1eeee",
  "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "PopupContainerBackground",
+ "title" : "弹出按钮的背景",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "CellOnEditingBackground",
+ "title" : "编辑行的背景",
+ "enableCustmize" : true,
+ "colorstringDefault" : "blue",
+ "colornightstringDefault" : "blue"
+},
+ 
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+},
+ 
+{
+ "name" : "NoteCellBackground1",
+ "title" : "Note行1",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
 }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  

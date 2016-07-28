@@ -14,6 +14,7 @@
 
 
 - (instancetype)initWithNoteModel:(NoteModel*)noteModel;
+- (instancetype)initWithCreateNoteModel;
 
 
 
