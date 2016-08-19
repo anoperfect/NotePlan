@@ -13,7 +13,22 @@
 
 
 
-//前景色, 背景色, 字体大小, 斜体, 下划线, 边框, 边沿宽度. 
+/*
+ 前景色, 
+ 背景色, 
+ 字体大小, 
+ 斜体, 
+ 下划线, 
+ 边框, 
+ 边沿宽度.
+ 
+ 
+ 
+ */
+
+@property (nonatomic, strong) RangeValueView *fontsizeView;
+
+@property (nonatomic, strong) UISwitch *fontStyleSwith;
 
 
 @end
@@ -23,7 +38,46 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    self.title = @"样式设置";
+    self.view.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
+    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = @"";
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    self.navigationItem.rightBarButtonItem
+            = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finish)];
+    
+    
+    
+    
+    self.fontsizeView = [RangeValueView rangeValueViewWithFrame:CGRectMake(10, 100, Width-20, 0)
+                                                           name:@"字体大小 - font-size"
+                                                       minValue:8.0
+                                                       maxValue:36.0 defaultValue:16];
+    [self.view addSubview:self.fontsizeView];
+    
+    
+    
+    
+    
+    
+    
 }
+
+
+- (void)finish
+{
+    CGFloat fontSize = self.fontsizeView.currentValue;
+    
+    
+    
+    
+}
+
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

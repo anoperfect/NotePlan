@@ -23,7 +23,7 @@
 #import "NSlogn.h"
 #import "FrameSplite.h"
 #import "UIpConfig.h"
-
+#import "DBData.h"
 
 
 
@@ -48,6 +48,17 @@
 #import <YYText/YYTextMagnifier.h>
 #import <YYText/YYTextEffectWindow.h>
 #import <YYText/YYTextKeyboardManager.h>
+
+#import "JSDropDownMenu.h"
+#import "MBProgressHUD.h"
+
+
+#import "RangeValueView.h"
+#import "UIView+SetRect.h"
+
+
+
+#import "AppConfig.h"
 
 
 #endif /* PrefixHeader_pch */

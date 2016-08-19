@@ -1,0 +1,56 @@
+{
+"version": 111,
+"tables": [
+{
+"tableName": "classification",
+"databaseNames": [
+"config"
+],
+"columnAttributes": [
+{
+"columnName": "classificationName",
+"dataType": "string",
+"isNeedForInsert": true,
+"isAutoIncrement": false
+}
+],
+"primaryKeys": [
+"classificationName"
+],
+"preset": [],
+"comment": "栏目"
+},
+{
+"tableName": "note",
+"databaseNames": [
+"config"
+],
+"columnAttributes":
+  [
+    {"columnName": "identifier",     "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": true},
+    {"columnName": "title",          "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "content",        "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "summary",        "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "classification", "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "color",          "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "thumb",          "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "audio",          "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "location",       "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "createdAt",      "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "modifiedAt",     "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "source",         "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "synchronize",    "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "countCollect",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "countLike",      "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "countDislike",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "countBrowser",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "countEdit",      "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
+  ],
+"primaryKeys": [
+"identifier"
+],
+"preset": [],
+"comment": "笔记"
+}
+]
+}

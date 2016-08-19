@@ -15,11 +15,14 @@
 
 @interface NotePropertyView ()
 
-@property (nonatomic, strong) YYLabel *categoryLabel;
+@property (nonatomic, strong) YYLabel *classificationLabel;
 @property (nonatomic, strong) YYLabel *colorLabel;
 @property (nonatomic, strong) UILabel *createdAtLabel;
 @property (nonatomic, strong) UILabel *editedAtLabel;
 
+
+
+@property (nonatomic, strong) void(^actionPressed)(NSString *item);
 
 
 @end
@@ -33,13 +36,13 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.categoryLabel = [[YYLabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width / 2 - 20, frame.size.height)];
-        self.categoryLabel.textAlignment = NSTextAlignmentCenter;
-        self.categoryLabel.textVerticalAlignment = YYTextVerticalAlignmentCenter;
-        self.categoryLabel.numberOfLines = 0;
-        [self addSubview:self.categoryLabel];
+        self.classificationLabel = [[YYLabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width * 0.66 - 20, frame.size.height)];
+        self.classificationLabel.textAlignment = NSTextAlignmentCenter;
+        self.classificationLabel.textVerticalAlignment = YYTextVerticalAlignmentCenter;
+        self.classificationLabel.numberOfLines = 0;
+        [self addSubview:self.classificationLabel];
         
-        self.colorLabel = [[YYLabel alloc] initWithFrame:CGRectMake(frame.size.width / 2, 0, frame.size.width / 2 - 20, frame.size.height)];
+        self.colorLabel = [[YYLabel alloc] initWithFrame:CGRectMake(frame.size.width * 0.66, 0, frame.size.width * 0.34 - 20, frame.size.height)];
         self.colorLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:self.colorLabel];
     }
@@ -47,11 +50,12 @@
 }
 
 
-- (void)setClassification:(NSString*)category color:(NSString*)color
+- (void)setClassification:(NSString*)classification color:(NSString*)color
 {
-    NSString *displayCategory = category.length > 0 ? [NSString stringWithFormat:@"类别:%@   ", category] : @"类别:未定义   ";
+    NSLog(@"setClassification : %@, color : %@", classification, color);
+    NSString *displayclassification = classification.length > 0 ? [NSString stringWithFormat:@"类别:%@   ", classification] : @"类别:未定义   ";
 #if 0
-    NSMutableAttributedString *one = [[NSMutableAttributedString alloc] initWithString:displayCategory];
+    NSMutableAttributedString *one = [[NSMutableAttributedString alloc] initWithString:displayclassification];
     [one setYy_font:[UIFont boldSystemFontOfSize:12]];
     [one setYy_color:[UIColor colorWithRed:1.000 green:0.029 blue:0.651 alpha:1.000]];
     
@@ -64,14 +68,14 @@
     [one yy_setTextBackgroundBorder:border range:NSMakeRange(0, one.length)];
 #endif
     
-    NSMutableAttributedString *textCategory = [[NSMutableAttributedString alloc] init];
+    NSMutableAttributedString *textclassification = [[NSMutableAttributedString alloc] init];
     
     NSMutableAttributedString *pad = [[NSMutableAttributedString alloc] initWithString:@"\n"];
     [pad setYy_font:[UIFont systemFontOfSize:4]];
     
-    NSMutableAttributedString *one = [[NSMutableAttributedString alloc] initWithString:displayCategory];
+    NSMutableAttributedString *one = [[NSMutableAttributedString alloc] initWithString:displayclassification];
     
-    [one setYy_font:[UIFont systemFontOfSize:16]];
+    [one setYy_font:[UIFont systemFontOfSize:12]];
     //[one setYy_color:[UIColor colorWithRed:1.000 green:0.029 blue:0.651 alpha:1.000]];
     [one setYy_color:[UIColor blackColor]];
     
@@ -91,21 +95,21 @@
     YYTextHighlight *highlight = [YYTextHighlight new];
     [highlight setColor:[UIColor purpleColor]];
     [highlight setBackgroundBorder:highlightBorder];
-    __weak typeof(self) weakSelf = self;
-    highlight.tapAction = ^(UIView *containerView, NSAttributedString *text, NSRange range, CGRect rect) {
-        [weakSelf showCategorySelection];
-    };
-    [one yy_setTextHighlight:highlight range:NSMakeRange(0, one.length)];
+//    __weak typeof(self) weakSelf = self;
+//    highlight.tapAction = ^(UIView *containerView, NSAttributedString *text, NSRange range, CGRect rect) {
+//        [weakSelf showclassificationSelection];
+//    };
+    //[one yy_setTextHighlight:highlight range:NSMakeRange(0, one.length)];
     
     //对齐调整和上边框的显示有问题. 根据demo使用pad.
-    [textCategory appendAttributedString:pad];
-    [textCategory appendAttributedString:one];
-    [textCategory appendAttributedString:pad];
-    [textCategory appendAttributedString:pad];
+    [textclassification appendAttributedString:pad];
+    [textclassification appendAttributedString:one];
+    [textclassification appendAttributedString:pad];
+    [textclassification appendAttributedString:pad];
     
-    self.categoryLabel.attributedText = textCategory;
-//    self.categoryLabel.backgroundColor = [UIColor blueColor];
-    self.categoryLabel.textAlignment = NSTextAlignmentRight;
+    self.classificationLabel.attributedText = textclassification;
+//    self.classificationLabel.backgroundColor = [UIColor blueColor];
+    self.classificationLabel.textAlignment = NSTextAlignmentRight;
     
     NSMutableAttributedString *textColor = [[NSMutableAttributedString alloc] init];
     
@@ -118,7 +122,7 @@
     }
     else if([color isEqualToString:@"yellow"]) {
         displayColor = @"◉黄色";
-        signColor = [UIColor yellowColor];
+        signColor = [UIColor colorFromString:@"f1cc56"];
     }
     else if([color isEqualToString:@"blue"]) {
         displayColor = @"◉蓝色";
@@ -129,7 +133,7 @@
         signColor = [UIColor blackColor];
     }
     
-    UIFont *font = [UIFont systemFontOfSize:16];
+    UIFont *font = [UIFont systemFontOfSize:12];
     
     UIColor *tagStrokeColor = [UIColor colorFromString:@"#fa3f39"];
     UIColor *tagFillColor = [UIColor colorFromString:@"#fb6560"];
@@ -163,11 +167,15 @@
 }
 
 
-- (void)showCategorySelection
+- (void)showclassificationSelection
 {
-    
-    
+    if(self.actionPressed) {
+        self.actionPressed(@"Classification");
+    }
 }
+
+
+
 
 
 

@@ -9,5 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @interface NotePropertyView : UIView
-- (void)setClassification:(NSString*)category color:(NSString*)color;
+
+
+
+
+- (void)setClassification:(NSString*)classification color:(NSString*)color;
+- (void)setActionPressed:(void(^)(NSString *item))action;
+
 @end

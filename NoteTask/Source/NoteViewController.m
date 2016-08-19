@@ -26,15 +26,20 @@
 }
 
 @property (nonatomic, strong) UITableView *notesView;
-@property (nonatomic, strong) NoteFilter *noteFilter;
 
-@property (nonatomic, strong) NSMutableArray *  filterDataCateogies;
-@property (nonatomic, assign) NSInteger         idxCateogies;
+
+
+@property (nonatomic, assign) CGFloat heightNoteFilter;
+@property (nonatomic, strong) UIView *noteFilter;
+
+@property (nonatomic, strong) NSMutableArray *  filterDataClassifications;
+@property (nonatomic, assign) NSInteger         idxClassifications;
 
 @property (nonatomic, strong) NSMutableArray *filterDataColors;
 @property (nonatomic, assign) NSInteger         idxColor;
 
-
+@property (nonatomic, strong) NSString *currentClassification;
+@property (nonatomic, strong) NSString *currentColorString;
 @property (nonatomic, strong) NSMutableArray<NoteModel*> *notes;
 
 @end
@@ -58,6 +63,7 @@
     //self.navigationController.navigationBar.barStyle = UIStatusBarStyleDefault;
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     
+
     //self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(fetchDetails)];
     
     //下一个UIViewController的返回的地方文字设置.
@@ -76,64 +82,104 @@
     UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(noteCreate)];
     self.navigationItem.rightBarButtonItem = rightItem;
     
-    //笔记内容栏创建.内容筛选栏创建.
+    //从AppConfig中读取上次保存的类别选项.
+    self.currentClassification = @"";
+    self.currentColorString = @"*";
+    
+    //内容筛选栏创建.
+    [self filterViewBuild];
+    
+    //笔记内容栏创建.
     [self notesViewBuild];
-    [self notesLoad];
     
+    //内容加载.
+//    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
+    [self refreshView];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    //从NoteDetailViewController返回的时候, 需重新刷新下Note. Classification.
+    //内容筛选栏创建.
+    [self filterViewBuild];
     
+    //笔记内容栏创建.
+    [self notesViewBuild];
     
+    //内容加载.
+//    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
+    [self refreshView];
 }
 
 
 - (void)notesViewBuild
 {
-    CGFloat heightNoteFilter = 36;
+    if(!self.notesView) {
+        CGRect frame = self.view.bounds;
+        frame.origin.y += self.heightNoteFilter ;
+        frame.size.height -= self.heightNoteFilter;
+        self.notesView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
+        self.notesView.dataSource = self;
+        self.notesView.delegate = self;
+        self.notesView.backgroundColor = [UIColor clearColor];
+        
+        //UIPanGestureRecognizer *panGesture=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewPan:)];
+        //[_notesView addGestureRecognizer:panGesture];
+        
+        /*添加轻扫手势*/
+        //注意一个轻扫手势只能控制一个方向，默认向右，通过direction进行方向控制
+        UISwipeGestureRecognizer *swipeGestureToRight=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeToRight:)];
+        //swipeGestureToRight.direction=UISwipeGestureRecognizerDirectionRight;//默认为向右轻扫
+        [_notesView addGestureRecognizer:swipeGestureToRight];
+        
+        UISwipeGestureRecognizer *swipeGestureToLeft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeToLeft:)];
+        swipeGestureToLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+        [_notesView addGestureRecognizer:swipeGestureToLeft];
+        
+        //注册UITableViewCell重用.
+        [self.notesView registerClass:[NoteCell class] forCellReuseIdentifier:@"note"];
+        
+        [self.view addSubview:_notesView];
+    }
     
-    CGRect frame = self.view.bounds;
-    frame.origin.y += heightNoteFilter ;
-    frame.size.height -= heightNoteFilter;
-    _notesView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
-    _notesView.dataSource = self;
-    _notesView.delegate = self;
-    _notesView.backgroundColor = [UIColor clearColor];
-    
-    //UIPanGestureRecognizer *panGesture=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewPan:)];
-    //[_notesView addGestureRecognizer:panGesture];
-    
-    
-    /*添加轻扫手势*/
-    //注意一个轻扫手势只能控制一个方向，默认向右，通过direction进行方向控制
-    UISwipeGestureRecognizer *swipeGestureToRight=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeToRight:)];
-    //swipeGestureToRight.direction=UISwipeGestureRecognizerDirectionRight;//默认为向右轻扫
-    [_notesView addGestureRecognizer:swipeGestureToRight];
-    
-    UISwipeGestureRecognizer *swipeGestureToLeft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeToLeft:)];
-    swipeGestureToLeft.direction=UISwipeGestureRecognizerDirectionLeft;
-    [_notesView addGestureRecognizer:swipeGestureToLeft];
-    
-    [self.notesView registerClass:[NoteCell class] forCellReuseIdentifier:@"note"];
-    
-    [self.view addSubview:_notesView];
-    
-    
-    //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
-//    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
-//    [self.view addSubview:self.noteFilter];
-//    self.noteFilter.backgroundColor = [UIColor yellowColor];
-//
-//    [self.view bringSubviewToFront:self.noteFilter];
-    
+    //需执行这个. 否则布局有问题.
+    [self.view bringSubviewToFront:self.noteFilter];
+}
 
-    self.filterDataCateogies = [NSMutableArray arrayWithObjects:@"全部类别", @"随笔记录", @"文章摘录", nil];
-    self.filterDataColors = [NSMutableArray arrayWithObjects:@"所有标记", @"红色", @"黄色", @"蓝色", nil];
-    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 64) andHeight:heightNoteFilter];
-    menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
-    menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
-    menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
-    menu.dataSource = self;
-    menu.delegate = self;
+
+- (void)filterViewBuild
+{
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", @"个人笔记", nil];
+    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
+    if(addedClassifications.count > 0) {
+        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
+    }
     
-    [self.view addSubview:menu];
+    if(!self.noteFilter) {
+        self.heightNoteFilter = 36;
+        
+        //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
+        //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
+        //    [self.view addSubview:self.noteFilter];
+        //    self.noteFilter.backgroundColor = [UIColor yellowColor];
+        //
+        //    [self.view bringSubviewToFront:self.noteFilter];
+
+        
+        self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+        [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
+        JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 64) andHeight:self.heightNoteFilter];
+        menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
+        menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
+        menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
+        menu.dataSource = self;
+        menu.delegate = self;
+        
+        self.noteFilter = menu;
+        
+        [self.view addSubview:menu];
+    }
 }
 
 
@@ -172,80 +218,76 @@
 
 
 
-- (void)notesLoad
+- (void)notesLoadAll
 {
     _notes = [[NSMutableArray alloc] init];
+    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGets]];
     
-    NoteModel *note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
+    for(NoteModel *note in _notes) {
+        NSLog(@"title : %@", note.title);
+    }
     
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
-    
-    note = [[NoteModel alloc] initWithJsonData:nil];
-    [_notes addObject:note];
+    NSLog(@"notesLoad finish.");
+    return ;
 }
 
+
+- (void)notesLoadWithClassification:(NSString*)classification andColorString:(NSString*)colorString
+{
+    _notes = [[NSMutableArray alloc] init];
+    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGetsByClassification:classification andColorString:colorString]];
+    
+    NSLog(@"notesLoad finish.");
+    return ;
+}
+
+
+
+/*
+ colorString :
+ red
+ yellow
+ blue
+ - 有任意标记
+ * 所有
+ ""无标记
+ */
+- (void)reloadWithClassification:(NSString*)classification andColorDisplayString:(NSString*)colorDisplayString
+{
+    NSString *colorString = [NoteModel colorDisplayStringToColorString:colorDisplayString];
+    //与AppConfig约定classification.length <= 0 是为不区分classification条件查询.
+    if([classification isEqualToString:@"全部类别"]) {
+        classification = @"";
+    }
+    [self notesLoadWithClassification:classification andColorString:colorString];
+    
+    [self.notesView reloadData];
+}
+
+
+- (void)reloadWithClassification:(NSString*)classification andColorString:(NSString*)colorString
+{
+    //与AppConfig约定classification.length <= 0 是为不区分classification条件查询.
+    if([classification isEqualToString:@"全部类别"]) {
+        classification = @"";
+    }
+    [self notesLoadWithClassification:classification andColorString:colorString];
+    [self.notesView reloadData];
+}
+
+
+//刷新notes的UITableView和filterView.
+- (void)refreshView
+{
+    NSLog(@"refreshView with classification:%@ color:%@", self.currentClassification, self.currentColorString);
+    
+    [self notesLoadWithClassification:self.currentClassification andColorString:self.currentColorString];
+    [self.notesView reloadData];
+    
+    
+    
+
+}
 
 
 
@@ -313,9 +355,9 @@
     //cell.textLabel.text = note.title;
     //cell.detailTextLabel.text = [note contents];
     
-    cell.titleLabel.text = note.title;
-    cell.bodyLabel.text = note.content;
-    
+
+    cell.titleLabel.text = [note previewTitle];
+    cell.bodyLabel.text = [note previewSummary];
     
     return cell;
 }
@@ -368,7 +410,7 @@
     
     if (column==0) {
         
-        return self.idxCateogies;
+        return self.idxClassifications;
         
     }
     if (column==1) {
@@ -382,7 +424,7 @@
 - (NSInteger)menu:(JSDropDownMenu *)menu numberOfRowsInColumn:(NSInteger)column leftOrRight:(NSInteger)leftOrRight leftRow:(NSInteger)leftRow{
     
     if (column==0) {
-        return self.filterDataCateogies.count;
+        return self.filterDataClassifications.count;
 
     } else if (column==1){
         return self.filterDataColors.count;
@@ -394,7 +436,7 @@
 - (NSString *)menu:(JSDropDownMenu *)menu titleForColumn:(NSInteger)column{
     
     switch (column) {
-        case 0: return self.filterDataCateogies[0];
+        case 0: return self.filterDataClassifications[0];
             break;
         case 1: return self.filterDataColors[0];
             break;
@@ -408,7 +450,7 @@
     
     if (indexPath.column==0) {
         
-        return self.filterDataCateogies[indexPath.row];
+        return self.filterDataClassifications[indexPath.row];
         
     } else {
         
@@ -418,18 +460,23 @@
 
 - (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
     
-    NSLog(@"111");
-    
     if(indexPath.column == 0){
-        
-        self.idxCateogies = indexPath.row;
+        self.idxClassifications = indexPath.row;
+        self.currentClassification = self.filterDataClassifications[self.idxClassifications];
+        if([self.currentClassification isEqualToString:@"全部类别"]) {
+            self.currentClassification = @"";
+        }
+        //#保存classification. 下次自动选择此.
         
     } else{
-        
         self.idxColor = indexPath.row;
+        self.currentColorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[self.idxColor]];
     }
     
-    NSLog(@"Category : %@, color : %@", self.filterDataCateogies[self.idxCateogies], self.filterDataColors[self.idxColor]);
+    NSLog(@"Classification : %@, color : %@", self.filterDataClassifications[self.idxClassifications], self.filterDataColors[self.idxColor]);
+    
+    //刷新notes的UITableView和filterView.
+    [self refreshView];
 }
 
 

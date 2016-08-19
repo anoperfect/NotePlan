@@ -9,15 +9,24 @@
 /* Begin PBXBuildFile section */
 		06BCD40F01D9418D196B09D5 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */; };
 		B53959261D27F55200FB5408 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53959251D27F55200FB5408 /* NoteViewController.m */; };
-		B53959281D28101500FB5408 /* NoteBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = B53959271D28101500FB5408 /* NoteBackground.png */; };
 		B539592C1D28112F00FB5408 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B539592B1D28112F00FB5408 /* NoteModel.m */; };
-		B539592E1D28137400FB5408 /* Note0.json in Resources */ = {isa = PBXBuildFile; fileRef = B539592D1D28137400FB5408 /* Note0.json */; };
 		B53959301D29524700FB5408 /* NoteBackground1.png in Resources */ = {isa = PBXBuildFile; fileRef = B539592F1D29524700FB5408 /* NoteBackground1.png */; };
+		B5448F001D658F3100F186BE /* UIFont+Fonts.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EE61D658F3100F186BE /* UIFont+Fonts.m */; };
+		B5448F011D658F3100F186BE /* UIView+AccessViewTag.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EE81D658F3100F186BE /* UIView+AccessViewTag.m */; };
+		B5448F021D658F3100F186BE /* UIView+AnimationPracticalMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EEA1D658F3100F186BE /* UIView+AnimationPracticalMethod.m */; };
+		B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EEC1D658F3100F186BE /* UIView+AnimationProperty.m */; };
+		B5448F041D658F3100F186BE /* UIView+AnimationsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EEE1D658F3100F186BE /* UIView+AnimationsListViewController.m */; };
+		B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EF01D658F3100F186BE /* UIView+ConvenientMethod.m */; };
+		B5448F061D658F3100F186BE /* UIView+GlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EF21D658F3100F186BE /* UIView+GlowView.m */; };
+		B5448F071D658F3100F186BE /* UIView+MotionEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EF41D658F3100F186BE /* UIView+MotionEffect.m */; };
+		B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EF61D658F3100F186BE /* UIView+RotateAnimationProtocol.m */; };
+		B5448F091D658F3100F186BE /* UIView+SetRect.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EF81D658F3100F186BE /* UIView+SetRect.m */; };
+		B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EFA1D658F3100F186BE /* UIView+Shake.m */; };
+		B5448F0B1D658F3100F186BE /* UIView+UserInteraction.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EFC1D658F3100F186BE /* UIView+UserInteraction.m */; };
+		B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EFF1D658F3100F186BE /* RangeValueView.m */; };
 		B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */; };
 		B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */; };
 		B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B55E9D791C9B09B000F581F5 /* FrameLayout.m */; };
-		B560A51B1D2A07380019F871 /* apic321.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B560A51A1D2A07380019F871 /* apic321.jpg */; };
-		B56282B71D3C4960003FBBED /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B56282B61D3C4960003FBBED /* JSDropDownMenu.m */; };
 		B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09B1C9110FD00E903B6 /* FAImageView.m */; };
 		B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09D1C9110FD00E903B6 /* NSString+FontAwesome.m */; };
 		B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09F1C9110FD00E903B6 /* UIFont+FontAwesome.m */; };
@@ -49,8 +58,12 @@
 		B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A054491D41C23100791702 /* PopupViewController.m */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
+		B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */; };
+		B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */; };
 		B5B392AE1D407678001D30BF /* NoteParagraphCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */; };
 		B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392B01D407968001D30BF /* NotePropertyView.m */; };
+		B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */; };
+		B5B905411D4FC3E900DF1E24 /* db.json in Resources */ = {isa = PBXBuildFile; fileRef = B5B905401D4FC3E900DF1E24 /* db.json */; };
 		B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C561E21D3942BF00F1EF82 /* NoteFilter.m */; };
 		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
@@ -78,20 +91,42 @@
 		234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B53959241D27F55200FB5408 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = Source/NoteViewController.h; sourceTree = "<group>"; };
 		B53959251D27F55200FB5408 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteViewController.m; path = Source/NoteViewController.m; sourceTree = "<group>"; };
-		B53959271D28101500FB5408 /* NoteBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground.png; path = ../NoteBackground.png; sourceTree = "<group>"; };
 		B539592A1D28112F00FB5408 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = Source/NoteModel.h; sourceTree = "<group>"; };
 		B539592B1D28112F00FB5408 /* NoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteModel.m; path = Source/NoteModel.m; sourceTree = "<group>"; };
-		B539592D1D28137400FB5408 /* Note0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Note0.json; sourceTree = "<group>"; };
 		B539592F1D29524700FB5408 /* NoteBackground1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NoteBackground1.png; path = ../Source/NoteBackground1.png; sourceTree = "<group>"; };
+		B5448EE51D658F3100F186BE /* UIFont+Fonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+Fonts.h"; sourceTree = "<group>"; };
+		B5448EE61D658F3100F186BE /* UIFont+Fonts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+Fonts.m"; sourceTree = "<group>"; };
+		B5448EE71D658F3100F186BE /* UIView+AccessViewTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AccessViewTag.h"; sourceTree = "<group>"; };
+		B5448EE81D658F3100F186BE /* UIView+AccessViewTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AccessViewTag.m"; sourceTree = "<group>"; };
+		B5448EE91D658F3100F186BE /* UIView+AnimationPracticalMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AnimationPracticalMethod.h"; sourceTree = "<group>"; };
+		B5448EEA1D658F3100F186BE /* UIView+AnimationPracticalMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AnimationPracticalMethod.m"; sourceTree = "<group>"; };
+		B5448EEB1D658F3100F186BE /* UIView+AnimationProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AnimationProperty.h"; sourceTree = "<group>"; };
+		B5448EEC1D658F3100F186BE /* UIView+AnimationProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AnimationProperty.m"; sourceTree = "<group>"; };
+		B5448EED1D658F3100F186BE /* UIView+AnimationsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+AnimationsListViewController.h"; sourceTree = "<group>"; };
+		B5448EEE1D658F3100F186BE /* UIView+AnimationsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+AnimationsListViewController.m"; sourceTree = "<group>"; };
+		B5448EEF1D658F3100F186BE /* UIView+ConvenientMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ConvenientMethod.h"; sourceTree = "<group>"; };
+		B5448EF01D658F3100F186BE /* UIView+ConvenientMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ConvenientMethod.m"; sourceTree = "<group>"; };
+		B5448EF11D658F3100F186BE /* UIView+GlowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+GlowView.h"; sourceTree = "<group>"; };
+		B5448EF21D658F3100F186BE /* UIView+GlowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+GlowView.m"; sourceTree = "<group>"; };
+		B5448EF31D658F3100F186BE /* UIView+MotionEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MotionEffect.h"; sourceTree = "<group>"; };
+		B5448EF41D658F3100F186BE /* UIView+MotionEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+MotionEffect.m"; sourceTree = "<group>"; };
+		B5448EF51D658F3100F186BE /* UIView+RotateAnimationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+RotateAnimationProtocol.h"; sourceTree = "<group>"; };
+		B5448EF61D658F3100F186BE /* UIView+RotateAnimationProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+RotateAnimationProtocol.m"; sourceTree = "<group>"; };
+		B5448EF71D658F3100F186BE /* UIView+SetRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SetRect.h"; sourceTree = "<group>"; };
+		B5448EF81D658F3100F186BE /* UIView+SetRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SetRect.m"; sourceTree = "<group>"; };
+		B5448EF91D658F3100F186BE /* UIView+Shake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Shake.h"; sourceTree = "<group>"; };
+		B5448EFA1D658F3100F186BE /* UIView+Shake.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Shake.m"; sourceTree = "<group>"; };
+		B5448EFB1D658F3100F186BE /* UIView+UserInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+UserInteraction.h"; sourceTree = "<group>"; };
+		B5448EFC1D658F3100F186BE /* UIView+UserInteraction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+UserInteraction.m"; sourceTree = "<group>"; };
+		B5448EFE1D658F3100F186BE /* RangeValueView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeValueView.h; sourceTree = "<group>"; };
+		B5448EFF1D658F3100F186BE /* RangeValueView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RangeValueView.m; sourceTree = "<group>"; };
+		B5448F0D1D65904C00F186BE /* AccessViewTagProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessViewTagProtocol.h; sourceTree = "<group>"; };
 		B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteDetailViewController.h; path = Source/NoteDetailViewController.h; sourceTree = "<group>"; };
 		B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteDetailViewController.m; path = Source/NoteDetailViewController.m; sourceTree = "<group>"; };
 		B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCreateViewController.h; path = Source/NoteCreateViewController.h; sourceTree = "<group>"; };
 		B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCreateViewController.m; path = Source/NoteCreateViewController.m; sourceTree = "<group>"; };
 		B55E9D781C9B09B000F581F5 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameLayout.h; path = ../../../../Kukuku/Extension/FrameLayout.h; sourceTree = "<group>"; };
 		B55E9D791C9B09B000F581F5 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameLayout.m; path = ../../../../Kukuku/Extension/FrameLayout.m; sourceTree = "<group>"; };
-		B560A51A1D2A07380019F871 /* apic321.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = apic321.jpg; path = ../apic321.jpg; sourceTree = "<group>"; };
-		B56282B51D3C4960003FBBED /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
-		B56282B61D3C4960003FBBED /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
 		B564D09A1C9110FD00E903B6 /* FAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAImageView.h; sourceTree = "<group>"; };
 		B564D09B1C9110FD00E903B6 /* FAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAImageView.m; sourceTree = "<group>"; };
 		B564D09C1C9110FD00E903B6 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
@@ -151,10 +186,17 @@
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
 		B5A26BD21D22140E00B1F629 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuButton.m; path = Source/MenuButton.m; sourceTree = "<group>"; };
 		B5A26BD41D22153F00B1F629 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B5AB6DDB1D658E3100938B7C /* CLDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLDropDownMenu.h; sourceTree = "<group>"; };
+		B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLDropDownMenu.m; sourceTree = "<group>"; };
+		B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
+		B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
 		B5B392AC1D407678001D30BF /* NoteParagraphCustmiseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteParagraphCustmiseViewController.h; path = Source/NoteParagraphCustmiseViewController.h; sourceTree = "<group>"; };
 		B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteParagraphCustmiseViewController.m; path = Source/NoteParagraphCustmiseViewController.m; sourceTree = "<group>"; };
 		B5B392AF1D407968001D30BF /* NotePropertyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePropertyView.h; path = Source/NotePropertyView.h; sourceTree = "<group>"; };
 		B5B392B01D407968001D30BF /* NotePropertyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePropertyView.m; path = Source/NotePropertyView.m; sourceTree = "<group>"; };
+		B5B9053D1D4FB0AC00DF1E24 /* AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = Source/AppConfig.h; sourceTree = "<group>"; };
+		B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppConfig.m; path = Source/AppConfig.m; sourceTree = "<group>"; };
+		B5B905401D4FC3E900DF1E24 /* db.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = db.json; path = Source/db.json; sourceTree = "<group>"; };
 		B5C561E11D3942BF00F1EF82 /* NoteFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteFilter.h; path = Source/NoteFilter.h; sourceTree = "<group>"; };
 		B5C561E21D3942BF00F1EF82 /* NoteFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteFilter.m; path = Source/NoteFilter.m; sourceTree = "<group>"; };
 		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
@@ -238,17 +280,67 @@
 				B5C561E21D3942BF00F1EF82 /* NoteFilter.m */,
 				B5E9D0A31D32815500395CF0 /* NoteCell.h */,
 				B5E9D0A41D32815500395CF0 /* NoteCell.m */,
-				B539592D1D28137400FB5408 /* Note0.json */,
 				B5E5FA861D3799E8000A648D /* Note1.json */,
 			);
 			name = Note;
 			sourceTree = "<group>";
 		};
+		B5448EE31D658F3100F186BE /* YouXianMing-Animations */ = {
+			isa = PBXGroup;
+			children = (
+				B5448EE41D658F3100F186BE /* UI-Component */,
+				B5448EFD1D658F3100F186BE /* View */,
+			);
+			name = "YouXianMing-Animations";
+			path = "Vandor/YouXianMing-Animations";
+			sourceTree = "<group>";
+		};
+		B5448EE41D658F3100F186BE /* UI-Component */ = {
+			isa = PBXGroup;
+			children = (
+				B5448EE51D658F3100F186BE /* UIFont+Fonts.h */,
+				B5448EE61D658F3100F186BE /* UIFont+Fonts.m */,
+				B5448F0D1D65904C00F186BE /* AccessViewTagProtocol.h */,
+				B5448EE71D658F3100F186BE /* UIView+AccessViewTag.h */,
+				B5448EE81D658F3100F186BE /* UIView+AccessViewTag.m */,
+				B5448EE91D658F3100F186BE /* UIView+AnimationPracticalMethod.h */,
+				B5448EEA1D658F3100F186BE /* UIView+AnimationPracticalMethod.m */,
+				B5448EEB1D658F3100F186BE /* UIView+AnimationProperty.h */,
+				B5448EEC1D658F3100F186BE /* UIView+AnimationProperty.m */,
+				B5448EED1D658F3100F186BE /* UIView+AnimationsListViewController.h */,
+				B5448EEE1D658F3100F186BE /* UIView+AnimationsListViewController.m */,
+				B5448EEF1D658F3100F186BE /* UIView+ConvenientMethod.h */,
+				B5448EF01D658F3100F186BE /* UIView+ConvenientMethod.m */,
+				B5448EF11D658F3100F186BE /* UIView+GlowView.h */,
+				B5448EF21D658F3100F186BE /* UIView+GlowView.m */,
+				B5448EF31D658F3100F186BE /* UIView+MotionEffect.h */,
+				B5448EF41D658F3100F186BE /* UIView+MotionEffect.m */,
+				B5448EF51D658F3100F186BE /* UIView+RotateAnimationProtocol.h */,
+				B5448EF61D658F3100F186BE /* UIView+RotateAnimationProtocol.m */,
+				B5448EF71D658F3100F186BE /* UIView+SetRect.h */,
+				B5448EF81D658F3100F186BE /* UIView+SetRect.m */,
+				B5448EF91D658F3100F186BE /* UIView+Shake.h */,
+				B5448EFA1D658F3100F186BE /* UIView+Shake.m */,
+				B5448EFB1D658F3100F186BE /* UIView+UserInteraction.h */,
+				B5448EFC1D658F3100F186BE /* UIView+UserInteraction.m */,
+			);
+			path = "UI-Component";
+			sourceTree = "<group>";
+		};
+		B5448EFD1D658F3100F186BE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B5448EFE1D658F3100F186BE /* RangeValueView.h */,
+				B5448EFF1D658F3100F186BE /* RangeValueView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		B55A834A1D3DC83C00814DE3 /* Vandor */ = {
 			isa = PBXGroup;
 			children = (
-				B56282B51D3C4960003FBBED /* JSDropDownMenu.h */,
-				B56282B61D3C4960003FBBED /* JSDropDownMenu.m */,
+				B5AB6DDA1D658E3100938B7C /* DropDownMenu */,
+				B5448EE31D658F3100F186BE /* YouXianMing-Animations */,
 			);
 			name = Vandor;
 			sourceTree = "<group>";
@@ -345,9 +437,7 @@
 			children = (
 				B564D0E81C912FFA00E903B6 /* json */,
 				B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */,
-				B53959271D28101500FB5408 /* NoteBackground.png */,
 				B539592F1D29524700FB5408 /* NoteBackground1.png */,
-				B560A51A1D2A07380019F871 /* apic321.jpg */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -392,9 +482,32 @@
 			path = DBData;
 			sourceTree = "<group>";
 		};
+		B5AB6DDA1D658E3100938B7C /* DropDownMenu */ = {
+			isa = PBXGroup;
+			children = (
+				B5AB6DDB1D658E3100938B7C /* CLDropDownMenu.h */,
+				B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */,
+				B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */,
+				B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */,
+			);
+			name = DropDownMenu;
+			path = Vandor/DropDownMenu;
+			sourceTree = "<group>";
+		};
+		B5B9053C1D4FB05800DF1E24 /* AppConfig */ = {
+			isa = PBXGroup;
+			children = (
+				B5B9053D1D4FB0AC00DF1E24 /* AppConfig.h */,
+				B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */,
+				B5B905401D4FC3E900DF1E24 /* db.json */,
+			);
+			name = AppConfig;
+			sourceTree = "<group>";
+		};
 		B5C20A3E1D20D20300CE52E4 /* Attent */ = {
 			isa = PBXGroup;
 			children = (
+				B5B9053C1D4FB05800DF1E24 /* AppConfig */,
 				B5E9D0A71D3288AD00395CF0 /* Root */,
 				B53959291D28110400FB5408 /* Note */,
 			);
@@ -632,14 +745,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */,
-				B560A51B1D2A07380019F871 /* apic321.jpg in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
 				B5E5FA871D3799E8000A648D /* Note1.json in Resources */,
 				B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */,
+				B5B905411D4FC3E900DF1E24 /* db.json in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,
-				B53959281D28101500FB5408 /* NoteBackground.png in Resources */,
-				B539592E1D28137400FB5408 /* Note0.json in Resources */,
 				B5CC2B451D366B410013D236 /* color.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -706,17 +817,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
+				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
+				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
+				B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */,
 				B5B392AE1D407678001D30BF /* NoteParagraphCustmiseViewController.m in Sources */,
 				B564D0D81C9110FD00E903B6 /* UIScrollView+ScalableCover.m in Sources */,
 				B564D0CF1C9110FD00E903B6 /* NSString+pinyin.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,
+				B5448F091D658F3100F186BE /* UIView+SetRect.m in Sources */,
 				B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */,
 				B564D0CD1C9110FD00E903B6 /* NSDate+Util.m in Sources */,
+				B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */,
+				B5448F001D658F3100F186BE /* UIFont+Fonts.m in Sources */,
 				B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */,
 				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */,
 				B564D0D51C9110FD00E903B6 /* UIImage+Util.m in Sources */,
+				B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */,
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
 				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
@@ -726,15 +845,19 @@
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
 				B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */,
 				B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */,
+				B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
 				B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */,
 				B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */,
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,
 				B564D0CC1C9110FD00E903B6 /* UIImage+FontAwesome.m in Sources */,
 				B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */,
+				B5448F061D658F3100F186BE /* UIView+GlowView.m in Sources */,
 				B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
+				B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */,
 				B564D0D01C9110FD00E903B6 /* NSString+Util.m in Sources */,
+				B5448F041D658F3100F186BE /* UIView+AnimationsListViewController.m in Sources */,
 				B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */,
 				B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */,
 				B564D0D21C9110FD00E903B6 /* UIBarButtonItem+Badge.m in Sources */,
@@ -744,10 +867,13 @@
 				B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */,
 				B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */,
 				B564D0D41C9110FD00E903B6 /* UIColor+Util.m in Sources */,
+				B5448F011D658F3100F186BE /* UIView+AccessViewTag.m in Sources */,
 				B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */,
+				B5448F021D658F3100F186BE /* UIView+AnimationPracticalMethod.m in Sources */,
 				B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */,
+				B5448F071D658F3100F186BE /* UIView+MotionEffect.m in Sources */,
 				B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */,
-				B56282B71D3C4960003FBBED /* JSDropDownMenu.m in Sources */,
+				B5448F0B1D658F3100F186BE /* UIView+UserInteraction.m in Sources */,
 				B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

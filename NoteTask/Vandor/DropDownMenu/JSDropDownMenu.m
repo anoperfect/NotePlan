@@ -118,6 +118,9 @@
 -(void)setCellText:(NSString *)text align:(NSString*)align{
     
     _cellTextLabel.text = text;
+    
+    NSLog(@"--- %@", text);
+    
     // 只取宽度
     CGSize textSize = [text textSizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(MAXFLOAT, 14) lineBreakMode:NSLineBreakByWordWrapping];
 //    CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(MAXFLOAT, 14)];
@@ -250,9 +253,14 @@
         //title
         CGPoint titlePosition = CGPointMake( (i * 2 + 1) * textLayerInterval , self.frame.size.height / 2);
         NSString *titleString = [_dataSource menu:self titleForColumn:i];
-        CATextLayer *title = [self createTextLayerWithNSString:titleString withColor:self.textColor andPosition:titlePosition];
+        UIColor *titleColor = self.textColor;
+        titleColor = [self textColorOfText:titleString];
+        
+        CATextLayer *title = [self createTextLayerWithNSString:titleString withColor:titleColor/*self.textColor*/ andPosition:titlePosition];
+        
         [self.layer addSublayer:title];
         [tempTitles addObject:title];
+
         //indicator
         CAShapeLayer *indicator = [self createIndicatorWithColor:self.indicatorColor andPosition:CGPointMake(titlePosition.x + title.bounds.size.width / 2 + 8, self.frame.size.height / 2)];
         [self.layer addSublayer:indicator];
@@ -390,6 +398,8 @@
     
     CGSize size = [self calculateTitleSizeWithString:string];
     
+    NSLog(@"%@", string);
+
     CATextLayer *layer = [CATextLayer new];
     CGFloat sizeWidth = (size.width < (self.frame.size.width / _numOfMenu) - 25) ? size.width : self.frame.size.width / _numOfMenu - 25;
     layer.bounds = CGRectMake(0, 0, sizeWidth, size.height);
@@ -775,7 +785,7 @@
     titleLabel.textColor = self.textColor;
     titleLabel.tag = 1;
     titleLabel.font = [UIFont systemFontOfSize:14.0];
-        
+    
     [cell addSubview:titleLabel];
     
     
@@ -801,7 +811,6 @@
     cell.backgroundColor = [UIColor whiteColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14.0];
     cell.separatorInset = UIEdgeInsetsZero;
-    
     
     if (leftOrRight == 1) {
         
@@ -931,6 +940,8 @@
     cell.selectedBackgroundView.backgroundColor = BackColor;
     cell.textLabel.font = [UIFont systemFontOfSize:14.0];
     cell.textLabel.textColor = self.textColor;
+    //Add. 标签颜色.
+    cell.textLabel.textColor = [self textColorOfText:cell.textLabel.text];
     
     if ([cell.textLabel.text isEqualToString:[(CATextLayer *)[_titles objectAtIndex:_currentSelectedMenudIndex] string]]) {
         cell.backgroundColor = BackColor;
@@ -971,6 +982,9 @@
     CATextLayer *title = (CATextLayer *)_titles[_currentSelectedMenudIndex];
     title.string = [self.dataSource menu:self titleForRowAtIndexPath:[JSIndexPath indexPathWithCol:self.currentSelectedMenudIndex leftOrRight:-1 leftRow:-1 row:row]];
     
+    //Add颜色标签.
+    title.foregroundColor = [self textColorOfText:title.string].CGColor;
+    
     [self animateIdicator:_indicators[_currentSelectedMenudIndex] background:_backGroundView collectionView:_collectionView title:_titles[_currentSelectedMenudIndex] forward:NO complecte:^{
         _show = NO;
     }];
@@ -984,6 +998,26 @@
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section{
     
     return 0.5;
+}
+
+
+- (UIColor*)textColorOfText:(NSString*)textString
+{
+    NSLog(@"textColorOfText : %@", textString);
+    UIColor *textColor = self.textColor;
+    
+    if([textString isEqualToString:@"◉红色"]) {
+        textColor = [UIColor redColor];
+    }
+    if([textString isEqualToString:@"◉黄色"]) {
+        textColor = [UIColor colorFromString:@"#f1cc56"];
+        //textColor = [UIColor colorFromString:@"#f1c02c"];
+    }
+    if([textString isEqualToString:@"◉蓝色"]) {
+        textColor = [UIColor blueColor];
+    }
+
+    return textColor;
 }
 
 @end

@@ -13,26 +13,23 @@
 #import "AppDelegate.h"
 #import "PopupViewController.h"
 #import "TextButtonLine.h"
+#import "CLDropDownMenu.h"
+#import "NoteParagraphCustmiseViewController.h"
 
 
+@interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
+                                        UITextFieldDelegate,
+                                        YYTextViewDelegate,
+                                        JSDropDownMenuDataSource,JSDropDownMenuDelegate>
+
+@property (nonatomic, strong) NoteModel                *noteModel;
+@property (nonatomic, assign) BOOL                      isCreateMode;
+@property (nonatomic, assign) BOOL                      isStoredToLocal;
+
+@property (nonatomic, strong) NoteParagraphModel       *titleParagraph;
+@property (nonatomic, strong) NSMutableArray<NoteParagraphModel*> *contentParagraphs;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-@interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate, YYTextViewDelegate>
-
-@property (nonatomic, strong) NoteModel* noteModel;
-@property (nonatomic, strong) NSMutableArray<NoteParagraphModel*> *noteParagraphs;
 @property (nonatomic, strong) NSMutableDictionary *optumizeHeights;
 
 @property (nonatomic, strong) NSIndexPath *indexPathOnEditing;
@@ -41,6 +38,17 @@
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UITableView *tableNoteParagraphs;
+
+
+//关于筛选.
+@property (nonatomic, assign) CGFloat heightNoteFilter;
+@property (nonatomic, strong) UIView *noteFilter;
+
+@property (nonatomic, strong) NSMutableArray *  filterDataClassifications;
+@property (nonatomic, assign) NSInteger         idxClassifications;
+
+@property (nonatomic, strong) NSMutableArray *filterDataColors;
+@property (nonatomic, assign) NSInteger         idxColor;
 
 
 
@@ -58,7 +66,6 @@
     self = [super init];
     if (self) {
         self.noteModel = noteModel;
-        self.noteParagraphs = [[NSMutableArray alloc] init];
         [self parseNoteParagraphs];
         
         self.optumizeHeights = [[NSMutableDictionary alloc] init];
@@ -68,26 +75,54 @@
 }
 
 
+#define CREATE_PLACEHOLD_TITLE                  @"点击输入标题"
+#define CREATE_PLACEHOLD_CONTENTPARAGRAPH       @"点击编辑内容"
+
+
+
+//新建跟编辑的流程类似.
 - (instancetype)initWithCreateNoteModel
 {
     self = [super init];
     if (self) {
+        self.isCreateMode = YES;
         
         NoteModel* noteModel = [[NoteModel alloc] init];
-        noteModel.title = @"点击输入题目";
-        noteModel.content = @"";
-        
+        noteModel.identifier    = 0;
+        noteModel.title         = @"";
+        noteModel.content       = @"";
+        noteModel.summary       = @"";
+        noteModel.classification = @"个人笔记";
+        noteModel.color = @"";
+        noteModel.thumb = @"";
+        noteModel.audio = @"",
+        noteModel.location = @"CHINA";
+        noteModel.createdAt = @"2016-08-02 01:23:45";
+        noteModel.modifiedAt = @"2016-08-08 01:23:45";
+        noteModel.source = @"";
+        noteModel.synchronize = @"";
+        noteModel.countCollect = 0;
+        noteModel.countLike = 0;
+        noteModel.countDislike = 0;
+        noteModel.countBrowser = 0;
+        noteModel.countEdit = 0;
         self.noteModel = noteModel;
-        self.noteParagraphs = [[NSMutableArray alloc] init];
-        [self parseNoteParagraphs];
+        
+        self.titleParagraph = [[NoteParagraphModel alloc] init];
+        self.titleParagraph.content = @""; //CREATE_PLACEHOLD_TITLE;
+        
+        NoteParagraphModel *contentParagraph = [[NoteParagraphModel alloc] init];
+        contentParagraph.content = @""; CREATE_PLACEHOLD_CONTENTPARAGRAPH;
+        self.contentParagraphs = [[NSMutableArray alloc] initWithObjects:contentParagraph, nil];
+        
+        self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
+        self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
         
         self.optumizeHeights = [[NSMutableDictionary alloc] init];
-        
     }
+    
     return self;
 }
-
-
 
 
 - (void)viewDidLoad {
@@ -95,7 +130,12 @@
     // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [UIColor whiteColor];
-    self.title = @"笔记详情";
+    if(!self.isCreateMode) {
+        self.title = @"笔记详情";
+    }
+    else {
+        self.title = @"新笔记";
+    }
     
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.text = self.noteModel.title;
@@ -106,8 +146,6 @@
     self.tableNoteParagraphs.dataSource = self;
     self.tableNoteParagraphs.delegate = self;
     [self.view addSubview:self.tableNoteParagraphs];
-    
-    
 }
 
 #define YBLOW 64
@@ -126,117 +164,99 @@
                                             self.view.bounds.size.height - (frameTitleLabel.origin.y + frameTitleLabel.size.height));
     frameNoteParagraphs = self.view.bounds;
     self.tableNoteParagraphs.frame = frameNoteParagraphs;
-    
-    
-    
-    
-    
-    
-    
 }
 
 
 - (void)parseNoteParagraphs
 {
-    self.noteParagraphs = [[NSMutableArray alloc] init];
-    
-    NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"设计师心情最平静的时候是熬夜做完案子准备睡觉时，看见天色有些发白，听见一两声鸟。为了更加形象地描述（嘲讽）这个脑细胞平均每天死一万次的职业，《Lean Branding》的作者Laura Busche画了10张图，长这样：";
-
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"1、设计师听到最幸福的情话就是：挺好的，用这稿！如果改到山穷水尽疑无路，设计师真的会想说“kill me，kill me now”。fs fsdfsdkfjs dfsdklfdskjf sdkfjds fsldkflsdfk sdfk sd;lkf s;ldfkdslkfsdl";
-    [self.noteParagraphs addObject:noteParagraph];
+    NSLog(@"identifier : %zd", self.noteModel.identifier);
     
     
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"2.直播优化层面";
-    [self.noteParagraphs addObject:noteParagraph];
+    self.titleParagraph = [NoteParagraphModel noteParagraphFromString:self.noteModel.title];
+    NSArray<NoteParagraphModel *> *contentNoteParagraphs = [NoteParagraphModel noteParagraphsFromString:self.noteModel.content];
+    self.contentParagraphs = [NSMutableArray arrayWithArray:contentNoteParagraphs];
+    NSLog(@"content paragraph count : %zd", self.contentParagraphs.count);
     
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"其实最难的难点是提高首播时间、服务质量即Qos（Quality of Service，服务质量），如何在丢包率20%的情况下还能保障稳定、流畅的直播体验，需要考虑以下方案：";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"1）为加快首播时间，收流服务器主动推送 GOP :（Group of Pictures:策略影响编码质量)所谓GOP，意思是画面组，一个GOP就是一组连续的画面至边缘节点，边缘节点缓存 GOP，播放端则可以快速加载，减少回源延迟";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"2）GOP丢帧，为解决延时，为什么会有延时，网络抖动、网络拥塞导致的数据发送不出去，丢完之后所有的时间戳都要修改，切记，要不客户端就会卡一个 GOP的时间，是由于 PTS（Presentation Time Stamp，PTS主要用于度量解码后的视频帧什么时候被显示出来） 和 DTS 的原因，或者播放器修正 DTS 和 PTS 也行（推流端丢GOD更复杂，丢 p 帧之前的 i 帧会花屏）";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"3）纯音频丢帧，要解决音视频不同步的问题，要让视频的 delta增量到你丢掉音频的delta之后，再发音频，要不就会音视频不同步";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"4）源站主备切换和断线重连";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"5）根据TCP拥塞窗口做智能调度，当拥塞窗口过大说明节点服务质量不佳，需要切换节点和故障排查";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"6）增加上行、下行带宽探测接口，当带宽不满足时降低视频质量，即降低码率";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"7）定时获取最优的推流、拉流链路IP，尽可能保证提供最好的服务";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"8)监控必须要，监控各个节点的Qos状态，来做整个平台的资源配置优化和调度";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"9）如果产品从推流端、CDN、播放器都是自家的，保障 Qos 优势非常大";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"10）当直播量非常大时，要加入集群管理和调度，保障 Qos";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"11）播放端通过增加延时来减少网络抖动，通过快播来减少延时。（出自知乎宋少东）。";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    
-    
-    
-    noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"7、你不知道排版最难的地方就是一点一点的间距和文字，真的会瞎掉我的狗眼，别说5分钟给我排个版，你以为是ppt？";
-    [self.noteParagraphs addObject:noteParagraph];
-    
-    [self.noteParagraphs addObjectsFromArray:self.noteParagraphs];
+    return ;
 }
 
 
-- (NSMutableAttributedString*)noteParagraphAttrbutedString:(NoteParagraphModel*)noteParagraphModel
+- (NSMutableAttributedString*)titleParagraphAttrbutedStringOnDisplay:(BOOL)onDisplay
 {
-
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:noteParagraphModel.content];
-    UIFont *font = [UIFont systemFontOfSize:16];
-    UIColor *color = [UIColor blackColor];
+    NoteParagraphModel* noteParagraphModel = self.titleParagraph;
+    NSString *string = noteParagraphModel.content;
+    //在非显示模式下, 内容为空的话显示placehold.
+    if(string.length == 0) {
+        if(onDisplay) {
+            if(!self.isCreateMode) {
+                string = @"无标题";
+            }
+            else {
+                string = CREATE_PLACEHOLD_TITLE;
+            }
+        }
+    }
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+    UIFont *font    = [noteParagraphModel titleFont];
+    UIColor *color  = [noteParagraphModel textColor];
+    
     [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
     [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
     [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
     
+    //对齐方式.
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    paragraphStyle.headIndent = 4.0;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 2.0;
+    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
+    
     return attributedString;
 }
+
+
+//noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
+- (NSMutableAttributedString*)noteParagraphAttrbutedString:(NoteParagraphModel*)noteParagraphModel onDisplay:(BOOL)onDisplay
+{
+    NSString *string = noteParagraphModel.content;
+    //在非显示模式下, 内容为空的话显示placehold.
+    if(string.length == 0) {
+        if(onDisplay) {
+            if(!self.isCreateMode) {
+                string = @"   ";
+            }
+            else {
+                string = CREATE_PLACEHOLD_CONTENTPARAGRAPH;
+            }
+        }
+    }
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+    
+    //字体,颜色.
+    UIFont *font    = [noteParagraphModel textFont];
+    UIColor *color  = [noteParagraphModel textColor];
+    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
+    
+    //对齐方式.
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    paragraphStyle.headIndent = 20.0;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 2.0;
+    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
+    
+    return attributedString;
+}
+
+
+
                                                             
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -273,7 +293,7 @@
 #define ROW_NUMBER_TITLE    2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger rows = self.noteParagraphs.count;
+    NSInteger rows = self.contentParagraphs.count;
     return rows + ROW_NUMBER_TITLE; /*title一栏, 信息一栏.*/
 }
 
@@ -298,21 +318,30 @@
     }
     
     if(indexPath.row == 0) {
-        cell.textLabel.text = self.noteModel.title;
-        cell.textLabel.font = [UIFont systemFontOfSize:20 weight:1];
-        cell.textLabel.numberOfLines = 0;
+        YYLabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
+        if(!noteParagraphLabel) {
+            noteParagraphLabel = [[YYLabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
+            noteParagraphLabel.numberOfLines = 0;
+            
+            [cell addSubview:noteParagraphLabel];
+            [noteParagraphLabel setTag:TAG_noteParagraphLabel];
+        }
         
-        NSLog(@"%f", cell.textLabel.frame.size.width);
-        NSLog(@"%f", cell.frame.size.width);
+        //内容设置.
+//        noteParagraphLabel.textAlignment = NSTextAlignmentCenter;
+//        noteParagraphLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        noteParagraphLabel.attributedText = [self titleParagraphAttrbutedStringOnDisplay:YES];
         
-        CGSize sizeOptumize = CGSizeMake(cell.frame.size.width - 80, 200);
-        sizeOptumize = [cell.textLabel sizeThatFits:sizeOptumize];
-        CGFloat heightOptumize = sizeOptumize.height;
+        //计算可变高度. 同时保存给UITableviewCell的高度计算.
+        CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
+        sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
+        CGFloat heightOptumize = sizeOptumize.height + 20 ;
         self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:heightOptumize];
         
-        CGRect frame = cell.textLabel.frame;
+        //设置高度.
+        CGRect frame = noteParagraphLabel.frame;
         frame.size.height = heightOptumize;
-        cell.textLabel.frame = frame;
+        noteParagraphLabel.frame = frame;
     }
     else if(indexPath.row == 1) {
         //cell.textLabel.text = @"附加信息";
@@ -328,10 +357,14 @@
             [notePropertyView setTag:TAG_notePropertyView];
         }
         
-        [notePropertyView setClassification:self.noteModel.classification color:nil];
+        [notePropertyView setClassification:self.noteModel.classification color:self.noteModel.color];
         
-
-        
+        [notePropertyView setActionPressed:^(NSString *item) {
+            if([item isEqualToString:@"Classification"]) {
+//                __weak typeof(self) weakSelf = self;
+//                [weakSelf openClassificationMenu];
+            }
+        }];
     }
     else {
 
@@ -345,8 +378,11 @@
         }
         
         //内容设置.
-        NoteParagraphModel *noteParagraph = self.noteParagraphs[indexPath.row - ROW_NUMBER_TITLE];
-        noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph];
+        noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
+        NoteParagraphModel *noteParagraph = self.contentParagraphs[indexPath.row - ROW_NUMBER_TITLE];
+        
+        
+        noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
         //noteParagraphLabel.lineBreakMode = NSLineBreakByWordWrapping;
         
         //计算可变高度. 同时保存给UITableviewCell的高度计算.
@@ -371,14 +407,18 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    //属性框显示的时候. 点击任意栏会执行关闭属性框.
+    if([self filterViewisShow]) {
+        NSLog(@"filterViewHidden");
+        [self filterViewHidden];
+        return ;
+    }
     
-    if(indexPath.row == 0) {
+    if(indexPath.row == 1) {
+        [self filterViewBuild];
         
+        return ;
     }
-    else if(indexPath.row == 1) {
-
-    }
-    else {
 //        //[self snapshot];
 //        
 //        PopupViewController *vc = [[PopupViewController alloc] init];
@@ -395,23 +435,42 @@
 //        */
 //        vc.imageBackground = image;
 //        [self.navigationController pushViewController:vc animated:NO];
-        
-        CGFloat width = 45;
-        TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(self.view.frame.size.width - width - 10, 64 + 10, width, self.view.frame.size.height - 10 * 2)];
-        v.layoutMode = TextButtonLineLayoutModeVertical;
-        NSArray<NSString*> *actionStrings = @[@"复制", @"编辑", @"插入", @"增加"];
-        
-        [v setTexts:actionStrings];
-        __weak typeof(self) weakSelf = self;
-        [v setButtonActionByText:^(NSString* actionText) {
-            [weakSelf dismissPopupView];
-            [weakSelf action:actionText OnIndexPath:indexPath];
-        }];
-        
-        [self showPopupView:v];
-    }
 
     
+    CGFloat width = 45;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(self.view.frame.size.width - width - 10, 64 + 10, width, self.view.frame.size.height - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = nil;
+    NoteParagraphModel *noteParagraphModel;
+    
+    if([self indexPathIsTitle:indexPath]) {
+        actionStrings = @[@"复制", @"编辑", @"样式"];
+        if([self.titleParagraph.content isEqualToString:@""]) {
+            [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
+            return ;
+        }
+    }
+    else if(nil != (noteParagraphModel = [self indexPathNoteParagraph:indexPath])) {
+        actionStrings = @[@"复制", @"编辑", @"插入", @"增加", @"样式"];
+        if([noteParagraphModel.content isEqualToString:@""]) {
+            [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
+            return ;
+        }
+    }
+    else {
+        NSLog(@"#error - ");
+        return ;
+    }
+    
+    [v setTexts:actionStrings];
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        [weakSelf dismissPopupView];
+        [weakSelf action:actionText OnIndexPath:indexPath];
+    }];
+    
+    [self showPopupView:v];
 }
 
 
@@ -433,6 +492,13 @@
 
 - (void)editNoteParagraphAtIndexPath:(NSIndexPath*)indexPath due:(NSString*)dueEditing
 {
+    //edit功能只针对title 和 content paragraph.
+    NoteParagraphModel *contentParagraph = [self indexPathNoteParagraph:indexPath];
+    if(!([self indexPathIsTitle:indexPath] || contentParagraph)) {
+        NSLog(@"#error - ");
+        return;
+    }
+    
     self.indexPathOnEditing = indexPath;
     self.dueEditing         = dueEditing;
     
@@ -451,13 +517,22 @@
     YYTextView *noteParagraphTextView = [[YYTextView alloc] init];
     noteParagraphTextView.tag = TAG_noteParagraphTextView;
     noteParagraphTextView.frame = cell.bounds;
-    noteParagraphTextView.attributedText = noteParagraphLabel.attributedText;
+    if([self indexPathIsTitle:indexPath]) {
+        noteParagraphTextView.attributedText = [self titleParagraphAttrbutedStringOnDisplay:NO];
+        noteParagraphTextView.font = [self.titleParagraph titleFont];
+    }
+    else {
+        noteParagraphTextView.attributedText = [self noteParagraphAttrbutedString:[self indexPathNoteParagraph:indexPath] onDisplay:NO];
+        noteParagraphTextView.font = [contentParagraph textFont];
+    }
     
     UIToolbar *keyboardAccessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 36)];
     keyboardAccessory.backgroundColor = [UIColor whiteColor];
     
     [keyboardAccessory setItems:@[
                                   [[UIBarButtonItem alloc] initWithTitle:@"撤销" style:UIBarButtonItemStylePlain target:self action:@selector(removeUpdate:)],
+                                  [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                                  [[UIBarButtonItem alloc] initWithTitle:@"下一段" style:UIBarButtonItemStylePlain target:self action:@selector(doneUpdateAndNext:)],
                                   [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
                                   [[UIBarButtonItem alloc] initWithTitle:@"输入完成" style:UIBarButtonItemStylePlain target:self action:@selector(doneUpdate:)]
                                   ]
@@ -486,8 +561,9 @@
     }
     else if([self.dueEditing isEqualToString:@"插入"] || [self.dueEditing isEqualToString:@"增加"]) {
         //删除新增加的NoteParagraph.
-        NSInteger idxNoteParagraph = [self noteParagraphIndexOn:indexPath];
-        [self.noteParagraphs removeObjectAtIndex:idxNoteParagraph];
+        NSInteger idxNoteParagraph = [self indexPathNoteParagraphIndex:indexPath];
+        [self.contentParagraphs removeObjectAtIndex:idxNoteParagraph];
+//        NoteParagraphModel *noteParagraph =
         
         [self.tableNoteParagraphs reloadData];
     }
@@ -509,7 +585,12 @@
     }
     
     NSString *content = [noteParagraphTextView.attributedText string];
-    [self updateNoteParagraphOnIndex:[self noteParagraphIndexOn:indexPath] withContent:content];
+    if([self indexPathIsTitle:indexPath]) {
+        [self updateNoteTitleWithContent:content];
+    }
+    else {
+        [self updateNoteParagraphOnIndex:[self indexPathNoteParagraphIndex:indexPath] withContent:content];
+    }
     
     //输入框移除.
     [noteParagraphTextView removeFromSuperview];
@@ -538,10 +619,10 @@
 
     
     if([string isEqualToString:@"插入"]) {
-        NSInteger idxInsert = [self noteParagraphIndexOn:indexPath];
+        NSInteger idxInsert = [self indexPathNoteParagraphIndex:indexPath];
         NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-        noteParagraph.content = @"111";
-        [self.noteParagraphs insertObject:noteParagraph atIndex:idxInsert];
+        noteParagraph.content = @"";
+        [self.contentParagraphs insertObject:noteParagraph atIndex:idxInsert];
         
         [self.tableNoteParagraphs beginUpdates];
         [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
@@ -559,12 +640,15 @@
     
     if([string isEqualToString:@"增加"]) {
     
-        NSInteger idxAppend = [self noteParagraphIndexOn:indexPath];
-        if(idxAppend == self.noteParagraphs.count - 1) {
-            [self.noteParagraphs addObject:[self newNoteParagraph]];
+        NSInteger idxAppend = [self indexPathNoteParagraphIndex:indexPath];
+        if(idxAppend == NSNotFound) {
+            NSLog(@"#error - ");
+        }
+        else if(idxAppend == self.contentParagraphs.count - 1) {
+            [self.contentParagraphs addObject:[self newNoteParagraph]];
         }
         else {
-            [self.noteParagraphs insertObject:[self newNoteParagraph] atIndex:idxAppend + 1];
+            [self.contentParagraphs insertObject:[self newNoteParagraph] atIndex:idxAppend + 1];
         }
         
         NSIndexPath *indexPathAppend = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
@@ -583,7 +667,13 @@
         
     }
     
-    
+    if([string isEqualToString:@"样式"]) {
+        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+
+        
+        return ;
+    }
     
     
     
@@ -595,29 +685,119 @@
 }
 
 
-- (NSInteger)noteParagraphIndexOn:(NSIndexPath*)indexPath
+- (BOOL)indexPathIsTitle:(NSIndexPath*)indexPath
 {
-    return indexPath.row - ROW_NUMBER_TITLE;
+    return indexPath.row == 0;
+}
+
+
+- (BOOL)indexPathIsLast:(NSIndexPath*)indexPath
+{
+    NSInteger noteIndex = [self indexPathNoteParagraphIndex:indexPath];
+    return noteIndex == (self.contentParagraphs.count - 1);
+}
+
+
+- (NSInteger)indexPathNoteParagraphIndex:(NSIndexPath*)indexPath
+{
+    NSInteger noteIndex = indexPath.row - ROW_NUMBER_TITLE;
+    if(noteIndex >= 0 && noteIndex < self.contentParagraphs.count) {
+        
+    }
+    else {
+        NSLog(@"#error - ");
+        noteIndex = NSNotFound;
+    }
+    
+    return noteIndex;
+}
+
+
+- (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
+{
+    NSInteger noteParagraphIndex = [self indexPathNoteParagraphIndex:indexPath];
+    if(noteParagraphIndex >= 0 && noteParagraphIndex < self.contentParagraphs.count) {
+        return self.contentParagraphs[noteParagraphIndex];
+    }
+    else {
+        NSLog(@"#error - noteParagraphOnIndexPath row %zd, contentParagraphs count %zd.", noteParagraphIndex, self.contentParagraphs.count);
+        return nil;
+    }
 }
 
 
 - (NoteParagraphModel*)newNoteParagraph
 {
     NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"111";
+    noteParagraph.content = @"";
     
     return noteParagraph;
 }
 
 
+
+
+
+- (void)updateNoteTitleWithContent:(NSString*)content
+{
+    self.titleParagraph.content = content;
+    NSString *titleContent = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
+    self.noteModel.title = titleContent;
+    
+    [self updateNoteToLocal];
+}
+
+
 - (void)updateNoteParagraphOnIndex:(NSInteger)noteParagraphIndex withContent:(NSString*)content
 {
-    NoteParagraphModel *noteParagraph = self.noteParagraphs[noteParagraphIndex];
+    NoteParagraphModel *noteParagraph = self.contentParagraphs[noteParagraphIndex];
     noteParagraph.content = content;
     
+    NSString *noteContent = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
+    self.noteModel.content = noteContent;
+    
+    [self updateNoteToLocal];
+}
+
+
+- (BOOL)addNoteToLocal
+{
+    BOOL result = YES;
+    self.noteModel.identifier = [[AppConfig sharedAppConfig] configNoteAdd:self.noteModel];
+    if(self.noteModel.identifier != NSNotFound) {
+        NSLog(@"created Note added.");
+        self.isStoredToLocal = YES;
+    }
+    else {
+        NSLog(@"created Note added failed.");
+        result = NO;
+    }
+    
+    return result;
+}
+
+
+- (void)updateNoteToLocal
+{
+    NSLog(@"updateNoteToLocal");
+    
+    //新建模式下, 保存之前先写入存储.
+    if(self.isCreateMode && !self.isStoredToLocal) {
+        //内容不为空的话才保存.
+        if(self.titleParagraph.content.length > 0
+           || self.contentParagraphs.count > 1
+           || (self.contentParagraphs.count == 1 &&  self.contentParagraphs[0].content.length > 0 )) {
+            [self addNoteToLocal];
+        }
+        else {
+            NSLog(@"none content. it would note store to local.");
+        }
+            
+        return ;
+    }
+    
     //更新本地存储.
-    
-    
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
 }
 
 
@@ -651,58 +831,355 @@
 }
 
 
-
-
-
-
-
--(UIImage *)screenImageWithSize:(CGSize )imgSize{
-    UIGraphicsBeginImageContext(imgSize);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    AppDelegate * app = (AppDelegate *)([UIApplication sharedApplication].delegate); //获取app的appdelegate，便于取到当前的window用来截屏
-    [app.window.layer renderInContext:context];
-    
-    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return img;
-}
-
-
-- (void)snapshot
+- (void)doneUpdateAndNext:(id)sender
 {
-    UIGraphicsBeginImageContext(self.view.frame.size);
-
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    //将截屏保存到相册
-    UIImage *newImage=UIGraphicsGetImageFromCurrentImageContext();
-    UIImageWriteToSavedPhotosAlbum(newImage,self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-    UIGraphicsEndImageContext();
+    NSIndexPath *indexPathOnEditing = self.indexPathOnEditing;
+    [self doneUpdate:sender];
     
-    UIImage *image = [self screenImageWithSize:[UIScreen mainScreen].bounds.size];
-    UIImageWriteToSavedPhotosAlbum(image,self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-    
-    
-
-}
-
-
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
-{
-    if (error) {
-        NSLog(@"保存失败，请检查是否拥有相关的权限");
+    if([self indexPathIsLast:indexPathOnEditing]) {
+        [self action:@"增加" OnIndexPath:indexPathOnEditing];
     }
     else {
-        NSLog(@"保存成功！");
+        NSIndexPath *nextIndexPath = [NSIndexPath indexPathForRow:indexPathOnEditing.row+1 inSection:indexPathOnEditing.section];
+        [self action:@"编辑" OnIndexPath:nextIndexPath];
     }
+}
+
+
+
+- (void)updateClassificationTo:(NSString*)classification
+{
+    NSLog(@"updateClassificationTo : %@", classification);
+    
+    //更新存储.
+    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifier:self.noteModel.identifier classification:classification];
+    
+    //更新数据.
+    self.noteModel.classification = classification;
+    
+    //更新属性显示.
+    [self updateNotePropertyDisplay];
+}
+
+
+- (void)updateColorStringTo:(NSString*)colorDisplayString
+{
+    NSString *colorString = [NoteModel colorDisplayStringToColorString:colorDisplayString];
+    NSLog(@"updateColorStringTo : %@", colorString);
+    
+    //更新存储.
+    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifier:self.noteModel.identifier colorString:colorString];
+    
+    //更新数据.
+    self.noteModel.color = colorString;
+    
+    //更新属性显示.
+    [self updateNotePropertyDisplay];
+}
+
+
+
+- (void)filterViewBuild
+{
+    if(self.noteFilter) {
+        NSLog(@"filterView already built.");
+        [self.view bringSubviewToFront:self.noteFilter];
+        return ;
+    }
+    
+    self.heightNoteFilter = 36;
+    
+    //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
+    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
+    //    [self.view addSubview:self.noteFilter];
+    //    self.noteFilter.backgroundColor = [UIColor yellowColor];
+    //
+    //    [self.view bringSubviewToFront:self.noteFilter];
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"个人笔记", nil];
+    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
+    if(addedClassifications.count > 0) {
+        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
+    }
+    [self.filterDataClassifications addObject:@"新增类别"];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 64) andHeight:self.heightNoteFilter];
+    menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
+    menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
+    menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
+    menu.dataSource = self;
+    menu.delegate = self;
+    
+    self.noteFilter = menu;
+    
+    [self.view addSubview:menu];
+    
+    //[self showPopupView:menu];
+}
+
+
+- (void)filterViewHidden
+{
+    self.noteFilter.hidden = YES;
+    [self.noteFilter removeFromSuperview];
+    self.noteFilter = nil;
+    //[self dismissPopupView];
+}
+
+
+- (BOOL)filterViewisShow
+{
+    return (nil != self.noteFilter);
+}
+
+
+//新增栏目.
+- (void)filterViewAddClassification
+{
+    CGRect frame = self.noteFilter.frame;
+    UIView *container = [[UIView alloc] initWithFrame:frame];
+    //[self.noteFilter addSubview:container];
+    container.backgroundColor = [UIColor whiteColor];
+    
+    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 10, 2, 10));
+    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
+    //[container addSubview:classificationInputView];
+    classificationInputView.borderStyle     = UITextBorderStyleLine;
+//    classificationInputView.backgroundColor = [UIColor blueColor];
+    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    classificationInputView.placeholder     = @"请输入新增的栏目";
+    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
+    classificationInputView.returnKeyType = UIReturnKeyDone;
+    classificationInputView.delegate        = self;
+    
+    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
+    classificationInputView.leftView = leftview;
+    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
+    
+    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
+    classificationInputView.layer.borderWidth = 1.5;
+    
+    [classificationInputView becomeFirstResponder];
+    
+    [self showPopupView:classificationInputView];
+    
+}
+
+
+- (void)filterViewDidAddClassification:(NSString*)classification
+{
+    //添加到栏目数据库.
+    [[AppConfig sharedAppConfig] configClassificationAdd:classification];
+    
+    //执行修改classification动作. 包括更新存储, 更新数据, 更新属性显示.
+    [self updateClassificationTo:classification];
+}
+
+
+- (void)updateNotePropertyDisplay
+{
+    NSIndexPath *indexPathProperty = [self indexPathProperty];
+    if([[self.tableNoteParagraphs indexPathsForVisibleRows] indexOfObject:indexPathProperty] != NSNotFound) {
+        //        [self.tableNoteParagraphs reloadData];
+        [self.tableNoteParagraphs beginUpdates];
+        [self.tableNoteParagraphs reloadRowsAtIndexPaths:@[indexPathProperty] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableNoteParagraphs endUpdates];
+    }
+}
+
+
+- (NSIndexPath *)indexPathProperty
+{
+    return [NSIndexPath indexPathForRow:1 inSection:0];
+}
+
+
+//栏目增加的delegate.
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    LOG_POSTION
+    return YES;
+}
+
+
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    LOG_POSTION
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    LOG_POSTION
+    
+    //官方 取消第一响应者（就是退出编辑模式收键盘）
+    [textField resignFirstResponder];
+    [self dismissPopupView];
+    
+    if(textField.text.length > 0) {
+        [self filterViewDidAddClassification:textField.text];
+    }
+    
+    return YES;
+}
+
+
+//方法一
+
+- (BOOL)textField1:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    if (range.location>= 10) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
+
+//方法二
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    if (toBeString.length > 10) {
+        textField.text = [toBeString substringToIndex:10];
+        return NO;
+    }
+    
+    return YES;
+}
+
+
+//关于筛选.
+- (NSInteger)numberOfColumnsInMenu:(JSDropDownMenu *)menu {
+    
+    return 2;
+}
+
+-(BOOL)displayByCollectionViewInColumn:(NSInteger)column{
+    
+    if (column==1) {
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
+-(BOOL)haveRightTableViewInColumn:(NSInteger)column{
+    
+    return NO;
+}
+
+-(CGFloat)widthRatioOfLeftColumn:(NSInteger)column{
+    
+    return 1;
+}
+
+-(NSInteger)currentLeftSelectedRow:(NSInteger)column{
+    
+    if (column==0) {
+        
+        return self.idxClassifications;
+        
+    }
+    if (column==1) {
+        
+        return self.idxColor;
+    }
+    
+    return 0;
+}
+
+- (NSInteger)menu:(JSDropDownMenu *)menu numberOfRowsInColumn:(NSInteger)column leftOrRight:(NSInteger)leftOrRight leftRow:(NSInteger)leftRow{
+    
+    if (column==0) {
+        return self.filterDataClassifications.count;
+        
+    } else if (column==1){
+        return self.filterDataColors.count;
+    }
+    
+    return 0;
+}
+
+- (NSString *)menu:(JSDropDownMenu *)menu titleForColumn:(NSInteger)column{
+    
+    switch (column) {
+        case 0: return self.noteModel.classification;
+            break;
+        case 1: return [NoteModel colorStringToColorDisplayString:self.noteModel.color];
+            break;
+        default:
+            return nil;
+            break;
+    }
+}
+
+- (NSString *)menu:(JSDropDownMenu *)menu titleForRowAtIndexPath:(JSIndexPath *)indexPath {
+    
+    if (indexPath.column==0) {
+        
+        return self.filterDataClassifications[indexPath.row];
+        
+    } else {
+        
+        return self.filterDataColors[indexPath.row];
+    }
+}
+
+- (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
+    
+    if(indexPath.column == 0){
+        
+        self.idxClassifications = indexPath.row;
+        
+        //新增栏目.
+        if(self.filterDataClassifications.count - 1 == indexPath.row) {
+            [self filterViewAddClassification];
+            [self filterViewHidden];
+        }
+        else {
+            [self updateClassificationTo:self.filterDataClassifications[indexPath.row]];
+            //选择后关闭属性栏. 是不是会修改多项时需重新打开...
+            [self filterViewHidden];
+        }
+    } else{
+        
+        self.idxColor = indexPath.row;
+        [self updateColorStringTo:self.filterDataColors[indexPath.row]];
+        [self filterViewHidden];
+    }
+    
+    NSLog(@"Classification : %@, color : %@", self.filterDataClassifications[self.idxClassifications], self.filterDataColors[self.idxColor]);
 }
 
 
 
 
 
-
-
+- (void)openClassificationMenu
+{
+    CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
+        
+        NSLog(@"点击了第%ld个btn",index+1);
+        
+        
+    }];
+    
+    dropMenu.direction = CLDirectionTypeRight;
+    dropMenu.titleList = @[@"添加好友",@"创建群",@"扫一扫"];
+    dropMenu.backgroundColor = [UIColor purpleColor];
+    
+    [self.view addSubview:dropMenu];
+    
+    
+    NSLog(@"%@", dropMenu);
+    
+}
 
 
 - (void)didReceiveMemoryWarning {
@@ -716,7 +1193,7 @@
 {
     UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
-    containerView.alpha = 0.9;
+    containerView.alpha = 0.95;
     containerView.tag = TAG_popupView_container;
     [self.view addSubview:containerView];
     
@@ -726,7 +1203,34 @@
     
     [containerView addSubview:view];
     
-
+    
+#if 0
+    //        [MBProgressHUD showHUDAddedTo:self.view.superview animated:YES];
+    [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        // Do something...
+        sleep(10);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+        });
+    });
+    
+    if(!self.popupHUD) {
+        self.popupHUD = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        self.popupHUD.mode = MBProgressHUDModeCustomView;
+        self.popupHUD.userInteractionEnabled = NO;
+        self.popupHUD.delegate = self;
+        self.popupHUD.removeFromSuperViewOnHide = NO; //设置这个.
+        self.popupHUD.margin = 0;
+    }
+    
+    self.popupHUD.customView = view;
+    [self.popupHUD show:YES];
+    
+    
+    
+#endif
     
     
 }
@@ -746,10 +1250,6 @@
 }
 
 
-
-
-
-
 /*
 #pragma mark - Navigation
 
@@ -761,3 +1261,77 @@
 */
 
 @end
+
+
+
+
+
+
+#if 0
+
+-(UIImage *)screenImageWithSize:(CGSize )imgSize{
+    UIGraphicsBeginImageContext(imgSize);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    AppDelegate * app = (AppDelegate *)([UIApplication sharedApplication].delegate); //获取app的appdelegate，便于取到当前的window用来截屏
+    [app.window.layer renderInContext:context];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return img;
+}
+
+
+- (void)snapshot
+{
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    //将截屏保存到相册
+    UIImage *newImage=UIGraphicsGetImageFromCurrentImageContext();
+    UIImageWriteToSavedPhotosAlbum(newImage,self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    UIGraphicsEndImageContext();
+    
+    UIImage *image = [self screenImageWithSize:[UIScreen mainScreen].bounds.size];
+    UIImageWriteToSavedPhotosAlbum(image,self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    
+    
+    
+}
+
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    if (error) {
+        NSLog(@"保存失败，请检查是否拥有相关的权限");
+    }
+    else {
+        NSLog(@"保存成功！");
+    }
+}
+
+#endif
+
+
+#if 0
+- (NSMutableAttributedString*)noteParagraphCreateAttributedString
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@""];
+    UIFont *font = [UIFont systemFontOfSize:16];
+    UIColor *color = [UIColor blackColor];
+    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
+    
+    //对齐方式.
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    paragraphStyle.headIndent = 20.0;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 2.0;
+    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
+    
+    return attributedString;
+}
+#endif

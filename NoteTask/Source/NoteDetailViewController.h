@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "NoteModel.h"
+
+
+
+
+
 @interface NoteDetailViewController : UIViewController
 
 
