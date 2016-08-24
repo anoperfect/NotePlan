@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NoteModel.h"
+#import "CustomViewController.h"
+@class NoteModel;
 
 
 
-
-
-@interface NoteDetailViewController : UIViewController
+@interface NoteDetailViewController : CustomViewController
 
 
 

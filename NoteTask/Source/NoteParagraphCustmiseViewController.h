@@ -7,7 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CustomViewController.h"
 
-@interface NoteParagraphCustmiseViewController : UIViewController
+
+
+
+
+@interface NoteParagraphColorSelector : UIView
+
+
 
 @end
+
+
+
+@interface NoteParagraphCustmiseViewController : CustomViewController
+
+@end
+
+
+
+

@@ -26,6 +26,7 @@
 		B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5448EFF1D658F3100F186BE /* RangeValueView.m */; };
 		B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */; };
 		B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */; };
+		B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55DA66D1D67798900A2EC8B /* CustomViewController.m */; };
 		B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B55E9D791C9B09B000F581F5 /* FrameLayout.m */; };
 		B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09B1C9110FD00E903B6 /* FAImageView.m */; };
 		B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D09D1C9110FD00E903B6 /* NSString+FontAwesome.m */; };
@@ -52,6 +53,7 @@
 		B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B62681D2124A4005A2242 /* RootViewController.m */; };
 		B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B626A1D2124A4005A2242 /* SummaryInRoot.m */; };
 		B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */; };
+		B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B58DE9791D6AB302002B7697 /* ColorSelector.m */; };
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
 		B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */; };
@@ -125,6 +127,8 @@
 		B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteDetailViewController.m; path = Source/NoteDetailViewController.m; sourceTree = "<group>"; };
 		B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCreateViewController.h; path = Source/NoteCreateViewController.h; sourceTree = "<group>"; };
 		B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCreateViewController.m; path = Source/NoteCreateViewController.m; sourceTree = "<group>"; };
+		B55DA66C1D67798900A2EC8B /* CustomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomViewController.h; path = Source/CustomViewController.h; sourceTree = "<group>"; };
+		B55DA66D1D67798900A2EC8B /* CustomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomViewController.m; path = Source/CustomViewController.m; sourceTree = "<group>"; };
 		B55E9D781C9B09B000F581F5 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameLayout.h; path = ../../../../Kukuku/Extension/FrameLayout.h; sourceTree = "<group>"; };
 		B55E9D791C9B09B000F581F5 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameLayout.m; path = ../../../../Kukuku/Extension/FrameLayout.m; sourceTree = "<group>"; };
 		B564D09A1C9110FD00E903B6 /* FAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAImageView.h; sourceTree = "<group>"; };
@@ -175,6 +179,8 @@
 		B56B62691D2124A4005A2242 /* SummaryInRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SummaryInRoot.h; path = Source/SummaryInRoot.h; sourceTree = "<group>"; };
 		B56B626A1D2124A4005A2242 /* SummaryInRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SummaryInRoot.m; path = Source/SummaryInRoot.m; sourceTree = "<group>"; };
 		B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.Storyboard; sourceTree = "<group>"; };
+		B58DE9781D6AB302002B7697 /* ColorSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorSelector.h; path = Source/ColorSelector.h; sourceTree = "<group>"; };
+		B58DE9791D6AB302002B7697 /* ColorSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorSelector.m; path = Source/ColorSelector.m; sourceTree = "<group>"; };
 		B595C25C1C7829E10087744D /* TableViewLastCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewLastCell.h; path = ViewPublic/TableViewLastCell.h; sourceTree = "<group>"; };
 		B595C25D1C7829E10087744D /* TableViewLastCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableViewLastCell.m; path = ViewPublic/TableViewLastCell.m; sourceTree = "<group>"; };
 		B59AB7201D34A5B40067C4B2 /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
@@ -266,8 +272,6 @@
 				B53959251D27F55200FB5408 /* NoteViewController.m */,
 				B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */,
 				B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */,
-				B5A054481D41C23100791702 /* PopupViewController.h */,
-				B5A054491D41C23100791702 /* PopupViewController.m */,
 				B5B392AC1D407678001D30BF /* NoteParagraphCustmiseViewController.h */,
 				B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */,
 				B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */,
@@ -532,6 +536,12 @@
 				B56B626A1D2124A4005A2242 /* SummaryInRoot.m */,
 				B5A26BD11D22140E00B1F629 /* MenuButton.h */,
 				B5A26BD21D22140E00B1F629 /* MenuButton.m */,
+				B55DA66C1D67798900A2EC8B /* CustomViewController.h */,
+				B55DA66D1D67798900A2EC8B /* CustomViewController.m */,
+				B5A054481D41C23100791702 /* PopupViewController.h */,
+				B5A054491D41C23100791702 /* PopupViewController.m */,
+				B58DE9781D6AB302002B7697 /* ColorSelector.h */,
+				B58DE9791D6AB302002B7697 /* ColorSelector.m */,
 			);
 			name = Root;
 			sourceTree = "<group>";
@@ -837,6 +847,7 @@
 				B564D0D51C9110FD00E903B6 /* UIImage+Util.m in Sources */,
 				B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */,
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
+				B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */,
 				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
 				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
@@ -874,6 +885,7 @@
 				B5448F071D658F3100F186BE /* UIView+MotionEffect.m in Sources */,
 				B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */,
 				B5448F0B1D658F3100F186BE /* UIView+UserInteraction.m in Sources */,
+				B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */,
 				B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

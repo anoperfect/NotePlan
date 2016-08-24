@@ -9,12 +9,12 @@
 #import "NoteDetailViewController.h"
 #import "NotePropertyView.h"
 #import "YYText.h"
-#import "MBProgressHUD.h"
 #import "AppDelegate.h"
 #import "PopupViewController.h"
 #import "TextButtonLine.h"
 #import "CLDropDownMenu.h"
 #import "NoteParagraphCustmiseViewController.h"
+#import "NoteModel.h"
 
 
 @interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
@@ -130,12 +130,7 @@
     // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [UIColor whiteColor];
-    if(!self.isCreateMode) {
-        self.title = @"笔记详情";
-    }
-    else {
-        self.title = @"新笔记";
-    }
+
     
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.text = self.noteModel.title;
@@ -164,6 +159,28 @@
                                             self.view.bounds.size.height - (frameTitleLabel.origin.y + frameTitleLabel.size.height));
     frameNoteParagraphs = self.view.bounds;
     self.tableNoteParagraphs.frame = frameNoteParagraphs;
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if(!self.isCreateMode) {
+        self.title = @"笔记详情";
+    }
+    else {
+        self.title = @"新笔记";
+    }
+    
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    self.title = @"";
 }
 
 
@@ -451,7 +468,7 @@
             return ;
         }
     }
-    else if(nil != (noteParagraphModel = [self indexPathNoteParagraph:indexPath])) {
+    else if(nil != (noteParagraphModel = [self indexPathContentNoteParagraph:indexPath])) {
         actionStrings = @[@"复制", @"编辑", @"插入", @"增加", @"样式"];
         if([noteParagraphModel.content isEqualToString:@""]) {
             [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
@@ -493,7 +510,9 @@
 - (void)editNoteParagraphAtIndexPath:(NSIndexPath*)indexPath due:(NSString*)dueEditing
 {
     //edit功能只针对title 和 content paragraph.
-    NoteParagraphModel *contentParagraph = [self indexPathNoteParagraph:indexPath];
+    
+    
+    NoteParagraphModel *contentParagraph = [self indexPathContentNoteParagraph:indexPath];
     if(!([self indexPathIsTitle:indexPath] || contentParagraph)) {
         NSLog(@"#error - ");
         return;
@@ -522,7 +541,7 @@
         noteParagraphTextView.font = [self.titleParagraph titleFont];
     }
     else {
-        noteParagraphTextView.attributedText = [self noteParagraphAttrbutedString:[self indexPathNoteParagraph:indexPath] onDisplay:NO];
+        noteParagraphTextView.attributedText = [self noteParagraphAttrbutedString:[self indexPathContentNoteParagraph:indexPath] onDisplay:NO];
         noteParagraphTextView.font = [contentParagraph textFont];
     }
     
@@ -561,7 +580,7 @@
     }
     else if([self.dueEditing isEqualToString:@"插入"] || [self.dueEditing isEqualToString:@"增加"]) {
         //删除新增加的NoteParagraph.
-        NSInteger idxNoteParagraph = [self indexPathNoteParagraphIndex:indexPath];
+        NSInteger idxNoteParagraph = [self indexPathContentNoteParagraphIndex:indexPath];
         [self.contentParagraphs removeObjectAtIndex:idxNoteParagraph];
 //        NoteParagraphModel *noteParagraph =
         
@@ -589,7 +608,7 @@
         [self updateNoteTitleWithContent:content];
     }
     else {
-        [self updateNoteParagraphOnIndex:[self indexPathNoteParagraphIndex:indexPath] withContent:content];
+        [self updateNoteParagraphOnIndex:[self indexPathContentNoteParagraphIndex:indexPath] withContent:content];
     }
     
     //输入框移除.
@@ -619,7 +638,7 @@
 
     
     if([string isEqualToString:@"插入"]) {
-        NSInteger idxInsert = [self indexPathNoteParagraphIndex:indexPath];
+        NSInteger idxInsert = [self indexPathContentNoteParagraphIndex:indexPath];
         NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
         noteParagraph.content = @"";
         [self.contentParagraphs insertObject:noteParagraph atIndex:idxInsert];
@@ -640,7 +659,7 @@
     
     if([string isEqualToString:@"增加"]) {
     
-        NSInteger idxAppend = [self indexPathNoteParagraphIndex:indexPath];
+        NSInteger idxAppend = [self indexPathContentNoteParagraphIndex:indexPath];
         if(idxAppend == NSNotFound) {
             NSLog(@"#error - ");
         }
@@ -668,6 +687,12 @@
     }
     
     if([string isEqualToString:@"样式"]) {
+        
+        if([self indexPathIsTitle:indexPath]) {
+            
+            
+        }
+        
         NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
 
@@ -693,12 +718,12 @@
 
 - (BOOL)indexPathIsLast:(NSIndexPath*)indexPath
 {
-    NSInteger noteIndex = [self indexPathNoteParagraphIndex:indexPath];
+    NSInteger noteIndex = [self indexPathContentNoteParagraphIndex:indexPath];
     return noteIndex == (self.contentParagraphs.count - 1);
 }
 
 
-- (NSInteger)indexPathNoteParagraphIndex:(NSIndexPath*)indexPath
+- (NSInteger)indexPathContentNoteParagraphIndex:(NSIndexPath*)indexPath
 {
     NSInteger noteIndex = indexPath.row - ROW_NUMBER_TITLE;
     if(noteIndex >= 0 && noteIndex < self.contentParagraphs.count) {
@@ -713,9 +738,10 @@
 }
 
 
-- (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
+//返回Content的NoteParagraph.
+- (NoteParagraphModel*)indexPathContentNoteParagraph:(NSIndexPath*)indexPath
 {
-    NSInteger noteParagraphIndex = [self indexPathNoteParagraphIndex:indexPath];
+    NSInteger noteParagraphIndex = [self indexPathContentNoteParagraphIndex:indexPath];
     if(noteParagraphIndex >= 0 && noteParagraphIndex < self.contentParagraphs.count) {
         return self.contentParagraphs[noteParagraphIndex];
     }
@@ -723,6 +749,17 @@
         NSLog(@"#error - noteParagraphOnIndexPath row %zd, contentParagraphs count %zd.", noteParagraphIndex, self.contentParagraphs.count);
         return nil;
     }
+}
+
+
+//返回title或者Content的NoteParagraph.
+- (NoteParagraphModel*)indexPathNoteParagraph1:(NSIndexPath*)indexPath
+{
+    if([self indexPathIsTitle:indexPath]) {
+        return self.titleParagraph;
+    }
+    
+    return [self indexPathContentNoteParagraph:indexPath];
 }
 
 
@@ -1165,7 +1202,7 @@
 {
     CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
         
-        NSLog(@"点击了第%ld个btn",index+1);
+        NSLog(@"点击了第%zd个btn",index+1);
         
         
     }];
@@ -1188,66 +1225,7 @@
 }
 
 
-#define TAG_popupView_container     1000000002
-- (void)showPopupView:(UIView*)view
-{
-    UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
-    containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
-    containerView.alpha = 0.95;
-    containerView.tag = TAG_popupView_container;
-    [self.view addSubview:containerView];
-    
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
-    tapGestureRecognizer.numberOfTapsRequired = 1;
-    [containerView addGestureRecognizer:tapGestureRecognizer];
-    
-    [containerView addSubview:view];
-    
-    
-#if 0
-    //        [MBProgressHUD showHUDAddedTo:self.view.superview animated:YES];
-    [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        // Do something...
-        sleep(10);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
-        });
-    });
-    
-    if(!self.popupHUD) {
-        self.popupHUD = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        self.popupHUD.mode = MBProgressHUDModeCustomView;
-        self.popupHUD.userInteractionEnabled = NO;
-        self.popupHUD.delegate = self;
-        self.popupHUD.removeFromSuperViewOnHide = NO; //设置这个.
-        self.popupHUD.margin = 0;
-    }
-    
-    self.popupHUD.customView = view;
-    [self.popupHUD show:YES];
-    
-    
-    
-#endif
-    
-    
-}
 
-
-- (void)dismissPopupView
-{
-    UIView *containerView = [self.view viewWithTag:TAG_popupView_container];
-    for(id obj in containerView.subviews) {
-        NSLog(@"%@", obj);
-        //        [obj removeObserver:self forKeyPath:@"frame"];
-        [obj removeFromSuperview];
-    }
-    
-    [containerView removeFromSuperview];
-    containerView = nil;
-}
 
 
 /*

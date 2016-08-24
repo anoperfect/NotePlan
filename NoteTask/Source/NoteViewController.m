@@ -98,8 +98,23 @@
 }
 
 
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    self.noteFilter.frame = CGRectMake(0, 0, self.contentView.frame.size.width, 36);
+    
+    CGRect frameNotesView = self.contentView.bounds;
+    frameNotesView.origin.y += self.heightNoteFilter ;
+    frameNotesView.size.height -= self.heightNoteFilter;
+    self.notesView.frame = frameNotesView;
+}
+
+
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
     //从NoteDetailViewController返回的时候, 需重新刷新下Note. Classification.
     //内容筛选栏创建.
     [self filterViewBuild];
@@ -113,10 +128,15 @@
 }
 
 
+
+
+
+
+
 - (void)notesViewBuild
 {
     if(!self.notesView) {
-        CGRect frame = self.view.bounds;
+        CGRect frame = self.contentView.bounds;
         frame.origin.y += self.heightNoteFilter ;
         frame.size.height -= self.heightNoteFilter;
         self.notesView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
@@ -140,7 +160,7 @@
         //注册UITableViewCell重用.
         [self.notesView registerClass:[NoteCell class] forCellReuseIdentifier:@"note"];
         
-        [self.view addSubview:_notesView];
+        [self.contentView addSubview:_notesView];
     }
     
     //需执行这个. 否则布局有问题.
@@ -169,7 +189,7 @@
         
         self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
         [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
-        JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 64) andHeight:self.heightNoteFilter];
+        JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
         menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
         menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
         menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
@@ -178,7 +198,7 @@
         
         self.noteFilter = menu;
         
-        [self.view addSubview:menu];
+        [self.contentView addSubview:menu];
     }
 }
 
@@ -284,7 +304,13 @@
     [self notesLoadWithClassification:self.currentClassification andColorString:self.currentColorString];
     [self.notesView reloadData];
     
+    NSLog(@"%@", self.noteFilter.superview);
+    NSLog(@"%@", self.notesView.superview);
     
+    
+    
+    LOG_VIEW_RECT(self.noteFilter, @"filter")
+    LOG_VIEW_RECT(self.notesView, @"notes")
     
 
 }

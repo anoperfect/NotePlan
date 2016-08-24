@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface NoteViewController : UIViewController
+#import "CustomViewController.h"
+@interface NoteViewController : CustomViewController
 
 @end
 
