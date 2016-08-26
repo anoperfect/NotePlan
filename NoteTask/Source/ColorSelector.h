@@ -17,6 +17,6 @@
                    cellHeight:(CGFloat)cellHeight
                  colorPresets:(NSArray<NSString*>*)presetColorStrings
                   isTextColor:(BOOL)isTextColor
-                 selectHandle:(void(^)(NSString* selectedColorString))handle;
+                 selectHandle:(void(^)(NSString* selectedColorString, NSString *selectedColorText))handle;
 
 @end

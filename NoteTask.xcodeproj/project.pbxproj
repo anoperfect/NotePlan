@@ -62,7 +62,7 @@
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
 		B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */; };
 		B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */; };
-		B5B392AE1D407678001D30BF /* NoteParagraphCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */; };
+		B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */; };
 		B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392B01D407968001D30BF /* NotePropertyView.m */; };
 		B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */; };
 		B5B905411D4FC3E900DF1E24 /* db.json in Resources */ = {isa = PBXBuildFile; fileRef = B5B905401D4FC3E900DF1E24 /* db.json */; };
@@ -196,8 +196,8 @@
 		B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLDropDownMenu.m; sourceTree = "<group>"; };
 		B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
 		B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
-		B5B392AC1D407678001D30BF /* NoteParagraphCustmiseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteParagraphCustmiseViewController.h; path = Source/NoteParagraphCustmiseViewController.h; sourceTree = "<group>"; };
-		B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteParagraphCustmiseViewController.m; path = Source/NoteParagraphCustmiseViewController.m; sourceTree = "<group>"; };
+		B5B392AC1D407678001D30BF /* NotePCustmiseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePCustmiseViewController.h; path = Source/NotePCustmiseViewController.h; sourceTree = "<group>"; };
+		B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePCustmiseViewController.m; path = Source/NotePCustmiseViewController.m; sourceTree = "<group>"; };
 		B5B392AF1D407968001D30BF /* NotePropertyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePropertyView.h; path = Source/NotePropertyView.h; sourceTree = "<group>"; };
 		B5B392B01D407968001D30BF /* NotePropertyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePropertyView.m; path = Source/NotePropertyView.m; sourceTree = "<group>"; };
 		B5B9053D1D4FB0AC00DF1E24 /* AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = Source/AppConfig.h; sourceTree = "<group>"; };
@@ -272,8 +272,8 @@
 				B53959251D27F55200FB5408 /* NoteViewController.m */,
 				B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */,
 				B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */,
-				B5B392AC1D407678001D30BF /* NoteParagraphCustmiseViewController.h */,
-				B5B392AD1D407678001D30BF /* NoteParagraphCustmiseViewController.m */,
+				B5B392AC1D407678001D30BF /* NotePCustmiseViewController.h */,
+				B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */,
 				B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */,
 				B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */,
 				B5B392AF1D407968001D30BF /* NotePropertyView.h */,
@@ -832,7 +832,7 @@
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
 				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
 				B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */,
-				B5B392AE1D407678001D30BF /* NoteParagraphCustmiseViewController.m in Sources */,
+				B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */,
 				B564D0D81C9110FD00E903B6 /* UIScrollView+ScalableCover.m in Sources */,
 				B564D0CF1C9110FD00E903B6 /* NSString+pinyin.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,

@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Ben. All rights reserved.
 //
 
-#import "NoteParagraphCustmiseViewController.h"
+#import "NotePCustmiseViewController.h"
 #import "NoteModel.h"
 #import "ColorSelector.h"
 
@@ -18,7 +18,7 @@
 
 
 
-@property (nonatomic, strong) NSDictionary  *styleDictionary;
+@property (nonatomic, strong) NoteParagraphModel    *sampleNoteParagraph;
 @property (nonatomic, strong) YYLabel       *sampleText;
 
 
@@ -55,18 +55,31 @@
 @property (nonatomic, strong) UITextField   *textBackgroundColorInput;
 @property (nonatomic, strong) UIButton      *textBackgroundColorButton;
 
+@property (nonatomic, strong) ColorSelector *textColorSelector;
+
+@property (nonatomic, strong) void(^finishHandle)(NSDictionary *styleDictionary);
+
 @end
 
 @implementation NoteParagraphCustmiseViewController
+
 
 
 - (instancetype)initWithStyleDictionary:(NSDictionary*)styleDictionary
 {
     self = [super init];
     if (self) {
-        self.styleDictionary = [NSDictionary dictionaryWithDictionary:styleDictionary];
+        self.sampleNoteParagraph = [[NoteParagraphModel alloc] init];
+        self.sampleNoteParagraph.styleDictionay = [NSMutableDictionary dictionaryWithDictionary:styleDictionary];
+        self.sampleNoteParagraph.content = @"样式测试 Sample";
     }
     return self;
+}
+
+
+- (void)setStyleFinishHandle:(void(^)(NSDictionary *styleDictionary))handle
+{
+    self.finishHandle = handle;
 }
 
 
@@ -86,7 +99,6 @@
     
     
     self.sampleText = [[YYLabel alloc] init];
-    self.sampleText.text = @"样式测试 Sample";
     [self.contentView addSubview:self.sampleText];
     
     self.fontsizeView = [RangeValueView rangeValueViewWithFrame:CGRectMake(10, 100, Width-20, 0)
@@ -160,16 +172,7 @@
     self.textBackgroundColorInput.layer.borderColor = [UIColor blackColor].CGColor;
     [self.contentView addSubview:self.textBackgroundColorInput];
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    [self updateSampleText];
 }
 
 
@@ -232,8 +235,14 @@
 {
     NSLog(@"Italic : %d", self.italicSwitch.on);
     
+    if(self.italicSwitch.on) {
+        self.sampleNoteParagraph.styleDictionay[@"font-style"] = @"italic";
+    }
+    else {
+        [self.sampleNoteParagraph.styleDictionay removeObjectForKey:@"font-style"];
+    }
     
-    
+    [self updateSampleText];
 }
 
 
@@ -241,7 +250,14 @@
 {
     NSLog(@"Underline : %d", self.underlineSwitch.on);
     
+    if(self.underlineSwitch.on) {
+        self.sampleNoteParagraph.styleDictionay[@"text-decoration"] = @"underline";
+    }
+    else {
+        [self.sampleNoteParagraph.styleDictionay removeObjectForKey:@"text-decoration"];
+    }
     
+    [self updateSampleText];
 }
 
 
@@ -249,13 +265,98 @@
 {
     NSLog(@"Border : %d", self.borderSwitch.on);
     
+    if(self.borderSwitch.on) {
+        self.sampleNoteParagraph.styleDictionay[@"border"] = @"1px";
+    }
+    else {
+        [self.sampleNoteParagraph.styleDictionay removeObjectForKey:@"border"];
+    }
     
+    [self updateSampleText];
 }
 
 
-- (void)sampleTextUpdate
+- (void)finish
 {
-#if 0
+    NSLog(@"done. styple : %@", self.sampleNoteParagraph.styleDictionay);
+    
+    if(self.finishHandle) {
+        self.finishHandle([NSDictionary dictionaryWithDictionary:self.sampleNoteParagraph.styleDictionay]);
+    }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+- (void)openTextColorSelector
+{
+    LOG_POSTION
+    if(self.textColorSelector) {
+        NSLog(@"textColorSelector already open");
+        return ;
+    }
+    
+    CGFloat width = self.contentView.bounds.size.width * 0.8;
+    CGRect frameInit = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+    CGRect frameShow = CGRectMake(self.contentView.frame.size.width - width, 0, width, self.contentView.frame.size.height);
+//    CGRect frameRemove = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+    
+    __weak typeof(self) _self = self;
+    self.textColorSelector = [[ColorSelector alloc] initWithFrame:frameInit
+                                                       cellHeight:36.0
+                                                     colorPresets:@[]
+                                                      isTextColor:YES
+                                                     selectHandle:^(NSString* selectedColorString, NSString *selectedColorText) {
+                                                         [_self selectedColorString:selectedColorString andColorText:selectedColorText];
+                                                     }];
+    [self.contentView addSubview:self.textColorSelector];
+    
+    [UIView animateWithDuration:1.0 animations:^{
+        self.textColorSelector.frame = frameShow;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
+
+- (void)selectedColorString:(NSString*)selectedColorString andColorText:(NSString *)selectedColorText
+{
+    NSLog(@"selectedTextColorString : %@, %@", selectedColorText, selectedColorString);
+    
+    //关闭颜色选择器.
+    CGFloat width = self.contentView.bounds.size.width * 0.8;
+//    CGRect frameInit = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+//    CGRect frameShow = CGRectMake(self.contentView.frame.size.width - width, 0, width, self.contentView.frame.size.height);
+    CGRect frameRemove = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+    
+    [UIView animateWithDuration:1.0 animations:^{
+        self.textColorSelector.frame = frameRemove;
+    } completion:^(BOOL finished) {
+        [self.textColorSelector removeFromSuperview];
+        self.textColorSelector = nil;
+    }];
+    
+    self.textColorInput.text = [NSString stringWithFormat:@"%@(%@)", selectedColorString, selectedColorText];
+
+    //重新刷下sample.
+    self.sampleNoteParagraph.styleDictionay[@"color"] = selectedColorString;
+    
+    [self updateSampleText];
+}
+
+
+- (void)updateSampleText
+{
+    NSLog(@"styple : %@", self.sampleNoteParagraph.styleDictionay);
+    self.sampleText.attributedText = [self sampleNoteParagraphAttrbutedString];
+}
+
+
+//noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
+- (NSMutableAttributedString*)sampleNoteParagraphAttrbutedString
+{
+    NoteParagraphModel *noteParagraphModel = self.sampleNoteParagraph;
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:noteParagraphModel.content];
     
     //字体,颜色.
     UIFont *font    = [noteParagraphModel textFont];
@@ -274,69 +375,6 @@
     [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
     
     return attributedString;
-    
-    
-#endif
-    
-    
-}
-
-
-
-
-- (void)finish
-{
-    //CGFloat fontSize = self.fontsizeView.currentValue;
-    
-    
-}
-
-
-- (void)openTextColorSelector
-{
-    LOG_POSTION
-    
-    CGFloat width = self.contentView.bounds.size.width * 0.8;
-    CGRect frameInit = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
-    CGRect frameShow = CGRectMake(self.contentView.frame.size.width - width, 0, width, self.contentView.frame.size.height);
-    CGRect frameRemove = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
-    
-    __weak typeof(self) _self = self;
-    ColorSelector *v = [[ColorSelector alloc] initWithFrame:frameInit
-                                                 cellHeight:36.0
-                                               colorPresets:@[]
-                                                isTextColor:YES
-                                               selectHandle:^(NSString *selectedColorString) {
-                                                   __weak ColorSelector *_v = v;
-                                                   [UIView animateWithDuration:1.0 animations:^{
-                                                       _v.frame = frameRemove;
-                                                       
-                                                   } completion:^(BOOL finished) {
-                                                       [_v removeFromSuperview];
-                                                   }];
-                                                   [_self selectedTextColorString:selectedColorString];
-                                                   
-                                            }];
-    [self.contentView addSubview:v];
-    v.backgroundColor = [UIColor blueColor];
-    
-    [UIView animateWithDuration:1.0 animations:^{
-        v.frame = frameShow;
-    LOG_POSTION
-        LOG_VIEW_RECT(v, @"v")
-    } completion:^(BOOL finished) {
-        LOG_VIEW_RECT(v, @"v")
-    LOG_POSTION
-        
-    }];
-}
-
-
-- (void)selectedTextColorString:(NSString*)selectedColorString
-{
-    NSLog(@"selectedTextColorString : %@", selectedColorString);
-    
-    
 }
 
 

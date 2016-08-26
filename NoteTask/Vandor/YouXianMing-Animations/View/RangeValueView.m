@@ -15,6 +15,8 @@
 @property (nonatomic, strong)  UILabel   *labelValue;
 @property (nonatomic, strong)  UISlider  *slider;
 
+@property (nonatomic, strong)  void(^handle)(CGFloat currentValue);
+
 @end
 
 @implementation RangeValueView
@@ -68,6 +70,11 @@
     
     // 当前的value值
     _currentValue        = value;
+    
+    if(self.handle) {
+        NSLog(@"%.2f", value);
+        self.handle(value);
+    }
 }
 
 + (instancetype)rangeValueViewWithFrame:(CGRect)frame
@@ -95,6 +102,12 @@
     
     return range;
 }
+
+- (void)setValueChangedHandle:(void(^)(CGFloat currentValue))handle
+{
+    self.handle = handle;
+}
+
 
 @synthesize minValue = _minValue;
 - (void)setMinValue:(CGFloat)minValue {

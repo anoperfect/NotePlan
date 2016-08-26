@@ -40,4 +40,6 @@
                                maxValue:(CGFloat)maxValue
                            defaultValue:(CGFloat)defaultValue;
 
+- (void)setValueChangedHandle:(void(^)(CGFloat currentValue))handle;
+
 @end

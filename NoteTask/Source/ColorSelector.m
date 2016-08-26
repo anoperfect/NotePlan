@@ -16,7 +16,7 @@
 @property (nonatomic, assign) CGFloat               cellHeight;
 @property (nonatomic, strong) NSArray<NSDictionary*>    *presetColorStrings;
 @property (nonatomic, assign) BOOL                  isTextColor;
-@property (nonatomic, strong) void (^handle)(NSString* selectedColorString);
+@property (nonatomic, strong) void (^handle)(NSString* selectedColorString, NSString *selectedColorText);
 
 @property (nonatomic, strong) NSArray<NSDictionary*>    *colorStrings;
 
@@ -37,7 +37,7 @@
                    cellHeight:(CGFloat)cellHeight
                  colorPresets:(NSArray<NSDictionary*>*)presetColorStrings
                   isTextColor:(BOOL)isTextColor
-                 selectHandle:(void(^)(NSString* selectedColorString))handle
+                 selectHandle:(void(^)(NSString* selectedColorString, NSString *selectedColorText))handle
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -94,6 +94,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"colorCell"];
         CGRect frame = cell.frame;
         frame.size.width = tableView.frame.size.width;
+        frame.size.height = 36.0;
         [cell setFrame:frame];
         
         UILabel *colorLabel = [[UILabel alloc] init];
@@ -105,8 +106,10 @@
         [cell addSubview:colorTextLabel];
     }
     else {
-        
-        
+        CGRect frame = cell.frame;
+        frame.size.width = tableView.frame.size.width;
+        frame.size.height = 36.0;
+        [cell setFrame:frame];
     }
     
     NSString *colorString   = @"orange";
@@ -133,18 +136,31 @@
     colorLabel.backgroundColor  = [UIColor colorFromString:colorString];
     colorTextLabel.text         = colorText;
     
+    NSLog(@"%zd:%zd : %@", indexPath.section, indexPath.row, cell.subviews);
+    
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
-    
-    
-    
-    
+    if(self.handle) {
+        NSString *colorString   = @"orange";
+        NSString *colorText     = @"orange";
+        if(indexPath.section == 0) {
+            NSDictionary *dict = self.presetColorStrings[indexPath.row];
+            colorText = [dict allKeys][0];
+            colorString = [dict allValues][0];
+        }
+        else if(indexPath.section == 1) {
+            NSDictionary *dict = self.colorStrings[indexPath.row];
+            colorText = [dict allKeys][0];
+            colorString = [dict allValues][0];
+        }
+        
+        self.handle(colorString, colorText);
+        
+    }
 }
 
 
@@ -582,10 +598,6 @@
       @{@"darkorchid2  " : @"#b23aee"},
       @{@"darkorchid3  " : @"#9a32cd"},
       @{@"darkorchid4  " : @"#68228b"},
-      @{@"purple1  " : @"#9b30ff"},
-      @{@"purple2  " : @"#912cee"},
-      @{@"purple3  " : @"#7d26cd"},
-      @{@"purple4 " : @"#551a8b"},
       @{@"mediumpurple1   " : @"#ab82ff"},
       @{@"mediumpurple2   " : @"#9f79ee"},
       @{@"mediumpurple3   " : @"#8968cd"},
@@ -608,7 +620,11 @@
       @{@"darkcyan   " : @"#008b8b"},
       @{@"darkmagenta   " : @"#8b008b"},
       @{@"darkred  " : @"#8b0000"},
-      @{@"lightgreen   " : @"#90ee90"}
+      @{@"lightgreen   " : @"#90ee90"},
+      @{@"purple1  " : @"#9b30ff"},
+      @{@"purple2  " : @"#912cee"},
+      @{@"purple3  " : @"#7d26cd"},
+      @{@"purple4 " : @"#551a8b"}
       
       ];
     

@@ -13,7 +13,7 @@
 #import "PopupViewController.h"
 #import "TextButtonLine.h"
 #import "CLDropDownMenu.h"
-#import "NoteParagraphCustmiseViewController.h"
+#import "NotePCustmiseViewController.h"
 #import "NoteModel.h"
 
 
@@ -688,14 +688,14 @@
     
     if([string isEqualToString:@"样式"]) {
         
-        if([self indexPathIsTitle:indexPath]) {
-            
-            
-        }
+        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
         
-        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] init];
+        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithStyleDictionary:noteParagraph.styleDictionay];
+        __weak typeof(self) _self = self;
+        [vc setStyleFinishHandle:^(NSDictionary *styleDictionary) {
+            [_self finishStyleCustmize:styleDictionary];
+        }];
         [self.navigationController pushViewController:vc animated:YES];
-
         
         return ;
     }
@@ -707,6 +707,13 @@
     
     
     NSLog(@"action not implemented.");
+}
+
+
+- (void)finishStyleCustmize:(NSDictionary*)stypleDictionary
+{
+    NSLog(@"finishStyleCustmize : %@", stypleDictionary);
+    
 }
 
 
@@ -753,7 +760,7 @@
 
 
 //返回title或者Content的NoteParagraph.
-- (NoteParagraphModel*)indexPathNoteParagraph1:(NSIndexPath*)indexPath
+- (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
 {
     if([self indexPathIsTitle:indexPath]) {
         return self.titleParagraph;

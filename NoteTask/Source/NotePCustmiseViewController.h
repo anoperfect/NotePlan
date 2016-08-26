@@ -13,15 +13,10 @@
 
 
 
-@interface NoteParagraphColorSelector : UIView
-
-
-
-@end
-
-
-
 @interface NoteParagraphCustmiseViewController : CustomViewController
+
+- (instancetype)initWithStyleDictionary:(NSDictionary*)styleDictionary;
+- (void)setStyleFinishHandle:(void(^)(NSDictionary *styleDictionary))handle;
 
 @end
 
