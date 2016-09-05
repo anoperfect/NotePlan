@@ -13,7 +13,9 @@
 
 
 
-@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, strong) UIView    *contentView;
+@property (nonatomic, assign) BOOL      hiddenByPush;
+
 
 
 
@@ -27,5 +29,7 @@
 - (void)dismissPopupView;
 
 
+//override.
+- (void)pushBackAction;
 
 @end

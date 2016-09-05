@@ -35,6 +35,7 @@
 @property (nonatomic, strong) NSIndexPath *indexPathOnEditing;
 @property (nonatomic, strong) NSString *dueEditing;
 
+@property (nonatomic, strong) NSIndexPath *indexPathOnCustmizing;
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UITableView *tableNoteParagraphs;
@@ -140,12 +141,14 @@
     self.tableNoteParagraphs = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableNoteParagraphs.dataSource = self;
     self.tableNoteParagraphs.delegate = self;
-    [self.view addSubview:self.tableNoteParagraphs];
+    [self.contentView addSubview:self.tableNoteParagraphs];
 }
 
 #define YBLOW 64
 - (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
+    
     CGRect frameTitleLabel = CGRectMake(0, YBLOW, self.view.bounds.size.width, 100);
     CGSize size = [self.titleLabel sizeThatFits:frameTitleLabel.size];
     frameTitleLabel.size.height = size.height;
@@ -214,6 +217,10 @@
         }
     }
     
+    noteParagraphModel.content = string;
+    return [noteParagraphModel attributedTextGenerated];
+    
+#if 0
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
     UIFont *font    = [noteParagraphModel titleFont];
     UIColor *color  = [noteParagraphModel textColor];
@@ -232,6 +239,7 @@
     [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
     
     return attributedString;
+#endif
 }
 
 
@@ -251,6 +259,10 @@
         }
     }
     
+    noteParagraphModel.content = string;
+    return [noteParagraphModel attributedTextGenerated];
+
+#if 0
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
     
     //字体,颜色.
@@ -270,6 +282,7 @@
     [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
     
     return attributedString;
+#endif
 }
 
 
@@ -688,9 +701,12 @@
     
     if([string isEqualToString:@"样式"]) {
         
+        self.indexPathOnCustmizing = indexPath;
         NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
         
-        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithStyleDictionary:noteParagraph.styleDictionay];
+//        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithStyleDictionary:noteParagraph.styleDictionay];
+        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph];
+        //通过block的方式将定制的内容传回此ViewController.
         __weak typeof(self) _self = self;
         [vc setStyleFinishHandle:^(NSDictionary *styleDictionary) {
             [_self finishStyleCustmize:styleDictionary];
@@ -712,8 +728,22 @@
 
 - (void)finishStyleCustmize:(NSDictionary*)stypleDictionary
 {
-    NSLog(@"finishStyleCustmize : %@", stypleDictionary);
+    NSLog(@"finishStyleCustmize : %@. ", stypleDictionary);
+    NSLog(@"indexPathOnCustmizing : %@%zd:%zd",
+          self.indexPathOnCustmizing?@"":@"nil --------",  self.indexPathOnCustmizing.section, self.indexPathOnCustmizing.row);
+    if(!self.indexPathOnCustmizing) {
+        NSLog(@"#error - indexPathOnCustmizing nil.");
+        return ;
+    }
     
+    NoteParagraphModel *noteParagraphOnCustmizing = [self indexPathNoteParagraph:self.indexPathOnCustmizing];
+    NSLog(@"before custmize : %@", noteParagraphOnCustmizing);
+    noteParagraphOnCustmizing.styleDictionay = [NSMutableDictionary dictionaryWithDictionary:stypleDictionary];
+    NSLog(@"after  custmize : %@", noteParagraphOnCustmizing);
+    
+    [self.tableNoteParagraphs beginUpdates];
+    [self.tableNoteParagraphs reloadRowsAtIndexPaths:@[self.indexPathOnCustmizing] withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableNoteParagraphs endUpdates];
 }
 
 
@@ -806,6 +836,7 @@
 
 - (BOOL)addNoteToLocal
 {
+    LOG_POSTION
     BOOL result = YES;
     self.noteModel.identifier = [[AppConfig sharedAppConfig] configNoteAdd:self.noteModel];
     if(self.noteModel.identifier != NSNotFound) {
@@ -948,7 +979,7 @@
     
     self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
     [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
-    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 64) andHeight:self.heightNoteFilter];
+    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
     menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
     menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
     menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
@@ -957,7 +988,7 @@
     
     self.noteFilter = menu;
     
-    [self.view addSubview:menu];
+    [self.contentView addSubview:menu];
     
     //[self showPopupView:menu];
 }
@@ -982,11 +1013,14 @@
 - (void)filterViewAddClassification
 {
     CGRect frame = self.noteFilter.frame;
+#if 0
     UIView *container = [[UIView alloc] initWithFrame:frame];
-    //[self.noteFilter addSubview:container];
+    [self.noteFilter addSubview:container];
     container.backgroundColor = [UIColor whiteColor];
+    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
+#endif
     
-    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 10, 2, 10));
+    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
     UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
     //[container addSubview:classificationInputView];
     classificationInputView.borderStyle     = UITextBorderStyleLine;

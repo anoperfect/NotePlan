@@ -166,7 +166,7 @@
     UIFont *font = [UIFont systemFontOfSize:20];
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize = 0.0;
-    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) > 6.0 && ptSize < 30.0) {
+    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         font = [UIFont systemFontOfSize:ptSize];
     }
     
@@ -180,7 +180,7 @@
     UIFont *font = [UIFont systemFontOfSize:16];
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize = 0.0;
-    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) > 6.0 && ptSize < 30.0) {
+    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         font = [UIFont systemFontOfSize:ptSize];
     }
     
@@ -209,9 +209,81 @@
 }
 
 
+- (NSMutableAttributedString*)attributedTextGenerated
+{
+    if(!self.content) {
+        self.content = @"";
+    }
+    
+    NSLog(@"NoteParagraph content : %@, style : %@", self.content, self.styleDictionay);
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.content];
+    NSRange rangeAll = NSMakeRange(0, attributedString.length);
+    
+    //字体,颜色.
+    UIFont *font    = [self textFont];
+    UIColor *color  = [self textColor];
+    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:rangeAll];
+    
+    //对齐方式.
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    paragraphStyle.headIndent = 20.0;
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.lineSpacing = 2.0;
+    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+    [attributedString addAttributes:attributes range:rangeAll];
+    
+    //斜体.
+    if([self.styleDictionay[@"font-style"] isEqualToString:@"italic"]) {
+        NSLog(@"attributedString add : italic");
+        [attributedString addAttribute:NSObliquenessAttributeName value:@1 range:rangeAll];
+    }
+    
+    //下划线.
+    if([self.styleDictionay[@"text-decoration"] isEqualToString:@"underline"]) {
+        NSLog(@"attributedString add : underline");
+        [attributedString addAttribute:NSUnderlineStyleAttributeName value:@1 range:rangeAll];
+    }
+    
+    //边框.
+    NSString *borderPx = self.styleDictionay[@"border"];
+    NSInteger px = 0;
+    if(borderPx.length > 0 && [borderPx hasSuffix:@"px"] && (px = [borderPx integerValue]) > 0) {
+        NSLog(@"attributedString add : border");
+        //[attributedString addAttribute:NSUnderlineStyleAttributeName value:@1 range:rangeAll];
+        
+        YYTextBorder *border = [YYTextBorder new];
+        border.strokeColor = color;//[UIColor colorWithRed:1.000 green:0.029 blue:0.651 alpha:1.000];
+        border.strokeWidth = 1;
+        border.lineStyle = YYTextLineStyleSingle;
+        border.cornerRadius = 0;
+        border.insets = UIEdgeInsetsMake(1, 1, 1, 1);
+        attributedString.yy_textBackgroundBorder = border;
+    }
+    
+    return attributedString;
+}
 
 
+- (NSString*)description
+{
+    return [NoteParagraphModel noteParagraphToString:self];
+}
 
+
+- (NoteParagraphModel*)copy
+{
+    NSLog(@"copy");
+    NoteParagraphModel *noteParagraphCopy = [[NoteParagraphModel alloc] init];
+    noteParagraphCopy.content = self.content;
+    noteParagraphCopy.image = self.image;
+    noteParagraphCopy.styleDictionay = [[NSMutableDictionary alloc] initWithDictionary:self.styleDictionay];
+    
+    return noteParagraphCopy;
+}
 
 
 

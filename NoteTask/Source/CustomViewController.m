@@ -45,6 +45,17 @@
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithName:@"NavigationBarBackground"];
     self.navigationController.navigationBar.translucent = NO;
     
+    if(self.hiddenByPush) {
+        self.hiddenByPush = NO;
+        //属于push后返回到此ViewController的Action.
+        [self pushBackAction];
+    }
+    
+}
+
+
+- (void)pushBackAction
+{
     
 }
 
@@ -119,7 +130,7 @@
 - (void)showPopupView:(UIView*)view
 {
     #define TAG_popupView_container     1000000002
-    UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
+    UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
     containerView.tag = TAG_popupView_container;

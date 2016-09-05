@@ -35,6 +35,8 @@
 
 - (UIColor*)backgroundColor;
 
+- (NSMutableAttributedString*)attributedTextGenerated;
+
 
 @end
 

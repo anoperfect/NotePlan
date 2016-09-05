@@ -93,8 +93,7 @@
     [self notesViewBuild];
     
     //内容加载.
-//    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
-    [self refreshView];
+    //[self loadNotesView];
 }
 
 
@@ -115,6 +114,10 @@
 {
     [super viewWillAppear:animated];
     
+    [self loadNotesView];
+    
+    return ;
+#if 0
     //从NoteDetailViewController返回的时候, 需重新刷新下Note. Classification.
     //内容筛选栏创建.
     [self filterViewBuild];
@@ -124,11 +127,16 @@
     
     //内容加载.
 //    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
-    [self refreshView];
+    //[self refreshView];
+#endif
 }
 
 
-
+//从NoteDetailViewController返回的时候, 可能修改的.
+//1.增加类别. －> 需刷新filter的数据.
+//2.note修改到其他类别. ->如果当前有筛选类别, 则删除此条.
+//3.note修改到其他颜色. ->如果当前有筛选颜色, 则删除此条.
+//4.note修改内容. ->刷新.
 
 
 
@@ -272,6 +280,7 @@
  * 所有
  ""无标记
  */
+#if 0
 - (void)reloadWithClassification:(NSString*)classification andColorDisplayString:(NSString*)colorDisplayString
 {
     NSString *colorString = [NoteModel colorDisplayStringToColorString:colorDisplayString];
@@ -294,15 +303,16 @@
     [self notesLoadWithClassification:classification andColorString:colorString];
     [self.notesView reloadData];
 }
-
+#endif
 
 //刷新notes的UITableView和filterView.
 - (void)refreshView
 {
-    NSLog(@"refreshView with classification:%@ color:%@", self.currentClassification, self.currentColorString);
+    NSLog(@"1refreshView with classification:%@ color:%@", self.currentClassification, self.currentColorString);
     
     [self notesLoadWithClassification:self.currentClassification andColorString:self.currentColorString];
     [self.notesView reloadData];
+    
     
     NSLog(@"%@", self.noteFilter.superview);
     NSLog(@"%@", self.notesView.superview);
@@ -313,6 +323,59 @@
     LOG_VIEW_RECT(self.notesView, @"notes")
     
 
+}
+
+
+//进入NoteViewController的第一次加载.
+- (void)loadNotesView
+{
+    NSLog(@"loadNotesView with classification:%@ color:%@", self.currentClassification, self.currentColorString);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self notesLoadWithClassification:self.currentClassification andColorString:self.currentColorString];
+        [self reloadNotesVia:@"load"];
+    });
+    
+}
+
+
+
+
+- (void)reloadNotesVia:(NSString*)via
+{
+    NSLog(@"111");
+    
+    if([via isEqualToString:@"load"]) {
+        
+//        NSMutableArray *indexPaths = [NSMutableArray array];
+//        for (int i = 0; i < self.notes.count; i++) {
+//            
+//            [indexPaths addObject:[NSIndexPath indexPathForItem:i inSection:0]];
+//        }
+//        
+//        //self.tableViewLoadData = YES;
+//        [self.notesView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+        
+        [self.notesView reloadData];
+        
+        return ;
+    }
+    
+    if([via isEqualToString:@"filter"]) {
+        
+        
+        
+        return ;
+    }
+    
+    if([via isEqualToString:@"back"]) {
+        
+        
+        
+        return;
+    }
+    
+    
 }
 
 
@@ -364,7 +427,7 @@
     
     NoteModel *note = [self noteOnIndexPath:indexPath];
     
-#if 0
+#if 0 //显示图片时, 可以使用此方法将图片显示为合适大小.
     UIImage *image = [UIImage imageNamed:@"apic321.jpg"];
     //NSLog(@"image : %@", image);
     cell.imageView.image = image;
@@ -384,6 +447,25 @@
 
     cell.titleLabel.text = [note previewTitle];
     cell.bodyLabel.text = [note previewSummary];
+#if 0
+    NSLog(@"%f, %f", cell.titleLabel.layer.position.x, cell.titleLabel.layer.position.y);
+    
+    cell.titleLabel.layer.position = CGPointMake(cell.bounds.size.width / 2 + cell.bounds.size.width / 2, 44.75);
+    CABasicAnimation *animation = [CABasicAnimation animation];
+    animation.keyPath = @"position.x";
+    animation.fromValue = @(cell.bounds.size.width / 2 + cell.bounds.size.width / 2);
+    animation.toValue = @(cell.bounds.size.width / 2);
+    
+    animation.duration = 0.4;
+    animation.beginTime = CACurrentMediaTime() + indexPath.row * 0.1;
+    
+    [cell.titleLabel.layer addAnimation:animation forKey:@"basic"];
+#endif
+    //一个渐渐显示的动画.
+    
+
+    
+    
     
     return cell;
 }

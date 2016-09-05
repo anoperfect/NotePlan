@@ -35,7 +35,16 @@
  
  */
 
-@property (nonatomic, strong) RangeValueView *fontsizeView;
+@property (nonatomic, strong) RangeValueView    *fontsizeView;
+@property (nonatomic, strong) UISlider          *fontSizeSlider;
+@property (nonatomic, strong) UILabel           *fontSizeNameLabel;
+@property (nonatomic, strong) UILabel           *fontSizeValueLabel;
+@property (nonatomic, strong) NSMutableArray    *fontNumbers;
+
+
+
+
+
 
 @property (nonatomic, strong) UILabel  *italicLable;
 @property (nonatomic, strong) UISwitch *italicSwitch;
@@ -77,6 +86,16 @@
 }
 
 
+- (instancetype)initWithNoteParagraph:(NoteParagraphModel*)noteParagraph
+{
+    self = [super init];
+    if (self) {
+        self.sampleNoteParagraph = [noteParagraph copy];
+    }
+    return self;
+}
+
+
 - (void)setStyleFinishHandle:(void(^)(NSDictionary *styleDictionary))handle
 {
     self.finishHandle = handle;
@@ -105,34 +124,74 @@
                                                            name:@"字体大小 - font-size"
                                                        minValue:8.0
                                                        maxValue:36.0 defaultValue:16];
-    [self.contentView addSubview:self.fontsizeView];
+//    [self.contentView addSubview:self.fontsizeView];
+    
+    
+    self.fontSizeSlider = [[UISlider alloc] init];
+    [self.contentView addSubview:self.fontSizeSlider];
+    self.fontSizeSlider.minimumValue = 8.0;
+    self.fontSizeSlider.maximumValue = 36.0;
+    self.fontSizeSlider.minimumTrackTintColor = [[UIColor blackColor] colorWithAlphaComponent:0.1f];
+    self.fontSizeSlider.maximumTrackTintColor = [[UIColor grayColor] colorWithAlphaComponent:0.05f];
+    [self.fontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
+    [self.fontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
+    [self.fontSizeSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+    NSString *fontString = self.sampleNoteParagraph.styleDictionay[@"font-size"];
+    CGFloat ptSize = 16.0;
+    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
+        
+    }
+    self.fontSizeSlider.value = ptSize;
+    
+    self.fontSizeNameLabel = [[UILabel alloc] init];
+    [self.contentView addSubview:self.fontSizeNameLabel];
+    self.fontSizeNameLabel.text = @"字体-大小";
+    self.fontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
+    self.fontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    
+    self.fontSizeValueLabel = [[UILabel alloc] init];
+    [self.contentView addSubview:self.fontSizeValueLabel];
+    self.fontSizeValueLabel.text = @"8pt";
+    self.fontSizeValueLabel.textAlignment = NSTextAlignmentCenter;
+    self.fontSizeValueLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    NSInteger ptSizeInt = ptSize;
+    self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpt", ptSizeInt];
     
     self.italicLable = [[UILabel alloc] init];
+    [self.contentView addSubview:self.italicLable];
     self.italicLable.text = @"斜体";
     self.italicLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.italicLable.textAlignment = NSTextAlignmentCenter;
     self.italicSwitch = [[UISwitch alloc] init];
-    [self.italicSwitch addTarget:self action:@selector(switchValueChangeItalic) forControlEvents:UIControlEventValueChanged];
-    [self.contentView addSubview:self.italicLable];
     [self.contentView addSubview:self.italicSwitch];
+    [self.italicSwitch addTarget:self action:@selector(switchValueChangeItalic) forControlEvents:UIControlEventValueChanged];
+    if([self.sampleNoteParagraph.styleDictionay[@"font-style"] isEqualToString:@"italic"]) {
+        self.italicSwitch.on = YES;
+    }
     
     self.underlineLable = [[UILabel alloc] init];
+    [self.contentView addSubview:self.underlineLable];
     self.underlineLable.text = @"下划线";
     self.underlineLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.underlineLable.textAlignment = NSTextAlignmentCenter;
     self.underlineSwitch = [[UISwitch alloc] init];
-    [self.underlineSwitch addTarget:self action:@selector(switchValueChangeUnderline) forControlEvents:UIControlEventValueChanged];
-    [self.contentView addSubview:self.underlineLable];
     [self.contentView addSubview:self.underlineSwitch];
+    [self.underlineSwitch addTarget:self action:@selector(switchValueChangeUnderline) forControlEvents:UIControlEventValueChanged];
+    if([self.sampleNoteParagraph.styleDictionay[@"text-decoration"] isEqualToString:@"underline"]) {
+        self.underlineSwitch.on = YES;
+    }
     
     self.borderLable = [[UILabel alloc] init];
+    [self.contentView addSubview:self.borderLable];
     self.borderLable.text = @"边框";
     self.borderLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.borderLable.textAlignment = NSTextAlignmentCenter;
     self.borderSwitch = [[UISwitch alloc] init];
-    [self.borderSwitch addTarget:self action:@selector(switchValueChangeBorder) forControlEvents:UIControlEventValueChanged];
-    [self.contentView addSubview:self.borderLable];
     [self.contentView addSubview:self.borderSwitch];
+    [self.borderSwitch addTarget:self action:@selector(switchValueChangeBorder) forControlEvents:UIControlEventValueChanged];
+    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+        self.borderSwitch.on = YES;
+    }
     
 #if 0
     //可以设置颜色和大小. 大小通过变换.
@@ -142,35 +201,35 @@
 #endif
     
     self.textColorLabel = [[UILabel alloc] init];
+    [self.contentView addSubview:self.textColorLabel];
     self.textColorLabel.text = @"文本颜色:";
     self.textColorLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.textColorLabel.textAlignment = NSTextAlignmentCenter;
-    [self.contentView addSubview:self.textColorLabel];
     
     self.textColorInput = [[UITextField alloc] init];
+    [self.contentView addSubview:self.textColorInput];
     self.textColorInput.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.textColorInput.layer.borderWidth = 1.0;
     self.textColorInput.layer.borderColor = [UIColor blackColor].CGColor;
-    [self.contentView addSubview:self.textColorInput];
     
     self.textColorButton = [[UIButton alloc] init];
+    [self.contentView addSubview:self.textColorButton];
     [self.textColorButton setTitle:@"颜色选择器" forState:UIControlStateNormal];
     [self.textColorButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     self.textColorButton.titleLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     [self.textColorButton addTarget:self action:@selector(openTextColorSelector) forControlEvents:UIControlEventTouchDown];
-    [self.contentView addSubview:self.textColorButton];
     
     self.textBackgroundColorLabel = [[UILabel alloc] init];
+    //[self.contentView addSubview:self.textBackgroundColorLabel];
     self.textBackgroundColorLabel.text = @"背景颜色:";
     self.textBackgroundColorLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.textBackgroundColorLabel.textAlignment = NSTextAlignmentCenter;
-    [self.contentView addSubview:self.textBackgroundColorLabel];
     
     self.textBackgroundColorInput = [[UITextField alloc] init];
+    //[self.contentView addSubview:self.textBackgroundColorInput];
     self.textBackgroundColorInput.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.textBackgroundColorInput.layer.borderWidth = 1.0;
     self.textBackgroundColorInput.layer.borderColor = [UIColor blackColor].CGColor;
-    [self.contentView addSubview:self.textBackgroundColorInput];
     
     [self updateSampleText];
 }
@@ -182,8 +241,19 @@
     
     FrameSplite *frameSplite = [[FrameSplite alloc] initWithRootView:self.contentView];
     [frameSplite frameSplite:FRAMESPLITE_NAME_MAIN
-                          to:@[@"sample", @"colorsDefault", @"colorsRecent", @"fontSize", @"switchs", @"textColorLine", @"paddingTextColor", @"textBackgroundColorLine"]
-             withPercentages:@[@(0.1),    @(0.27),          @(0.1),          @(0.1),      @(0.06),     @(0.036),        @(0.01),  @(0.036)]];
+                          to:@[@"sample",
+                               @"colorsDefault",
+                               @"colorsRecent",
+                               @"fontSizeLabel",
+                               @"fontSize",
+                               @"padding0",
+                               @"switchs",
+                               @"padding1",
+                               @"textColorLine",
+                               @"paddingTextColor",
+                               @"textBackgroundColorLine"]
+             withPercentages:@[@(0.1),    @(0.27),          @(0.1),          @(0.06),          @(0.02),     @(0.06),      @(0.06),    @(0.06),         @(0.036),         @(0.01),
+                                @(0.036)]];
     
 //    [frameSplite frameSpliteEqual:@"switchs" to:@[@"switchLabelLine", @"switchLine"]];
 //    [frameSplite frameSpliteEqual:@"switchLabelLine" toVertical:@[@"italicLabel", @"underlineLabel", @"borderLabel"]];
@@ -198,7 +268,23 @@
     
     
     
-    self.fontsizeView.frame = [frameSplite frameSpliteGet:@"fontSize"];
+//    self.fontsizeView.frame = [frameSplite frameSpliteGet:@"fontSize"];
+//    self.fontSizeSlider.frame = [frameSplite frameSpliteGet:@"fontSize"];
+    
+    //font-size.
+    [frameSplite frameSplite:@"fontSizeLabel"
+                  toVertical:@[@"fontSizeName", @"fontSizeNamePadding", @"fontSizeValue"]
+             withPercentages:@[@(0.18), @(0.7), @(0.12)]];
+    FrameAssign(self.fontSizeNameLabel,     @"fontSizeName",    frameSplite)
+    FrameAssign(self.fontSizeValueLabel,    @"fontSizeValue",   frameSplite)
+    
+    [frameSplite frameSplite:@"fontSize"
+                  toVertical:@[@"fontSizeSliderPaddingLeft", @"fontSizeSlider", @"fontSizeSliderRight"]
+             withPercentages:@[@(0.03), @(0.94), @(0.03)]];
+    FrameAssign(self.fontSizeSlider,        @"fontSizeSlider",  frameSplite)
+    
+    
+    
     
     self.italicLable.frame      = [frameSplite frameSpliteGet:@"italicLabel"];
     self.italicSwitch.frame     = [frameSplite frameSpliteGet:@"italicSwitch"];
@@ -228,6 +314,54 @@
     
     
 
+}
+
+
+- (void)sliderChanged:(UISlider*)slider
+{
+    CGFloat value        = slider.value;
+    NSLog(@"%f", value);
+    
+    value = roundf(value);
+    NSLog(@"%f", value);
+    
+    NSInteger valuex = value;
+    NSLog(@"%zd", valuex);
+    
+    NSString *fontSizeString = [NSString stringWithFormat:@"%zdpt", valuex];
+    if([fontSizeString isEqualToString:self.fontSizeValueLabel.text]) {
+        
+    }
+    else {
+        self.fontSizeValueLabel.text = fontSizeString;
+        self.sampleNoteParagraph.styleDictionay[@"font-size"] = fontSizeString;
+        self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGenerated];
+    }
+    
+    return ;
+    
+#if 0
+    NSString *string     = [NSString stringWithFormat:@"%.2f", value];
+    
+    if(!self.fontNumbers) {
+        self.fontNumbers = [[NSMutableArray alloc] init];
+    }
+    [self.fontNumbers addObject:[NSNumber numberWithFloat:value]];
+    NSLog(@"string : %@, %f", string, value);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CGFloat valueLast = [[self.fontNumbers lastObject] floatValue];
+        if(valueLast == value) {
+            NSLog(@"%f", value);
+        }
+        
+        [UIView animateWithDuration:0.6 animations:^{
+            slider.value = 10;
+        }];
+        
+        
+    });
+#endif
 }
 
 
@@ -355,26 +489,8 @@
 //noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
 - (NSMutableAttributedString*)sampleNoteParagraphAttrbutedString
 {
-    NoteParagraphModel *noteParagraphModel = self.sampleNoteParagraph;
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:noteParagraphModel.content];
-    
-    //字体,颜色.
-    UIFont *font    = [noteParagraphModel textFont];
-    UIColor *color  = [noteParagraphModel textColor];
-    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-    
-    //对齐方式.
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-    paragraphStyle.headIndent = 20.0;
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 2.0;
-    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-    
-    return attributedString;
+    NoteParagraphModel *noteParagraph = self.sampleNoteParagraph;
+    return [noteParagraph attributedTextGenerated];
 }
 
 
