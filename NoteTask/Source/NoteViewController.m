@@ -475,9 +475,13 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithNoteModel:self.notes[indexPath.row]];
+    NoteModel *note = self.notes[indexPath.row];
+    
+    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithNoteModel:note];
     [self.navigationController pushViewController:vc animated:YES];
-
+    
+    NSLog(@"NoteModel did select.");
+    NSLog(@"%@", note);
 }
 
 

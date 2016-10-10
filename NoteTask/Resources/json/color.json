@@ -101,7 +101,18 @@
  "enableCustmize" : true,
  "colorstringDefault" : "#e1eeee",
  "colornightstringDefault" : "#e1eeee"
-}
+},
+ 
+{
+ "name" : "ParagraghOnEditingBackground",
+ "title" : "文本编辑时的背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#f0ffff@60",
+ "colornightstringDefault" : "#f0ffff@60"
+},
+ 
+ 
+ 
  
  
  

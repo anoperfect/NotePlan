@@ -111,7 +111,7 @@
         value = style[[property uppercaseString]];
     }
     if(value) {
-        [styleString appendFormat:@"%@: %@", property, value];
+        [styleString appendFormat:@"%@: %@;", property, value];
     }
     
     property = @"font-size";
@@ -120,7 +120,25 @@
         value = style[[property uppercaseString]];
     }
     if(value) {
-        [styleString appendFormat:@"%@: %@", property, value];
+        [styleString appendFormat:@"%@: %@;", property, value];
+    }
+    
+    property = @"font-style";
+    value = style[property];
+    if([value isEqualToString:@"italic"]) {
+        [styleString appendFormat:@"%@: %@;", property, value];
+    }
+    
+    property = @"text-decoration";
+    value = style[property];
+    if([value isEqualToString:@"underline"]) {
+        [styleString appendFormat:@"%@: %@;", property, value];
+    }
+    
+    property = @"border";
+    value = style[property];
+    if([value isEqualToString:@"underline"]) {
+        [styleString appendFormat:@"%@: %@ %@;", property, value, @"solid"];
     }
     
     return [NSString stringWithString:styleString];
@@ -161,28 +179,19 @@
 }
 
 
-- (UIFont*)titleFont
+- (UIFont*)textFont
 {
-    UIFont *font = [UIFont systemFontOfSize:20];
+    NSLog(@"xxx : %@", self.styleDictionay);
+    CGFloat fontSizeDefault = self.isTitle?18:16;
+    UIFont *font = [UIFont systemFontOfSize:fontSizeDefault];
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize = 0.0;
     if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         font = [UIFont systemFontOfSize:ptSize];
     }
     
-    return font;
-}
-
-
-- (UIFont*)textFont
-{
-    NSLog(@"xxx : %@", self.styleDictionay);
-    UIFont *font = [UIFont systemFontOfSize:16];
-    NSString *fontString = self.styleDictionay[@"font-size"];
-    CGFloat ptSize = 0.0;
-    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
-        font = [UIFont systemFontOfSize:ptSize];
-    }
+    //斜体.测试中发现对中文不支持.使用obliq方法.
+    //font = [UIFont fontWithDescriptor:[font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic] size:font.pointSize];
     
     return font;
 }
@@ -239,7 +248,7 @@
     //斜体.
     if([self.styleDictionay[@"font-style"] isEqualToString:@"italic"]) {
         NSLog(@"attributedString add : italic");
-        [attributedString addAttribute:NSObliquenessAttributeName value:@1 range:rangeAll];
+        [attributedString addAttribute:NSObliquenessAttributeName value:@0.5 range:rangeAll];
     }
     
     //下划线.
@@ -263,6 +272,8 @@
         border.insets = UIEdgeInsetsMake(1, 1, 1, 1);
         attributedString.yy_textBackgroundBorder = border;
     }
+    
+    NSLog(@"%@", attributedString);
     
     return attributedString;
 }
@@ -328,9 +339,9 @@ static NSInteger kno = 0;
 - (NSString*)description
 {
     NSMutableString *strm = [[NSMutableString alloc] init];
-    strm = nil;
+    [strm appendFormat:@"======NoteModel description : %p, %@", self, self.title];
     
-    return self.title;
+    return strm;
 }
 
 

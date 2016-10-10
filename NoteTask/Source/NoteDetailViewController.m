@@ -111,6 +111,7 @@
         
         self.titleParagraph = [[NoteParagraphModel alloc] init];
         self.titleParagraph.content = @""; //CREATE_PLACEHOLD_TITLE;
+        self.titleParagraph.isTitle = YES;
         
         NoteParagraphModel *contentParagraph = [[NoteParagraphModel alloc] init];
         contentParagraph.content = @""; CREATE_PLACEHOLD_CONTENTPARAGRAPH;
@@ -142,6 +143,8 @@
     self.tableNoteParagraphs.dataSource = self;
     self.tableNoteParagraphs.delegate = self;
     [self.contentView addSubview:self.tableNoteParagraphs];
+    
+    NSLog(@"%@", self.noteModel);
 }
 
 #define YBLOW 64
@@ -191,8 +194,9 @@
 {
     NSLog(@"identifier : %zd", self.noteModel.identifier);
     
-    
     self.titleParagraph = [NoteParagraphModel noteParagraphFromString:self.noteModel.title];
+    self.titleParagraph.isTitle = YES;
+    
     NSArray<NoteParagraphModel *> *contentNoteParagraphs = [NoteParagraphModel noteParagraphsFromString:self.noteModel.content];
     self.contentParagraphs = [NSMutableArray arrayWithArray:contentNoteParagraphs];
     NSLog(@"content paragraph count : %zd", self.contentParagraphs.count);
@@ -201,6 +205,7 @@
 }
 
 
+#if 0
 - (NSMutableAttributedString*)titleParagraphAttrbutedStringOnDisplay:(BOOL)onDisplay
 {
     NoteParagraphModel* noteParagraphModel = self.titleParagraph;
@@ -220,27 +225,9 @@
     noteParagraphModel.content = string;
     return [noteParagraphModel attributedTextGenerated];
     
-#if 0
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-    UIFont *font    = [noteParagraphModel titleFont];
-    UIColor *color  = [noteParagraphModel textColor];
-    
-    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-    
-    //对齐方式.
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentCenter;
-    paragraphStyle.headIndent = 4.0;
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 2.0;
-    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-    
-    return attributedString;
-#endif
+
 }
+#endif
 
 
 //noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
@@ -262,32 +249,13 @@
     noteParagraphModel.content = string;
     return [noteParagraphModel attributedTextGenerated];
 
-#if 0
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-    
-    //字体,颜色.
-    UIFont *font    = [noteParagraphModel textFont];
-    UIColor *color  = [noteParagraphModel textColor];
-    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-    
-    //对齐方式.
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-    paragraphStyle.headIndent = 20.0;
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 2.0;
-    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-    
-    return attributedString;
-#endif
 }
 
 
 
-                                                            
+
+
+
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -347,33 +315,8 @@
 
     }
     
-    if(indexPath.row == 0) {
-        YYLabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
-        if(!noteParagraphLabel) {
-            noteParagraphLabel = [[YYLabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
-            noteParagraphLabel.numberOfLines = 0;
-            
-            [cell addSubview:noteParagraphLabel];
-            [noteParagraphLabel setTag:TAG_noteParagraphLabel];
-        }
-        
-        //内容设置.
-//        noteParagraphLabel.textAlignment = NSTextAlignmentCenter;
-//        noteParagraphLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        noteParagraphLabel.attributedText = [self titleParagraphAttrbutedStringOnDisplay:YES];
-        
-        //计算可变高度. 同时保存给UITableviewCell的高度计算.
-        CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
-        sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
-        CGFloat heightOptumize = sizeOptumize.height + 20 ;
-        self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:heightOptumize];
-        
-        //设置高度.
-        CGRect frame = noteParagraphLabel.frame;
-        frame.size.height = heightOptumize;
-        noteParagraphLabel.frame = frame;
-    }
-    else if(indexPath.row == 1) {
+    //属性栏.
+    if(indexPath.row == 1) {
         //cell.textLabel.text = @"附加信息";
         CGFloat height = 36.0;
         
@@ -386,6 +329,9 @@
             [cell addSubview:notePropertyView];
             [notePropertyView setTag:TAG_notePropertyView];
         }
+        [[cell viewWithTag:TAG_noteParagraphLabel] removeFromSuperview];
+        [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
+        
         
         [notePropertyView setClassification:self.noteModel.classification color:self.noteModel.color];
         
@@ -396,24 +342,24 @@
             }
         }];
     }
+    //标题和内容.
     else {
-
-        YYLabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
+        UILabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
         if(!noteParagraphLabel) {
-            noteParagraphLabel = [[YYLabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
+            noteParagraphLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
             noteParagraphLabel.numberOfLines = 0;
             
             [cell addSubview:noteParagraphLabel];
             [noteParagraphLabel setTag:TAG_noteParagraphLabel];
         }
         
+        [[cell viewWithTag:TAG_notePropertyView] removeFromSuperview];
+        [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
+
         //内容设置.
+        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
         noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
-        NoteParagraphModel *noteParagraph = self.contentParagraphs[indexPath.row - ROW_NUMBER_TITLE];
-        
-        
         noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
-        //noteParagraphLabel.lineBreakMode = NSLineBreakByWordWrapping;
         
         //计算可变高度. 同时保存给UITableviewCell的高度计算.
         CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
@@ -549,14 +495,9 @@
     YYTextView *noteParagraphTextView = [[YYTextView alloc] init];
     noteParagraphTextView.tag = TAG_noteParagraphTextView;
     noteParagraphTextView.frame = cell.bounds;
-    if([self indexPathIsTitle:indexPath]) {
-        noteParagraphTextView.attributedText = [self titleParagraphAttrbutedStringOnDisplay:NO];
-        noteParagraphTextView.font = [self.titleParagraph titleFont];
-    }
-    else {
-        noteParagraphTextView.attributedText = [self noteParagraphAttrbutedString:[self indexPathContentNoteParagraph:indexPath] onDisplay:NO];
-        noteParagraphTextView.font = [contentParagraph textFont];
-    }
+    
+    noteParagraphTextView.attributedText = [self noteParagraphAttrbutedString:[self indexPathNoteParagraph:indexPath] onDisplay:NO];
+    noteParagraphTextView.font = [contentParagraph textFont];
     
     UIToolbar *keyboardAccessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 36)];
     keyboardAccessory.backgroundColor = [UIColor whiteColor];
@@ -574,7 +515,7 @@
     
     [cell addSubview:noteParagraphTextView];
     
-    cell.backgroundColor = [UIColor blueColor];
+    cell.backgroundColor = [UIColor colorWithName:@"ParagraghOnEditingBackground"];
     
     [self.tableNoteParagraphs scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
     
@@ -744,6 +685,8 @@
     [self.tableNoteParagraphs beginUpdates];
     [self.tableNoteParagraphs reloadRowsAtIndexPaths:@[self.indexPathOnCustmizing] withRowAnimation:UITableViewRowAnimationNone];
     [self.tableNoteParagraphs endUpdates];
+    
+    NSLog(@"%@", self.noteModel);
 }
 
 
@@ -1242,10 +1185,7 @@
 - (void)openClassificationMenu
 {
     CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
-        
         NSLog(@"点击了第%zd个btn",index+1);
-        
-        
     }];
     
     dropMenu.direction = CLDirectionTypeRight;
@@ -1254,9 +1194,7 @@
     
     [self.view addSubview:dropMenu];
     
-    
     NSLog(@"%@", dropMenu);
-    
 }
 
 
@@ -1353,4 +1291,48 @@
     
     return attributedString;
 }
+#endif
+
+
+#if 0
+NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+UIFont *font    = [noteParagraphModel titleFont];
+UIColor *color  = [noteParagraphModel textColor];
+
+[attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
+[attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
+[attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
+
+//对齐方式.
+NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+paragraphStyle.alignment = NSTextAlignmentCenter;
+paragraphStyle.headIndent = 4.0;
+paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+paragraphStyle.lineSpacing = 2.0;
+NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+[attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
+
+return attributedString;
+#endif
+
+#if 0
+NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+
+//字体,颜色.
+UIFont *font    = [noteParagraphModel textFont];
+UIColor *color  = [noteParagraphModel textColor];
+[attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
+[attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
+[attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
+
+//对齐方式.
+NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+paragraphStyle.alignment = NSTextAlignmentLeft;
+paragraphStyle.headIndent = 20.0;
+paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+paragraphStyle.lineSpacing = 2.0;
+NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
+[attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
+
+return attributedString;
 #endif

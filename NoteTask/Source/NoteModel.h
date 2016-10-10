@@ -15,6 +15,7 @@
 
 @interface NoteParagraphModel : NSObject
 
+@property (nonatomic, assign) BOOL      isTitle;
 @property (nonatomic, strong) NSString *content;
 @property (nonatomic, strong) NSString *image;
 @property (nonatomic, strong) NSMutableDictionary *styleDictionay;
@@ -28,7 +29,6 @@
 + (NSString*)noteParagraphsToString:(NSArray<NoteParagraphModel*> *)noteParagraphs;
 
 
-- (UIFont*)titleFont;
 - (UIFont*)textFont;
 - (UIColor*)textColor;
 

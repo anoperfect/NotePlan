@@ -13,13 +13,13 @@
 
 
 
-@interface NoteParagraphCustmiseViewController ()
+@interface NoteParagraphCustmiseViewController () <UITextFieldDelegate>
 
 
 
 
 @property (nonatomic, strong) NoteParagraphModel    *sampleNoteParagraph;
-@property (nonatomic, strong) YYLabel       *sampleText;
+@property (nonatomic, strong) UILabel       *sampleText;
 
 
 /*
@@ -67,6 +67,10 @@
 @property (nonatomic, strong) ColorSelector *textColorSelector;
 
 @property (nonatomic, strong) void(^finishHandle)(NSDictionary *styleDictionary);
+
+
+
+
 
 @end
 
@@ -116,16 +120,26 @@
     self.navigationItem.rightBarButtonItem
             = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finish)];
     
+    //点击空白的地方时关闭软键盘.
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    //设置成NO表示当前控件响应后会传播到其他控件上，默认为YES。
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    //将触摸事件添加到当前view
+    [self.view addGestureRecognizer:tapGestureRecognizer];
     
-    self.sampleText = [[YYLabel alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    
+    self.sampleText = [[UILabel alloc] init];
     [self.contentView addSubview:self.sampleText];
+    self.sampleText.numberOfLines = 0;
     
     self.fontsizeView = [RangeValueView rangeValueViewWithFrame:CGRectMake(10, 100, Width-20, 0)
                                                            name:@"字体大小 - font-size"
                                                        minValue:8.0
                                                        maxValue:36.0 defaultValue:16];
 //    [self.contentView addSubview:self.fontsizeView];
-    
     
     self.fontSizeSlider = [[UISlider alloc] init];
     [self.contentView addSubview:self.fontSizeSlider];
@@ -211,6 +225,9 @@
     self.textColorInput.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     self.textColorInput.layer.borderWidth = 1.0;
     self.textColorInput.layer.borderColor = [UIColor blackColor].CGColor;
+    self.textColorInput.delegate = self;
+    self.textColorInput.returnKeyType = UIReturnKeyDone;
+    self.textColorInput.keyboardType = UIKeyboardTypeDefault;
     
     self.textColorButton = [[UIButton alloc] init];
     [self.contentView addSubview:self.textColorButton];
@@ -232,6 +249,8 @@
     self.textBackgroundColorInput.layer.borderColor = [UIColor blackColor].CGColor;
     
     [self updateSampleText];
+    
+    
 }
 
 
@@ -252,7 +271,7 @@
                                @"textColorLine",
                                @"paddingTextColor",
                                @"textBackgroundColorLine"]
-             withPercentages:@[@(0.1),    @(0.27),          @(0.1),          @(0.06),          @(0.02),     @(0.06),      @(0.06),    @(0.06),         @(0.036),         @(0.01),
+             withPercentages:@[@(0.45),    @(0.01),          @(0.01),          @(0.06),          @(0.02),     @(0.06),      @(0.06),    @(0.06),         @(0.036),         @(0.01),
                                 @(0.036)]];
     
 //    [frameSplite frameSpliteEqual:@"switchs" to:@[@"switchLabelLine", @"switchLine"]];
@@ -340,7 +359,8 @@
     
     return ;
     
-#if 0
+    
+#if 0 //使用动画的方式让游标滑动到整数位置.下面的方法不能实现.
     NSString *string     = [NSString stringWithFormat:@"%.2f", value];
     
     if(!self.fontNumbers) {
@@ -413,7 +433,6 @@
 - (void)finish
 {
     NSLog(@"done. styple : %@", self.sampleNoteParagraph.styleDictionay);
-    
     if(self.finishHandle) {
         self.finishHandle([NSDictionary dictionaryWithDictionary:self.sampleNoteParagraph.styleDictionay]);
     }
@@ -483,6 +502,10 @@
 {
     NSLog(@"styple : %@", self.sampleNoteParagraph.styleDictionay);
     self.sampleText.attributedText = [self sampleNoteParagraphAttrbutedString];
+    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+        self.sampleText.layer.borderColor = [self.sampleNoteParagraph textColor].CGColor;
+        self.sampleText.layer.borderWidth = 1.0f;
+    }
 }
 
 
@@ -492,6 +515,55 @@
     NoteParagraphModel *noteParagraph = self.sampleNoteParagraph;
     return [noteParagraph attributedTextGenerated];
 }
+
+
+- (void)keyboardHide:(id)sender
+{
+    //关闭所有编辑.
+    [self.view endEditing:YES];
+    
+    //针对控件关闭.
+    //[self.textColorInput resignFirstResponder];
+}
+
+
+///键盘显示事件
+- (void) keyboardWillShow:(NSNotification *)notification {
+    //获取键盘高度，在不同设备上，以及中英文下是不同的
+    CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    
+    CGRect frameContentView = self.contentView.frame;
+    frameContentView.origin.y -= kbHeight;
+    
+    // 取得键盘的动画时间，这样可以在视图上移的时候更连贯
+    double duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    //将视图上移计算好的偏移
+    [UIView animateWithDuration:duration animations:^{
+        self.contentView.frame = frameContentView;
+    }];
+}
+
+
+///键盘消失事件
+- (void) keyboardWillHide:(NSNotification *)notification {
+    //获取键盘高度，在不同设备上，以及中英文下是不同的
+    CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    
+    // 键盘动画时间
+    double duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    CGRect frameContentView = self.contentView.frame;
+    frameContentView.origin.y += kbHeight;
+    
+    //视图下沉恢复原状
+    [UIView animateWithDuration:duration animations:^{
+            self.contentView.frame = frameContentView;
+    }];
+}
+
+
+
 
 
 - (void)didReceiveMemoryWarning {
