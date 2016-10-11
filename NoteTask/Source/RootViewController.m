@@ -356,6 +356,17 @@
         return ;
     }
     
+    if([data.title isEqualToString:@"任务"]) {
+        Class class = NSClassFromString(@"TaskViewController");
+        if(class) {
+            UIViewController *ctrl = class.new;
+            ctrl.title = data.title;
+            [self.navigationController pushViewController:ctrl animated:YES];
+        }
+        
+        return ;
+    }
+    
     
     
 }

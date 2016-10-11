@@ -13,7 +13,10 @@
 #import "JSDropDownMenu.h"
 #import "NoteDetailViewController.h"
 
-@interface NoteViewController () <UITableViewDataSource, UITableViewDelegate, JSDropDownMenuDataSource,JSDropDownMenuDelegate> {
+@interface NoteViewController () <UITableViewDataSource, UITableViewDelegate,
+                                        UITextFieldDelegate,
+                                    JSDropDownMenuDataSource,JSDropDownMenuDelegate>
+{
     
     NSMutableArray *_data1;
     NSMutableArray *_data2;
@@ -41,6 +44,9 @@
 @property (nonatomic, strong) NSString *currentClassification;
 @property (nonatomic, strong) NSString *currentColorString;
 @property (nonatomic, strong) NSMutableArray<NoteModel*> *notes;
+
+@property (nonatomic, assign) BOOL onSelectedMode;
+@property (nonatomic, strong) NSMutableArray *indexPathsSelected;
 
 @end
 
@@ -71,15 +77,16 @@
     backItem.title = @"";
     self.navigationItem.backBarButtonItem = backItem;
     
-    UIImage *rightItemImage = [UIImage imageNamed:@"Note"];
+    UIImage *rightItemImage = [UIImage imageNamed:@"slider"];
+#if 0
     CGSize itemSize = CGSizeMake(36, 36);
     UIGraphicsBeginImageContextWithOptions(itemSize, NO, UIScreen.mainScreen.scale);
     CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
     [rightItemImage drawInRect:imageRect];
     rightItemImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(noteCreate)];
+#endif
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(actionMore)];
     self.navigationItem.rightBarButtonItem = rightItem;
     
     //从AppConfig中读取上次保存的类别选项.
@@ -178,36 +185,41 @@
 
 - (void)filterViewBuild
 {
+    if(self.noteFilter) {
+        NSLog(@"filterView already built.");
+        [self.view bringSubviewToFront:self.noteFilter];
+        return ;
+    }
+    
+    self.heightNoteFilter = 36;
+    
+    //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
+    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
+    //    [self.view addSubview:self.noteFilter];
+    //    self.noteFilter.backgroundColor = [UIColor yellowColor];
+    //
+    //    [self.view bringSubviewToFront:self.noteFilter];
     self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", @"个人笔记", nil];
     NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
     if(addedClassifications.count > 0) {
         [self.filterDataClassifications addObjectsFromArray:addedClassifications];
     }
+    [self.filterDataClassifications addObject:@"新增类别"];
     
-    if(!self.noteFilter) {
-        self.heightNoteFilter = 36;
-        
-        //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
-        //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
-        //    [self.view addSubview:self.noteFilter];
-        //    self.noteFilter.backgroundColor = [UIColor yellowColor];
-        //
-        //    [self.view bringSubviewToFront:self.noteFilter];
-
-        
-        self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
-        [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
-        JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
-        menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
-        menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
-        menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
-        menu.dataSource = self;
-        menu.delegate = self;
-        
-        self.noteFilter = menu;
-        
-        [self.contentView addSubview:menu];
-    }
+    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
+    menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
+    menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
+    menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
+    menu.dataSource = self;
+    menu.delegate = self;
+    
+    self.noteFilter = menu;
+    
+    [self.contentView addSubview:menu];
+    
+    //[self showPopupView:menu];
 }
 
 
@@ -312,17 +324,6 @@
     
     [self notesLoadWithClassification:self.currentClassification andColorString:self.currentColorString];
     [self.notesView reloadData];
-    
-    
-    NSLog(@"%@", self.noteFilter.superview);
-    NSLog(@"%@", self.notesView.superview);
-    
-    
-    
-    LOG_VIEW_RECT(self.noteFilter, @"filter")
-    LOG_VIEW_RECT(self.notesView, @"notes")
-    
-
 }
 
 
@@ -343,7 +344,7 @@
 
 - (void)reloadNotesVia:(NSString*)via
 {
-    NSLog(@"111");
+    NSLog(@"reloadNotesVia : %@", via);
     
     if([via isEqualToString:@"load"]) {
         
@@ -473,6 +474,11 @@
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
+    if(self.onSelectedMode) {
+        [self.indexPathsSelected addObject:indexPath];
+        return;
+    }
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     NoteModel *note = self.notes[indexPath.row];
@@ -485,13 +491,27 @@
 }
 
 
-- (void)noteCreate
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithCreateNoteModel];
-    [self.navigationController pushViewController:vc animated:YES];
+    if(self.onSelectedMode) {
+        [self.indexPathsSelected removeObject:indexPath];
+        return;
+    }
+    
+    
 }
 
 
+-(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
+    
+}
+
+
+
+
+#pragma mark - filter
 //关于筛选.
 - (NSInteger)numberOfColumnsInMenu:(JSDropDownMenu *)menu {
     
@@ -573,6 +593,16 @@
 - (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
     
     if(indexPath.column == 0){
+        
+        //增加新增功能.
+        if(self.filterDataClassifications.count - 1 == indexPath.row) {
+            //[self filterViewAddClassification];
+            //[self refreshView];
+            
+            [self showIndicationText:@"not implement" inTime:1.0];
+            return ;
+        }
+        
         self.idxClassifications = indexPath.row;
         self.currentClassification = self.filterDataClassifications[self.idxClassifications];
         if([self.currentClassification isEqualToString:@"全部类别"]) {
@@ -592,10 +622,104 @@
 }
 
 
+- (void)filterViewAddClassification
+{
+    CGRect frame = self.noteFilter.frame;
+#if 0
+    UIView *container = [[UIView alloc] initWithFrame:frame];
+    [self.noteFilter addSubview:container];
+    container.backgroundColor = [UIColor whiteColor];
+    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
+#endif
+    
+    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
+    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
+    //[container addSubview:classificationInputView];
+    classificationInputView.borderStyle     = UITextBorderStyleLine;
+    //    classificationInputView.backgroundColor = [UIColor blueColor];
+    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    classificationInputView.placeholder     = @"请输入新增的栏目";
+    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
+    classificationInputView.returnKeyType = UIReturnKeyDone;
+    classificationInputView.delegate        = self;
+    
+    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
+    classificationInputView.leftView = leftview;
+    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
+    
+    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
+    classificationInputView.layer.borderWidth = 1.5;
+    
+    [classificationInputView becomeFirstResponder];
+    
+    [self showPopupView:classificationInputView];
+    
+}
 
 
 
 
+
+
+
+
+
+#pragma mark - action
+- (void)showActionMenu
+{
+    CGFloat width = 45;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(self.view.frame.size.width - width - 10, 64 + 10, width, self.view.frame.size.height - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = nil;
+    actionStrings = @[@"创建", @"多选", @"恢复预制"];
+    [v setTexts:actionStrings];
+    
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [weakSelf dismissPopupView];
+        
+        if([actionText isEqualToString:@"创建"]) {
+            [weakSelf actionCreateNote];
+            return ;
+        }
+        
+        if([actionText isEqualToString:@"多选"]) {
+            [weakSelf actionMuiltSelect];
+            return;
+        }
+    }];
+    
+    [self showPopupView:v];
+}
+
+
+- (void)actionMore
+{
+    [self showActionMenu];
+}
+
+
+- (void)actionCreateNote
+{
+    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithCreateNoteModel];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+
+- (void)actionMuiltSelect
+{
+    self.onSelectedMode = YES;
+    self.indexPathsSelected = [[NSMutableArray alloc] init];
+    [self.notesView setEditing:YES animated:YES];
+    
+    
+    
+}
+
+
+#pragma mark - w
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

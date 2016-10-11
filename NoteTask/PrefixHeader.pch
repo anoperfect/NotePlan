@@ -63,5 +63,6 @@
 
 #import "AppConfig.h"
 
+#import "TextButtonLine.h"
 
 #endif /* PrefixHeader_pch */

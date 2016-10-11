@@ -248,7 +248,6 @@
     
     noteParagraphModel.content = string;
     return [noteParagraphModel attributedTextGenerated];
-
 }
 
 
@@ -341,37 +340,65 @@
 //                [weakSelf openClassificationMenu];
             }
         }];
-    }
-    //标题和内容.
-    else {
-        UILabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
-        if(!noteParagraphLabel) {
-            noteParagraphLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
-            noteParagraphLabel.numberOfLines = 0;
-            
-            [cell addSubview:noteParagraphLabel];
-            [noteParagraphLabel setTag:TAG_noteParagraphLabel];
-        }
         
-        [[cell viewWithTag:TAG_notePropertyView] removeFromSuperview];
-        [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
+        return cell;
+    }
+    
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+    
+#define USE_UILABEL 1
+    
+#if USE_UILABEL
+    //显示用的具体控件的创建.
+    UILabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
+    if(!noteParagraphLabel) {
+        noteParagraphLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
+        noteParagraphLabel.numberOfLines = 0;
+    }
+    
+    //内容设置.
+    noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
+    noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
+    
+    //计算可变高度. 同时保存给UITableviewCell的高度计算.
+    CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
+    sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
+    
+    
 
-        //内容设置.
-        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
-        noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
-        
-        //计算可变高度. 同时保存给UITableviewCell的高度计算.
-        CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
-        sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
-        CGFloat heightOptumize = sizeOptumize.height + 20 ;
-        self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:heightOptumize];
-        
-        //设置高度.
-        CGRect frame = noteParagraphLabel.frame;
-        frame.size.height = heightOptumize;
-        noteParagraphLabel.frame = frame;
+#endif
+    
+#if USE_YYLABEL
+    //显示用的具体控件的创建.
+    YYLabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
+    if(!noteParagraphLabel) {
+        noteParagraphLabel = [[YYLabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
+        noteParagraphLabel.numberOfLines = 0;
     }
+    
+    //内容设置.
+    noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
+    noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
+    
+    //计算可变高度. 同时保存给UITableviewCell的高度计算.
+    CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
+    sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
+#endif
+    
+    
+    
+    
+    //设置高度.
+    CGFloat heightOptumize = sizeOptumize.height + 20 ;
+    self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:heightOptumize];
+    CGRect frame = noteParagraphLabel.frame;
+    frame.size.height = heightOptumize;
+    noteParagraphLabel.frame = frame;
+    
+    [[cell viewWithTag:TAG_notePropertyView] removeFromSuperview];
+    [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
+    [cell addSubview:noteParagraphLabel];
+    [noteParagraphLabel setTag:TAG_noteParagraphLabel];
     
     return cell;
 }
@@ -686,6 +713,13 @@
     [self.tableNoteParagraphs reloadRowsAtIndexPaths:@[self.indexPathOnCustmizing] withRowAnimation:UITableViewRowAnimationNone];
     [self.tableNoteParagraphs endUpdates];
     
+    //更改过样式后, 重新生成title和content.
+    self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
+    self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
+    
+    //更新到本地数据库.
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    
     NSLog(@"%@", self.noteModel);
 }
 
@@ -808,7 +842,7 @@
             [self addNoteToLocal];
         }
         else {
-            NSLog(@"none content. it would note store to local.");
+            NSLog(@"none content. it would not store to local.");
         }
             
         return ;

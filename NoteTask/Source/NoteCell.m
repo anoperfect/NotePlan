@@ -27,7 +27,7 @@
     
     [super setHighlighted:highlighted animated:animated];
     
-    NSLog(@"setHighlighted");
+    NS0Log(@"setHighlighted");
     
     if (self.highlighted) {
         

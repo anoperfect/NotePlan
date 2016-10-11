@@ -239,7 +239,7 @@
     //对齐方式.
     NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.alignment = NSTextAlignmentLeft;
-    paragraphStyle.headIndent = 20.0;
+    paragraphStyle.headIndent = 0.0;
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     paragraphStyle.lineSpacing = 2.0;
     NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
@@ -339,7 +339,7 @@ static NSInteger kno = 0;
 - (NSString*)description
 {
     NSMutableString *strm = [[NSMutableString alloc] init];
-    [strm appendFormat:@"======NoteModel description : %p, %@", self, self.title];
+    [strm appendFormat:@"======NoteModel description : %p, title:%@, content:%@", self, self.title, self.content];
     
     return strm;
 }

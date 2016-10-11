@@ -527,7 +527,7 @@
 }
 
 
-///键盘显示事件
+#pragma mark - 键盘显示事件
 - (void) keyboardWillShow:(NSNotification *)notification {
     //获取键盘高度，在不同设备上，以及中英文下是不同的
     CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
