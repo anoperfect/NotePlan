@@ -20,5 +20,6 @@ pod 'MJExtension'
 pod 'MJRefresh'
 pod 'FMDB'
 pod 'pop', '~> 1.0'
+pod "GCDWebServer", "~> 3.0"
 
 end

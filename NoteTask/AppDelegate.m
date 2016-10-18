@@ -9,8 +9,9 @@
 #import "AppDelegate.h"
 #import "NoteViewController.h"
 #import "RootViewController.h"
-@interface AppDelegate ()
-
+@interface AppDelegate () {
+GCDWebServer* _webServer;
+}
 @end
 
 @implementation AppDelegate
@@ -27,6 +28,30 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
+    
+    // Create server
+    
+    _webServer = [[GCDWebServer alloc] init];
+    
+    // Add a handler to respond to GET requests on any URL
+    [_webServer addDefaultHandlerForMethod:@"GET"
+                              requestClass:[GCDWebServerRequest class]
+                              processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+                                  
+                                  NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"note.htm"];
+                                  
+                                  NSData *data = [NSData dataWithContentsOfFile:resPath];
+                                  NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+                                  return [GCDWebServerDataResponse responseWithHTML:s];
+                                  
+//                                  return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Hello World</p></body></html>"];
+                                  
+                              }];
+    
+    // Start server on port 8080
+    [_webServer startWithPort:8080 bonjourName:nil];
+    NSLog(@"Visit %@ in your web browser", _webServer.serverURL);
     
     return YES;
 }

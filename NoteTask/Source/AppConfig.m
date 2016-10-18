@@ -419,6 +419,27 @@
 }
 
 
+- (void)configNoteRemoveByIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers
+{
+    BOOL result = YES;
+    
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withQuery:@{@"identifier":noteIdentifiers}];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+    }
+    
+    //return result;
+    
+    
+}
+
+
+
+
+
+
+
 - (void)configNoteUpdate:(NoteModel*)note
 {
     NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
@@ -456,6 +477,18 @@
                             toTable:TABLENAME_NOTE
                      withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
                       withInfoQuery:@{@"identifier":@(noteIdentifier)}];
+}
+
+
+- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers classification:(NSString*)classification
+{
+    NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
+    updateDict[@"classification"]   = classification;
+    
+    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
+                            toTable:TABLENAME_NOTE
+                     withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
+                      withInfoQuery:@{@"identifier":noteIdentifiers}];
 }
 
 

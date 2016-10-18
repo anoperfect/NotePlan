@@ -385,8 +385,11 @@
     sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
 #endif
     
-    
-    
+    //设置边框.
+    if([noteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+        noteParagraphLabel.layer.borderWidth = 1.0;
+        noteParagraphLabel.layer.borderColor = [UIColor blackColor].CGColor;
+    }
     
     //设置高度.
     CGFloat heightOptumize = sizeOptumize.height + 20 ;
@@ -889,6 +892,10 @@
     [self doneUpdate:sender];
     
     if([self indexPathIsLast:indexPathOnEditing]) {
+        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPathOnEditing];
+        noteParagraph = nil;
+        //是否增加最后一段为空的时候, 不允许新增加.
+        
         [self action:@"增加" OnIndexPath:indexPathOnEditing];
     }
     else {
@@ -896,7 +903,6 @@
         [self action:@"编辑" OnIndexPath:nextIndexPath];
     }
 }
-
 
 
 - (void)updateClassificationTo:(NSString*)classification
@@ -917,7 +923,7 @@
 - (void)updateColorStringTo:(NSString*)colorDisplayString
 {
     NSString *colorString = [NoteModel colorDisplayStringToColorString:colorDisplayString];
-    NSLog(@"updateColorStringTo : %@", colorString);
+    NSLog(@"updateColorStringTo : %@", colorString); 
     
     //更新存储.
     [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifier:self.noteModel.identifier colorString:colorString];

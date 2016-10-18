@@ -35,10 +35,14 @@
 //返回新增note的identifier.
 - (NSInteger)configNoteAdd:(NoteModel*)note;
 - (void)configNoteRemoveById:(NSInteger)noteIdentifier;
+- (void)configNoteRemoveByIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers;
 
 
 - (void)configNoteUpdate:(NoteModel*)note;
+
 - (void)configNoteUpdateBynoteIdentifier:(NSInteger)noteIdentifier classification:(NSString*)classification;
+- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers classification:(NSString*)classification;
+
 - (void)configNoteUpdateBynoteIdentifier:(NSInteger)noteIdentifier colorString:(NSString*)colorString;
 
 

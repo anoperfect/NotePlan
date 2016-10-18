@@ -77,18 +77,8 @@
     backItem.title = @"";
     self.navigationItem.backBarButtonItem = backItem;
     
-    UIImage *rightItemImage = [UIImage imageNamed:@"slider"];
-#if 0
-    CGSize itemSize = CGSizeMake(36, 36);
-    UIGraphicsBeginImageContextWithOptions(itemSize, NO, UIScreen.mainScreen.scale);
-    CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
-    [rightItemImage drawInRect:imageRect];
-    rightItemImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-#endif
-    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(actionMore)];
-    self.navigationItem.rightBarButtonItem = rightItem;
-    
+    [self navigationItemRightInit];
+
     //从AppConfig中读取上次保存的类别选项.
     self.currentClassification = @"";
     self.currentColorString = @"*";
@@ -136,6 +126,22 @@
 //    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
     //[self refreshView];
 #endif
+}
+
+
+- (void)navigationItemRightInit
+{
+    UIImage *rightItemImage = [UIImage imageNamed:@"slider"];
+#if 0
+    CGSize itemSize = CGSizeMake(36, 36);
+    UIGraphicsBeginImageContextWithOptions(itemSize, NO, UIScreen.mainScreen.scale);
+    CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
+    [rightItemImage drawInRect:imageRect];
+    rightItemImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+#endif
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(actionMore)];
+    self.navigationItem.rightBarButtonItem = rightItem;
 }
 
 
@@ -476,6 +482,13 @@
 {
     if(self.onSelectedMode) {
         [self.indexPathsSelected addObject:indexPath];
+        if(self.indexPathsSelected.count > 0) {
+            self.title = [NSString stringWithFormat:@"已选择 %zd 篇笔记", self.indexPathsSelected.count];
+        }
+        else {
+            self.title = @"选择笔记";
+        }
+        
         return;
     }
     
@@ -495,6 +508,13 @@
 {
     if(self.onSelectedMode) {
         [self.indexPathsSelected removeObject:indexPath];
+        if(self.indexPathsSelected.count > 0) {
+            self.title = [NSString stringWithFormat:@"已选择 %zd 篇笔记", self.indexPathsSelected.count];
+        }
+        else {
+            self.title = @"选择笔记";
+        }
+        
         return;
     }
     
@@ -714,9 +734,178 @@
     self.indexPathsSelected = [[NSMutableArray alloc] init];
     [self.notesView setEditing:YES animated:YES];
     
+    self.title = @"选择笔记";
+    
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(actionMuiltSelectDone)];
+    self.navigationItem.rightBarButtonItem = rightItem;
+    
+    [self showMuiltSelectToolBar];
+}
+
+
+- (void)showMuiltSelectToolBar
+{
+    NSMutableArray *toolDatas = [[NSMutableArray alloc] init];
+    
+    ButtonData *actionData = nil;
+    
+    actionData = [[ButtonData alloc] init];
+    actionData.keyword      = @"notesDelete";
+    actionData.imageName    = @"Advertising";
+    [toolDatas addObject:actionData];
+    
+    actionData = [[ButtonData alloc] init];
+    actionData.keyword      = @"notesUpdateClassification";
+    actionData.imageName    = @"City";
+    [toolDatas addObject:actionData];
+    
+    actionData = [[ButtonData alloc] init];
+    actionData.keyword      = @"notesShare";
+    actionData.imageName    = @"Diary";
+    [toolDatas addObject:actionData];
+    
+    //重新加载按钮.
+    NSMutableArray *toolBarItems = [[NSMutableArray alloc] init];
+    NSInteger index = 0;
+    for(ButtonData *data in toolDatas) {
+        
+        if(index > 0) {
+            UIBarButtonItem *flexibleitem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:(UIBarButtonSystemItemFlexibleSpace) target:self action:nil];
+            [toolBarItems addObject:flexibleitem];
+        }
+        
+        NSLog(@"index : %zd, %@ %@", index, data.keyword, data.imageName);
+        
+        PushButton *button = [[PushButton alloc] init];
+        button.actionData = data;
+        [button addTarget:self action:@selector(actionMuiltSelectOnPushButton:) forControlEvents:UIControlEventTouchDown];
+        [button setFrame:CGRectMake(0, 0, 60, 60)];
+        if(data.triggerOn) {
+            button.backgroundColor = [UIColor colorWithName:@"CustomButtonTriggerOnBackground"];
+        }
+        UIBarButtonItem *item = nil;
+        if(nil != data.imageName) {
+            UIImage *image = [UIImage imageNamed:data.imageName];
+            button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+            [button setImage:image forState:UIControlStateNormal];
+            item = [[UIBarButtonItem alloc] initWithCustomView:button];
+        }
+        else {
+            //[button setTitle:data.keyword forState:UIControlStateNormal];
+            //[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            item = [[UIBarButtonItem alloc] initWithTitle:data.keyword
+                                                    style:UIBarButtonItemStyleDone
+                                                   target:self
+                                                   action:@selector(actionMuiltSelectOnToolBar:)];
+            
+        }
+        
+        item.tintColor = [UIColor yellowColor];
+        [toolBarItems addObject:item];
+        
+        
+        
+        index ++;
+    }
+    
+    self.navigationController.toolbarHidden = NO;
+    self.toolbarItems = [NSArray arrayWithArray:toolBarItems];
+}
+
+
+- (void)actionMuiltSelectOnKeyword:(NSString*)keyword
+{
+    NSLog(@"actionMuiltSelectOnKeyword : %@", keyword);
+    
+    if(self.indexPathsSelected.count == 0) {
+        [self showIndicationText:@"未选中任何笔记" inTime:1.0];
+        return ;
+    }
+    
+    //关闭多选状态.
+    [self actionMuiltSelectDone];
+    
+    if([keyword isEqualToString:@"notesDelete"]) {
+        
+        
+        return;
+    }
+    
+    if([keyword isEqualToString:@"notesUpdateClassification"]) {
+        
+        
+        return;
+    }
+    
+    if([keyword isEqualToString:@"notesShare"]) {
+        
+        
+        return;
+    }
+    
+    
     
     
 }
+
+
+- (void)actionMuiltSelectOnPushButton:(PushButton*)button
+{
+    [self actionMuiltSelectOnKeyword:button.actionData.keyword];
+}
+
+
+- (void)actionMuiltSelectOnToolBar:(UIBarButtonItem*)sender
+{
+    [self actionMuiltSelectOnKeyword:sender.title];
+}
+
+
+
+
+
+
+- (void)actionMuiltSelectDone
+{
+    self.onSelectedMode = NO;
+    self.indexPathsSelected = [[NSMutableArray alloc] init];
+    [self.notesView setEditing:NO animated:YES];
+    
+    self.title = @"笔记";
+    
+    [self navigationItemRightInit];
+    
+    self.navigationController.toolbarHidden = YES;
+}
+
+
+- (NSArray<NSNumber*>*)notesIdentifierOnMutilSelect
+{
+    NSArray *indexPaths = self.indexPathsSelected;
+    NSMutableArray *notesIdentifier = [[NSMutableArray alloc] init];
+    for(NSIndexPath* indexPath in indexPaths) {
+        [notesIdentifier addObject:@([self noteOnIndexPath:indexPath].identifier)];
+    }
+    
+    return [NSArray arrayWithArray:notesIdentifier];
+}
+
+
+- (void)actionMuiltSelectedNotesDelete
+{
+    NSLog(@"actionMuiltSelectedNotesDelete");
+    NSArray<NSNumber*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
+    [[AppConfig sharedAppConfig] configNoteRemoveByIdentifiers:notesIdentifier];
+}
+
+
+- (void)actionMuiltSelectedNotesChangeClassificationTo:(NSString*)classification
+{
+    NSLog(@"actionMuiltSelectedNotesChangeClassificationTo");
+    NSArray<NSNumber*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
+    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifiers:notesIdentifier classification:classification];
+}
+
 
 
 #pragma mark - w

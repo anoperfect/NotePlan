@@ -24,6 +24,9 @@ PODS:
   - FMDB (2.6.2):
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
+  - GCDWebServer (3.3.2):
+    - GCDWebServer/Core (= 3.3.2)
+  - GCDWebServer/Core (3.3.2)
   - GPUImage (0.1.7)
   - MBProgressHUD (0.9.1)
   - MJExtension (3.0.10)
@@ -56,6 +59,7 @@ DEPENDENCIES:
   - AFNetworking
   - CocoaAsyncSocket
   - FMDB
+  - GCDWebServer (~> 3.0)
   - GPUImage
   - MBProgressHUD
   - MJExtension
@@ -75,6 +79,7 @@ SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   CocoaAsyncSocket: a18c75dca4b08723628a0bacca6e94803d90be91
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  GCDWebServer: 2a375ec42839a41d7187d04e5b688d32fa5c4cd5
   GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   MJExtension: d86aacb740c87519d20e3cca55b6fa4be6cc7548
@@ -91,6 +96,6 @@ SPEC CHECKSUMS:
   YYText: ac09660c9ccd9b817f409a20caa6f5587444d2ae
   YYWebImage: 8da75a611fd0d2e0f58a273f9ca0bc731614cb0d
 
-PODFILE CHECKSUM: e33b30b8c33afb6fc53b54da408b3041a9d30003
+PODFILE CHECKSUM: f759ced233e6e6ea698ac8649a2f7cc75c1c3034
 
 COCOAPODS: 1.0.0
