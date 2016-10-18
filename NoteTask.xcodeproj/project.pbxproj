@@ -74,6 +74,7 @@
 		B5B905411D4FC3E900DF1E24 /* db.json in Resources */ = {isa = PBXBuildFile; fileRef = B5B905401D4FC3E900DF1E24 /* db.json */; };
 		B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C561E21D3942BF00F1EF82 /* NoteFilter.m */; };
 		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
+		B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D4923C1DB5C8DC00794A97 /* TaskCell.m */; };
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
 		B5E5FA871D3799E8000A648D /* Note1.json in Resources */ = {isa = PBXBuildFile; fileRef = B5E5FA861D3799E8000A648D /* Note1.json */; };
 		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
@@ -223,6 +224,8 @@
 		B5C561E11D3942BF00F1EF82 /* NoteFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteFilter.h; path = Source/NoteFilter.h; sourceTree = "<group>"; };
 		B5C561E21D3942BF00F1EF82 /* NoteFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteFilter.m; path = Source/NoteFilter.m; sourceTree = "<group>"; };
 		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
+		B5D4923B1DB5C8DC00794A97 /* TaskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskCell.h; sourceTree = "<group>"; };
+		B5D4923C1DB5C8DC00794A97 /* TaskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCell.m; sourceTree = "<group>"; };
 		B5DC864D1D4A57F600DCE8C8 /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
 		B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextButtonLine.m; sourceTree = "<group>"; };
 		B5E5FA861D3799E8000A648D /* Note1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Note1.json; path = Source/Note1.json; sourceTree = "<group>"; };
@@ -376,6 +379,8 @@
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
 				B56428C91DAB405C00FBB1FE /* TaskModel.h */,
 				B56428CA1DAB405C00FBB1FE /* TaskModel.m */,
+				B5D4923B1DB5C8DC00794A97 /* TaskCell.h */,
+				B5D4923C1DB5C8DC00794A97 /* TaskCell.m */,
 			);
 			name = Task;
 			path = Source/Task;
@@ -907,6 +912,7 @@
 				B56632DF1DB0865E006EE40A /* PushButton.m in Sources */,
 				B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */,
 				B5448F061D658F3100F186BE /* UIView+GlowView.m in Sources */,
+				B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */,
 				B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
 				B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */,

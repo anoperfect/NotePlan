@@ -47,4 +47,20 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+- (NSString*)configSettingGet:(NSString*)key;
+- (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value;
+
+
+
+
 @end

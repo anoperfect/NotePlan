@@ -572,4 +572,44 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- (NSString*)configSettingGet:(NSString*)key
+{
+    return @"";
+}
+
+
+- (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value
+{
+    
+    
+    
+}
+
+
 @end

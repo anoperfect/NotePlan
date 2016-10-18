@@ -203,7 +203,7 @@
     self.borderSwitch = [[UISwitch alloc] init];
     [self.contentView addSubview:self.borderSwitch];
     [self.borderSwitch addTarget:self action:@selector(switchValueChangeBorder) forControlEvents:UIControlEventValueChanged];
-    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px solid #000"]) {
         self.borderSwitch.on = YES;
     }
     
@@ -420,7 +420,7 @@
     NSLog(@"Border : %d", self.borderSwitch.on);
     
     if(self.borderSwitch.on) {
-        self.sampleNoteParagraph.styleDictionay[@"border"] = @"1px";
+        self.sampleNoteParagraph.styleDictionay[@"border"] = @"1px solid #000";
     }
     else {
         [self.sampleNoteParagraph.styleDictionay removeObjectForKey:@"border"];
@@ -502,7 +502,7 @@
 {
     NSLog(@"styple : %@", self.sampleNoteParagraph.styleDictionay);
     self.sampleText.attributedText = [self sampleNoteParagraphAttrbutedString];
-    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+    if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px solid #000"]) {
         self.sampleText.layer.borderColor = [self.sampleNoteParagraph textColor].CGColor;
         self.sampleText.layer.borderWidth = 1.0f;
     }

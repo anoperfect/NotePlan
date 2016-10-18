@@ -51,6 +51,31 @@
 ],
 "preset": [],
 "comment": "笔记"
-}
+},
+           {
+           "tableName": "settings",
+           "databaseNames": [
+                             "config"
+                             ],
+           "columnAttributes": [
+                                {
+                                "columnName": "key",
+                                "dataType": "string",
+                                "isNeedForInsert": true,
+                                "isAutoIncrement": false
+                                },
+                                {
+                                "columnName": "value",
+                                "dataType": "string",
+                                "isNeedForInsert": true,
+                                "isAutoIncrement": false
+                                }
+                                ],
+           "primaryKeys": [
+                           "key"
+                           ],
+           "preset": [],
+           "comment": "设置"
+           }
 ]
 }

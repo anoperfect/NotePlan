@@ -386,7 +386,7 @@
 #endif
     
     //设置边框.
-    if([noteParagraph.styleDictionay[@"border"] isEqualToString:@"1px"]) {
+    if([noteParagraph.styleDictionay[@"border"] isEqualToString:@"1px solid #000"]) {
         noteParagraphLabel.layer.borderWidth = 1.0;
         noteParagraphLabel.layer.borderColor = [UIColor blackColor].CGColor;
     }
