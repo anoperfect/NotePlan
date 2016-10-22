@@ -747,34 +747,34 @@
 {
     NSMutableArray *toolDatas = [[NSMutableArray alloc] init];
     
-    ButtonData *actionData = nil;
+    PushButtonData *actionData = nil;
     
-    actionData = [[ButtonData alloc] init];
-    actionData.keyword      = @"notesDelete";
+    actionData = [[PushButtonData alloc] init];
+    actionData.actionString = @"notesDelete";
     actionData.imageName    = @"Advertising";
     [toolDatas addObject:actionData];
     
-    actionData = [[ButtonData alloc] init];
-    actionData.keyword      = @"notesUpdateClassification";
+    actionData = [[PushButtonData alloc] init];
+    actionData.actionString = @"notesUpdateClassification";
     actionData.imageName    = @"City";
     [toolDatas addObject:actionData];
     
-    actionData = [[ButtonData alloc] init];
-    actionData.keyword      = @"notesShare";
+    actionData = [[PushButtonData alloc] init];
+    actionData.actionString = @"notesShare";
     actionData.imageName    = @"Diary";
     [toolDatas addObject:actionData];
     
     //重新加载按钮.
     NSMutableArray *toolBarItems = [[NSMutableArray alloc] init];
     NSInteger index = 0;
-    for(ButtonData *data in toolDatas) {
+    for(PushButtonData *data in toolDatas) {
         
         if(index > 0) {
             UIBarButtonItem *flexibleitem = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:(UIBarButtonSystemItemFlexibleSpace) target:self action:nil];
             [toolBarItems addObject:flexibleitem];
         }
         
-        NSLog(@"index : %zd, %@ %@", index, data.keyword, data.imageName);
+        NSLog(@"index : %zd, %@ %@", index, data.actionString, data.imageName);
         
         PushButton *button = [[PushButton alloc] init];
         button.actionData = data;
@@ -793,7 +793,7 @@
         else {
             //[button setTitle:data.keyword forState:UIControlStateNormal];
             //[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            item = [[UIBarButtonItem alloc] initWithTitle:data.keyword
+            item = [[UIBarButtonItem alloc] initWithTitle:data.actionString
                                                     style:UIBarButtonItemStyleDone
                                                    target:self
                                                    action:@selector(actionMuiltSelectOnToolBar:)];
@@ -851,7 +851,7 @@
 
 - (void)actionMuiltSelectOnPushButton:(PushButton*)button
 {
-    [self actionMuiltSelectOnKeyword:button.actionData.keyword];
+    [self actionMuiltSelectOnKeyword:button.actionData.actionString];
 }
 
 

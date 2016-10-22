@@ -18,9 +18,20 @@
 @property (nonatomic, strong) NSString *step;
 @property (nonatomic, strong) NSString *dateStart;
 @property (nonatomic, strong) NSString *dateFinish;
-@property (nonatomic, assign) NSInteger status;
+@property (nonatomic, assign) NSInteger status; //0.not finish. 1.finish.
 
 
+
+
+
+@end
+
+
+
+@interface TaskListModel : NSObject
+
+@property (nonatomic, strong) NSString                      *detail;
+@property (nonatomic, strong) NSMutableArray<TaskModel*>    *tasklist;
 
 
 @end
