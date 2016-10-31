@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		06BCD40F01D9418D196B09D5 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */; };
+		B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B520931F1DC19E0E000349A5 /* NoteDetailCell.m */; };
 		B53959261D27F55200FB5408 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53959251D27F55200FB5408 /* NoteViewController.m */; };
 		B539592C1D28112F00FB5408 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B539592B1D28112F00FB5408 /* NoteModel.m */; };
 		B53959301D29524700FB5408 /* NoteBackground1.png in Resources */ = {isa = PBXBuildFile; fileRef = B539592F1D29524700FB5408 /* NoteBackground1.png */; };
@@ -59,6 +60,12 @@
 		B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B62681D2124A4005A2242 /* RootViewController.m */; };
 		B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B626A1D2124A4005A2242 /* SummaryInRoot.m */; };
 		B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */; };
+		B56E369C1DBE656800165050 /* TaskEditTitleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */; };
+		B56E369F1DBE658700165050 /* TaskEditDurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E369E1DBE658700165050 /* TaskEditDurationViewController.m */; };
+		B56E36A21DBE659800165050 /* TaskEditSubTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36A11DBE659800165050 /* TaskEditSubTaskViewController.m */; };
+		B56E36A81DBE65FB00165050 /* TaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36A71DBE65FB00165050 /* TaskListViewController.m */; };
+		B56E36AB1DBE662300165050 /* TaskNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36AA1DBE662300165050 /* TaskNoteViewController.m */; };
+		B56E36AE1DBE664800165050 /* TaskTimeLineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */; };
 		B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B58DE9791D6AB302002B7697 /* ColorSelector.m */; };
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
@@ -98,6 +105,8 @@
 
 /* Begin PBXFileReference section */
 		234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B520931E1DC19E0E000349A5 /* NoteDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteDetailCell.h; path = Source/NoteDetailCell.h; sourceTree = "<group>"; };
+		B520931F1DC19E0E000349A5 /* NoteDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteDetailCell.m; path = Source/NoteDetailCell.m; sourceTree = "<group>"; };
 		B53959241D27F55200FB5408 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = Source/NoteViewController.h; sourceTree = "<group>"; };
 		B53959251D27F55200FB5408 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteViewController.m; path = Source/NoteViewController.m; sourceTree = "<group>"; };
 		B539592A1D28112F00FB5408 /* NoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteModel.h; path = Source/NoteModel.h; sourceTree = "<group>"; };
@@ -197,6 +206,18 @@
 		B56B62691D2124A4005A2242 /* SummaryInRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SummaryInRoot.h; path = Source/SummaryInRoot.h; sourceTree = "<group>"; };
 		B56B626A1D2124A4005A2242 /* SummaryInRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SummaryInRoot.m; path = Source/SummaryInRoot.m; sourceTree = "<group>"; };
 		B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.Storyboard; sourceTree = "<group>"; };
+		B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskEditTitleViewController.h; sourceTree = "<group>"; };
+		B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskEditTitleViewController.m; sourceTree = "<group>"; };
+		B56E369D1DBE658700165050 /* TaskEditDurationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskEditDurationViewController.h; sourceTree = "<group>"; };
+		B56E369E1DBE658700165050 /* TaskEditDurationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskEditDurationViewController.m; sourceTree = "<group>"; };
+		B56E36A01DBE659800165050 /* TaskEditSubTaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskEditSubTaskViewController.h; sourceTree = "<group>"; };
+		B56E36A11DBE659800165050 /* TaskEditSubTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskEditSubTaskViewController.m; sourceTree = "<group>"; };
+		B56E36A61DBE65FB00165050 /* TaskListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskListViewController.h; sourceTree = "<group>"; };
+		B56E36A71DBE65FB00165050 /* TaskListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskListViewController.m; sourceTree = "<group>"; };
+		B56E36A91DBE662300165050 /* TaskNoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskNoteViewController.h; sourceTree = "<group>"; };
+		B56E36AA1DBE662300165050 /* TaskNoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskNoteViewController.m; sourceTree = "<group>"; };
+		B56E36AC1DBE664800165050 /* TaskTimeLineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskTimeLineViewController.h; sourceTree = "<group>"; };
+		B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskTimeLineViewController.m; sourceTree = "<group>"; };
 		B58DE9781D6AB302002B7697 /* ColorSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorSelector.h; path = Source/ColorSelector.h; sourceTree = "<group>"; };
 		B58DE9791D6AB302002B7697 /* ColorSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorSelector.m; path = Source/ColorSelector.m; sourceTree = "<group>"; };
 		B595C25C1C7829E10087744D /* TableViewLastCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewLastCell.h; path = ViewPublic/TableViewLastCell.h; sourceTree = "<group>"; };
@@ -304,6 +325,8 @@
 				B5C561E21D3942BF00F1EF82 /* NoteFilter.m */,
 				B5E9D0A31D32815500395CF0 /* NoteCell.h */,
 				B5E9D0A41D32815500395CF0 /* NoteCell.m */,
+				B520931E1DC19E0E000349A5 /* NoteDetailCell.h */,
+				B520931F1DC19E0E000349A5 /* NoteDetailCell.m */,
 				B5E5FA861D3799E8000A648D /* Note1.json */,
 				B56632D81DAF3179006EE40A /* note.htm */,
 			);
@@ -375,8 +398,20 @@
 			children = (
 				B56428C31DAB403300FBB1FE /* TaskViewController.h */,
 				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
+				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
+				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,
+				B56E369D1DBE658700165050 /* TaskEditDurationViewController.h */,
+				B56E369E1DBE658700165050 /* TaskEditDurationViewController.m */,
+				B56E36A01DBE659800165050 /* TaskEditSubTaskViewController.h */,
+				B56E36A11DBE659800165050 /* TaskEditSubTaskViewController.m */,
+				B56E36A61DBE65FB00165050 /* TaskListViewController.h */,
+				B56E36A71DBE65FB00165050 /* TaskListViewController.m */,
 				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
+				B56E36A91DBE662300165050 /* TaskNoteViewController.h */,
+				B56E36AA1DBE662300165050 /* TaskNoteViewController.m */,
+				B56E36AC1DBE664800165050 /* TaskTimeLineViewController.h */,
+				B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */,
 				B56428C91DAB405C00FBB1FE /* TaskModel.h */,
 				B56428CA1DAB405C00FBB1FE /* TaskModel.m */,
 				B5D4923B1DB5C8DC00794A97 /* TaskCell.h */,
@@ -870,6 +905,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B56E36AE1DBE664800165050 /* TaskTimeLineViewController.m in Sources */,
 				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
 				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
@@ -878,6 +914,7 @@
 				B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */,
 				B564D0D81C9110FD00E903B6 /* UIScrollView+ScalableCover.m in Sources */,
 				B564D0CF1C9110FD00E903B6 /* NSString+pinyin.m in Sources */,
+				B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,
 				B5448F091D658F3100F186BE /* UIView+SetRect.m in Sources */,
 				B56428C51DAB403300FBB1FE /* TaskViewController.m in Sources */,
@@ -892,12 +929,16 @@
 				B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */,
 				B564D0D91C9110FD00E903B6 /* UIView+Util.m in Sources */,
 				B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */,
+				B56E369F1DBE658700165050 /* TaskEditDurationViewController.m in Sources */,
+				B56E36A81DBE65FB00165050 /* TaskListViewController.m in Sources */,
 				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
 				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
+				B56E36AB1DBE662300165050 /* TaskNoteViewController.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
 				B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */,
 				B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */,
+				B56E36A21DBE659800165050 /* TaskEditSubTaskViewController.m in Sources */,
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
 				B56632DC1DB08652006EE40A /* ButtonData.m in Sources */,
 				B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */,
@@ -913,6 +954,7 @@
 				B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */,
 				B5448F061D658F3100F186BE /* UIView+GlowView.m in Sources */,
 				B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */,
+				B56E369C1DBE656800165050 /* TaskEditTitleViewController.m in Sources */,
 				B564D0DB1C9110FD00E903B6 /* HorizonalTableViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
 				B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */,

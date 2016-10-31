@@ -53,6 +53,10 @@
 - (void)setClassification:(NSString*)classification color:(NSString*)color
 {
     NSLog(@"setClassification : %@, color : %@", classification, color);
+    
+    self.classificationLabel.frame = CGRectMake(0, 0, self.frame.size.width * 0.66 - 20, self.frame.size.height);
+    self.colorLabel.frame = CGRectMake(self.frame.size.width * 0.66, 0, self.frame.size.width * 0.34 - 20, self.frame.size.height);
+    
     NSString *displayclassification = classification.length > 0 ? [NSString stringWithFormat:@"类别:%@   ", classification] : @"类别:未定义   ";
 #if 0
     NSMutableAttributedString *one = [[NSMutableAttributedString alloc] initWithString:displayclassification];

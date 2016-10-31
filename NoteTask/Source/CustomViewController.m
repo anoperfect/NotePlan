@@ -21,6 +21,9 @@
 @property (nonatomic, strong) MBProgressHUD *messageIndicationHUD;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) MBProgressHUD *popupHUD;
+
+@property (nonatomic, strong) void(^popupViewDismissBlock)(void);
+
 @end
 
 @implementation CustomViewController
@@ -60,7 +63,10 @@
 }
 
 
-
+- (void)addSubview:(UIView*)view
+{
+    [self.contentView addSubview:view];
+}
 
 
 - (void)showIndicationText:(NSString*)text inTime:(NSTimeInterval)secs;
@@ -73,7 +79,7 @@
         self.messageIndicationHUD.userInteractionEnabled = NO;
         self.messageIndicationHUD.delegate = self;
         self.messageIndicationHUD.removeFromSuperViewOnHide = NO; //设置这个.
-        self.messageIndicationHUD.yOffset = 100 - self.view.bounds.size.height / 2;
+        self.messageIndicationHUD.yOffset = 100 - VIEW_HEIGHT / 2;
     }
     
     self.messageIndicationHUD.labelText = text;
@@ -160,8 +166,33 @@
 }
 
 
+- (void)showPopupView:(UIView*)view containerAlpha:(CGFloat)alpha dismiss:(void(^)(void))dismiss
+{
+    #define TAG_popupView_container     1000000002
+    UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
+    containerView.alpha = alpha;
+    containerView.tag = TAG_popupView_container;
+    //    [self.view addSubview:containerView];
+    [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
+    tapGestureRecognizer.numberOfTapsRequired = 1;
+    [containerView addGestureRecognizer:tapGestureRecognizer];
+    [containerView addSubview:view];
+    
+    self.popupViewDismissBlock = dismiss;
+}
+
+
+
+
 - (void)dismissPopupView
 {
+    if(self.popupViewDismissBlock) {
+        self.popupViewDismissBlock();
+    }
+    
 //    UIView *containerView = [self.view viewWithTag:TAG_popupView_container];
     UIView *containerView = [[[UIApplication sharedApplication] keyWindow] viewWithTag:TAG_popupView_container];
     for(id obj in containerView.subviews) {

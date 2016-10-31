@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 
-@class NoteModel;
+#import "NoteModel.h"
+#import "TaskModel.h"
 
 
 
@@ -29,21 +30,19 @@
 
 - (NSArray<NoteModel*> *)configNoteGets;
 - (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString;
-- (NoteModel*)configNoteGetByNoteIdentifier:(NSInteger)noteIdentifier;
+- (NoteModel*)configNoteGetByNoteIdentifier:(NSString*)noteIdentifier;
 
 
 //返回新增note的identifier.
-- (NSInteger)configNoteAdd:(NoteModel*)note;
-- (void)configNoteRemoveById:(NSInteger)noteIdentifier;
-- (void)configNoteRemoveByIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers;
+- (BOOL)configNoteAdd:(NoteModel*)note;
+- (void)configNoteRemoveById:(NSString*)noteIdentifier;
+- (void)configNoteRemoveByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
 
 - (void)configNoteUpdate:(NoteModel*)note;
 
-- (void)configNoteUpdateBynoteIdentifier:(NSInteger)noteIdentifier classification:(NSString*)classification;
-- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers classification:(NSString*)classification;
-
-- (void)configNoteUpdateBynoteIdentifier:(NSInteger)noteIdentifier colorString:(NSString*)colorString;
+- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers classification:(NSString*)classification;
+- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers colorString:(NSString*)colorString;
 
 
 
@@ -61,6 +60,11 @@
 - (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value;
 
 
+
+- (NSArray<TaskInfo*>*)configTaskInfoGets;
+- (BOOL)configTaskInfoAdd:(TaskInfo*)taskinfo;
+- (void)configTaskInfoRemoveBySn:(NSArray<NSString*>*)sn;
+- (void)configTaskInfoUpdate:(TaskInfo*)taskinfo;
 
 
 @end

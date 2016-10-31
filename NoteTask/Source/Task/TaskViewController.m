@@ -9,7 +9,7 @@
 #import "TaskViewController.h"
 #import "TaskModel.h"
 #import "TaskCell.h"
-
+#import "AppConfig.h"
 
 
 
@@ -22,7 +22,7 @@
 
 @property (nonatomic, assign) BOOL dayMode;
 
-@property (nonatomic, strong) NSMutableArray<TaskListModel*> *tasks;
+@property (nonatomic, strong) TaskGroup *taskGroup;
 
 @property (nonatomic, strong) NSIndexPath *indexPathDetaied; //只有一个可以点击后展开状态. 展开前需关闭前一个.
 @property (nonatomic, assign) CGFloat heightDetailedCell; //纪录下展开的cell的fit高度.
@@ -57,6 +57,10 @@
     [self dataTasksReload];
     
     [self subviewBuild];
+    
+    NSLog(@"-%zd", [@"1" compare:@"2"]);
+    NSLog(@"-%zd", [@"1" compare:@"1"]);
+    NSLog(@"-%zd", [@"2" compare:@"1"]);
 }
 
 
@@ -64,7 +68,7 @@
 {
     [super viewWillLayoutSubviews];
     
-    self.tasksView.frame = self.contentView.bounds;
+    self.tasksView.frame = VIEW_BOUNDS;
 }
 
 
@@ -102,12 +106,43 @@
 
 - (void)tasksViewBuild
 {
-    self.tasksView = [[UITableView alloc] initWithFrame:self.contentView.bounds style:UITableViewStylePlain];
+    self.tasksView = [[UITableView alloc] initWithFrame:VIEW_BOUNDS style:UITableViewStylePlain];
     [self.contentView addSubview:self.tasksView];
+    self.tasksView.separatorStyle = UITableViewCellSeparatorStyleSingleLineEtched;
     self.tasksView.dataSource   = self;
     self.tasksView.delegate     = self;
     //注册UITableViewCell重用.
     [self.tasksView registerClass:[TaskCell class] forCellReuseIdentifier:@"TaskCell"];
+    
+    /*添加轻扫手势*/
+    //注意一个轻扫手势只能控制一个方向，默认向右，通过direction进行方向控制
+    UISwipeGestureRecognizer *swipeGestureToRight=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewSwipeToRight:)];
+    //swipeGestureToRight.direction=UISwipeGestureRecognizerDirectionRight;//默认为向右轻扫
+    [self.tasksView addGestureRecognizer:swipeGestureToRight];
+    
+    UISwipeGestureRecognizer *swipeGestureToLeft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewSwipeToLeft:)];
+    swipeGestureToLeft.direction=UISwipeGestureRecognizerDirectionLeft;
+    [self.tasksView addGestureRecognizer:swipeGestureToLeft];
+}
+
+
+- (void)tableViewSwipeToRight:(UISwipeGestureRecognizer*)gesture
+{
+    CGPoint point = [gesture locationInView:self.tasksView];
+    NSIndexPath *indexPath = [self.tasksView indexPathForRowAtPoint:point];
+    if(indexPath) {
+        [self actionOnIndexPath:indexPath byString:@"finish"];
+    }
+}
+
+
+- (void)tableViewSwipeToLeft:(UISwipeGestureRecognizer*)gesture
+{
+    CGPoint point = [gesture locationInView:self.tasksView];
+    NSIndexPath *indexPath = [self.tasksView indexPathForRowAtPoint:point];
+    if(indexPath) {
+        [self actionOnIndexPath:indexPath byString:@"redo"];
+    }
 }
 
 
@@ -124,7 +159,7 @@
     sectionHeaderView.tag = section;
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 2, sectionHeaderView.frame.size.width - 10, 41)];
-    label.text = self.tasks[section].detail;
+    label.text = [self.taskGroup dayNameOnSection:section];
     [sectionHeaderView addSubview:label];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionSectionTap:)];
@@ -135,10 +170,9 @@
 }
 
 
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 60.0;
+    CGFloat height = 80.0;
     if([self.indexPathDetaied isEqual:indexPath]) {
         height = self.heightDetailedCell;
     }
@@ -150,16 +184,19 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSInteger sections = self.tasks.count;
-    sections = 4;
+    NSInteger sections ;
+    sections = 3;
     return sections;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger rows = self.tasks[section].tasklist.count;
+    NSInteger rows;
     rows = 6;
+    
+    TaskDayList *taskDayList = [self.taskGroup taskDayListOnSection:section];
+    rows = taskDayList.taskinfos.count;
     
     if([self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
         rows = 0;
@@ -176,7 +213,7 @@
     cell.imageView.layer.cornerRadius = 6;
     
     cell.detailedMode = [self.indexPathDetaied isEqual:indexPath];
-    TaskModel *task = [self dataTaskModeOnIndexPath:indexPath];
+    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
     cell.task = task;
     __weak typeof(self) _self = self;
     cell.actionOn = ^(NSString* actionString){
@@ -227,36 +264,33 @@
 
 - (void)dataTasksReload
 {
-    self.tasks = [[NSMutableArray alloc] init];
-    TaskListModel *list ;
-    TaskModel *task ;
-    
-    for(NSInteger idxList = 0; idxList < 4 ; idxList ++ ) {
-        list = [[TaskListModel alloc] init];
-        list.detail = [NSString stringWithFormat:@"abc-%zd", idxList];
-        list.tasklist = [[NSMutableArray alloc] init];
-        for(NSInteger idxTask = 0; idxTask < 6; idxTask ++) {
-            task = [[TaskModel alloc] init];
-            task.title = [NSString stringWithFormat:@"%zd:%zd-111分十分艰苦的技术开发技术开发设计款发动机风扇肯德基风扇会计法深刻的风景哦日福建省开发经费可是对方离开", idxList, idxTask+1];
-            [list.tasklist addObject:task];
-        }
-        
-        [self.tasks addObject:list];
-    }
+    self.taskGroup = [[TaskGroup alloc] init];
+    self.taskGroup.taskinfos = [[AppConfig sharedAppConfig] configTaskInfoGets];
 }
 
 
 
-- (TaskModel*)dataTaskModeOnIndexPath:(NSIndexPath*)indexPath
+- (TaskInfo*)dataTaskModeOnIndexPath:(NSIndexPath*)indexPath
 {
-    TaskListModel *list = self.tasks[indexPath.section];
-    TaskModel *task = list.tasklist[indexPath.row];
-    return task;
+    switch (indexPath.section) {
+        case 0:
+            return self.taskGroup.taskDayListToday.taskinfos[indexPath.row];
+            break;
+            
+        case 1:
+            return self.taskGroup.taskDayListTomorrow.taskinfos[indexPath.row];
+            break;
+            
+        case 2:
+            return self.taskGroup.taskDayListComming.taskinfos[indexPath.row];
+            break;
+            
+        default:
+            break;
+    }
+    
+    return nil;
 }
-
-
-
-
 
 
 - (void)actionMore
@@ -273,21 +307,19 @@
     NSIndexPath *prevIndexPath = self.indexPathDetaied;
     self.indexPathDetaied = indexPath;
     
-    [self.tasksView beginUpdates];
     if(prevIndexPath) {
-        [self.tasksView reloadRowsAtIndexPaths:@[prevIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self actionReloadTasksViewOnIndexPaths:@[prevIndexPath, indexPath]];
     }
-    [self.tasksView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tasksView endUpdates];
+    else {
+        [self actionReloadTasksViewOnIndexPath:indexPath];
+    }
 }
 
 
 - (void)actionCloseDetailedOnIndexPath:(NSIndexPath*)indexPath
 {
     self.indexPathDetaied = nil;
-    [self.tasksView beginUpdates];
-    [self.tasksView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [self.tasksView endUpdates];
+    [self actionReloadTasksViewOnIndexPath:indexPath];
 }
 
 
@@ -312,31 +344,26 @@
         [self.sectionsWrap removeObject:@(section)];
     }
     
-    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:section];
-    [self.tasksView beginUpdates];
-    [self.tasksView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
-    [self.tasksView endUpdates];
+    [self actionReloadTasksViewSection:section];
 }
-
-
 
 
 
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
-    TaskModel *task = [self dataTaskModeOnIndexPath:indexPath];
+    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
     if([actionString isEqualToString:@"finish"]) {
         task.status = 1;
         self.indexPathDetaied = nil;
-        [self actionReloadOnIndexPath:indexPath];
+        [self actionReloadTasksViewOnIndexPath:indexPath];
         return ;
     }
     
     if([actionString isEqualToString:@"redo"]) {
         if(task.status == 1) {
             task.status = 0;
-            [self actionReloadOnIndexPath:indexPath];
+            [self actionReloadTasksViewOnIndexPath:indexPath];
         }
         else {
             [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
@@ -345,7 +372,36 @@
     }
     
     if([actionString isEqualToString:@"edit"]) {
-        TaskCellActionMenu *menu = [[TaskCellActionMenu alloc] initWithFrame:CGRectMake(self.contentView.frame.size.width * 0.2, 0, self.contentView.frame.size.width * 0.8, self.contentView.frame.size.height)];
+        //编辑时效果. row=0的滚动到row0. row>=1的滚动到row1. 然后计算frame弹出输入框控件.
+        //编辑行滚动到最上行.
+//        [self.tasksView moveRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0] toIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+        
+        [self.tasksView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        TaskCell *cell = [self.tasksView cellForRowAtIndexPath:indexPath];
+        CGRect tmp = [cell.summayView convertRect:cell.summayView.bounds toView:[UIApplication sharedApplication].keyWindow];
+        LOG_RECT(tmp, @"---")
+        
+        UIView *v0 = self.view;
+        while(v0) {
+            NSLog(@"v0 : %@", v0);
+            v0 = [v0 superview];
+        }
+        
+        UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, 100)];
+        textView.text = task.content;
+        textView.font = [UIFont systemFontOfSize:14.5];
+        textView.backgroundColor = [UIColor whiteColor];
+        __weak typeof(self) _self = self;
+        __weak typeof(textView) _textView = textView;
+        [self showPopupView:textView containerAlpha:0.3 dismiss:^{
+            [_self actionUpdateTaskContentOn:indexPath to:_textView.text];
+        }];
+        
+        return ;
+    }
+    
+    if([actionString isEqualToString:@"edit"]) {
+        TaskCellActionMenu *menu = [[TaskCellActionMenu alloc] initWithFrame:CGRectMake(VIEW_WIDTH * 0.2, 0, VIEW_WIDTH * 0.8, VIEW_HEIGHT)];
         [self.contentView addSubview:menu];
         
         menu.backgroundColor = [UIColor blueColor];
@@ -359,12 +415,57 @@
 }
 
 
-- (void)actionReloadOnIndexPath:(NSIndexPath*)indexPath
+- (void)actionReloadTasksViewOnIndexPath:(NSIndexPath*)indexPath
 {
     [self.tasksView beginUpdates];
     [self.tasksView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     [self.tasksView endUpdates];
 }
+
+- (void)actionReloadTasksViewOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
+{
+    [self.tasksView beginUpdates];
+    [self.tasksView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    [self.tasksView endUpdates];
+}
+
+
+- (void)actionReloadTasksViewSection:(NSInteger)section
+{
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:section];
+    [self.tasksView beginUpdates];
+    [self.tasksView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    [self.tasksView endUpdates];
+}
+
+
+- (void)actionReloadTasksView
+{
+    [self.tasksView reloadData];
+}
+
+
+- (void)actionUpdateTaskContentOn:(NSIndexPath*)indexPath to:(NSString*)text
+{
+    //检查内容是否有更改.
+    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
+    if([task.content isEqualToString:text]) {
+        
+        
+        return ;
+    }
+    
+    //根据sn更新数据库存储.
+    
+    
+    //根据sn更新self.tasks数据源.
+    
+    
+    //更新tasksView.
+}
+
+
+
 
 
 

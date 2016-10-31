@@ -24,7 +24,7 @@
 #import "FrameSplite.h"
 #import "UIpConfig.h"
 #import "DBData.h"
-
+#import "NSObject+Util.h"
 
 
 #import "YYText/YYText.h"

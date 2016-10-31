@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-@class TaskModel;
+#import "TaskModel.h"
 @interface TaskCell : UITableViewCell
-@property (nonatomic, strong) TaskModel *task;
+@property (nonatomic, strong) TaskInfo *task;
 @property (nonatomic, assign) BOOL detailedMode;
 
 
 @property (nonatomic, strong) void(^actionOn)(NSString*);
-
+@property (nonatomic, strong, readonly) UILabel *summayView;
 @end
 
 

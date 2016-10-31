@@ -44,7 +44,7 @@
 
 //    let blurEffect: UIBlurEffect = UIBlurEffect(style: .Light)
 //    let blurView: UIVisualEffectView = UIVisualEffectView(effect: blurEffect)
-//    blurView.frame = CGRectMake(50.0, 50.0, self.view.frame.width - 100.0, 200.0)
+//    blurView.frame = CGRectMake(50.0, 50.0, VIEW_WIDTH - 100.0, 200.0)
 //    self.view.addSubview(blurView)
     
     

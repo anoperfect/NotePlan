@@ -98,9 +98,9 @@
 {
     [super viewWillLayoutSubviews];
     
-    self.noteFilter.frame = CGRectMake(0, 0, self.contentView.frame.size.width, 36);
+    self.noteFilter.frame = CGRectMake(0, 0, VIEW_WIDTH, 36);
     
-    CGRect frameNotesView = self.contentView.bounds;
+    CGRect frameNotesView = VIEW_BOUNDS;
     frameNotesView.origin.y += self.heightNoteFilter ;
     frameNotesView.size.height -= self.heightNoteFilter;
     self.notesView.frame = frameNotesView;
@@ -157,7 +157,7 @@
 - (void)notesViewBuild
 {
     if(!self.notesView) {
-        CGRect frame = self.contentView.bounds;
+        CGRect frame = VIEW_BOUNDS;
         frame.origin.y += self.heightNoteFilter ;
         frame.size.height -= self.heightNoteFilter;
         self.notesView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
@@ -200,7 +200,7 @@
     self.heightNoteFilter = 36;
     
     //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
-    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, heightNoteFilter)];
+    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, heightNoteFilter)];
     //    [self.view addSubview:self.noteFilter];
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
@@ -353,16 +353,6 @@
     NSLog(@"reloadNotesVia : %@", via);
     
     if([via isEqualToString:@"load"]) {
-        
-//        NSMutableArray *indexPaths = [NSMutableArray array];
-//        for (int i = 0; i < self.notes.count; i++) {
-//            
-//            [indexPaths addObject:[NSIndexPath indexPathForItem:i inSection:0]];
-//        }
-//        
-//        //self.tableViewLoadData = YES;
-//        [self.notesView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-        
         [self.notesView reloadData];
         
         return ;
@@ -652,7 +642,7 @@
     frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
 #endif
     
-    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
+    frame = CGRectMake(0, 64, VIEW_WIDTH, 36);
     UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
     //[container addSubview:classificationInputView];
     classificationInputView.borderStyle     = UITextBorderStyleLine;
@@ -687,8 +677,8 @@
 #pragma mark - action
 - (void)showActionMenu
 {
-    CGFloat width = 45;
-    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(self.view.frame.size.width - width - 10, 64 + 10, width, self.view.frame.size.height - 10 * 2)];
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
     NSArray<NSString*> *actionStrings = nil;
@@ -709,6 +699,51 @@
             [weakSelf actionMuiltSelect];
             return;
         }
+        
+        if([actionText isEqualToString:@"恢复预制"]) {
+
+            NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"note.htm"];
+#if 0
+            NSData *data = [NSData dataWithContentsOfFile:resPath];
+            
+            UIActivityViewController *activiryViewController = [[UIActivityViewController alloc] initWithActivityItems:@[data] applicationActivities:nil];
+            
+            NSArray *excludedActivities = @[UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
+                                            UIActivityTypePostToWeibo,
+                                            UIActivityTypeMessage, UIActivityTypeMail,
+                                            UIActivityTypePrint, UIActivityTypeCopyToPasteboard,
+                                            UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
+                                            UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
+                                            UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo];
+            activiryViewController.excludedActivityTypes = excludedActivities;
+            
+            
+            [self presentViewController:activiryViewController animated:YES completion:^(void){
+                
+            }];
+#endif
+            NSURL *url = [NSURL fileURLWithPath:resPath];
+            NSArray *objectsToShare = @[url];
+            
+            UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+            
+            // Exclude all activities except AirDrop.
+            NSArray *excludedActivities = @[UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
+                                            UIActivityTypePostToWeibo,
+                                            UIActivityTypeMessage, UIActivityTypeMail,
+                                            UIActivityTypePrint, UIActivityTypeCopyToPasteboard,
+                                            UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
+                                            UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
+                                            UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo];
+            controller.excludedActivityTypes = excludedActivities;
+            
+            // Present the controller
+            [self presentViewController:controller animated:YES completion:nil];
+            
+            
+            return;
+        }
+        
     }];
     
     [self showPopupView:v];
@@ -879,12 +914,12 @@
 }
 
 
-- (NSArray<NSNumber*>*)notesIdentifierOnMutilSelect
+- (NSArray<NSString*>*)notesIdentifierOnMutilSelect
 {
     NSArray *indexPaths = self.indexPathsSelected;
-    NSMutableArray *notesIdentifier = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString*> *notesIdentifier = [[NSMutableArray alloc] init];
     for(NSIndexPath* indexPath in indexPaths) {
-        [notesIdentifier addObject:@([self noteOnIndexPath:indexPath].identifier)];
+        [notesIdentifier addObject:[self noteOnIndexPath:indexPath].identifier];
     }
     
     return [NSArray arrayWithArray:notesIdentifier];
@@ -894,7 +929,7 @@
 - (void)actionMuiltSelectedNotesDelete
 {
     NSLog(@"actionMuiltSelectedNotesDelete");
-    NSArray<NSNumber*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
+    NSArray<NSString*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
     [[AppConfig sharedAppConfig] configNoteRemoveByIdentifiers:notesIdentifier];
 }
 
@@ -902,7 +937,7 @@
 - (void)actionMuiltSelectedNotesChangeClassificationTo:(NSString*)classification
 {
     NSLog(@"actionMuiltSelectedNotesChangeClassificationTo");
-    NSArray<NSNumber*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
+    NSArray<NSString*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
     [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifiers:notesIdentifier classification:classification];
 }
 

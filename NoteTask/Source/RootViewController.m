@@ -62,7 +62,7 @@
     _summary = [[SummaryInRoot alloc] init];
     [_summary fromMenuName:_menus[_selectedIndex]];
     _summary.tag = 1;
-    [self.view addSubview:_summary];
+    [self addSubview:_summary];
     
     //菜单的数据.
     [self buildMenus];
@@ -87,7 +87,7 @@
 
 - (void)viewWillLayoutSubviews1
 {
-    CGSize size = self.view.bounds.size;
+    CGSize size = VIEW_SIZE;
     
     FrameSplite *f = [[FrameSplite alloc] initWithSize:size];
     [f frameSplite:FRAMESPLITE_NAME_MAIN
@@ -185,7 +185,9 @@
 
 - (void)viewWillLayoutSubviews
 {
-    CGSize size = self.view.bounds.size;
+    [super viewWillLayoutSubviews];
+    
+    CGSize size = VIEW_SIZE;
     
     FrameSplite *f = [[FrameSplite alloc] initWithSize:size];
     [f frameSplite:FRAMESPLITE_NAME_MAIN
@@ -319,7 +321,7 @@
         MenuButton *button = [[MenuButton alloc] init];
         [button addTarget:self action:@selector(clickMenu:) forControlEvents:UIControlEventTouchDown];
         button.tag = idx + 100;
-        [self.view addSubview:button];
+        [self addSubview:button];
         [_buttons addObject:button];
         
         [button setMenuButtonData:_menus[idx]];
@@ -385,7 +387,7 @@
     _settingView.tag = 3;
     _settingView.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:0.8];
     
-    [self.view addSubview:_settingView];
+    [self addSubview:_settingView];
     
     
 }

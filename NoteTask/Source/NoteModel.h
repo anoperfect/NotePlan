@@ -43,7 +43,8 @@
 
 //本地存储时的时候的格式.
 @interface NoteModel : NSObject
-@property (nonatomic, assign) NSInteger identifier;
+@property (nonatomic, assign) NSInteger sn;
+@property (nonatomic, strong) NSString* identifier;
 
 
 @property (nonatomic, strong) NSString *title;
@@ -59,6 +60,7 @@
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *createdAt;
 @property (nonatomic, strong) NSString *modifiedAt;
+@property (nonatomic, strong) NSString *browseredAt;
 @property (nonatomic, strong) NSString *source;
 
 
@@ -91,7 +93,9 @@
 + (NSString*)colorStringToColorDisplayString:(NSString*)colorString;
 
 
+- (NSString*)generateWWWPage;
 
++ (NSString*)randonIdentifierStringWithLength:(NSInteger)length;
 
 @end
 

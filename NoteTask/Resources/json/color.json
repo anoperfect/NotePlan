@@ -64,11 +64,11 @@
 },
  
 {
- "name" : "NoteCellBackground1",
- "title" : "Note行1",
+ "name" : "NoteParagraphs",
+ "title" : "详情背景",
  "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
+ "colorstringDefault" : "white",
+ "colornightstringDefault" : "white"
 },
  
 {

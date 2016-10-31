@@ -449,10 +449,9 @@
         return ;
     }
     
-    CGFloat width = self.contentView.bounds.size.width * 0.8;
-    CGRect frameInit = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
-    CGRect frameShow = CGRectMake(self.contentView.frame.size.width - width, 0, width, self.contentView.frame.size.height);
-//    CGRect frameRemove = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+    CGFloat width = VIEW_WIDTH * 0.8;
+    CGRect frameInit = CGRectMake(VIEW_WIDTH - 0, 0, width, VIEW_HEIGHT);
+    CGRect frameShow = CGRectMake(VIEW_WIDTH - width, 0, width, VIEW_HEIGHT);
     
     __weak typeof(self) _self = self;
     self.textColorSelector = [[ColorSelector alloc] initWithFrame:frameInit
@@ -477,10 +476,8 @@
     NSLog(@"selectedTextColorString : %@, %@", selectedColorText, selectedColorString);
     
     //关闭颜色选择器.
-    CGFloat width = self.contentView.bounds.size.width * 0.8;
-//    CGRect frameInit = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
-//    CGRect frameShow = CGRectMake(self.contentView.frame.size.width - width, 0, width, self.contentView.frame.size.height);
-    CGRect frameRemove = CGRectMake(self.contentView.frame.size.width - 0, 0, width, self.contentView.frame.size.height);
+    CGFloat width = VIEW_WIDTH * 0.8;
+    CGRect frameRemove = CGRectMake(VIEW_WIDTH - 0, 0, width, VIEW_HEIGHT);
     
     [UIView animateWithDuration:1.0 animations:^{
         self.textColorSelector.frame = frameRemove;

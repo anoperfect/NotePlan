@@ -181,7 +181,7 @@
 
 - (UIFont*)textFont
 {
-    NSLog(@"xxx : %@", self.styleDictionay);
+    NS0Log(@"xxx : %@", self.styleDictionay);
     CGFloat fontSizeDefault = self.isTitle?18:16;
     UIFont *font = [UIFont systemFontOfSize:fontSizeDefault];
     NSString *fontString = self.styleDictionay[@"font-size"];
@@ -273,7 +273,7 @@
         attributedString.yy_textBackgroundBorder = border;
     }
     
-    NSLog(@"%@", attributedString);
+    NS0Log(@"%@", attributedString);
     
     return attributedString;
 }
@@ -441,11 +441,14 @@ static NSInteger kno = 0;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict
 {
-    NS0Log(@"noteFromDictionary : %@", dict);
+    NSLog(@"noteFromDictionary : %@", dict);
     NoteModel *note = [[NoteModel alloc] init];
     
+    note.sn
+    = [dict[@"rowid"] integerValue];
+    
     note.identifier
-    = [dict[@"identifier"] integerValue];
+    = dict[@"identifier"];
     
     note.title
     = dict[@"title"];
@@ -470,6 +473,8 @@ static NSInteger kno = 0;
     = dict[@"createdAt"];
     note.modifiedAt
     = dict[@"modifiedAt"];
+    note.browseredAt
+    = dict[@"browseredAt"];
     note.source
     = dict[@"source"];
     
@@ -506,7 +511,7 @@ static NSInteger kno = 0;
         title = @"无标题";
     }
     else {
-        title = [NSString stringWithFormat:@"[%zd]%@", self.identifier, titleNoteParagraph.content];
+        title = [NSString stringWithFormat:@"[%@]%@", self.identifier, titleNoteParagraph.content];
     }
 
     return title;
@@ -532,6 +537,62 @@ static NSInteger kno = 0;
     }
     
     return [NSString stringWithString:summary];
+}
+
+
+- (NSString*)generateWWWPage
+{
+    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"note.htm"];
+    NSData *data = [NSData dataWithContentsOfFile:resPath];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title?self.title:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.content" withString:self.content?self.content:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?self.createdAt:@""];
+    return s;
+}
+
+
++ (NSString*)randonIdentifierStringWithLength:(NSInteger)length
+{
+    static char kchs[36] = {'0', '1'};
+    char s[100];
+    
+    NSInteger idx;
+    for(idx = 0; idx < length && idx < 100 - 1; idx ++) {
+        s[idx] = kchs[arc4random() % 36];
+    }
+    s[idx] = '\0';
+    
+    return [NSString stringWithUTF8String:s];
+}
+
+
++ (void)sortNotes:(NSMutableArray<NoteModel*>*)notes By:(NSString*)by ascend:(BOOL)ascend
+{
+    if([by isEqualToString:@"createdAt"]) {
+        [notes sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            NoteModel *note1 = obj1;
+            NoteModel *note2 = obj2;
+            return ascend?[note1.createdAt compare:note2.createdAt]:[note2.createdAt compare:note1.createdAt];
+        }];
+    }
+    
+    if([by isEqualToString:@"modifiedAt"]) {
+        [notes sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            NoteModel *note1 = obj1;
+            NoteModel *note2 = obj2;
+            return ascend?[note1.modifiedAt compare:note2.modifiedAt]:[note2.modifiedAt compare:note1.modifiedAt];
+        }];
+    }
+    
+    if([by isEqualToString:@"browseredAt"]) {
+        [notes sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            NoteModel *note1 = obj1;
+            NoteModel *note2 = obj2;
+            return ascend?[note1.browseredAt compare:note2.browseredAt]:[note2.browseredAt compare:note1.browseredAt];
+        }];
+    }
 }
 
 

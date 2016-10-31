@@ -15,6 +15,8 @@
 
 @interface TaskCell ()
 
+@property (nonatomic, strong) UIView *container;
+
 @property (nonatomic, strong) UIView *statusView;
 @property (nonatomic, strong) UILabel *summayView;
 
@@ -35,24 +37,30 @@
     NSLog(@"111");
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.container = [[UIView alloc] init];
+        [self addSubview:self.container];
+        
         self.summayView = [[UILabel alloc] init];
-        [self addSubview:self.summayView];
+        [self.container addSubview:self.summayView];
         
         self.actionsMenu = [[UIToolbar alloc] init];
-        [self addSubview:self.actionsMenu];
+        [self.container addSubview:self.actionsMenu];
         
         self.actionsContainer = [[UIView alloc] init];
-        [self addSubview:self.actionsContainer];
+        [self.container addSubview:self.actionsContainer];
         
     }
     return self;
 }
 
 
-- (void)setTask:(TaskModel*)task
+- (void)setTask:(TaskInfo*)task
 {
     CGRect frameCell = self.frame;
-    CGRect frameSummary = CGRectMake(64, 10, self.frame.size.width - 64 - 6, 12);
+    UIEdgeInsets edgeContainer = UIEdgeInsetsMake(10, 10, 10, 10);
+    CGRect frameContainer = self.bounds;
+    frameContainer = UIEdgeInsetsInsetRect(frameContainer, edgeContainer);
+    CGRect frameSummary = CGRectMake(64, 10, frameContainer.size.width - 64 - 6, 12);
     CGRect frameActions;
     self.summayView.numberOfLines = 1;
     if(self.detailedMode) {
@@ -60,18 +68,8 @@
         frameSummary.size.height = 100;
     }
     
-    LOG_VIEW_RECT(self, @"taskcell");
-    LOG_VIEW_RECT(self.summayView, @"summay");
-    
-//    self.summayView.font = [UIFont systemFontOfSize:14.5];
-//    self.summayView.text = task.title;
-    
-//    let attributedText = NSAttributedString(string: "内容", attributes: [NSStrikethroughStyleAttributeName: 1])
-//    let contentLabel = UILabel()
-//    contentLabel.attributedText = attributedText
-    
-    NSUInteger length = [task.title length];
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:task.title];
+    NSUInteger length = [task.content length];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:task.content];
     UIColor *textColor = [UIColor blackColor];
     UIColor *textFinishColor = [UIColor grayColor];
     UIFont *textFont = [UIFont systemFontOfSize:14.5];
@@ -89,7 +87,7 @@
         
         //删除线.
         [attributedString addAttribute:NSStrikethroughStyleAttributeName value:@(NSUnderlinePatternSolid | NSUnderlineStyleSingle) range:NSMakeRange(0, length)];
-        [attributedString addAttribute:NSStrikethroughColorAttributeName value:(id)[UIColor blackColor] range:NSMakeRange(0, length)];
+        [attributedString addAttribute:NSStrikethroughColorAttributeName value:(id)textFinishColor range:NSMakeRange(0, length)];
     }
     
     self.summayView.attributedText = attributedString;
@@ -105,17 +103,17 @@
     
     if(self.detailedMode) {
 //        self.actionsMenu.hidden = NO;
-        frameActions = CGRectMake(0, frameSummary.origin.y + frameSummary.size.height, frameCell.size.width, 36);
+        frameActions = CGRectMake(0, frameSummary.origin.y + frameSummary.size.height + 10, frameContainer.size.width, 36);
         self.actionsMenu.frame = frameActions;
         NSArray<NSString*> *actionsKeyword = @[@"checkin", @"edit", @"subtask", @"finish", @"redo"];
         NSInteger count = actionsKeyword.count;
         NSLog(@"actions count : %zd", count);
         
         CGFloat heightActions = 36;
-        CGFloat heightAction = 20;
+        CGFloat heightAction = 18;
         CGFloat padding = (frameActions.size.width - actionsKeyword.count * heightAction) / (actionsKeyword.count + 1);
         CGFloat edgeTop = (heightActions - heightAction) / 2 ;
-        CGFloat edgeLeft = (frameActions.size.width / actionsKeyword.count - heightActions ) / 2;
+        CGFloat edgeLeft = (frameActions.size.width / actionsKeyword.count - heightAction ) / 2;
         
         self.actionsContainer.frame = frameActions;
         self.actionsContainer.hidden = NO;
@@ -134,27 +132,44 @@
             button.frame = CGRectMake(padding + idx * (padding + heightAction), (heightActions - heightAction) / 2, heightAction, heightAction);
             [button setImageEdgeInsets:UIEdgeInsetsMake(edgeTop, edgeLeft, edgeTop, edgeLeft)];
             button.frame = CGRectMake(idx * frameActions.size.width / actionsKeyword.count, 0, frameActions.size.width / actionsKeyword.count, heightActions);
+            LOG_RECT(button.frame, @"button")
+            NSLog(@"%lf, %lf", edgeTop, edgeLeft);
+            
+            
             [button addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchDown];
         }
         
-        self.actionsMenu.items = @[
-                                   [[UIBarButtonItem alloc] initWithTitle:@"abc" style:UIBarButtonItemStylePlain target:self action:nil],
-                                   
-                                   
-                                   
-                                   
-                                   ];
-        
-        
-        frameCell.size.height = frameActions.origin.y + frameActions.size.height;
-        NSLog(@"--- cell height : %lf", frameCell.size.height);
-        self.frame = frameCell;
+        frameContainer.size.height = frameActions.origin.y + frameActions.size.height;
         
         self.actionsMenu.backgroundColor = [UIColor whiteColor];
     }
     else {
         self.actionsMenu.hidden = YES;
+        frameContainer.size.height = 60;
+        
     }
+    
+#if 0
+    CAGradientLayer *newShadow = [[CAGradientLayer alloc] init];
+    CGRect newShadowFrame =   CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
+    newShadow.frame = newShadowFrame;
+    CGColorRef darkColor = [UIColor blackColor].CGColor;
+    CGColorRef lightColor =    [UIColor whiteColor].CGColor;
+    newShadow.colors = [NSArray arrayWithObjects:(__bridge id _Nonnull)(lightColor),darkColor,nil];
+    [self.container.layer insertSublayer:newShadow atIndex:0];
+#endif
+    
+    
+    frameCell.size.height = frameContainer.size.height + edgeContainer.top + edgeContainer.bottom;
+    NSLog(@"--- cell height : %lf", frameCell.size.height);
+    self.frame = frameCell;
+    self.container.frame = frameContainer;
+    self.container.backgroundColor = [UIColor whiteColor];
+    self.container.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.container.layer.shadowOffset = CGSizeMake(2, 2);
+    self.container.layer.shadowOpacity = 0.8;
+    self.container.layer.shadowRadius = 2;
+    
     
 }
 

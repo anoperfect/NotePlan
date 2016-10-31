@@ -9,6 +9,10 @@
 #import "AppDelegate.h"
 #import "NoteViewController.h"
 #import "RootViewController.h"
+#import "AppConfig.h"
+
+
+
 @interface AppDelegate () {
 GCDWebServer* _webServer;
 }
@@ -37,14 +41,17 @@ GCDWebServer* _webServer;
     [_webServer addDefaultHandlerForMethod:@"GET"
                               requestClass:[GCDWebServerRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+                                  NSArray<NSString*> *paths = [request.path componentsSeparatedByString:@"/"];
+                                  NSString* noteIdentifier = [paths lastObject];
+                                  noteIdentifier = noteIdentifier?noteIdentifier:@"null";
                                   
-                                  NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"note.htm"];
-                                  
-                                  NSData *data = [NSData dataWithContentsOfFile:resPath];
-                                  NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-
-                                  return [GCDWebServerDataResponse responseWithHTML:s];
-                                  
+                                  NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetByNoteIdentifier:noteIdentifier];
+                                  if(note) {
+                                      return [GCDWebServerDataResponse responseWithHTML:[note generateWWWPage]];
+                                  }
+                                  else {
+                                      return [GCDWebServerDataResponse responseWithStatusCode:404];
+                                  }
 //                                  return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Hello World</p></body></html>"];
                                   
                               }];

@@ -91,6 +91,8 @@
     self.commentCount.font = [UIFont systemFontOfSize:12];
     self.commentCount.textColor = [UIColor grayColor];
     [self.contentView addSubview:self.commentCount];
+    
+    [self.bodyLabel setLayoutMargins:UIEdgeInsetsMake(10, 10, 10, 10)];
 }
 
 

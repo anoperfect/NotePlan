@@ -27,7 +27,7 @@
 ],
 "columnAttributes":
   [
-    {"columnName": "identifier",     "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": true},
+    {"columnName": "identifier",     "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "title",          "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "content",        "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "summary",        "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
@@ -38,6 +38,7 @@
     {"columnName": "location",       "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "createdAt",      "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "modifiedAt",     "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "browseredAt",    "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "source",         "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "synchronize",    "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "countCollect",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
@@ -46,14 +47,12 @@
     {"columnName": "countBrowser",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "countEdit",      "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
   ],
-"primaryKeys": [
-"identifier"
-],
+"primaryKeys": [ ],
 "preset": [],
 "comment": "笔记"
 },
            {
-           "tableName": "settings",
+           "tableName": "setting",
            "databaseNames": [
                              "config"
                              ],
@@ -76,6 +75,87 @@
                            ],
            "preset": [],
            "comment": "设置"
+           },
+           {
+           "tableName":"taskinfo",
+           "databaseNames":["config"],
+           "columnAttributes":[
+                                {
+                                    "columnName":"sn",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"content",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"status",
+                                    "dataType":"integer",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"committedAt",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"modifiedAt",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"signedAt",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"finishedAt",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"scheduleType",
+                                    "dataType":"integer",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"dayRepeat",
+                                    "dataType":"integer",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"daysStrings",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"time",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                },
+                                {
+                                    "columnName":"period",
+                                    "dataType":"string",
+                                    "isNeedForInsert":true,
+                                    "isAutoIncrement":false
+                                }
+           ],
+           "primaryKeys":["sn"],
+           "preset":[],
+           "comment":"计划"
            }
 ]
 }

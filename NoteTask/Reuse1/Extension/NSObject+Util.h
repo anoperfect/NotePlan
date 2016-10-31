@@ -17,3 +17,15 @@
 
 
 @end
+
+
+
+@interface NSString (DateString)
+
++ (BOOL)stringIsAllDigtal:(NSString*)string;
++ (BOOL)stringIsValidDayString:(NSString*)dayString;
+
++ (NSString*)dayStringToday;
++ (NSString*)dayStringTomorrow;
+
+@end
