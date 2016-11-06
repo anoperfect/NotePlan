@@ -20,6 +20,7 @@
 #define TABLENAME_NOTE              @"note"
 #define TABLENAME_SETTING           @"setting"
 #define TABLENAME_TASKINFO          @"taskinfo"
+#define TABLENAME_TASKRECORD        @"taskrecord"
 
 
 @interface AppConfig ()
@@ -27,6 +28,7 @@
 //具体的数据库操作尽量通过DBData.
 @property (nonatomic, strong) DBData *dbData;
 
+@property (nonatomic, strong) AFHTTPSessionManager *session;
 
 @end
 
@@ -516,7 +518,7 @@
     note.countDislike = 0;
     note.countBrowser = 0;
     note.countEdit = 0;
-    //[self configNoteAdd:note];
+    [self configNoteAdd:note];
     
     note.identifier = @"preset2";
     note.title = @"<p style=\"color:blue; text-align:center\">color - red    使用说明1 red使用说明2使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1</p>";
@@ -552,7 +554,51 @@
     note.classification = @"新增";
     [self configNoteAdd:note];
     
+    TaskInfo *task;
+    task = [[TaskInfo alloc] init];
+    task.sn = @"t1";
+    task.content = @"英语单词";
+    task.status = 1;
+    task.committedAt = @"2016-11-01 09:10:36";
+    task.modifiedAt = @"2016-11-01 09:10:36";
+    task.signedAt = @"2016-11-01 09:10:36";
+    task.finishedAt = @"";
+    task.scheduleType = 2;
+    task.dayRepeat = YES;
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04";
+    task.time = @"07:00-23:00";
+    task.period = @"period1";
+    [self configTaskInfoAdd:task];
     
+    task = [[TaskInfo alloc] init];
+    task.sn = @"t2";
+    task.content = @"英语单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤";
+    task.status = 1;
+    task.committedAt = @"2016-11-01 09:16:36";
+    task.modifiedAt = @"2016-11-01 09:16:36";
+    task.signedAt = @"2016-11-01 09:16:36";
+    task.finishedAt = @"";
+    task.scheduleType = 2;
+    task.dayRepeat = YES;
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07";
+    task.time = @"07:00-23:00";
+    task.period = @"period2k";
+    [self configTaskInfoAdd:task];
+    
+    task = [[TaskInfo alloc] init];
+    task.sn = @"t3";
+    task.content = @"t3英语单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤";
+    task.status = 1;
+    task.committedAt = @"2016-11-01 09:12:36";
+    task.modifiedAt = @"2016-11-01 09:12:36";
+    task.signedAt = @"2016-11-01 09:12:36";
+    task.finishedAt = @"";
+    task.scheduleType = 2;
+    task.dayRepeat = YES;
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07";
+    task.time = @"07:00-23:00";
+    task.period = @"period3t";
+    [self configTaskInfoAdd:task];
     
     
     
@@ -690,7 +736,7 @@
             }
         }
     }
-    NSLog(@"All note number : %zd", dicts.count);
+    NSLog(@"All task number : %zd", dicts.count);
     
     return [NSArray arrayWithArray:arrayReturnM];
 }
@@ -779,6 +825,123 @@
                                  };
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfoUpdate:updateDict withInfoQuery:@{@"sn":taskinfo.sn}];
 }
+
+
+
+
+
+
+
+
+
+
+- (NSArray<TaskRecord*>*)configTaskRecordGets
+{
+    NSMutableArray<TaskRecord*> *arrayReturnM = [[NSMutableArray alloc] init];
+    
+    //默认降序.
+    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
+                                                       toTable:TABLENAME_TASKRECORD
+                                                   columnNames:nil
+                                                     withQuery:nil
+                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
+    NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
+    if(dicts.count > 0) {
+        for(NSDictionary *dict in dicts) {
+            TaskRecord *taskRecord = [TaskRecord taskRecordFromDictionary:dict];
+            if(taskRecord) {
+                [arrayReturnM addObject:taskRecord];
+            }
+        }
+    }
+    NSLog(@"All note number : %zd", dicts.count);
+    
+    return [NSArray arrayWithArray:arrayReturnM];
+}
+
+
+
+- (BOOL)configTaskRecordAdd:(TaskRecord*)taskRecord
+{
+    BOOL result = YES;
+    
+    NSDictionary *infoInsert = @{
+                                 DBDATA_STRING_COLUMNS:
+                                     @[
+                                         @"snTaskInfo",
+                                         @"snTaskRecord",
+                                         @"status",
+                                         @"committedAt",
+                                         @"modifiedAt",
+                                         @"record",
+                                         ],
+                                 DBDATA_STRING_VALUES:
+                                     @[
+                                         @[
+                                             taskRecord.snTaskInfo,
+                                             taskRecord.snTaskRecord,
+                                             @(taskRecord.type),
+                                             taskRecord.committedAt,
+                                             taskRecord.modifiedAt,
+                                             taskRecord.record,
+                                             ]
+                                         ]
+                                 };
+    
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfo:infoInsert];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+        return result;
+    }
+    
+    //tasksub.
+    
+    
+    return result;
+}
+
+
+- (void)configTaskRecordRemoveBySn:(NSArray<NSString*>*)sn
+{
+    BOOL result = YES;
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withQuery:@{@"snTaskRecord":sn}];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+    }
+}
+
+
+- (void)configTaskRecordUpdate:(TaskRecord*)taskRecord
+{
+    NSDictionary *updateDict = @{
+                                 //@"sn":taskRecord.sn,
+                                 @"snTaskInfo":taskRecord.snTaskInfo,
+                                 @"type":@(taskRecord.type),
+                                 @"committedAt":taskRecord.committedAt,
+                                 @"modifiedAt":taskRecord.modifiedAt,
+                                 @"record":taskRecord.record
+                                 };
+    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfoUpdate:updateDict withInfoQuery:@{@"snTaskRecord":taskRecord.snTaskRecord}];
+}
+
+
+
+- (AFHTTPSessionManager *)HTTPSessionManager
+{
+    if(!self.session) {
+        self.session = [AFHTTPSessionManager manager];
+        [self.session setResponseSerializer:[AFHTTPResponseSerializer serializer]];
+    }
+    
+    
+    
+    return self.session;
+}
+
+
+
 
 
 @end

@@ -8,23 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TaskModel : NSObject
 
-
-
-
-@property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *content;
-@property (nonatomic, strong) NSString *step;
-@property (nonatomic, strong) NSString *dateStart;
-@property (nonatomic, strong) NSString *dateFinish;
-@property (nonatomic, assign) NSInteger status; //0.not finish. 1.finish.
 
 //day时间点.         day时间段.              days时间段.    day.                     days.
 //repeat.           repeat.                              repeat.
 //workday repeat.   workday repeat.                      workday repeat.
-
-@end
 
 
 #if 0
@@ -72,16 +60,6 @@ submmitAt:
 
 
 
-@interface TaskListModel : NSObject
-
-@property (nonatomic, strong) NSString                      *detail;
-@property (nonatomic, strong) NSMutableArray<TaskModel*>    *tasklist;
-
-
-@end
-
-
-
 
 
 
@@ -121,57 +99,10 @@ submmitAt:
 
 
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict;
-+ (NSMutableDictionary<NSString*,NSMutableArray*>*)taskinfosGroupByDay:(NSArray<TaskInfo*>*)taskinfos;
 
 @end
 
 
-
-
-
-@interface TaskRecord : NSObject
-
-@property (nonatomic, strong) NSString *sn;
-@property (nonatomic, assign) NSInteger type;
-@property (nonatomic, strong) NSString *record;
-@property (nonatomic, strong) NSString *committedAt;
-@property (nonatomic, strong) NSString *modifiedAt;
-
-
-@end
-
-
-@interface TaskDayList : NSObject
-
-@property (nonatomic, strong) NSString                      *dayName;
-@property (nonatomic, strong) NSString                      *dayString;
-@property (nonatomic, strong) NSMutableArray<TaskInfo*>      *taskinfos;
-
-
-+(instancetype)taskDayListWithDayName:(NSString*)dayName andDayString:(NSString*)dayString;
-
-@end
-
-
-
-@interface TaskGroup : NSObject
-
-@property (nonatomic, strong) NSArray<TaskInfo*>* taskinfos;
-
-@property (nonatomic, strong, readonly) NSString *dateStringToday;
-@property (nonatomic, strong, readonly) NSString *dateStringTomorrow;
-
-@property (nonatomic, strong, readonly) TaskDayList *taskDayListBefore;
-@property (nonatomic, strong, readonly) TaskDayList *taskDayListToday;
-@property (nonatomic, strong, readonly) TaskDayList *taskDayListTomorrow;
-@property (nonatomic, strong, readonly) TaskDayList *taskDayListComming;
-
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString*,NSMutableArray*>* taskinfosSortedByDay; //将任务按照day分类.
-
-- (NSString*)dayNameOnSection:(NSInteger)section;
-- (TaskDayList*)taskDayListOnSection:(NSInteger)section;
-
-@end
 
 
 

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "TaskModel.h"
+#import "TaskInfoManager.h"
 @interface TaskCell : UITableViewCell
-@property (nonatomic, strong) TaskInfo *task;
+@property (nonatomic, strong) TaskDay *taskDay;
 @property (nonatomic, assign) BOOL detailedMode;
 
 

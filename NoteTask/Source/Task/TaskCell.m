@@ -54,7 +54,7 @@
 }
 
 
-- (void)setTask:(TaskInfo*)task
+- (void)setTaskDay:(TaskDay*)taskDay
 {
     CGRect frameCell = self.frame;
     UIEdgeInsets edgeContainer = UIEdgeInsetsMake(10, 10, 10, 10);
@@ -68,14 +68,14 @@
         frameSummary.size.height = 100;
     }
     
-    NSUInteger length = [task.content length];
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:task.content];
+    NSUInteger length = [taskDay.taskinfo.content length];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:taskDay.taskinfo.content];
     UIColor *textColor = [UIColor blackColor];
     UIColor *textFinishColor = [UIColor grayColor];
     UIFont *textFont = [UIFont systemFontOfSize:14.5];
     UIFont *textFinishFont = [UIFont systemFontOfSize:14.6];
     
-    if(task.status == 0) {
+    if(taskDay.finishedAt.length == 0) {
         [attributedString addAttribute:NSFontAttributeName value:textFont range:NSMakeRange(0, attributedString.length)];
         [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:NSMakeRange(0, attributedString.length)];
         [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, attributedString.length)];

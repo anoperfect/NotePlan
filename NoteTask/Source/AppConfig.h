@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-
-
 #import "NoteModel.h"
 #import "TaskModel.h"
+#import "TaskRecord.h"
 
 
 
@@ -66,5 +65,16 @@
 - (void)configTaskInfoRemoveBySn:(NSArray<NSString*>*)sn;
 - (void)configTaskInfoUpdate:(TaskInfo*)taskinfo;
 
+- (NSArray<TaskRecord*>*)configTaskRecordGets;
+- (BOOL)configTaskRecordAdd:(TaskRecord*)taskRecord;
+- (void)configTaskRecordRemoveBySn:(NSArray<NSString*>*)sn;
+- (void)configTaskRecordUpdate:(TaskRecord*)taskRecord;
+
+
+
+
+
+- (AFHTTPSessionManager *)HTTPSessionManager;
+#define HTTPMANAGE [[AppConfig sharedAppConfig] HTTPSessionManager]
 
 @end

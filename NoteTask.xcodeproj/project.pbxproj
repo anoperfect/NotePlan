@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		06BCD40F01D9418D196B09D5 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */; };
+		B5056A8C1DC82A8F00979758 /* TaskRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = B5056A8B1DC82A8F00979758 /* TaskRecord.m */; };
+		B5056A8F1DC82AA500979758 /* TaskInfoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B5056A8E1DC82AA500979758 /* TaskInfoManager.m */; };
+		B5056A921DC82ABC00979758 /* TaskRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5056A911DC82ABC00979758 /* TaskRecordViewController.m */; };
+		B5056A951DC8523700979758 /* NoteShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5056A941DC8523700979758 /* NoteShareViewController.m */; };
+		B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */ = {isa = PBXBuildFile; fileRef = B5056A961DC85A9000979758 /* NoteTemplate.htm */; };
 		B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B520931F1DC19E0E000349A5 /* NoteDetailCell.m */; };
 		B53959261D27F55200FB5408 /* NoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B53959251D27F55200FB5408 /* NoteViewController.m */; };
 		B539592C1D28112F00FB5408 /* NoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B539592B1D28112F00FB5408 /* NoteModel.m */; };
@@ -105,6 +110,15 @@
 
 /* Begin PBXFileReference section */
 		234CE8449ADEFB83A938A23D /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5056A8A1DC82A8F00979758 /* TaskRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskRecord.h; sourceTree = "<group>"; };
+		B5056A8B1DC82A8F00979758 /* TaskRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskRecord.m; sourceTree = "<group>"; };
+		B5056A8D1DC82AA500979758 /* TaskInfoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskInfoManager.h; sourceTree = "<group>"; };
+		B5056A8E1DC82AA500979758 /* TaskInfoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskInfoManager.m; sourceTree = "<group>"; };
+		B5056A901DC82ABC00979758 /* TaskRecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskRecordViewController.h; sourceTree = "<group>"; };
+		B5056A911DC82ABC00979758 /* TaskRecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskRecordViewController.m; sourceTree = "<group>"; };
+		B5056A931DC8523700979758 /* NoteShareViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteShareViewController.h; path = Source/NoteShareViewController.h; sourceTree = "<group>"; };
+		B5056A941DC8523700979758 /* NoteShareViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteShareViewController.m; path = Source/NoteShareViewController.m; sourceTree = "<group>"; };
+		B5056A961DC85A9000979758 /* NoteTemplate.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = NoteTemplate.htm; path = Source/NoteTemplate.htm; sourceTree = "<group>"; };
 		B520931E1DC19E0E000349A5 /* NoteDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteDetailCell.h; path = Source/NoteDetailCell.h; sourceTree = "<group>"; };
 		B520931F1DC19E0E000349A5 /* NoteDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteDetailCell.m; path = Source/NoteDetailCell.m; sourceTree = "<group>"; };
 		B53959241D27F55200FB5408 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteViewController.h; path = Source/NoteViewController.h; sourceTree = "<group>"; };
@@ -313,6 +327,8 @@
 				B53959251D27F55200FB5408 /* NoteViewController.m */,
 				B55A83431D3DC80E00814DE3 /* NoteDetailViewController.h */,
 				B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */,
+				B5056A931DC8523700979758 /* NoteShareViewController.h */,
+				B5056A941DC8523700979758 /* NoteShareViewController.m */,
 				B5B392AC1D407678001D30BF /* NotePCustmiseViewController.h */,
 				B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */,
 				B55A83461D3DC81C00814DE3 /* NoteCreateViewController.h */,
@@ -329,6 +345,7 @@
 				B520931F1DC19E0E000349A5 /* NoteDetailCell.m */,
 				B5E5FA861D3799E8000A648D /* Note1.json */,
 				B56632D81DAF3179006EE40A /* note.htm */,
+				B5056A961DC85A9000979758 /* NoteTemplate.htm */,
 			);
 			name = Note;
 			sourceTree = "<group>";
@@ -412,8 +429,14 @@
 				B56E36AA1DBE662300165050 /* TaskNoteViewController.m */,
 				B56E36AC1DBE664800165050 /* TaskTimeLineViewController.h */,
 				B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */,
+				B5056A901DC82ABC00979758 /* TaskRecordViewController.h */,
+				B5056A911DC82ABC00979758 /* TaskRecordViewController.m */,
 				B56428C91DAB405C00FBB1FE /* TaskModel.h */,
 				B56428CA1DAB405C00FBB1FE /* TaskModel.m */,
+				B5056A8A1DC82A8F00979758 /* TaskRecord.h */,
+				B5056A8B1DC82A8F00979758 /* TaskRecord.m */,
+				B5056A8D1DC82AA500979758 /* TaskInfoManager.h */,
+				B5056A8E1DC82AA500979758 /* TaskInfoManager.m */,
 				B5D4923B1DB5C8DC00794A97 /* TaskCell.h */,
 				B5D4923C1DB5C8DC00794A97 /* TaskCell.m */,
 			);
@@ -832,6 +855,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */,
+				B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
 				B5E5FA871D3799E8000A648D /* Note1.json in Resources */,
@@ -906,13 +930,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B56E36AE1DBE664800165050 /* TaskTimeLineViewController.m in Sources */,
+				B5056A8C1DC82A8F00979758 /* TaskRecord.m in Sources */,
 				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
 				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
 				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
+				B5056A8F1DC82AA500979758 /* TaskInfoManager.m in Sources */,
 				B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */,
 				B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */,
 				B564D0D81C9110FD00E903B6 /* UIScrollView+ScalableCover.m in Sources */,
+				B5056A951DC8523700979758 /* NoteShareViewController.m in Sources */,
 				B564D0CF1C9110FD00E903B6 /* NSString+pinyin.m in Sources */,
 				B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,
@@ -945,6 +972,7 @@
 				B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */,
 				B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
+				B5056A921DC82ABC00979758 /* TaskRecordViewController.m in Sources */,
 				B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */,
 				B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */,
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,

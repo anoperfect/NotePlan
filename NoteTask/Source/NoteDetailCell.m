@@ -98,9 +98,7 @@
     self.noteParagraphTextView.scrollEnabled = NO;
     self.noteParagraphTextView.userInteractionEnabled = NO;
     
-    
-    self.edgeContainer = UIEdgeInsetsMake(10, 10, 10, 10);
-    self.edgeLabel = UIEdgeInsetsMake(0, 10, 0, 10);
+
 }
 
 
@@ -128,7 +126,6 @@
         NSLog(@"---%@", view);
     }
     
-    
     self.noteParagraphYYLabel.hidden    = YES;
     self.noteParagraphLabel.hidden      = YES;
     self.noteParagraphTextView.hidden   = YES;
@@ -143,12 +140,12 @@
     CGFloat heightOptumize = 100.0;
     
     CGRect frame = self.frame;
-    CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, self.edgeContainer);
+    CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, NOTEDETAILCELL_EDGE_CONTAINER);
     CGSize sizeOptumizeLabel;
     CGRect frameLabel;
     
     frameLabel = CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
-    frameLabel = UIEdgeInsetsInsetRect(frameLabel, self.edgeLabel);
+    frameLabel = UIEdgeInsetsInsetRect(frameLabel, NOTEDETAILCELL_EDGE_LABEL);
     
     self.noteParagraphYYLabel.textAlignment = NSTextAlignmentLeft;
     self.noteParagraphYYLabel.attributedText = [noteParagraph attributedTextGenerated];
@@ -170,8 +167,8 @@
         frameLabel.size.height = 200.;
         if(self.heightFitToKeyboard > 0.0) {
             frameLabel.size.height = self.heightFitToKeyboard
-                    - (self.edgeLabel.top + self.edgeLabel.bottom)
-                    - (self.edgeContainer.top + self.edgeContainer.bottom);
+                    - (NOTEDETAILCELL_EDGE_LABEL.top + NOTEDETAILCELL_EDGE_LABEL.bottom)
+                    - (NOTEDETAILCELL_EDGE_CONTAINER.top + NOTEDETAILCELL_EDGE_CONTAINER.bottom);
         }
         self.noteParagraphTextView.editable = YES;
         self.noteParagraphTextView.scrollEnabled = YES;
@@ -189,8 +186,8 @@
         
     }
     
-    frameContainer.size.height = frameLabel.size.height + self.edgeLabel.top + self.edgeLabel.bottom;
-    frame.size.height = frameContainer.size.height + self.edgeContainer.top + self.edgeContainer.bottom;
+    frameContainer.size.height = frameLabel.size.height + NOTEDETAILCELL_EDGE_LABEL.top + NOTEDETAILCELL_EDGE_LABEL.bottom;
+    frame.size.height = frameContainer.size.height + NOTEDETAILCELL_EDGE_CONTAINER.top + NOTEDETAILCELL_EDGE_CONTAINER.bottom;
     self.frame = frame;
     self.container.frame = frameContainer;
     
@@ -217,10 +214,10 @@
 {
     CGRect frame = self.frame;
     frame.size.height = height;
-    CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, self.edgeContainer);
+    CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, NOTEDETAILCELL_EDGE_CONTAINER);
     
     CGRect frameLabel = CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
-    frameLabel = UIEdgeInsetsInsetRect(frameLabel, self.edgeLabel);
+    frameLabel = UIEdgeInsetsInsetRect(frameLabel, NOTEDETAILCELL_EDGE_LABEL);
     
     
     self.frame = frame;

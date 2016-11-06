@@ -110,28 +110,13 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     [self loadNotesView];
-    
-    return ;
-#if 0
-    //从NoteDetailViewController返回的时候, 需重新刷新下Note. Classification.
-    //内容筛选栏创建.
-    [self filterViewBuild];
-    
-    //笔记内容栏创建.
-    [self notesViewBuild];
-    
-    //内容加载.
-//    [self reloadWithClassification:self.currentClassification andColorString:self.currentColorString];
-    //[self refreshView];
-#endif
 }
 
 
 - (void)navigationItemRightInit
 {
-    UIImage *rightItemImage = [UIImage imageNamed:@"slider"];
+    UIImage *rightItemImage = [UIImage imageNamed:@"more"];
 #if 0
     CGSize itemSize = CGSizeMake(36, 36);
     UIGraphicsBeginImageContextWithOptions(itemSize, NO, UIScreen.mainScreen.scale);

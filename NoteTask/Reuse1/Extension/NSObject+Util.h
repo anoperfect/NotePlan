@@ -29,3 +29,11 @@
 + (NSString*)dayStringTomorrow;
 
 @end
+
+
+@interface NSString (Htm)
+
++ (NSString*)htmEncode:(NSString*)s;
++ (NSString*)htmDecode:(NSString*)s;
+
+@end

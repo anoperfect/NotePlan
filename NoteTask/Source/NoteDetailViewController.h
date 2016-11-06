@@ -24,3 +24,9 @@
 
 @end
 
+
+@interface KYPrintPageRenderer : UIPrintPageRenderer
+@property (nonatomic, assign) BOOL generatingPdf;
+
+- (NSData*) printToPDF;
+@end

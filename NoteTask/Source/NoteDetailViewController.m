@@ -16,7 +16,7 @@
 #import "NotePCustmiseViewController.h"
 #import "NoteModel.h"
 #import "NoteDetailCell.h"
-
+#import "NoteShareViewController.h"
 @interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
                                         UITextFieldDelegate,
                                         UITextViewDelegate,
@@ -41,6 +41,7 @@
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UITableView *tableNoteParagraphs;
 @property (nonatomic, strong) UITextView *textViewEditing;
+@property (nonatomic, strong) UIView *textViewEditingContainer;
 
 
 //关于筛选.
@@ -56,6 +57,8 @@
 @property (nonatomic, assign) CGFloat           heightFitToKeyboard;
 
 
+
+//@property (nonatomic, strong) UIWebView *webView;
 
 @end
 
@@ -143,6 +146,11 @@
     self.titleLabel.numberOfLines = 0;
     //[self.view addSubview:self.titleLabel];
     
+    //UITextView导致加载卡顿,因此延迟加载.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    
+    LOG_POSTION
+        
     self.tableNoteParagraphs = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     [self addSubview:self.tableNoteParagraphs];
     self.tableNoteParagraphs.dataSource = self;
@@ -151,20 +159,37 @@
     self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     [self.tableNoteParagraphs registerClass:[NoteDetailCell class] forCellReuseIdentifier:@"NoteDetail"];
     
+    self.textViewEditingContainer = [[UIView alloc] init];
+    [self addSubview:self.textViewEditingContainer];
+    self.textViewEditingContainer.hidden = YES;
+        self.textViewEditingContainer.backgroundColor = [UIColor blueColor];
+        
     self.textViewEditing = [[UITextView alloc] init];
+    self.textViewEditing.attributedText = [[NSAttributedString alloc] initWithString:@""];
+    self.textViewEditing.editable = NO;
     [self addSubview:self.textViewEditing];
     self.textViewEditing.hidden = YES;
     self.textViewEditing.delegate = self;
+        
+        //显式调用一次布局.否则显示有问题.
+        [self.view setNeedsLayout];
+        
+    });
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     NSLog(@"%@", self.noteModel);
+    
+
+
 }
 
 #define YBLOW 64
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
+    
+    LOG_POSTION
     
     CGRect frameTitleLabel = CGRectMake(0, YBLOW, VIEW_WIDTH, 100);
     CGSize size = [self.titleLabel sizeThatFits:frameTitleLabel.size];
@@ -179,28 +204,49 @@
                                             VIEW_HEIGHT - (frameTitleLabel.origin.y + frameTitleLabel.size.height));
     frameNoteParagraphs = VIEW_BOUNDS;
     self.tableNoteParagraphs.frame = frameNoteParagraphs;
+    
+    
+    self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
+    CGRect frameTextViewEditingContainer = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
+    CGRect frameTextViewEditing = frameTextViewEditingContainer;
+    frameTextViewEditing = UIEdgeInsetsInsetRect(frameTextViewEditing, NOTEDETAILCELL_EDGE_CONTAINER);
+    frameTextViewEditing = UIEdgeInsetsInsetRect(frameTextViewEditing, NOTEDETAILCELL_EDGE_LABEL);
+    self.textViewEditing.frame = frameTextViewEditing;
+    self.textViewEditingContainer.frame = frameTextViewEditingContainer;
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    if(!self.isCreateMode) {
-        self.title = @"笔记详情";
-    }
-    else {
-        self.title = @"新笔记";
-    }
-    
+    self.title = !self.isCreateMode? @"笔记详情":@"新笔记";
+    [self navigationItemRightInit];
 }
 
 
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
     self.title = @"";
+}
+
+
+- (void)navigationItemRightInit
+{
+    UIImage *rightItemImage = [UIImage imageNamed:@"NoteShare"];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    [button setImageEdgeInsets:UIEdgeInsetsMake(6, 6, 6, 6)];
+    [button setImage:rightItemImage forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(actionShare) forControlEvents:UIControlEventTouchDown];
+    
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    self.navigationItem.rightBarButtonItem = rightItem;
 }
 
 
@@ -422,7 +468,7 @@
     self.dueEditing         = dueEditing;
     
     [self.tableNoteParagraphs scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    NoteDetailCell *cell = [self.tableNoteParagraphs cellForRowAtIndexPath:indexPath];
+//    NoteDetailCell *cell = [self.tableNoteParagraphs cellForRowAtIndexPath:indexPath];
     
     UIToolbar *keyboardAccessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, VIEW_WIDTH, 36)];
     keyboardAccessory.backgroundColor = [UIColor whiteColor];
@@ -437,23 +483,24 @@
     
     //重用cell中的textview有刷新逻辑设计的问题. 用一个单独的textview用于编辑.
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
-    CGRect frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
-    frame = UIEdgeInsetsInsetRect(frame, cell.edgeContainer);
-    frame = UIEdgeInsetsInsetRect(frame, cell.edgeLabel);
-    self.textViewEditing.frame = frame;
-    LOG_RECT(self.textViewEditing.frame, @"111")
     self.textViewEditing.attributedText = [noteParagraph attributedTextGenerated];
-    self.textViewEditing.hidden = NO;
+    self.textViewEditing.editable = YES;
     self.textViewEditing.inputAccessoryView = keyboardAccessory;
     [self.contentView bringSubviewToFront:self.textViewEditing];
     [self.textViewEditing becomeFirstResponder];
     
-#if 0
-    cell.backgroundColor = [UIColor colorWithName:@"ParagraghOnEditingBackground"];
-    cell.onEditing = YES;
-    cell.noteParagraphTextView.inputAccessoryView = keyboardAccessory;
-    [self reloadNoteParagraphAtIndexPath:self.indexPathOnEditing due:@"edit on"];
-#endif
+    self.textViewEditing.hidden = NO;
+    self.textViewEditingContainer.hidden = NO;
+    
+    [self.view setNeedsLayout];
+    
+    if([self indexPathIsTitle:indexPath]) {
+        self.title = @"编辑中 - 标题";
+    }
+    else {
+        NSInteger noteParagraphIndex = [self indexPathContentNoteParagraphIndex:indexPath];
+        self.title = [NSString stringWithFormat:@"编辑中 - 第%zd段", noteParagraphIndex + 1];
+    }
 }
 
 
@@ -461,6 +508,7 @@
 {
     [self.textViewEditing resignFirstResponder];
     self.textViewEditing.hidden = YES;
+    self.textViewEditingContainer.hidden = YES;
     self.indexPathOnEditing = nil;
     
     if([self.dueEditing isEqualToString:@"编辑"]) {
@@ -484,12 +532,13 @@
 
 - (void)finishEditingNoteParagraphAtIndexPath:(NSIndexPath*)indexPath
 {
+    NSString *content = [self.textViewEditing.attributedText string];
+    self.indexPathOnEditing = nil;
+    
     [self.textViewEditing resignFirstResponder];
     self.textViewEditing.hidden = YES;
+    self.textViewEditingContainer.hidden = YES;
     
-    self.indexPathOnEditing = nil;
-    NSString *content = [self.textViewEditing.attributedText string];
-
     if([self indexPathIsTitle:indexPath]) {
         [self updateNoteTitleWithContent:content];
     }
@@ -502,6 +551,8 @@
     
     //标记indexPathOnEditing.
     self.indexPathOnEditing = nil;
+    
+    self.title = !self.isCreateMode? @"笔记详情":@"新笔记";
 }
 
 
@@ -662,6 +713,12 @@
 }
 
 
+- (NSIndexPath*)indexPathOnNoteParagraphIndex:(NSInteger)noteParagraphIndex
+{
+    return [NSIndexPath indexPathForRow:noteParagraphIndex+ROW_NUMBER_TITLE inSection:0];
+}
+
+
 //返回Content的NoteParagraph.
 - (NoteParagraphModel*)indexPathContentNoteParagraph:(NSIndexPath*)indexPath
 {
@@ -769,7 +826,10 @@
     NSIndexPath *indexPathOnEditing = self.indexPathOnEditing;
     [self doneUpdate:sender];
     
-    if([self indexPathIsLast:indexPathOnEditing]) {
+    if([self indexPathIsTitle:indexPathOnEditing]) {
+        [self action:@"编辑" OnIndexPath:[self indexPathOnNoteParagraphIndex:0]];
+    }
+    else if([self indexPathIsLast:indexPathOnEditing]) {
         NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPathOnEditing];
         noteParagraph = nil;
         //是否增加最后一段为空的时候, 不允许新增加.
@@ -1102,22 +1162,14 @@
     //判断软键盘是否隐藏.
     if(!CGRectIntersectsRect(softKeyboardFrame, self.view.frame)) {
         NSLog(@"soft keypad not shown.");
+        self.heightFitToKeyboard = 0.0;
+        
     }
     else {
         NSLog(@"soft keypad shown.");
         if(self.heightFitToKeyboard != self.contentView.frame.size.height - softKeyboardFrame.size.height) {
             self.heightFitToKeyboard = self.contentView.frame.size.height - softKeyboardFrame.size.height;
-            CGRect frame = self.textViewEditing.frame;
-            frame.size.height = self.heightFitToKeyboard;
-            self.textViewEditing.frame = frame;
         }
-#if 0
-        NoteDetailCell *cell;
-        if(self.indexPathOnEditing && nil != (cell = [self.tableNoteParagraphs cellForRowAtIndexPath:self.indexPathOnEditing])) {
-            self.heightFitToKeyboard = heightCell;
-            [self reloadNoteParagraphAtIndexPath:self.indexPathOnEditing due:@"fit to keyboard"];
-        }
-#endif
     }
     
     [self.view setNeedsLayout];
@@ -1160,6 +1212,48 @@
 }
 
 
+
+
+
+- (void)actionMore
+{
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = nil;
+    actionStrings = @[@"Pdf分享", @"电脑查看"];
+    [v setTexts:actionStrings];
+    
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [weakSelf dismissPopupView];
+        
+        if([actionText isEqualToString:@"Pdf分享"]) {
+            return ;
+        }
+        
+        if([actionText isEqualToString:@"电脑查看"]) {
+            return;
+        }
+        
+        if([actionText isEqualToString:@"恢复预制"]) {
+            return;
+        }
+        
+    }];
+    
+    [self showPopupView:v];
+}
+
+
+- (void)actionShare
+{
+    NoteShareViewController *vc = [[NoteShareViewController alloc] init];
+    vc.noteModel = self.noteModel;
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 
 
@@ -1435,3 +1529,41 @@ return attributedString;
 
 
 #endif
+
+
+
+
+@implementation KYPrintPageRenderer
+- (CGRect) paperRect
+{
+    if (!_generatingPdf)
+        return [super paperRect];
+    return UIGraphicsGetPDFContextBounds();
+}
+
+
+- (CGRect) printableRect
+{
+    if (!_generatingPdf)
+        return [super printableRect];
+    return CGRectInset( self.paperRect, 100, 100 );
+}
+
+
+- (NSData*) printToPDF
+{
+    _generatingPdf = YES;
+    NSMutableData *pdfData = [NSMutableData data];
+    UIGraphicsBeginPDFContextToData( pdfData, CGRectMake(0, 0, 612, 796), nil );  // letter-size, landscape
+    [self prepareForDrawingPages: NSMakeRange(0, 1)];
+    CGRect bounds = UIGraphicsGetPDFContextBounds();
+    for ( int i = 0 ; i < self.numberOfPages ; i++ )
+    {
+        UIGraphicsBeginPDFPage();
+        [self drawPageAtIndex: i inRect: bounds];
+    }
+    UIGraphicsEndPDFContext();
+    _generatingPdf = NO;
+    return pdfData;
+}
+@end

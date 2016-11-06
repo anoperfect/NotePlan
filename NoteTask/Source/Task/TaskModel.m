@@ -13,23 +13,6 @@
 
 
 
-@implementation TaskModel
-
-@end
-
-
-
-
-@implementation TaskListModel
-
-
-@end
-
-
-
-
-
-
 typedef NS_ENUM(NSInteger, DaysCompare) {
     DaysCompareBefore = 20,
     DaysCompareToday ,
@@ -65,6 +48,8 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.period = dict[@"period"];
     
     [taskinfo daysStringsParse];
+    
+    
     
     return taskinfo;
 }
@@ -182,24 +167,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 
 
 
-+ (NSMutableDictionary<NSString*,NSMutableArray*>*)taskinfosGroupByDay:(NSArray<TaskInfo*>*)taskinfos
-{
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    
-    for(TaskInfo *taskinfo in taskinfos) {
-        for(NSString *dayString in taskinfo.daysOnTask) {
-            NSMutableArray *taskinfosIn1Day = result[dayString];
-            if(taskinfosIn1Day) {
-                [taskinfosIn1Day addObject:taskinfo];
-            }
-            else {
-                result[dayString] = [NSMutableArray arrayWithObject:taskinfo];
-            }
-        }
-    }
-    
-    return result;
-}
+
 
 
 + (void)addTaskInfosUniqued:(NSMutableArray*)taskinfos toArray:(NSMutableArray*)array
@@ -245,229 +213,6 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 
 
 
-@interface TaskRecord ()
 
 
-
-@end
-
-
-@implementation TaskRecord
-
-@end
-
-
-@interface TaskDayList ()
-
-
-
-@end
-
-@implementation TaskDayList
-
-+(instancetype)taskDayListWithDayName:(NSString*)dayName andDayString:(NSString*)dayString
-{
-    TaskDayList *taskDayList = [[TaskDayList alloc] init];
-    taskDayList.dayName = dayName;
-    taskDayList.dayString = dayString;
-    taskDayList.taskinfos = [[NSMutableArray alloc] init];
-    
-    return taskDayList;
-}
-
-@end
-
-
-
-
-
-@interface TaskGroup ()
-
-@property (nonatomic, strong) NSString *dateStringToday;
-@property (nonatomic, strong) NSString *dateStringTomorrow;
-
-@property (nonatomic, strong) TaskDayList *taskDayListBefore;
-@property (nonatomic, strong) TaskDayList *taskDayListToday;
-@property (nonatomic, strong) TaskDayList *taskDayListTomorrow;
-@property (nonatomic, strong) TaskDayList *taskDayListComming;
-
-@property (nonatomic, strong) NSMutableDictionary<NSString*,NSMutableArray*>* taskinfosSortedByDay;
-@property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask;
-
-@end
-
-
-@implementation TaskGroup
-
-
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.dateStringToday = [NSString dayStringToday];
-        self.dateStringTomorrow = [NSString dayStringTomorrow];
-    }
-    
-    return self;
-}
-
-
-- (void)setTaskinfos:(NSArray<TaskInfo *> *)taskinfos
-{
-    _taskinfos = taskinfos;
-    
-    self.taskinfosSortedByDay = [TaskInfo taskinfosGroupByDay:taskinfos];
-    
-    NSMutableArray<NSString*> *days = [NSMutableArray arrayWithArray:self.taskinfosSortedByDay.allKeys];
-    [days sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        NSString *day1 = obj1;
-        NSString *day2 = obj2;
-        
-        return [day1 compare:day2];
-    }];
-    self.daysOnTask = days;
-    
-    self.taskDayListBefore = [TaskDayList taskDayListWithDayName:@"之前" andDayString:@""];
-    self.taskDayListToday = [TaskDayList taskDayListWithDayName:@"今天" andDayString:self.dateStringToday];
-    self.taskDayListTomorrow = [TaskDayList taskDayListWithDayName:@"明天" andDayString:self.dateStringTomorrow];
-    self.taskDayListComming = [TaskDayList taskDayListWithDayName:@"之后" andDayString:@""];
-    
-    for(NSString *day in days) {
-        NSMutableArray<TaskInfo*> *taskinfos = self.taskinfosSortedByDay[day];
-        if([day compare:self.dateStringToday] == NSOrderedSame) {
-            [TaskInfo addTaskInfosUniqued:taskinfos toArray:self.taskDayListToday.taskinfos];
-        }
-        else if([day compare:self.dateStringTomorrow] == NSOrderedSame) {
-            [TaskInfo addTaskInfosUniqued:taskinfos toArray:self.taskDayListTomorrow.taskinfos];
-        }
-        else if([day compare:self.dateStringToday] == NSOrderedAscending) {
-            [TaskInfo addTaskInfosUniqued:taskinfos toArray:self.taskDayListBefore.taskinfos];
-        }
-        else {
-            [TaskInfo addTaskInfosUniqued:taskinfos toArray:self.taskDayListComming.taskinfos];
-        }
-    }
-}
-
-
-+ (instancetype)fromTaskInfos:(NSArray<TaskInfo*>*)taskinfos
-{
-    TaskGroup *taskGroup = [[TaskGroup alloc] init];
-    
-    NSDate *date = [NSDate date];
-    NSString *dateString = [NSString stringWithFormat:@"%@", date];
-    dateString = [dateString substringToIndex:9];
-    
-    NSDate *dateTomorrow = [date dateByAddingTimeInterval:24*60*60];
-    NSString *dateStringTomorrow = [NSString stringWithFormat:@"%@", dateTomorrow];
-    dateStringTomorrow = [dateStringTomorrow substringToIndex:9];
-    
-    taskGroup.dateStringToday = dateString;
-    taskGroup.dateStringTomorrow = dateStringTomorrow;
-    
-    TaskDayList *taskDayListBefore = [[TaskDayList alloc] init];
-    taskDayListBefore.dayName = @"之前";
-    taskDayListBefore.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListToday = [[TaskDayList alloc] init];
-    taskDayListToday.dayName = @"今天";
-    taskDayListToday.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListTomorrow = [[TaskDayList alloc] init];
-    taskDayListTomorrow.dayName = @"明天";
-    taskDayListTomorrow.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListComming = [[TaskDayList alloc] init];
-    taskDayListComming.dayName = @"之后";
-    taskDayListComming.taskinfos = [[NSMutableArray alloc] init];
-    
-    for(TaskInfo *taskinfo in taskinfos) {
-        NSMutableArray<NSNumber*> *days = [taskinfo daysDetect];
-        if(NSNotFound != [days indexOfObject:@(DaysCompareBefore)]) {
-            [taskDayListBefore.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareToday)]) {
-            [taskDayListToday.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareTomorrow)]) {
-            [taskDayListTomorrow.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareComming)]) {
-            [taskDayListComming.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        NSLog(@"#error - should not excute to here.");
-        days = nil;
-    }
-    
-    taskGroup.taskDayListBefore     = taskDayListBefore;
-    taskGroup.taskDayListToday      = taskDayListToday;
-    taskGroup.taskDayListTomorrow   = taskDayListTomorrow;
-    taskGroup.taskDayListComming    = taskDayListComming;
-    
-    return taskGroup;
-}
-
-
-- (NSString*)dayNameOnSection:(NSInteger)section
-{
-    switch (section) {
-        case 0:
-            return self.taskDayListToday.dayName;
-            break;
-            
-        case 1:
-            return self.taskDayListTomorrow.dayName;
-            break;
-            
-        case 2:
-            return self.taskDayListComming.dayName;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return @"NAN";
-    
-}
-
-
-- (TaskDayList*)taskDayListOnSection:(NSInteger)section;
-{
-    switch (section) {
-        case 0:
-            return self.taskDayListToday;
-            break;
-            
-        case 1:
-            return self.taskDayListTomorrow;
-            break;
-            
-        case 2:
-            return self.taskDayListComming;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return nil;
-}
-
-
-
-@end
 

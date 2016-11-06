@@ -37,6 +37,7 @@
         NS0Log(@"ParagraphString style : %@", styleString);
         
         noteParagraph.content = [string substringWithRange:NSMakeRange(range1.location + range1.length, range2.location - (range1.location + range1.length))];
+        noteParagraph.content = [NSString htmDecode:noteParagraph.content];
         NS0Log(@"ParagraphString content : %@", noteParagraph.content);
         
         noteParagraph.styleDictionay = [self styleParseFromString:styleString];
@@ -56,7 +57,7 @@
     return [NSString stringWithFormat:
             @"<p style=\"%@\">%@</p>"
             , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
-            , noteParagraph.content];
+            , [NSString htmEncode:noteParagraph.content]];
 }
 
 
@@ -542,13 +543,16 @@ static NSInteger kno = 0;
 
 - (NSString*)generateWWWPage
 {
-    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"note.htm"];
+    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"NoteTemplate.htm"];
     NSData *data = [NSData dataWithContentsOfFile:resPath];
     NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.identifier" withString:self.identifier?self.identifier:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title?self.title:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.content" withString:self.content?self.content:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?self.createdAt:@""];
+    
+    NSLog(@"-=-=-=\n\n\n%@\n\n\n", s);
     return s;
 }
 

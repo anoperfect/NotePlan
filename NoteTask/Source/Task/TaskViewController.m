@@ -8,6 +8,8 @@
 
 #import "TaskViewController.h"
 #import "TaskModel.h"
+#import "TaskInfoManager.h"
+#import "TaskRecord.h"
 #import "TaskCell.h"
 #import "AppConfig.h"
 
@@ -22,7 +24,7 @@
 
 @property (nonatomic, assign) BOOL dayMode;
 
-@property (nonatomic, strong) TaskGroup *taskGroup;
+@property (nonatomic, strong) TaskInfoManager *taskInfoManager;
 
 @property (nonatomic, strong) NSIndexPath *indexPathDetaied; //只有一个可以点击后展开状态. 展开前需关闭前一个.
 @property (nonatomic, assign) CGFloat heightDetailedCell; //纪录下展开的cell的fit高度.
@@ -159,7 +161,7 @@
     sectionHeaderView.tag = section;
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 2, sectionHeaderView.frame.size.width - 10, 41)];
-    label.text = [self.taskGroup dayNameOnSection:section];
+    label.text = [self.taskInfoManager dayNameOnSection:section];
     [sectionHeaderView addSubview:label];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionSectionTap:)];
@@ -195,8 +197,8 @@
     NSInteger rows;
     rows = 6;
     
-    TaskDayList *taskDayList = [self.taskGroup taskDayListOnSection:section];
-    rows = taskDayList.taskinfos.count;
+    TaskDayList *taskDayList = [self.taskInfoManager taskDayListOnSection:section];
+    rows = taskDayList.taskDays.count;
     
     if([self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
         rows = 0;
@@ -213,8 +215,8 @@
     cell.imageView.layer.cornerRadius = 6;
     
     cell.detailedMode = [self.indexPathDetaied isEqual:indexPath];
-    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
-    cell.task = task;
+    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
+    cell.taskDay = taskDay;
     __weak typeof(self) _self = self;
     cell.actionOn = ^(NSString* actionString){
         [_self actionOnIndexPath:indexPath byString:actionString];
@@ -264,25 +266,26 @@
 
 - (void)dataTasksReload
 {
-    self.taskGroup = [[TaskGroup alloc] init];
-    self.taskGroup.taskinfos = [[AppConfig sharedAppConfig] configTaskInfoGets];
+    self.taskInfoManager = [TaskInfoManager taskInfoManager];
+    [self.taskInfoManager reloadTaskInfos];
+    
+    NSLog(@"%@", self.taskInfoManager);
 }
 
 
-
-- (TaskInfo*)dataTaskModeOnIndexPath:(NSIndexPath*)indexPath
+- (TaskDay*)dataTaskDayOnIndexPath:(NSIndexPath*)indexPath
 {
     switch (indexPath.section) {
         case 0:
-            return self.taskGroup.taskDayListToday.taskinfos[indexPath.row];
+            return self.taskInfoManager.taskDayListToday.taskDays[indexPath.row];
             break;
             
         case 1:
-            return self.taskGroup.taskDayListTomorrow.taskinfos[indexPath.row];
+            return self.taskInfoManager.taskDayListTomorrow.taskDays[indexPath.row];
             break;
             
         case 2:
-            return self.taskGroup.taskDayListComming.taskinfos[indexPath.row];
+            return self.taskInfoManager.taskDayListComming.taskDays[indexPath.row];
             break;
             
         default:
@@ -352,18 +355,20 @@
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
-    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
+    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
     if([actionString isEqualToString:@"finish"]) {
-        task.status = 1;
+        taskDay.finishedAt = @"";
         self.indexPathDetaied = nil;
         [self actionReloadTasksViewOnIndexPath:indexPath];
+        [[TaskRecordManager taskRecordManager] taskRecordAddToTaskInfo:taskDay.taskinfo.sn finishedAt:taskDay.finishedAt];
         return ;
     }
     
     if([actionString isEqualToString:@"redo"]) {
-        if(task.status == 1) {
-            task.status = 0;
+        if(taskDay.finishedAt.length > 0) {
+            taskDay.finishedAt = @"";
             [self actionReloadTasksViewOnIndexPath:indexPath];
+            [[TaskRecordManager taskRecordManager] taskRecordAddToTaskInfo:taskDay.taskinfo.sn redoAt:@"111"];
         }
         else {
             [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
@@ -388,7 +393,7 @@
         }
         
         UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, 100)];
-        textView.text = task.content;
+        textView.text = taskDay.taskinfo.content;
         textView.font = [UIFont systemFontOfSize:14.5];
         textView.backgroundColor = [UIColor whiteColor];
         __weak typeof(self) _self = self;
@@ -448,8 +453,8 @@
 - (void)actionUpdateTaskContentOn:(NSIndexPath*)indexPath to:(NSString*)text
 {
     //检查内容是否有更改.
-    TaskInfo *task = [self dataTaskModeOnIndexPath:indexPath];
-    if([task.content isEqualToString:text]) {
+    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
+    if([taskDay.taskinfo.content isEqualToString:text]) {
         
         
         return ;

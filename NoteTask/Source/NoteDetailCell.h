@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "NotePropertyView.h"
 #import "NoteModel.h"
+
+
+
+
 @interface NoteDetailCell : UITableViewCell
 
 
@@ -35,3 +39,8 @@
 - (void)setCellDisplayHeight:(CGFloat)height;
 
 @end
+
+
+
+#define NOTEDETAILCELL_EDGE_CONTAINER   UIEdgeInsetsMake(10, 10, 10, 10)
+#define NOTEDETAILCELL_EDGE_LABEL       UIEdgeInsetsMake(10, 10, 10, 10)
