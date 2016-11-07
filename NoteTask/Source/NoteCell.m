@@ -115,9 +115,21 @@
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-8-[_titleLabel]-8-|"
                                                                              options:0 metrics:nil views:viewsDict]];
     
-    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[_authorLabel]-10-[_timeLabel]-10-[_commentCount]"
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[_authorLabel]-10-[_timeLabel]-10-[_commentCount]-10-|"
                                                                              options:NSLayoutFormatAlignAllTop | NSLayoutFormatAlignAllBottom
                                                                              metrics:nil views:viewsDict]];
+}
+
+
+- (void)setNote:(NoteModel*)note
+{
+    _note = note;
+    self.titleLabel.text    = [note previewTitle];
+    self.bodyLabel.text     = [note previewSummary];
+    self.timeLabel.text     = @"2016-11-01 10:10:10";
+    self.commentCount.text  = @"评论";
+    
+    
 }
 
 

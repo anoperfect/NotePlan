@@ -24,10 +24,18 @@
 },
  
 {
+ "name" : "NotesBackground",
+ "title" : "Notes列表",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#eeeeee",
+ "colornightstringDefault" : "#eeeeee"
+},
+
+{
  "name" : "NoteCellBackground0",
  "title" : "Note行0",
  "enableCustmize" : true,
- "colorstringDefault" : "#e1eaeb",
+ "colorstringDefault" : "#eeeeee",
  "colornightstringDefault" : "#e1eaeb"
 },
 
@@ -35,7 +43,7 @@
  "name" : "NoteCellBackground1",
  "title" : "Note行1",
  "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
+ "colorstringDefault" : "#e1eeee@60",
  "colornightstringDefault" : "#e1eeee"
 },
  
@@ -56,43 +64,11 @@
 },
  
 {
- "name" : "NoteCellBackground1",
- "title" : "Note行1",
- "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
-},
- 
-{
  "name" : "NoteParagraphs",
  "title" : "详情背景",
  "enableCustmize" : true,
  "colorstringDefault" : "white",
  "colornightstringDefault" : "white"
-},
- 
-{
- "name" : "NoteCellBackground1",
- "title" : "Note行1",
- "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
-},
- 
-{
- "name" : "NoteCellBackground1",
- "title" : "Note行1",
- "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
-},
- 
-{
- "name" : "NoteCellBackground1",
- "title" : "Note行1",
- "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
 },
  
 {

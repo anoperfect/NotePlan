@@ -148,7 +148,7 @@
         self.notesView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
         self.notesView.dataSource = self;
         self.notesView.delegate = self;
-        self.notesView.backgroundColor = [UIColor clearColor];
+        self.notesView.backgroundColor = [UIColor colorWithName:@"NotesBackground"];
         
         //UIPanGestureRecognizer *panGesture=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewPan:)];
         //[_notesView addGestureRecognizer:panGesture];
@@ -405,7 +405,6 @@
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.imageView.layer.cornerRadius = 6;
-    cell.t = @"";
     
     NoteModel *note = [self noteOnIndexPath:indexPath];
     
@@ -426,9 +425,13 @@
     //cell.textLabel.text = note.title;
     //cell.detailTextLabel.text = [note contents];
     
-
+#if 0
     cell.titleLabel.text = [note previewTitle];
     cell.bodyLabel.text = [note previewSummary];
+#endif
+    
+    cell.note = note;
+    
 #if 0
     NSLog(@"%f, %f", cell.titleLabel.layer.position.x, cell.titleLabel.layer.position.y);
     

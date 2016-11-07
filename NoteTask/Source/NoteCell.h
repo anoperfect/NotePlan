@@ -21,7 +21,7 @@
 
 
 
-@property (nonatomic, strong) NSString *t;
+@property (nonatomic, strong) NoteModel *note;
  
 
 @end
