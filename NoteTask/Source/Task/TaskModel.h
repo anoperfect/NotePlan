@@ -25,36 +25,12 @@ duration:[]
 fromtime:
 totime:
 time:
-
-
-
-
-
-id,
-type,
-title,
-content,
-subtasks:[["","",""],["","",""]]
-{
-    data: "",
-    fromtime:"",
-    totime:"",
-    status:"",
-    note:["system:", "user:", "usernote:"]
-},
-
-
-//存储.
-//按日期执行显示.
-
-subtask
-{
-title:
-submmitAt:
-}
-
-
 #endif
+
+
+
+
+
 
 
 

@@ -156,6 +156,63 @@
            "primaryKeys":["sn"],
            "preset":[],
            "comment":"计划"
+           },
+           {
+           "tableName":"taskrecord",
+           "databaseNames":["config"],
+           "columnAttributes":[
+                               {
+                               "columnName":"snTaskRecord",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"snTaskInfo",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"dayString",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"type",
+                               "dataType":"integer",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"record",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"committedAt",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"modifiedAt",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"deprecatedAt",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               }
+                               ],
+           "primaryKeys":["snTaskRecord"],
+           "preset":[],
+           "comment":"计划"
            }
 ]
 }

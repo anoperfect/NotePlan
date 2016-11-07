@@ -25,15 +25,12 @@
     }
 }
 
-
-
-
-
 @end
 
 
 
 @implementation NSString (DateString)
+
 
 
 + (BOOL)stringIsAllDigtal:(NSString*)string
@@ -42,8 +39,6 @@
     for(NSInteger idx = 0; idx < length; idx ++) {
         unichar ch = [string characterAtIndex:idx];
         if(ch >= '0' && ch <= '9') {
-            
-            
         }
         else {
             return NO;
@@ -96,7 +91,6 @@
 }
 
 
-
 + (NSString*)dayStringToday
 {
     NSDate *date = [NSDate date];
@@ -105,9 +99,6 @@
     [dateformatter setDateFormat:@"yyyy-MM-dd"];
     NSString * dateString = [dateformatter stringFromDate:date];
     NSLog(@"%@", dateString);
-    
-    //NSDate *dateTomorrow = [date dateByAddingTimeInterval:24*60*60];
-    //NSString *dateStringTomorrow = [dateformatter stringFromDate:dateTomorrow];
     
     return dateString;
 }
@@ -119,14 +110,67 @@
     
     NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
     [dateformatter setDateFormat:@"yyyy-MM-dd"];
-    NSString * dateString = [dateformatter stringFromDate:date];
-    NSLog(@"%@", dateString);
     
     NSDate *dateTomorrow = [date dateByAddingTimeInterval:24*60*60];
     NSString *dateStringTomorrow = [dateformatter stringFromDate:dateTomorrow];
     
     return dateStringTomorrow;
 }
+
+
++ (NSString*)stringDateTimeNow
+{
+    NSDate *date = [NSDate date];
+    NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    NSString * dateString = [dateformatter stringFromDate:date];
+    
+    NSTimeInterval t = [date timeIntervalSince1970];
+    long long lt = t;
+    double dot = t - lt;
+    dateString = [dateString stringByAppendingFormat:@" %.6lf",dot];
+    
+    return dateString;
+}
+
+
++ (NSDate*)stringToDate:(NSString*)s
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+    [formatter setTimeZone:timeZone];
+    [formatter setDateFormat : @"yyyy-MM-dd hh:mm:ss"];
+    NSDate *dateTime = [formatter dateFromString:s];
+    return dateTime;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -175,4 +219,30 @@
 }
 
 @end
+
+
+
+@implementation NSString (Random)
+
+
+
++ (NSString*)randomStringWithLength:(NSInteger)length andType:(NSInteger)type
+{
+    //暂不实现多种type. 仅仅支持0-9, a-z.
+    NSMutableString *s = [[NSMutableString alloc] init];
+    for(NSInteger idx = 0; idx < length; idx ++) {
+        u_int32_t num = arc4random();
+        NSUInteger snNum = num % 36;
+        char ch = snNum <= 9 ? '0' + snNum : 'a' + snNum - 10;
+        [s appendFormat:@"%c", ch];
+    }
+    
+    return [NSString stringWithString:s];
+}
+
+
+
+
+@end
+
 

@@ -351,28 +351,49 @@
 }
 
 
+- (void)actionFinishOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
+{
+    if(taskDay.finishedAt.length > 0) {
+        NSLog(@"Already finished.");
+        return ;
+    }
+    
+    taskDay.finishedAt = [NSString stringDateTimeNow];
+    self.indexPathDetaied = nil;
+    [self actionReloadTasksViewOnIndexPath:indexPath];
+    [[TaskRecordManager taskRecordManager] taskRecordAddFinish:taskDay.taskinfo.sn on:taskDay.dayString committedAt:taskDay.finishedAt];
+}
+
+
+- (void)actionRedoOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
+{
+    if(taskDay.finishedAt == 0) {
+        NSLog(@"Already finished.");
+        return ;
+    }
+    
+    if(taskDay.finishedAt.length > 0) {
+        taskDay.finishedAt = @"";
+        [self actionReloadTasksViewOnIndexPath:indexPath];
+        [[TaskRecordManager taskRecordManager] taskRecordAddRedo:taskDay.taskinfo.sn on:taskDay.dayString committedAt:[NSString stringDateTimeNow]];
+    }
+    else {
+        [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
+    }
+}
+
 
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
     TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
     if([actionString isEqualToString:@"finish"]) {
-        taskDay.finishedAt = @"";
-        self.indexPathDetaied = nil;
-        [self actionReloadTasksViewOnIndexPath:indexPath];
-        [[TaskRecordManager taskRecordManager] taskRecordAddToTaskInfo:taskDay.taskinfo.sn finishedAt:taskDay.finishedAt];
+        [self actionFinishOnIndexPath:indexPath andTaskDay:taskDay];
         return ;
     }
     
     if([actionString isEqualToString:@"redo"]) {
-        if(taskDay.finishedAt.length > 0) {
-            taskDay.finishedAt = @"";
-            [self actionReloadTasksViewOnIndexPath:indexPath];
-            [[TaskRecordManager taskRecordManager] taskRecordAddToTaskInfo:taskDay.taskinfo.sn redoAt:@"111"];
-        }
-        else {
-            [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
-        }
+        [self actionRedoOnIndexPath:indexPath andTaskDay:taskDay];
         return ;
     }
     

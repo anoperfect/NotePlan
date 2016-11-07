@@ -57,6 +57,8 @@
 #import "MBProgressHUD.h"
 
 
+#import "MJExtension.h"
+
 #import "RangeValueView.h"
 #import "UIView+SetRect.h"
 

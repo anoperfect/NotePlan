@@ -14,7 +14,7 @@
 
 
 @interface AppDelegate () {
-GCDWebServer* _webServer;
+    
 }
 @end
 
@@ -33,35 +33,9 @@ GCDWebServer* _webServer;
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
-    // Create server
-    
-    _webServer = [[GCDWebServer alloc] init];
-    
-    // Add a handler to respond to GET requests on any URL
-    [_webServer addDefaultHandlerForMethod:@"GET"
-                              requestClass:[GCDWebServerRequest class]
-                              processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
-                                  NSArray<NSString*> *paths = [request.path componentsSeparatedByString:@"/"];
-                                  NSString* noteIdentifier = [paths lastObject];
-                                  noteIdentifier = noteIdentifier?noteIdentifier:@"null";
-                                  
-                                  NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetByNoteIdentifier:noteIdentifier];
-                                  if(note) {
-                                      return [GCDWebServerDataResponse responseWithHTML:[note generateWWWPage]];
-                                  }
-                                  else {
-                                      return [GCDWebServerDataResponse responseWithStatusCode:404];
-                                  }
-//                                  return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Hello World</p></body></html>"];
-                                  
-                              }];
-    
-    // Start server on port 8080
-    [_webServer startWithPort:8080 bonjourName:nil];
-    NSLog(@"Visit %@ in your web browser", _webServer.serverURL);
-    
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

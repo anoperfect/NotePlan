@@ -43,4 +43,4 @@
 
 
 #define NOTEDETAILCELL_EDGE_CONTAINER   UIEdgeInsetsMake(10, 10, 10, 10)
-#define NOTEDETAILCELL_EDGE_LABEL       UIEdgeInsetsMake(10, 10, 10, 10)
+#define NOTEDETAILCELL_EDGE_LABEL       UIEdgeInsetsMake(0, 10, 0, 10)

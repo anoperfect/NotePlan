@@ -492,12 +492,12 @@
 
 - (void)testBeforeBuild
 {
-    [self.dbData removeDBName:@"config"];
+    //[self.dbData removeDBName:@"config"];
 }
 
 
 - (void)testAfterBuild
-{//return ;
+{return ;
     NoteModel *note = [[NoteModel alloc] init];
     note.identifier = @"preset1";
     note.title = @"<p style=\"FONT-SIZE: 15pt; COLOR: #ffff00; FONT-FAMILY: 黑体\">使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1</p>";
@@ -868,22 +868,26 @@
     NSDictionary *infoInsert = @{
                                  DBDATA_STRING_COLUMNS:
                                      @[
-                                         @"snTaskInfo",
                                          @"snTaskRecord",
-                                         @"status",
+                                         @"snTaskInfo",
+                                         @"dayString",
+                                         @"type",
+                                         @"record",
                                          @"committedAt",
                                          @"modifiedAt",
-                                         @"record",
+                                         @"deprecatedAt",
                                          ],
                                  DBDATA_STRING_VALUES:
                                      @[
                                          @[
-                                             taskRecord.snTaskInfo,
                                              taskRecord.snTaskRecord,
+                                             taskRecord.snTaskInfo,
+                                             taskRecord.dayString,
                                              @(taskRecord.type),
+                                             taskRecord.record,
                                              taskRecord.committedAt,
                                              taskRecord.modifiedAt,
-                                             taskRecord.record,
+                                             taskRecord.deprecatedAt,
                                              ]
                                          ]
                                  };
@@ -918,10 +922,12 @@
     NSDictionary *updateDict = @{
                                  //@"sn":taskRecord.sn,
                                  @"snTaskInfo":taskRecord.snTaskInfo,
+                                 @"dayString":taskRecord.dayString,
                                  @"type":@(taskRecord.type),
+                                 @"record":taskRecord.record,
                                  @"committedAt":taskRecord.committedAt,
                                  @"modifiedAt":taskRecord.modifiedAt,
-                                 @"record":taskRecord.record
+                                 @"deprecatedAt":taskRecord.deprecatedAt,
                                  };
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfoUpdate:updateDict withInfoQuery:@{@"snTaskRecord":taskRecord.snTaskRecord}];
 }

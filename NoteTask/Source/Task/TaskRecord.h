@@ -13,13 +13,14 @@
 
 
 
-@property (nonatomic, strong) NSString *snTaskInfo;
 @property (nonatomic, strong) NSString *snTaskRecord;
+@property (nonatomic, strong) NSString *snTaskInfo;
+@property (nonatomic, strong) NSString *dayString;
 @property (nonatomic, assign) NSInteger type; //0.do/redo. 1.finish. 2.signin. 3.user-record. 4.user-delete. 5.user-modify. 6.system-reminder.
 @property (nonatomic, strong) NSString *record;
 @property (nonatomic, strong) NSString *committedAt;
 @property (nonatomic, strong) NSString *modifiedAt;
-
+@property (nonatomic, strong) NSString *deprecatedAt;
 
 
 + (instancetype)taskRecordFromDictionary:(NSDictionary*)dict;
@@ -42,8 +43,12 @@
 
 
 
-- (void)taskRecordAddToTaskInfo:(NSString*)snTaskInfo finishedAt:(NSString*)finishedAt;
-- (void)taskRecordAddToTaskInfo:(NSString*)snTaskInfo redoAt:(NSString*)redoAt;
+
+
+
+
+- (void)taskRecordAddFinish:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt;
+- (void)taskRecordAddRedo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt;
 
 - (void)taskRecordRemove:(TaskRecord*)taskRecord;
 - (void)taskRecordUpdate:(TaskRecord*)taskRecord;

@@ -78,6 +78,7 @@
 		B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A054491D41C23100791702 /* PopupViewController.m */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
+		B5A6E86A1DD0AB0B0062FF80 /* TaskDaySelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A6E8691DD0AB0B0062FF80 /* TaskDaySelectViewController.m */; };
 		B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */; };
 		B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */; };
 		B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */; };
@@ -245,6 +246,8 @@
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
 		B5A26BD21D22140E00B1F629 /* MenuButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MenuButton.m; path = Source/MenuButton.m; sourceTree = "<group>"; };
 		B5A26BD41D22153F00B1F629 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B5A6E8681DD0AB0B0062FF80 /* TaskDaySelectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskDaySelectViewController.h; sourceTree = "<group>"; };
+		B5A6E8691DD0AB0B0062FF80 /* TaskDaySelectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskDaySelectViewController.m; sourceTree = "<group>"; };
 		B5AB6DDB1D658E3100938B7C /* CLDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLDropDownMenu.h; sourceTree = "<group>"; };
 		B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLDropDownMenu.m; sourceTree = "<group>"; };
 		B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
@@ -417,6 +420,8 @@
 				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
 				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,
+				B5A6E8681DD0AB0B0062FF80 /* TaskDaySelectViewController.h */,
+				B5A6E8691DD0AB0B0062FF80 /* TaskDaySelectViewController.m */,
 				B56E369D1DBE658700165050 /* TaskEditDurationViewController.h */,
 				B56E369E1DBE658700165050 /* TaskEditDurationViewController.m */,
 				B56E36A01DBE659800165050 /* TaskEditSubTaskViewController.h */,
@@ -949,6 +954,7 @@
 				B564D0CD1C9110FD00E903B6 /* NSDate+Util.m in Sources */,
 				B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */,
 				B5448F001D658F3100F186BE /* UIFont+Fonts.m in Sources */,
+				B5A6E86A1DD0AB0B0062FF80 /* TaskDaySelectViewController.m in Sources */,
 				B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */,
 				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */,

@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.time = dict[@"time"];
     taskinfo.period = dict[@"period"];
     
+    taskinfo = [TaskInfo mj_objectWithKeyValues:dict];
     [taskinfo daysStringsParse];
     
     
