@@ -24,7 +24,7 @@
 
 
 + (instancetype)taskRecordFromDictionary:(NSDictionary*)dict;
-
+- (NSMutableAttributedString*)generateAttributedString;
 
 @end
 
@@ -55,6 +55,9 @@
 
 
 @end
+
+
+
 
 
 

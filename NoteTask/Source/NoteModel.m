@@ -225,7 +225,7 @@
         self.content = @"";
     }
     
-    NSLog(@"NoteParagraph content : %@, style : %@", self.content, self.styleDictionay);
+    NS0Log(@"NoteParagraph content : %@, style : %@", self.content, self.styleDictionay);
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.content];
     NSRange rangeAll = NSMakeRange(0, attributedString.length);

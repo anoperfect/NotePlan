@@ -492,12 +492,12 @@
 
 - (void)testBeforeBuild
 {
-    //[self.dbData removeDBName:@"config"];
+    [self.dbData removeDBName:@"config"];
 }
 
 
 - (void)testAfterBuild
-{return ;
+{//return ;
     NoteModel *note = [[NoteModel alloc] init];
     note.identifier = @"preset1";
     note.title = @"<p style=\"FONT-SIZE: 15pt; COLOR: #ffff00; FONT-FAMILY: 黑体\">使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1</p>";
@@ -580,7 +580,7 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10";
     task.time = @"07:00-23:00";
     task.period = @"period2k";
     [self configTaskInfoAdd:task];
@@ -595,7 +595,7 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08";
     task.time = @"07:00-23:00";
     task.period = @"period3t";
     [self configTaskInfoAdd:task];

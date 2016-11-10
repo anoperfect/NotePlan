@@ -12,7 +12,7 @@
 #import "TaskRecord.h"
 #import "TaskCell.h"
 #import "AppConfig.h"
-
+#import "TaskDetailViewController.h"
 
 
 @interface TaskViewController () <UITableViewDelegate, UITableViewDataSource
@@ -44,8 +44,7 @@
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
-    self.navigationController.navigationBarHidden = NO;
+    
     self.title = @"任务";
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     
@@ -298,7 +297,25 @@
 
 - (void)actionMore
 {
+    UILabel *label = [[UILabel alloc] init];
+    [self.view addSubview:label];
     
+    label.frame = CGRectMake(0, 360, VIEW_WIDTH, 100);
+    label.backgroundColor = [UIColor blueColor];
+    NSString *s =  @"富士康的肌肤快速打击费拉达斯克己复礼深刻的见风使舵路口附近的身份离开时的肌肤";
+//    label.text = s;
+    label.numberOfLines = 0;
+    
+    NSMutableAttributedString *attributedStr = [[NSMutableAttributedString alloc] initWithString:s];
+    [attributedStr addAttribute:NSExpansionAttributeName value:@-0.2 range:NSMakeRange(0, s.length)];
+    
+    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setHeadIndent:20];
+    [paragraphStyle setFirstLineHeadIndent:20];
+    [paragraphStyle setTailIndent:-20];
+    [attributedStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, s.length)];
+    
+    label.attributedText = attributedStr;
     
     
     
@@ -383,6 +400,14 @@
 }
 
 
+- (void)actionEditOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
+{
+    TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
+    vc.taskinfo = taskDay.taskinfo;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
@@ -398,6 +423,11 @@
     }
     
     if([actionString isEqualToString:@"edit"]) {
+        [self actionEditOnIndexPath:indexPath andTaskDay:taskDay];
+        return ;
+        
+        
+#if 0
         //编辑时效果. row=0的滚动到row0. row>=1的滚动到row1. 然后计算frame弹出输入框控件.
         //编辑行滚动到最上行.
 //        [self.tasksView moveRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0] toIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
@@ -424,9 +454,10 @@
         }];
         
         return ;
+#endif
     }
     
-    if([actionString isEqualToString:@"edit"]) {
+    if([actionString isEqualToString:@"more"]) {
         TaskCellActionMenu *menu = [[TaskCellActionMenu alloc] initWithFrame:CGRectMake(VIEW_WIDTH * 0.2, 0, VIEW_WIDTH * 0.8, VIEW_HEIGHT)];
         [self.contentView addSubview:menu];
         

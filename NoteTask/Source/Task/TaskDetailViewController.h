@@ -9,5 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "CustomViewController.h"
 @interface TaskDetailViewController : CustomViewController
+@property (nonatomic, strong) TaskInfo *taskinfo;
+@end
 
+
+
+@interface TaskRecordView : UIView
+@property (nonatomic, strong) TaskInfo* taskinfo;
 @end

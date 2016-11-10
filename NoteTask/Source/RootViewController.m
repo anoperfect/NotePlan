@@ -89,25 +89,25 @@
 {
     CGSize size = VIEW_SIZE;
     
-    FrameSplite *f = [[FrameSplite alloc] initWithSize:size];
-    [f frameSplite:FRAMESPLITE_NAME_MAIN
+    FrameLayout *f = [[FrameLayout alloc] initWithSize:size];
+    [f frameLayout:FRAMELAYOUT_NAME_MAIN
                 to:@[@"summary", @"menus", @"settings"]
    withPercentages:@[@(0.36), @(0.54), @(0.1)]];
     
-    _summary.frame =[f frameSpliteGet:@"summary"];
+    _summary.frame =[f frameLayoutGet:@"summary"];
     
-    [f frameSpliteEqual:@"menus" to:@[@"menusLine1", @"menusLine2", @"menusLine3"]];
+    [f frameLayoutEqual:@"menus" to:@[@"menusLine1", @"menusLine2", @"menusLine3"]];
     
-    [f frameSpliteEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
-    [f frameSpliteEqual:@"menusLine2" toVertical:@[@"button4", @"button5", @"button6"]];
-    [f frameSpliteEqual:@"menusLine3" toVertical:@[@"button7", @"button8", @"button9"]];
+    [f frameLayoutEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
+    [f frameLayoutEqual:@"menusLine2" toVertical:@[@"button4", @"button5", @"button6"]];
+    [f frameLayoutEqual:@"menusLine3" toVertical:@[@"button7", @"button8", @"button9"]];
     
     for(UIButton *button in _buttons) {
         NSString *name = [NSString stringWithFormat:@"button%zd", button.tag - 100 + 1];
-        button.frame = [f frameSpliteGet:name];
+        button.frame = [f frameLayoutGet:name];
     }
     
-    _settingView.frame = [f frameSpliteGet:@"settings"];
+    _settingView.frame = [f frameLayoutGet:@"settings"];
     
 //    NSLog(@"f : \n%@", f);
     
@@ -131,7 +131,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine1"];
+    frameLayer = [f frameLayoutGet:@"menusLine1"];
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
     [self.view.layer addSublayer:line];
@@ -139,7 +139,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine2"];
+    frameLayer = [f frameLayoutGet:@"menusLine2"];
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
     [self.view.layer addSublayer:line];
@@ -147,7 +147,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine3"];
+    frameLayer = [f frameLayoutGet:@"menusLine3"];
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
     [self.view.layer addSublayer:line];
@@ -155,7 +155,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine3"];
+    frameLayer = [f frameLayoutGet:@"menusLine3"];
     frameLayer.origin.y += frameLayer.size.height;
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
@@ -164,7 +164,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer = [f frameLayoutGet:@"menus"];
     frameLayer.origin.x = frameLayer.size.width / 3;
     frameLayer.size.width = layerWidth;
     line.frame = frameLayer;
@@ -173,7 +173,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer = [f frameLayoutGet:@"menus"];
     frameLayer.origin.x = frameLayer.size.width / 3 * 2;
     frameLayer.size.width = layerWidth;
     line.frame = frameLayer;
@@ -189,23 +189,23 @@
     
     CGSize size = VIEW_SIZE;
     
-    FrameSplite *f = [[FrameSplite alloc] initWithSize:size];
-    [f frameSplite:FRAMESPLITE_NAME_MAIN
+    FrameLayout *f = [[FrameLayout alloc] initWithSize:size];
+    [f frameLayout:FRAMELAYOUT_NAME_MAIN
                 to:@[@"summary", @"menus", @"settings"]
    withPercentages:@[@(0.62), @(0.18), @(0.2)]];
     
-    _summary.frame =[f frameSpliteGet:@"summary"];
+    _summary.frame =[f frameLayoutGet:@"summary"];
     
-    [f frameSpliteEqual:@"menus" to:@[@"menusLine1"]];
+    [f frameLayoutEqual:@"menus" to:@[@"menusLine1"]];
     
-    [f frameSpliteEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
+    [f frameLayoutEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
 
     for(UIButton *button in _buttons) {
         NSString *name = [NSString stringWithFormat:@"button%zd", button.tag - 100 + 1];
-        button.frame = [f frameSpliteGet:name];
+        button.frame = [f frameLayoutGet:name];
     }
     
-    _settingView.frame = [f frameSpliteGet:@"settings"];
+    _settingView.frame = [f frameLayoutGet:@"settings"];
     
     //    NSLog(@"f : \n%@", f);
     
@@ -229,7 +229,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine1"];
+    frameLayer = [f frameLayoutGet:@"menusLine1"];
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
     [self.view.layer addSublayer:line];
@@ -237,7 +237,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menusLine1"];
+    frameLayer = [f frameLayoutGet:@"menusLine1"];
     frameLayer.origin.y += frameLayer.size.height;
     frameLayer.size.height = layerWidth;
     line.frame = frameLayer;
@@ -246,7 +246,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer = [f frameLayoutGet:@"menus"];
     frameLayer.origin.x = frameLayer.size.width / 3;
     frameLayer.size.width = layerWidth;
     line.frame = frameLayer;
@@ -255,7 +255,7 @@
     line = [CALayer layer];
     [line setValue:@100 forKey:@"menuButtonLayer"];
     line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameSpliteGet:@"menus"];
+    frameLayer = [f frameLayoutGet:@"menus"];
     frameLayer.origin.x = frameLayer.size.width / 3 * 2;
     frameLayer.size.width = layerWidth;
     line.frame = frameLayer;

@@ -258,8 +258,8 @@
 {
     [super viewWillLayoutSubviews];
     
-    FrameSplite *frameSplite = [[FrameSplite alloc] initWithRootView:self.contentView];
-    [frameSplite frameSplite:FRAMESPLITE_NAME_MAIN
+    FrameLayout *frameLayout = [[FrameLayout alloc] initWithRootView:self.contentView];
+    [frameLayout frameLayout:FRAMELAYOUT_NAME_MAIN
                           to:@[@"sample",
                                @"colorsDefault",
                                @"colorsRecent",
@@ -274,61 +274,61 @@
              withPercentages:@[@(0.45),    @(0.01),          @(0.01),          @(0.06),          @(0.02),     @(0.06),      @(0.06),    @(0.06),         @(0.036),         @(0.01),
                                 @(0.036)]];
     
-//    [frameSplite frameSpliteEqual:@"switchs" to:@[@"switchLabelLine", @"switchLine"]];
-//    [frameSplite frameSpliteEqual:@"switchLabelLine" toVertical:@[@"italicLabel", @"underlineLabel", @"borderLabel"]];
-//    [frameSplite frameSpliteEqual:@"switchLine" toVertical:@[@"italicSwitch", @"underlineSwitch", @"borderSwitch"]];
+//    [frameLayout frameLayoutEqual:@"switchs" to:@[@"switchLabelLine", @"switchLine"]];
+//    [frameLayout frameLayoutEqual:@"switchLabelLine" toVertical:@[@"italicLabel", @"underlineLabel", @"borderLabel"]];
+//    [frameLayout frameLayoutEqual:@"switchLine" toVertical:@[@"italicSwitch", @"underlineSwitch", @"borderSwitch"]];
     
-    [frameSplite frameSplite:@"switchs"
+    [frameLayout frameLayout:@"switchs"
                   toVertical:@[@"italicLabel", @"italicSwitch", @"underlineLabel", @"underlineSwitch", @"borderLabel", @"borderSwitch"]
              withPercentages:@[@(.12), @(.21), @(.12), @(.21), @(.12), @(.21)]];
     
-    FrameAssign(self.sampleText, @"sample", frameSplite)
+    FrameAssign(self.sampleText, @"sample", frameLayout)
     
     
     
     
-//    self.fontsizeView.frame = [frameSplite frameSpliteGet:@"fontSize"];
-//    self.fontSizeSlider.frame = [frameSplite frameSpliteGet:@"fontSize"];
+//    self.fontsizeView.frame = [frameLayout frameLayoutGet:@"fontSize"];
+//    self.fontSizeSlider.frame = [frameLayout frameLayoutGet:@"fontSize"];
     
     //font-size.
-    [frameSplite frameSplite:@"fontSizeLabel"
+    [frameLayout frameLayout:@"fontSizeLabel"
                   toVertical:@[@"fontSizeName", @"fontSizeNamePadding", @"fontSizeValue"]
              withPercentages:@[@(0.18), @(0.7), @(0.12)]];
-    FrameAssign(self.fontSizeNameLabel,     @"fontSizeName",    frameSplite)
-    FrameAssign(self.fontSizeValueLabel,    @"fontSizeValue",   frameSplite)
+    FrameAssign(self.fontSizeNameLabel,     @"fontSizeName",    frameLayout)
+    FrameAssign(self.fontSizeValueLabel,    @"fontSizeValue",   frameLayout)
     
-    [frameSplite frameSplite:@"fontSize"
+    [frameLayout frameLayout:@"fontSize"
                   toVertical:@[@"fontSizeSliderPaddingLeft", @"fontSizeSlider", @"fontSizeSliderRight"]
              withPercentages:@[@(0.03), @(0.94), @(0.03)]];
-    FrameAssign(self.fontSizeSlider,        @"fontSizeSlider",  frameSplite)
+    FrameAssign(self.fontSizeSlider,        @"fontSizeSlider",  frameLayout)
     
     
     
     
-    self.italicLable.frame      = [frameSplite frameSpliteGet:@"italicLabel"];
-    self.italicSwitch.frame     = [frameSplite frameSpliteGet:@"italicSwitch"];
+    self.italicLable.frame      = [frameLayout frameLayoutGet:@"italicLabel"];
+    self.italicSwitch.frame     = [frameLayout frameLayoutGet:@"italicSwitch"];
     
-    self.underlineLable.frame   = [frameSplite frameSpliteGet:@"underlineLabel"];
-    self.underlineSwitch.frame  = [frameSplite frameSpliteGet:@"underlineSwitch"];
+    self.underlineLable.frame   = [frameLayout frameLayoutGet:@"underlineLabel"];
+    self.underlineSwitch.frame  = [frameLayout frameLayoutGet:@"underlineSwitch"];
     
-    self.borderLable.frame      = [frameSplite frameSpliteGet:@"borderLabel"];
-    self.borderSwitch.frame     = [frameSplite frameSpliteGet:@"borderSwitch"];
+    self.borderLable.frame      = [frameLayout frameLayoutGet:@"borderLabel"];
+    self.borderSwitch.frame     = [frameLayout frameLayoutGet:@"borderSwitch"];
     
     
-    [frameSplite frameSplite:@"textColorLine"
+    [frameLayout frameLayout:@"textColorLine"
                   toVertical:@[@"textColorLabel", @"textColorInput", @"textColorButton"]
              withPercentages:@[@(.20), @(.40), @(.20)]];
     
-    FrameAssign(self.textColorLabel, @"textColorLabel", frameSplite)
-    FrameAssign(self.textColorInput, @"textColorInput", frameSplite)
-    FrameAssign(self.textColorButton, @"textColorButton", frameSplite)
+    FrameAssign(self.textColorLabel, @"textColorLabel", frameLayout)
+    FrameAssign(self.textColorInput, @"textColorInput", frameLayout)
+    FrameAssign(self.textColorButton, @"textColorButton", frameLayout)
     
-    [frameSplite frameSplite:@"textBackgroundColorLine"
+    [frameLayout frameLayout:@"textBackgroundColorLine"
                   toVertical:@[@"textBackgroundColorLabel", @"textBackgroundColorInput"]
              withPercentages:@[@(.36), @(.60), @(.12), @(.21), @(.12), @(.21)]];
     
-    FrameAssign(self.textBackgroundColorLabel, @"textBackgroundColorLabel", frameSplite)
-    FrameAssign(self.textBackgroundColorInput, @"textBackgroundColorInput", frameSplite)
+    FrameAssign(self.textBackgroundColorLabel, @"textBackgroundColorLabel", frameLayout)
+    FrameAssign(self.textBackgroundColorInput, @"textBackgroundColorInput", frameLayout)
     
     
     

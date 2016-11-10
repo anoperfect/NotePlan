@@ -21,7 +21,7 @@
 #endif
 
 #import "NSlogn.h"
-#import "FrameSplite.h"
+#import "FrameLayout.h"
 #import "UIpConfig.h"
 #import "DBData.h"
 #import "NSObject+Util.h"

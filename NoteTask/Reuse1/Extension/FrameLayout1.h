@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface FrameLayout : NSObject
+@interface FrameLayout1 : NSObject
 
 
 

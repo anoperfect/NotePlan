@@ -6,14 +6,14 @@
 //  Copyright © 2016年 Ben. All rights reserved.
 //
 
-#import "FrameLayout.h"
+#import "FrameLayout1.h"
 
 
 
 
 
 
-@interface FrameLayout ()
+@interface FrameLayout1 ()
 
 @property (nonatomic, assign) CGSize sizeSuper;
 
@@ -23,7 +23,7 @@
 @end
 
 
-@implementation FrameLayout
+@implementation FrameLayout1
 
 
 

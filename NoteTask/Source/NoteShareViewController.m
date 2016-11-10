@@ -168,25 +168,25 @@
     [super viewWillLayoutSubviews];
     self.webView.frame = VIEW_BOUNDS;
     
-    FrameSplite *f = [[FrameSplite alloc] initWithRootView:self.contentView];
-    [f frameSplite:FRAMESPLITE_NAME_MAIN to:@[@"FileTypeMain", @"AirDropMain", @"LANMain", @"WANMain"] withPercentages:@[@0.08,@0.20,@0.36,@0.36]];
+    FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
+    [f frameLayout:FRAMELAYOUT_NAME_MAIN to:@[@"FileTypeMain", @"AirDropMain", @"LANMain", @"WANMain"] withPercentages:@[@0.08,@0.20,@0.36,@0.36]];
     
-    [f frameSpliteSet:@"FileTypeSelect" in:@"FileTypeMain" withEdgeInserts:UIEdgeInsetsMake(2, 10, 2, 10)];
+    [f frameLayoutSet:@"FileTypeSelect" in:@"FileTypeMain" withEdgeInserts:UIEdgeInsetsMake(2, 10, 2, 10)];
     
-    [f frameSpliteSet:@"AirDropContainer" in:@"AirDropMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameSplite:@"AirDropContainer" toVertical:@[@"AirDropDescription", @"AirDropAction"] withPercentages:@[@0.64,@0.36]];
-    [f frameSplite:@"AirDropDescription" to:@[@"AirDropTitle", @"AirDropDetail"] withHeights:@[@36,@-1.]];
-    [f frameSpliteSquare:@"AirDropTitle" toVertical:@[@"AirDropIcon", @"AirDropLabel"]];
-    [f frameSplite:@"AirDropAction" to:@[@"AirDropClick", @""] withHeights:@[@36,@-1.]];
+    [f frameLayoutSet:@"AirDropContainer" in:@"AirDropMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
+    [f frameLayout:@"AirDropContainer" toVertical:@[@"AirDropDescription", @"AirDropAction"] withPercentages:@[@0.64,@0.36]];
+    [f frameLayout:@"AirDropDescription" to:@[@"AirDropTitle", @"AirDropDetail"] withHeights:@[@36,@-1.]];
+    [f frameLayoutSquare:@"AirDropTitle" toVertical:@[@"AirDropIcon", @"AirDropLabel"]];
+    [f frameLayout:@"AirDropAction" to:@[@"AirDropClick", @""] withHeights:@[@36,@-1.]];
     
-    [f frameSpliteSet:@"LANContainer" in:@"LANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameSplite:@"LANContainer" to:@[@"LANTitle", @"LANDetail"] withHeights:@[@36, @-1.]];
-    [f frameSpliteSquare:@"LANTitle" toVertical:@[@"LANIcon", @"LANLabel"]];
+    [f frameLayoutSet:@"LANContainer" in:@"LANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
+    [f frameLayout:@"LANContainer" to:@[@"LANTitle", @"LANDetail"] withHeights:@[@36, @-1.]];
+    [f frameLayoutSquare:@"LANTitle" toVertical:@[@"LANIcon", @"LANLabel"]];
     
-    [f frameSpliteSet:@"WANContainer" in:@"WANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameSplite:@"WANContainer" to:@[@"WANTitle", @"WANDetail"] withHeights:@[@36, @-1.]];
-    [f frameSpliteSquare:@"WANTitle" toVertical:@[@"WANIcon", @"WANLabelAndButton"]];
-    [f frameSplite:@"WANLabelAndButton" toVertical:@[@"WANLabel", @"WANButton"] withWidths:@[@160,@-1.]];
+    [f frameLayoutSet:@"WANContainer" in:@"WANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
+    [f frameLayout:@"WANContainer" to:@[@"WANTitle", @"WANDetail"] withHeights:@[@36, @-1.]];
+    [f frameLayoutSquare:@"WANTitle" toVertical:@[@"WANIcon", @"WANLabelAndButton"]];
+    [f frameLayout:@"WANLabelAndButton" toVertical:@[@"WANLabel", @"WANButton"] withWidths:@[@160,@-1.]];
     
     FrameAssign(self.fileTypeSelect, @"FileTypeSelect", f)
     

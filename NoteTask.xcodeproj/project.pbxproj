@@ -33,7 +33,6 @@
 		B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */; };
 		B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */; };
 		B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55DA66D1D67798900A2EC8B /* CustomViewController.m */; };
-		B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B55E9D791C9B09B000F581F5 /* FrameLayout.m */; };
 		B56428C51DAB403300FBB1FE /* TaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428C41DAB403300FBB1FE /* TaskViewController.m */; };
 		B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */; };
 		B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428CA1DAB405C00FBB1FE /* TaskModel.m */; };
@@ -57,7 +56,6 @@
 		B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C21C9110FD00E903B6 /* SwipableViewController.m */; };
 		B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0C41C9110FD00E903B6 /* TitleBarView.m */; };
 		B564D0EA1C912FFA00E903B6 /* note.json in Resources */ = {isa = PBXBuildFile; fileRef = B564D0E91C912FFA00E903B6 /* note.json */; };
-		B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0ED1C91681700E903B6 /* NSThread+Util.m */; };
 		B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0F01C91686700E903B6 /* NSObject+Util.m */; };
 		B56632D91DAF3179006EE40A /* note.htm in Resources */ = {isa = PBXBuildFile; fileRef = B56632D81DAF3179006EE40A /* note.htm */; };
 		B56632DC1DB08652006EE40A /* ButtonData.m in Sources */ = {isa = PBXBuildFile; fileRef = B56632DB1DB08652006EE40A /* ButtonData.m */; };
@@ -81,6 +79,9 @@
 		B5A6E86A1DD0AB0B0062FF80 /* TaskDaySelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A6E8691DD0AB0B0062FF80 /* TaskDaySelectViewController.m */; };
 		B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */; };
 		B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */; };
+		B5AD77C81DD41C91000CC52D /* FrameLayout1.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77C51DD41C91000CC52D /* FrameLayout1.m */; };
+		B5AD77C91DD41C91000CC52D /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77C71DD41C91000CC52D /* NSThread+Util.m */; };
+		B5AD77CD1DD420D8000CC52D /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77CC1DD420D8000CC52D /* FrameLayout.m */; };
 		B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */; };
 		B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392B01D407968001D30BF /* NotePropertyView.m */; };
 		B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */; };
@@ -91,7 +92,6 @@
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
 		B5E5FA871D3799E8000A648D /* Note1.json in Resources */ = {isa = PBXBuildFile; fileRef = B5E5FA861D3799E8000A648D /* Note1.json */; };
 		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
-		B5E9D0AF1D33F09100395CF0 /* FrameSplite.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */; };
 		B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B11D33F28000395CF0 /* UIpConfig.m */; };
 		B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */; };
 		B5F24BC81C4A94370027DAB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BC71C4A94370027DAB2 /* main.m */; };
@@ -160,8 +160,6 @@
 		B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCreateViewController.m; path = Source/NoteCreateViewController.m; sourceTree = "<group>"; };
 		B55DA66C1D67798900A2EC8B /* CustomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomViewController.h; path = Source/CustomViewController.h; sourceTree = "<group>"; };
 		B55DA66D1D67798900A2EC8B /* CustomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomViewController.m; path = Source/CustomViewController.m; sourceTree = "<group>"; };
-		B55E9D781C9B09B000F581F5 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameLayout.h; path = ../../../../Kukuku/Extension/FrameLayout.h; sourceTree = "<group>"; };
-		B55E9D791C9B09B000F581F5 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameLayout.m; path = ../../../../Kukuku/Extension/FrameLayout.m; sourceTree = "<group>"; };
 		B56428C31DAB403300FBB1FE /* TaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskViewController.h; sourceTree = "<group>"; };
 		B56428C41DAB403300FBB1FE /* TaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskViewController.m; sourceTree = "<group>"; };
 		B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskDetailViewController.h; sourceTree = "<group>"; };
@@ -207,8 +205,6 @@
 		B564D0C31C9110FD00E903B6 /* TitleBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TitleBarView.h; sourceTree = "<group>"; };
 		B564D0C41C9110FD00E903B6 /* TitleBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleBarView.m; sourceTree = "<group>"; };
 		B564D0E91C912FFA00E903B6 /* note.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.json; sourceTree = "<group>"; };
-		B564D0EC1C91681700E903B6 /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
-		B564D0ED1C91681700E903B6 /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
 		B564D0EF1C91686700E903B6 /* NSObject+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Util.h"; sourceTree = "<group>"; };
 		B564D0F01C91686700E903B6 /* NSObject+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Util.m"; sourceTree = "<group>"; };
 		B56632D81DAF3179006EE40A /* note.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = note.htm; path = Source/note.htm; sourceTree = "<group>"; };
@@ -252,6 +248,12 @@
 		B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLDropDownMenu.m; sourceTree = "<group>"; };
 		B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
 		B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
+		B5AD77C41DD41C91000CC52D /* FrameLayout1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLayout1.h; sourceTree = "<group>"; };
+		B5AD77C51DD41C91000CC52D /* FrameLayout1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLayout1.m; sourceTree = "<group>"; };
+		B5AD77C61DD41C91000CC52D /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
+		B5AD77C71DD41C91000CC52D /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
+		B5AD77CB1DD420D8000CC52D /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLayout.h; sourceTree = "<group>"; };
+		B5AD77CC1DD420D8000CC52D /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLayout.m; sourceTree = "<group>"; };
 		B5B392AC1D407678001D30BF /* NotePCustmiseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePCustmiseViewController.h; path = Source/NotePCustmiseViewController.h; sourceTree = "<group>"; };
 		B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePCustmiseViewController.m; path = Source/NotePCustmiseViewController.m; sourceTree = "<group>"; };
 		B5B392AF1D407968001D30BF /* NotePropertyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePropertyView.h; path = Source/NotePropertyView.h; sourceTree = "<group>"; };
@@ -269,8 +271,6 @@
 		B5E5FA861D3799E8000A648D /* Note1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Note1.json; path = Source/Note1.json; sourceTree = "<group>"; };
 		B5E9D0A31D32815500395CF0 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = Source/NoteCell.h; sourceTree = "<group>"; };
 		B5E9D0A41D32815500395CF0 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = Source/NoteCell.m; sourceTree = "<group>"; };
-		B5E9D0AC1D33F09100395CF0 /* FrameSplite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSplite.h; sourceTree = "<group>"; };
-		B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameSplite.m; sourceTree = "<group>"; };
 		B5E9D0B01D33F28000395CF0 /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
 		B5E9D0B11D33F28000395CF0 /* UIpConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIpConfig.m; sourceTree = "<group>"; };
 		B5E9D0B41D33F2FF00395CF0 /* NSLogn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSLogn.h; sourceTree = "<group>"; };
@@ -418,6 +418,8 @@
 			children = (
 				B56428C31DAB403300FBB1FE /* TaskViewController.h */,
 				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
+				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
+				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
 				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,
 				B5A6E8681DD0AB0B0062FF80 /* TaskDaySelectViewController.h */,
@@ -428,8 +430,6 @@
 				B56E36A11DBE659800165050 /* TaskEditSubTaskViewController.m */,
 				B56E36A61DBE65FB00165050 /* TaskListViewController.h */,
 				B56E36A71DBE65FB00165050 /* TaskListViewController.m */,
-				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
-				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
 				B56E36A91DBE662300165050 /* TaskNoteViewController.h */,
 				B56E36AA1DBE662300165050 /* TaskNoteViewController.m */,
 				B56E36AC1DBE664800165050 /* TaskTimeLineViewController.h */,
@@ -558,10 +558,10 @@
 		B564D0EB1C91681700E903B6 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				B55E9D781C9B09B000F581F5 /* FrameLayout.h */,
-				B55E9D791C9B09B000F581F5 /* FrameLayout.m */,
-				B564D0EC1C91681700E903B6 /* NSThread+Util.h */,
-				B564D0ED1C91681700E903B6 /* NSThread+Util.m */,
+				B5AD77C41DD41C91000CC52D /* FrameLayout1.h */,
+				B5AD77C51DD41C91000CC52D /* FrameLayout1.m */,
+				B5AD77C61DD41C91000CC52D /* NSThread+Util.h */,
+				B5AD77C71DD41C91000CC52D /* NSThread+Util.m */,
 				B564D0EF1C91686700E903B6 /* NSObject+Util.h */,
 				B564D0F01C91686700E903B6 /* NSObject+Util.m */,
 			);
@@ -586,6 +586,14 @@
 			path = DBData;
 			sourceTree = "<group>";
 		};
+		B5A6E86B1DD0DBB40062FF80 /* VSetting */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = VSetting;
+			path = Source/VSetting;
+			sourceTree = "<group>";
+		};
 		B5AB6DDA1D658E3100938B7C /* DropDownMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -596,6 +604,15 @@
 			);
 			name = DropDownMenu;
 			path = Vandor/DropDownMenu;
+			sourceTree = "<group>";
+		};
+		B5AD77CA1DD420D8000CC52D /* FrameLayout */ = {
+			isa = PBXGroup;
+			children = (
+				B5AD77CB1DD420D8000CC52D /* FrameLayout.h */,
+				B5AD77CC1DD420D8000CC52D /* FrameLayout.m */,
+			);
+			path = FrameLayout;
 			sourceTree = "<group>";
 		};
 		B5B9053C1D4FB05800DF1E24 /* AppConfig */ = {
@@ -615,6 +632,7 @@
 				B5E9D0A71D3288AD00395CF0 /* Root */,
 				B53959291D28110400FB5408 /* Note */,
 				B56428C21DAB401D00FBB1FE /* Task */,
+				B5A6E86B1DD0DBB40062FF80 /* VSetting */,
 			);
 			name = Attent;
 			sourceTree = "<group>";
@@ -656,21 +674,12 @@
 			children = (
 				B59AB71F1D34A5A60067C4B2 /* DBData */,
 				B5E9D0B31D33F2F400395CF0 /* NSLogn */,
-				B5E9D0AB1D33F09100395CF0 /* FrameSplite */,
+				B5AD77CA1DD420D8000CC52D /* FrameLayout */,
 				B5E9D0AE1D33F09100395CF0 /* UIpConfig */,
 				B5DC864C1D4A57C800DCE8C8 /* View */,
 			);
 			name = Reuse1;
 			path = ../Reuse1;
-			sourceTree = "<group>";
-		};
-		B5E9D0AB1D33F09100395CF0 /* FrameSplite */ = {
-			isa = PBXGroup;
-			children = (
-				B5E9D0AC1D33F09100395CF0 /* FrameSplite.h */,
-				B5E9D0AD1D33F09100395CF0 /* FrameSplite.m */,
-			);
-			path = FrameSplite;
 			sourceTree = "<group>";
 		};
 		B5E9D0AE1D33F09100395CF0 /* UIpConfig */ = {
@@ -941,6 +950,7 @@
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
 				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
 				B5056A8F1DC82AA500979758 /* TaskInfoManager.m in Sources */,
+				B5AD77CD1DD420D8000CC52D /* FrameLayout.m in Sources */,
 				B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */,
 				B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */,
 				B564D0D81C9110FD00E903B6 /* UIScrollView+ScalableCover.m in Sources */,
@@ -970,7 +980,6 @@
 				B56E36AB1DBE662300165050 /* TaskNoteViewController.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
 				B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */,
-				B564D0EE1C91681700E903B6 /* NSThread+Util.m in Sources */,
 				B56E36A21DBE659800165050 /* TaskEditSubTaskViewController.m in Sources */,
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
 				B56632DC1DB08652006EE40A /* ButtonData.m in Sources */,
@@ -979,9 +988,9 @@
 				B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
 				B5056A921DC82ABC00979758 /* TaskRecordViewController.m in Sources */,
-				B55E9D7A1C9B09B000F581F5 /* FrameLayout.m in Sources */,
 				B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */,
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,
+				B5AD77C81DD41C91000CC52D /* FrameLayout1.m in Sources */,
 				B564D0CC1C9110FD00E903B6 /* UIImage+FontAwesome.m in Sources */,
 				B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */,
 				B56632DF1DB0865E006EE40A /* PushButton.m in Sources */,
@@ -999,7 +1008,6 @@
 				B564D0D21C9110FD00E903B6 /* UIBarButtonItem+Badge.m in Sources */,
 				B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */,
 				B564D0D11C9110FD00E903B6 /* NSTextAttachment+Util.m in Sources */,
-				B5E9D0AF1D33F09100395CF0 /* FrameSplite.m in Sources */,
 				B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */,
 				B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */,
 				B564D0D41C9110FD00E903B6 /* UIColor+Util.m in Sources */,
@@ -1009,6 +1017,7 @@
 				B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */,
 				B5448F071D658F3100F186BE /* UIView+MotionEffect.m in Sources */,
 				B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */,
+				B5AD77C91DD41C91000CC52D /* NSThread+Util.m in Sources */,
 				B5448F0B1D658F3100F186BE /* UIView+UserInteraction.m in Sources */,
 				B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */,
 				B564D0C91C9110FD00E903B6 /* FAImageView.m in Sources */,

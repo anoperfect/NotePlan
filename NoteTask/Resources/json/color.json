@@ -87,6 +87,31 @@
  "colornightstringDefault" : "#f0ffff@60"
 },
  
+ {
+ "name" : "TaskDetailText",
+ "title" : "任务详情页文本颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskDetailContentContainerBackground",
+ "title" : "任务详情页内容区背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#efefef",
+ "colornightstringDefault" : "#efefef"
+ },
+ 
+ {
+ "name" : "TaskDetailPropertyContainerBackground",
+ "title" : "任务详情页属性区背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1e1e1",
+ "colornightstringDefault" : "#e1e1e1"
+ },
+ 
+ 
  
  
  

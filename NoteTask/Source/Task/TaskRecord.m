@@ -76,7 +76,18 @@
 
 
 
-
+- (NSMutableAttributedString*)generateAttributedString
+{
+    NSString *s = @"";
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.committedAt];
+    
+    
+    NSMutableAttributedString *attributedStringContent = [[NSMutableAttributedString alloc] initWithString:s];
+    
+    [attributedString appendAttributedString:attributedStringContent];
+    
+    return attributedString;
+}
 
 
 @end
@@ -149,6 +160,7 @@
         }
     }
     
+    NSLog(@"[%@]task record count : %zd", sn, recordsResult.count);
     return [NSArray<TaskRecord*> arrayWithArray:recordsResult];
 }
 
@@ -227,4 +239,6 @@
 
 
 @end
+
+
 
