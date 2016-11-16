@@ -42,10 +42,18 @@
 
 
 
-
 @interface NSString (Random)
 + (NSString*)randomStringWithLength:(NSInteger)length andType:(NSInteger)type;
+@end
 
+
+
+@interface NSString (NSAttributedString)
++(NSMutableAttributedString*)attributedStringWith:(NSString*)s
+                                             font:(UIFont*)font
+                                        textColor:(UIColor*)textColor
+                                  backgroundColor:(UIColor*)backgroundColor
+                                           indent:(NSInteger)indent;
 
 
 

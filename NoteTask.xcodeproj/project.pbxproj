@@ -33,6 +33,8 @@
 		B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83441D3DC80E00814DE3 /* NoteDetailViewController.m */; };
 		B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */; };
 		B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55DA66D1D67798900A2EC8B /* CustomViewController.m */; };
+		B56230601DDAA747000BBB46 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B562305F1DDAA747000BBB46 /* YYFPSLabel.m */; };
+		B56230631DDAA8B2000BBB46 /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B56230621DDAA8B2000BBB46 /* YYWeakProxy.m */; };
 		B56428C51DAB403300FBB1FE /* TaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428C41DAB403300FBB1FE /* TaskViewController.m */; };
 		B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */; };
 		B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428CA1DAB405C00FBB1FE /* TaskModel.m */; };
@@ -160,6 +162,10 @@
 		B55A83471D3DC81C00814DE3 /* NoteCreateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCreateViewController.m; path = Source/NoteCreateViewController.m; sourceTree = "<group>"; };
 		B55DA66C1D67798900A2EC8B /* CustomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomViewController.h; path = Source/CustomViewController.h; sourceTree = "<group>"; };
 		B55DA66D1D67798900A2EC8B /* CustomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomViewController.m; path = Source/CustomViewController.m; sourceTree = "<group>"; };
+		B562305E1DDAA747000BBB46 /* YYFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYFPSLabel.h; sourceTree = "<group>"; };
+		B562305F1DDAA747000BBB46 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
+		B56230611DDAA8B2000BBB46 /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
+		B56230621DDAA8B2000BBB46 /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
 		B56428C31DAB403300FBB1FE /* TaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskViewController.h; sourceTree = "<group>"; };
 		B56428C41DAB403300FBB1FE /* TaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskViewController.m; sourceTree = "<group>"; };
 		B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskDetailViewController.h; sourceTree = "<group>"; };
@@ -409,8 +415,21 @@
 			children = (
 				B5AB6DDA1D658E3100938B7C /* DropDownMenu */,
 				B5448EE31D658F3100F186BE /* YouXianMing-Animations */,
+				B562305D1DDAA747000BBB46 /* YYKit */,
 			);
 			name = Vandor;
+			sourceTree = "<group>";
+		};
+		B562305D1DDAA747000BBB46 /* YYKit */ = {
+			isa = PBXGroup;
+			children = (
+				B562305E1DDAA747000BBB46 /* YYFPSLabel.h */,
+				B562305F1DDAA747000BBB46 /* YYFPSLabel.m */,
+				B56230611DDAA8B2000BBB46 /* YYWeakProxy.h */,
+				B56230621DDAA8B2000BBB46 /* YYWeakProxy.m */,
+			);
+			name = YYKit;
+			path = Vandor/YYKit;
 			sourceTree = "<group>";
 		};
 		B56428C21DAB401D00FBB1FE /* Task */ = {
@@ -947,6 +966,7 @@
 				B5056A8C1DC82A8F00979758 /* TaskRecord.m in Sources */,
 				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
 				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
+				B56230631DDAA8B2000BBB46 /* YYWeakProxy.m in Sources */,
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
 				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
 				B5056A8F1DC82AA500979758 /* TaskInfoManager.m in Sources */,
@@ -985,6 +1005,7 @@
 				B56632DC1DB08652006EE40A /* ButtonData.m in Sources */,
 				B564D0DC1C9110FD00E903B6 /* SwipableViewController.m in Sources */,
 				B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */,
+				B56230601DDAA747000BBB46 /* YYFPSLabel.m in Sources */,
 				B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */,
 				B564D0DD1C9110FD00E903B6 /* TitleBarView.m in Sources */,
 				B5056A921DC82ABC00979758 /* TaskRecordViewController.m in Sources */,

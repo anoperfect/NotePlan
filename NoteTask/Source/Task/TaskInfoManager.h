@@ -49,11 +49,9 @@
 @property (nonatomic, strong, readonly) TaskDayList *taskDayListTomorrow;
 @property (nonatomic, strong, readonly) TaskDayList *taskDayListComming;
 
+@property (nonatomic, strong, readonly) NSMutableArray<TaskDayList *> *taskDayListAtArrangeMode;
 
 + (TaskInfoManager*)taskInfoManager;
 - (void)reloadTaskInfos;
-
-- (NSString*)dayNameOnSection:(NSInteger)section;
-- (TaskDayList*)taskDayListOnSection:(NSInteger)section;
 
 @end

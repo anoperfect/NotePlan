@@ -246,3 +246,37 @@
 @end
 
 
+@implementation NSString (NSAttributedString)
+
+
++(NSMutableAttributedString*)attributedStringWith:(NSString*)s
+                                             font:(UIFont*)font
+                                        textColor:(UIColor*)textColor
+                                  backgroundColor:(UIColor*)backgroundColor
+                                           indent:(NSInteger)indent
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s];
+    NSInteger length = attributedString.length;
+    NSRange range = NSMakeRange(0, length);
+    
+    if(indent > 0) {
+        NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyleContent setHeadIndent:indent];
+        [paragraphStyleContent setFirstLineHeadIndent:indent];
+        [paragraphStyleContent setTailIndent:-indent];
+        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:range];
+    }
+    
+    if(font) {
+        [attributedString addAttribute:NSFontAttributeName value:font range:range];
+    }
+    
+    if(textColor) {
+        [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:range];
+    }
+    
+    return attributedString;
+}
+
+
+@end

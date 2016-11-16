@@ -8,23 +8,50 @@
 
 #import <Foundation/Foundation.h>
 
+
+
+
+
+
+
+
+
 @interface TaskRecord : NSObject
 
 
 
 
+typedef NS_ENUM (NSUInteger, TaskRecordType) {
+    TaskRecordTypeNone = 0,
+    TaskRecordTypeCreate ,
+    TaskRecordTypeSignIn ,
+    TaskRecordTypeSignOut ,
+    TaskRecordTypeUserModify ,
+    TaskRecordTypeUserDelete ,
+    TaskRecordTypeUserRecord ,
+    TaskRecordTypeLocalReminder ,
+    TaskRecordTypeRemoteReminder ,
+    TaskRecordTypeFinish ,
+    TaskRecordTypeRedo ,
+};
+
+
 @property (nonatomic, strong) NSString *snTaskRecord;
 @property (nonatomic, strong) NSString *snTaskInfo;
 @property (nonatomic, strong) NSString *dayString;
-@property (nonatomic, assign) NSInteger type; //0.do/redo. 1.finish. 2.signin. 3.user-record. 4.user-delete. 5.user-modify. 6.system-reminder.
+@property (nonatomic, assign) TaskRecordType type;
 @property (nonatomic, strong) NSString *record;
 @property (nonatomic, strong) NSString *committedAt;
 @property (nonatomic, strong) NSString *modifiedAt;
 @property (nonatomic, strong) NSString *deprecatedAt;
 
++ (NSString*)stringOfType:(TaskRecordType)type;
++ (TaskRecordType)typeOfString:(NSString*)typeString;
 
 + (instancetype)taskRecordFromDictionary:(NSDictionary*)dict;
+
 - (NSMutableAttributedString*)generateAttributedString;
+
 
 @end
 
@@ -53,6 +80,8 @@
 - (void)taskRecordRemove:(TaskRecord*)taskRecord;
 - (void)taskRecordUpdate:(TaskRecord*)taskRecord;
 
+
+- (void)taskRecordSort:(NSMutableArray<TaskRecord*>*)taskRecords byModifiedAtAscend:(BOOL)ascend;
 
 @end
 

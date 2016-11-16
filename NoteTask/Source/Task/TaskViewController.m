@@ -19,6 +19,7 @@
                                     >
 
 @property (nonatomic, strong) UITableView *tasksView;
+@property (nonatomic, strong) NSMutableDictionary<NSIndexPath*,NSNumber*> *taskCellOptumizeHeights;
 
 
 
@@ -31,6 +32,8 @@
 
 
 @property (nonatomic, strong) NSMutableArray *sectionsWrap;
+@property (nonatomic, assign) BOOL isDisplayBeforeTask;
+@property (nonatomic, assign) CGFloat contentOffsetYMonitor; //监测上拉距离. 以打开section之前.
 
 @end
 
@@ -44,7 +47,6 @@
 {
     [super viewDidLoad];
     
-    
     self.title = @"任务";
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     
@@ -54,6 +56,7 @@
     self.navigationItem.backBarButtonItem = backItem;
     
     self.sectionsWrap = [[NSMutableArray alloc] init];
+    self.taskCellOptumizeHeights = [[NSMutableDictionary alloc] init];
     
     [self dataTasksReload];
     
@@ -78,6 +81,23 @@
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = NO;
     
+    self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
+//    self.navigationController.navigationBar.translucent = YES;
+//    self.navigationController.navigationBar.alpha = 0.0;
+    
+//    [self.navigationController.navigationBar setTintColor:];
+#if 0
+    //    导航栏变为透明
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:0];
+    //    让黑线消失的方法
+    self.navigationController.navigationBar.shadowImage=[UIImage new];
+#endif
+    
+//    self.tasksView.backgroundColor = [UIColor clearColor];
+    
+//    self.navigationController.navigationBar.barTintColor = [UIColor colorFromString:@"#9779ee"];
+    
+    self.navigationController.navigationBar.translucent = NO;
 }
 
 
@@ -110,8 +130,10 @@
     self.tasksView = [[UITableView alloc] initWithFrame:VIEW_BOUNDS style:UITableViewStylePlain];
     [self.contentView addSubview:self.tasksView];
     self.tasksView.separatorStyle = UITableViewCellSeparatorStyleSingleLineEtched;
+    self.tasksView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tasksView.dataSource   = self;
     self.tasksView.delegate     = self;
+    self.tasksView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
     //注册UITableViewCell重用.
     [self.tasksView registerClass:[TaskCell class] forCellReuseIdentifier:@"TaskCell"];
     
@@ -149,19 +171,46 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
+    if(!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"]) {
+        return 0;
+    }
+    
     return 45.0;
 }
 
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
+    if(!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"]) {
+        return nil;
+    }
+    
     UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 45.0)];
-    sectionHeaderView.backgroundColor = [UIColor colorFromString:@"#faf0e6@60"];
     sectionHeaderView.tag = section;
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 2, sectionHeaderView.frame.size.width - 10, 41)];
-    label.text = [self.taskInfoManager dayNameOnSection:section];
-    [sectionHeaderView addSubview:label];
+    UIEdgeInsets edgeContainer = UIEdgeInsetsMake(2, 0, 2, 0);
+    CGRect frameContainer = UIEdgeInsetsInsetRect(sectionHeaderView.bounds, edgeContainer);
+    UIView *container = [[UIView alloc] initWithFrame:frameContainer];
+    [sectionHeaderView addSubview:container];
+    container.backgroundColor = [UIColor colorWithName:@"TaskSectionHeaderBackground"];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:container.bounds];
+    NSMutableAttributedString *attributedString =
+                    [NSString attributedStringWith:taskDayList.dayName
+                                              font:[UIFont fontWithName:@"TaskSectionHeader"]
+                                         textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                                   backgroundColor:nil
+                                            indent:36];
+    NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskDayList.taskDays.count];
+    [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
+                                                                       font:[UIFont fontWithName:@"small"]
+                                                                  textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                                                            backgroundColor:nil
+                                                                    indent:0]];
+    label.attributedText = attributedString;
+    [container addSubview:label];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionSectionTap:)];
     tap.numberOfTapsRequired = 1;
@@ -178,6 +227,11 @@
         height = self.heightDetailedCell;
     }
     
+    NSNumber *heightNumber;
+    if(nil != (heightNumber = self.taskCellOptumizeHeights[indexPath])) {
+        height = [heightNumber floatValue];
+    }
+    
     NSLog(@"---tableview height row : %lf", height);
     return height;
 }
@@ -186,22 +240,24 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger sections ;
-    sections = 3;
+    sections = self.taskInfoManager.taskDayListAtArrangeMode.count;
     return sections;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger rows;
-    rows = 6;
+    NSInteger rows = 0;
+   TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
     
-    TaskDayList *taskDayList = [self.taskInfoManager taskDayListOnSection:section];
-    rows = taskDayList.taskDays.count;
-    
-    if([self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
+    if((!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"])
+       || [self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
         rows = 0;
     }
+    else {
+        rows = taskDayList.taskDays.count;
+    }
+    
     return rows;
 }
 
@@ -212,8 +268,7 @@
     TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskCell" forIndexPath:indexPath];
     //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.imageView.layer.cornerRadius = 6;
-    
-    cell.detailedMode = [self.indexPathDetaied isEqual:indexPath];
+    cell.detailedMode = [self detailModeOnIndexPath:indexPath];
     TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
     cell.taskDay = taskDay;
     __weak typeof(self) _self = self;
@@ -221,9 +276,12 @@
         [_self actionOnIndexPath:indexPath byString:actionString];
     };
     
+    self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height + 10);
+/*
+    只有一个cell是展开状态.因此可以只记录一个优化高度.
     self.heightDetailedCell = cell.frame.size.height + 10;
-    
     NSLog(@"--- heightDetailedCell : %lf", self.heightDetailedCell);
+ */
     
     return cell;
 }
@@ -237,12 +295,18 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    TaskDay* taskDay = [self dataTaskDayOnIndexPath:indexPath];
+    [self enterTaskDetail:taskDay];
+    
+#if 0
+    
     if([indexPath isEqual:self.indexPathDetaied]) {
         [self actionCloseDetailedOnIndexPath:indexPath];
     }
     else {
         [self actionOpenDetailedOnIndexPath:indexPath];
     }
+#endif
 }
 
 
@@ -262,6 +326,12 @@
 }
 
 
+- (BOOL)detailModeOnIndexPath:(NSIndexPath*)indexPath
+{
+    return NO;
+//    return [self.indexPathDetaied isEqual:indexPath];
+}
+
 
 - (void)dataTasksReload
 {
@@ -274,51 +344,16 @@
 
 - (TaskDay*)dataTaskDayOnIndexPath:(NSIndexPath*)indexPath
 {
-    switch (indexPath.section) {
-        case 0:
-            return self.taskInfoManager.taskDayListToday.taskDays[indexPath.row];
-            break;
-            
-        case 1:
-            return self.taskInfoManager.taskDayListTomorrow.taskDays[indexPath.row];
-            break;
-            
-        case 2:
-            return self.taskInfoManager.taskDayListComming.taskDays[indexPath.row];
-            break;
-            
-        default:
-            break;
-    }
+    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[indexPath.section];
+    TaskDay *taskDay = taskDayList.taskDays[indexPath.row];
     
-    return nil;
+    return taskDay;
 }
 
 
 - (void)actionMore
 {
-    UILabel *label = [[UILabel alloc] init];
-    [self.view addSubview:label];
-    
-    label.frame = CGRectMake(0, 360, VIEW_WIDTH, 100);
-    label.backgroundColor = [UIColor blueColor];
-    NSString *s =  @"富士康的肌肤快速打击费拉达斯克己复礼深刻的见风使舵路口附近的身份离开时的肌肤";
-//    label.text = s;
-    label.numberOfLines = 0;
-    
-    NSMutableAttributedString *attributedStr = [[NSMutableAttributedString alloc] initWithString:s];
-    [attributedStr addAttribute:NSExpansionAttributeName value:@-0.2 range:NSMakeRange(0, s.length)];
-    
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setHeadIndent:20];
-    [paragraphStyle setFirstLineHeadIndent:20];
-    [paragraphStyle setTailIndent:-20];
-    [attributedStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, s.length)];
-    
-    label.attributedText = attributedStr;
-    
-    
-    
+  
 }
 
 
@@ -402,8 +437,14 @@
 
 - (void)actionEditOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
 {
+    
+}
+
+
+- (void)enterTaskDetail:(TaskDay*)taskDay
+{
     TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
-    vc.taskinfo = taskDay.taskinfo;
+    vc.taskDay = taskDay;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -522,6 +563,34 @@
 }
 
 
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    CGPoint point = scrollView.contentOffset;
+    NSLog(@"%f, %f", point.x, point.y);
+    
+    if(!self.isDisplayBeforeTask) {
+        if(point.y < self.contentOffsetYMonitor) {
+            self.contentOffsetYMonitor = point.y;
+        }
+    }
+    
+    
+
+    
+    
+}
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if(self.contentOffsetYMonitor < - 100 && !self.isDisplayBeforeTask) {
+        NSLog(@"- drag to display tasks Before.")
+        self.contentOffsetYMonitor = 0;
+        self.isDisplayBeforeTask = YES;
+        [self.sectionsWrap addObject:@0];
+        [self.tasksView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+    }
+}
 
 
 

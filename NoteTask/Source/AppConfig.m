@@ -557,7 +557,7 @@
     TaskInfo *task;
     task = [[TaskInfo alloc] init];
     task.sn = @"t1";
-    task.content = @"英语单词";
+    task.content = @"t1英语单词单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤";
     task.status = 1;
     task.committedAt = @"2016-11-01 09:10:36";
     task.modifiedAt = @"2016-11-01 09:10:36";
@@ -565,14 +565,16 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16";
     task.time = @"07:00-23:00";
     task.period = @"period1";
+    [self configTaskInfoAdd:task];
+    task.sn = @"t10";
     [self configTaskInfoAdd:task];
     
     task = [[TaskInfo alloc] init];
     task.sn = @"t2";
-    task.content = @"英语单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤";
+    task.content = @"t2英语单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤单词fsjdkfjfslkj flskdfdjsfd 发神经开放式空间粉色款经典福克斯肌肤";
     task.status = 1;
     task.committedAt = @"2016-11-01 09:16:36";
     task.modifiedAt = @"2016-11-01 09:16:36";
@@ -580,7 +582,7 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10;2016-11-15;2016-11-16";
     task.time = @"07:00-23:00";
     task.period = @"period2k";
     [self configTaskInfoAdd:task];
@@ -595,17 +597,138 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08;2016-11-11;2016-11-15;2016-11-16";
     task.time = @"07:00-23:00";
     task.period = @"period3t";
     [self configTaskInfoAdd:task];
+    
+    TaskRecord *taskRecord;
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r0";
+    taskRecord.type = 0;
+    taskRecord.record = @"";
+    taskRecord.committedAt = @"2016-11-10 12:34:50";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r0";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r0";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r1";
+    taskRecord.type = 1;
+    taskRecord.record = @"";
+    taskRecord.committedAt = @"2016-11-10 12:34:51";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r1";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r1";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r2";
+    taskRecord.type = 2;
+    taskRecord.record = @"";
+    taskRecord.committedAt = @"2016-11-10 12:34:52";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r2";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r2";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r3";
+    taskRecord.type = 3;
+    taskRecord.record = @"用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容";
+    taskRecord.committedAt = @"2016-11-10 12:34:53";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r3";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r3";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r4";
+    taskRecord.type = 4;
+    taskRecord.record = @"";
+    taskRecord.committedAt = @"2016-11-10 12:34:54";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r4";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r4";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r5";
+    taskRecord.type = 5;
+    taskRecord.record = @"";
+    taskRecord.committedAt = @"2016-11-10 12:34:55";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r5";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r5";
+    [self configTaskRecordAdd:taskRecord];
+    
+    taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskInfo = @"t2";
+    taskRecord.snTaskRecord = @"t2r6";
+    taskRecord.type = 6;
+    taskRecord.record = @"本地提醒 10:00:00";
+    taskRecord.committedAt = @"2016-11-10 12:34:56";
+    taskRecord.dayString = @"";
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t3";
+    taskRecord.snTaskRecord = @"t3r6";
+    [self configTaskRecordAdd:taskRecord];
+    taskRecord.snTaskInfo = @"t1";
+    taskRecord.snTaskRecord = @"t1r6";
+    [self configTaskRecordAdd:taskRecord];
+    
+    
     
     
     
     
     
 }
-
 
 
 
@@ -947,6 +1070,11 @@
 }
 
 
+//一些保存的时间字符串显示的时候, 可能进行一些调整. 统一使用此接口.
++ (NSString*)dateStringToDisplay:(NSString*)at
+{
+    return at;
+}
 
 
 

@@ -80,6 +80,7 @@
 @property (nonatomic, strong) TaskDayList *taskDayListToday;
 @property (nonatomic, strong) TaskDayList *taskDayListTomorrow;
 @property (nonatomic, strong) TaskDayList *taskDayListComming;
+@property (nonatomic, strong) NSMutableArray<TaskDayList *> *taskDayListAtArrangeMode;
 
 @property (nonatomic, strong) NSMutableDictionary<NSString*,NSMutableArray<TaskDay*>*>* taskinfosSortedByDay;
 @property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask;
@@ -181,7 +182,7 @@
     for(NSString *day in days) {
         NSMutableArray<TaskDay*> *taskDays = self.taskinfosSortedByDay[day];
         
-        NSLog(@"day:[%@], today:[%@], tomorrow:[%@]", day, self.dateStringToday, self.dateStringTomorrow);
+        NS0Log(@"day:[%@], today:[%@], tomorrow:[%@]", day, self.dateStringToday, self.dateStringTomorrow);
         
         if([day compare:self.dateStringToday] == NSOrderedSame) {
             [self.taskDayListToday addTaskDays:taskDays];
@@ -196,124 +197,8 @@
             [self.taskDayListComming addTaskDays:taskDays];
         }
     }
-}
-
-
-#if 0
-+ (instancetype)fromTaskInfos:(NSArray<TaskInfo*>*)taskinfos
-{
-    TaskGroup *taskGroup = [[TaskGroup alloc] init];
     
-    NSDate *date = [NSDate date];
-    NSString *dateString = [NSString stringWithFormat:@"%@", date];
-    dateString = [dateString substringToIndex:9];
-    
-    NSDate *dateTomorrow = [date dateByAddingTimeInterval:24*60*60];
-    NSString *dateStringTomorrow = [NSString stringWithFormat:@"%@", dateTomorrow];
-    dateStringTomorrow = [dateStringTomorrow substringToIndex:9];
-    
-    taskGroup.dateStringToday = dateString;
-    taskGroup.dateStringTomorrow = dateStringTomorrow;
-    
-    TaskDayList *taskDayListBefore = [[TaskDayList alloc] init];
-    taskDayListBefore.dayName = @"之前";
-    taskDayListBefore.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListToday = [[TaskDayList alloc] init];
-    taskDayListToday.dayName = @"今天";
-    taskDayListToday.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListTomorrow = [[TaskDayList alloc] init];
-    taskDayListTomorrow.dayName = @"明天";
-    taskDayListTomorrow.taskinfos = [[NSMutableArray alloc] init];
-    
-    TaskDayList *taskDayListComming = [[TaskDayList alloc] init];
-    taskDayListComming.dayName = @"之后";
-    taskDayListComming.taskinfos = [[NSMutableArray alloc] init];
-    
-    for(TaskInfo *taskinfo in taskinfos) {
-        NSMutableArray<NSNumber*> *days = [taskinfo daysDetect];
-        if(NSNotFound != [days indexOfObject:@(DaysCompareBefore)]) {
-            [taskDayListBefore.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareToday)]) {
-            [taskDayListToday.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareTomorrow)]) {
-            [taskDayListTomorrow.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        if(NSNotFound != [days indexOfObject:@(DaysCompareComming)]) {
-            [taskDayListComming.taskinfos addObject:taskinfo];
-            days = nil;
-            continue;
-        }
-        
-        NSLog(@"#error - should not excute to here.");
-        days = nil;
-    }
-    
-    taskGroup.taskDayListBefore     = taskDayListBefore;
-    taskGroup.taskDayListToday      = taskDayListToday;
-    taskGroup.taskDayListTomorrow   = taskDayListTomorrow;
-    taskGroup.taskDayListComming    = taskDayListComming;
-    
-    return taskGroup;
-}
-#endif
-
-- (NSString*)dayNameOnSection:(NSInteger)section
-{
-    switch (section) {
-        case 0:
-            return self.taskDayListToday.dayName;
-            break;
-            
-        case 1:
-            return self.taskDayListTomorrow.dayName;
-            break;
-            
-        case 2:
-            return self.taskDayListComming.dayName;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return @"NAN";
-    
-}
-
-
-- (TaskDayList*)taskDayListOnSection:(NSInteger)section;
-{
-    switch (section) {
-        case 0:
-            return self.taskDayListToday;
-            break;
-            
-        case 1:
-            return self.taskDayListTomorrow;
-            break;
-            
-        case 2:
-            return self.taskDayListComming;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return nil;
+    self.taskDayListAtArrangeMode = [@[self.taskDayListBefore, self.taskDayListToday, self.taskDayListTomorrow, self.taskDayListComming] mutableCopy];
 }
 
 

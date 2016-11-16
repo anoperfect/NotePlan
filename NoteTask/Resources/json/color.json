@@ -6,6 +6,22 @@
 "colorstringDefault" : "#e1eaeb",
 "colornightstringDefault" : "#e1eaeb"
 },
+ 
+ {
+ "name" : "CustomTextColor",
+ "title" : "通用字体颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+
+ {
+ "name" : "CustomTextLightColor",
+ "title" : "通用字体轻颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#7e7e7e",
+ "colornightstringDefault" : "#7e7e7e"
+ },
 
 {
 "name" : "MenuBackground",
@@ -109,6 +125,76 @@
  "enableCustmize" : true,
  "colorstringDefault" : "#e1e1e1",
  "colornightstringDefault" : "#e1e1e1"
+ },
+ {
+ "name" : "NoteRecordCommittedAt",
+ "title" : "任务记录时间栏",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+ {
+ "name" : "NoteRecordType",
+ "title" : "任务记录类型",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+ {
+ "name" : "NoteRecordContent",
+ "title" : "任务记录内容",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ 
+ {
+ "name" : "TaskDetailRecordHeaderBackground",
+ "title" : "任务详情记录栏背景",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eaeb",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskDetailRecordTypeEnabledBackground",
+ "title" : "任务详情任务栏",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskDetailRecordTypeDisabledBackground",
+ "title" : "任务详情任务栏",
+ "enableCustmize" : true,
+ "colorstringDefault" : "clear",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskRecordTimeLine",
+ "title" : "任务详情记录时间线",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454d9b",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskSectionHeaderBackground",
+ "title" : "任务列表部头背景",
+ "enableCustmize" : true,
+ "colorstringDefault" : "white",
+ "colornightstringDefault" : "#454545"
+ },
+ 
+ {
+ "name" : "TaskSectionHeaderText",
+ "title" : "任务列表部头文字颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#599AD0",
+ "colornightstringDefault" : "#454545"
  },
  
  

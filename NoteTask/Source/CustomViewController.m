@@ -40,12 +40,14 @@
 - (void)viewWillLayoutSubviews
 {
     self.contentView.frame = self.view.bounds;
+//    self.contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithName:@"NavigationBarBackground"];
+//    self.navigationController.navigationBar.barTintColor = [UIColor colorFromString:@"#7e9ae1@50"];
     self.navigationController.navigationBar.translucent = NO;
     
     if(self.hiddenByPush) {

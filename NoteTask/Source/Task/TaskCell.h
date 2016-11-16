@@ -22,3 +22,18 @@
 @interface TaskCellActionMenu : UIView
 
 @end
+
+
+@interface TaskDetailContentCell : UITableViewCell
+@property (nonatomic, strong) TaskInfo *taskinfo;
+@property (nonatomic, strong) void(^actionOn)(NSString*);
+@end
+
+
+@interface TaskDetailPropertyCell : UITableViewCell
+- (void)setTitle:(NSAttributedString*)titleAttributedString content:(NSAttributedString*)contentAttributedString;
+@end
+
+@interface TaskRecordCell : UITableViewCell
+@property (nonatomic, strong) TaskRecord *taskRecord;
+@end

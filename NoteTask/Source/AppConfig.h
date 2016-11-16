@@ -77,4 +77,7 @@
 - (AFHTTPSessionManager *)HTTPSessionManager;
 #define HTTPMANAGE [[AppConfig sharedAppConfig] HTTPSessionManager]
 
+//一些保存的时间字符串显示的时候, 可能进行一些调整. 统一使用此接口.
++ (NSString*)dateStringToDisplay:(NSString*)at;
+
 @end

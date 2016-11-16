@@ -33,6 +33,12 @@
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
+    YYFPSLabel *fpsLabel = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 100, 60, 18)];
+    fpsLabel.backgroundColor = [UIColor blueColor];
+    [self.window addSubview:fpsLabel];
+    fpsLabel.hidden = YES;
+    
+    
     return YES;
 }
 

@@ -48,7 +48,7 @@
 #import <YYText/YYTextMagnifier.h>
 #import <YYText/YYTextEffectWindow.h>
 #import <YYText/YYTextKeyboardManager.h>
-
+#import "YYFPSLabel.h"
 #import "POP.h"
 #import "GCDWebServer.h"
 #import "GCDWebServerDataResponse.h"
