@@ -43,7 +43,6 @@ PODS:
     - SDWebImage/Core (= 3.8.1)
   - SDWebImage/Core (3.8.1)
   - SSKeychain (1.4.0)
-  - TTTAttributedLabel (1.13.4)
   - YYCache (1.0.3)
   - YYImage (1.0.2):
     - YYImage/Core (= 1.0.2)
@@ -67,7 +66,6 @@ DEPENDENCIES:
   - ReactiveCocoa
   - SDWebImage
   - SSKeychain
-  - TTTAttributedLabel
   - YYCache
   - YYModel
   - YYText
@@ -86,13 +84,12 @@ SPEC CHECKSUMS:
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
   SDWebImage: 35f9627a3e44b4f292a8a8ce6a531fa488239b91
   SSKeychain: c71293fa57216a40ab06c23f4085387583293de4
-  TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
   YYCache: 282f35b5b0990833d0b7a06d864a87141a021da2
   YYImage: 2cc79ed49b9549b71c6715cefe7b0f5ab3d33abf
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: ac09660c9ccd9b817f409a20caa6f5587444d2ae
   YYWebImage: 0431ed108e104527669b86f75efd58958425cca2
 
-PODFILE CHECKSUM: 1b99545b0f0c4f7b22d7c2351f9ac69e28ebb7da
+PODFILE CHECKSUM: 02dc994f256f5129040b4856bfd3de379082cd23
 
 COCOAPODS: 1.0.0

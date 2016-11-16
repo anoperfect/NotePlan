@@ -10,7 +10,7 @@ pod 'ReactiveCocoa'
 #pod 'GPUImage'
 pod 'MBProgressHUD'
 pod 'Reachability'
-pod 'TTTAttributedLabel'
+#pod 'TTTAttributedLabel'
 pod 'AFNetworking'
 pod 'YYModel'
 pod 'YYText'
@@ -23,3 +23,4 @@ pod 'pop', '~> 1.0'
 pod "GCDWebServer", "~> 3.0"
 
 end
+
