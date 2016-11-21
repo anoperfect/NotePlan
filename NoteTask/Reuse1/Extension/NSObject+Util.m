@@ -275,7 +275,28 @@
         [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:range];
     }
     
+    
     return attributedString;
+}
+
+
+@end
+
+@implementation NSString (NSArrayCombine)
+
+
++ (NSString*)arrayDescriptionConbine:(NSArray*)array seprator:(NSString*)seprator
+{
+    NSMutableString *s = [[NSMutableString alloc] init];
+    NSInteger idx = 0;
+    for(id obj in array) {
+        if(idx != 0) {
+            [s appendString:seprator];
+        }
+        [s appendFormat:@"%@", obj];
+    }
+    
+    return [NSString stringWithString:s];
 }
 
 

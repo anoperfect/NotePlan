@@ -58,3 +58,10 @@
 
 
 @end
+
+
+@interface NSString (NSArrayCombine)
+
++ (NSString*)arrayDescriptionConbine:(NSArray*)array seprator:(NSString*)seprator;
+
+@end

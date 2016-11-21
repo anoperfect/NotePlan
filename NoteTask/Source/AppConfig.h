@@ -5,11 +5,11 @@
 //  Created by Ben on 16/8/2.
 //  Copyright © 2016年 Ben. All rights reserved.
 //
-
 #import <Foundation/Foundation.h>
 #import "NoteModel.h"
 #import "TaskModel.h"
 #import "TaskRecord.h"
+#import "TaskInfoManager.h"
 
 
 
@@ -70,6 +70,9 @@
 - (void)configTaskRecordRemoveBySn:(NSArray<NSString*>*)sn;
 - (void)configTaskRecordUpdate:(TaskRecord*)taskRecord;
 
+- (NSArray<TaskFinishAt*>*)configTaskFinishAtGets;
+- (BOOL)configTaskFinishAtAdd:(TaskFinishAt*)taskFinishAt;
+- (void)configTaskFinishAtRemove:(TaskFinishAt*)taskFinishAt;
 
 
 

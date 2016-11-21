@@ -53,6 +53,12 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 @interface TaskCell ()
 
+@property (nonatomic, strong) id data;
+@property (nonatomic, strong) TaskInfo *taskinfo;
+
+@property (nonatomic, assign) BOOL detailedMode;
+@property (nonatomic, strong) void(^actionOn)(NSString*);
+
 @property (nonatomic, strong) UIView *container;
 
 @property (nonatomic, strong) UIView *statusView;
@@ -92,8 +98,11 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 }
 
 
-- (void)setTaskDay:(TaskDay*)taskDay
+- (void)setTaskInfoArrange:(TaskInfoArrange*)taskInfoArrange
 {
+    _data = taskInfoArrange;
+    _taskinfo = taskInfoArrange.taskinfo;
+    
     CGRect frameCell = self.frame;
     UIEdgeInsets edgeContainer = UIEdgeInsetsMake(10, 10, 0, 10);
     UIEdgeInsets edgeSummary = UIEdgeInsetsMake(10, 64, 10, 10);
@@ -109,14 +118,14 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
         frameSummary.size.height = 100;
     }
     
-    NSUInteger length = [taskDay.taskinfo.content length];
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:taskDay.taskinfo.content];
+    NSUInteger length = [_taskinfo.content length];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_taskinfo.content];
     UIColor *textColor = [UIColor blackColor];
     UIColor *textFinishColor = [UIColor grayColor];
     UIFont *textFont = [UIFont systemFontOfSize:14.5];
     UIFont *textFinishFont = [UIFont systemFontOfSize:14.6];
     
-    if(taskDay.finishedAt.length == 0) {
+    if(_taskinfo.finishedAt.length == 0) {
         [attributedString addAttribute:NSFontAttributeName value:textFont range:NSMakeRange(0, attributedString.length)];
         [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:NSMakeRange(0, attributedString.length)];
         [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, attributedString.length)];
@@ -225,6 +234,88 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
         self.actionOn(button.actionData.actionString);
     }
     
+}
+
+
+- (void)setTaskInfo:(TaskInfo*)taskinfo finishedAts:(NSArray<TaskFinishAt*>*)finishedAts
+{
+    _taskinfo = taskinfo;
+    BOOL isFinished = NO;
+    
+    //任务全局设置为完成的话, 则标记为完成. 否则需要检测对应的TaskFinishAt.
+    if(_taskinfo.finishedAt.length > 0) {
+        isFinished = YES;
+    }
+    else {
+        if(finishedAts.count > 0) {
+            BOOL allDayFinished = YES;
+            for(TaskFinishAt *taskFinishAt in finishedAts) {
+                if(taskFinishAt.finishedAt.length > 0) {
+                    NSLog(@"%@ %@ : %@", taskFinishAt.snTaskInfo, taskFinishAt.dayString, taskFinishAt.finishedAt);
+                }
+                else {
+                    allDayFinished = NO;
+                    break;
+                }
+            }
+            
+            isFinished = allDayFinished;
+        }
+    }
+    
+    CGRect frameCell = self.frame;
+    UIEdgeInsets edgeContainer  = UIEdgeInsetsMake(10, 10, 0, 10);
+    UIEdgeInsets edgeSummary    = UIEdgeInsetsMake(10, 64, 10, 10);
+    
+    CGRect frameContainer   = UIEdgeInsetsInsetRect(self.bounds, edgeContainer);
+    CGRect frameSummary     = UIEdgeInsetsInsetRect(CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height), edgeSummary);
+    
+    self.summayView.numberOfLines = 0;
+    frameSummary.size.height = 100;
+    
+    NSUInteger length = [_taskinfo.content length];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_taskinfo.content];
+    UIColor *textColor = [UIColor blackColor];
+    UIColor *textFinishColor = [UIColor grayColor];
+    UIFont *textFont = [UIFont systemFontOfSize:14.5];
+    UIFont *textFinishFont = [UIFont systemFontOfSize:14.6];
+    
+    if(!isFinished) {
+        [attributedString addAttribute:NSFontAttributeName value:textFont range:NSMakeRange(0, attributedString.length)];
+        [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:NSMakeRange(0, attributedString.length)];
+        [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, attributedString.length)];
+    }
+    else {
+        [attributedString addAttribute:NSFontAttributeName value:textFinishFont range:NSMakeRange(0, attributedString.length)];
+        [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textFinishColor.CGColor range:NSMakeRange(0, attributedString.length)];
+        [attributedString addAttribute:NSForegroundColorAttributeName value:textFinishColor range:NSMakeRange(0, attributedString.length)];
+        
+        //删除线.
+        [attributedString addAttribute:NSStrikethroughStyleAttributeName value:@(NSUnderlinePatternSolid | NSUnderlineStyleSingle) range:NSMakeRange(0, length)];
+        [attributedString addAttribute:NSStrikethroughColorAttributeName value:(id)textFinishColor range:NSMakeRange(0, length)];
+    }
+    
+    self.summayView.attributedText = attributedString;
+    
+    
+    CGSize size = [self.summayView sizeThatFits:frameSummary.size];
+    frameSummary.size.height = size.height;
+    self.summayView.frame = frameSummary;
+    NSLog(@"fit --- %lf, %lf", size.width, size.height);
+
+    frameContainer.size.height = frameSummary.size.height + edgeSummary.top + edgeSummary.bottom;
+    frameCell.size.height = frameContainer.size.height + edgeContainer.top + edgeContainer.bottom;
+
+    NSLog(@"--- cell height : %lf", frameCell.size.height);
+    self.frame = frameCell;
+    self.container.frame = frameContainer;
+    self.container.backgroundColor = [UIColor whiteColor];
+    
+    //模拟一个立体效果.
+    self.container.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.container.layer.shadowOffset = CGSizeMake(1, 1);
+    self.container.layer.shadowOpacity = 0.8;
+    self.container.layer.shadowRadius = 1;
 }
 
 
@@ -696,7 +787,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     NSString *s;
     NSMutableAttributedString *attributedString;
     
-    s = self.taskRecord.committedAt;
+    s = [TaskInfo dateTimeStringForDisplay:self.taskRecord.committedAt];
     attributedString = [NSString attributedStringWith:s
                                                  font:[UIFont fontWithName:@"NoteRecordCommittedAt"]
                                             textColor:[UIColor colorWithName:@"NoteRecordCommittedAt"]

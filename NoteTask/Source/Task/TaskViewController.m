@@ -61,17 +61,12 @@
     [self dataTasksReload];
     
     [self subviewBuild];
-    
-    NSLog(@"-%zd", [@"1" compare:@"2"]);
-    NSLog(@"-%zd", [@"1" compare:@"1"]);
-    NSLog(@"-%zd", [@"2" compare:@"1"]);
 }
 
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    
     self.tasksView.frame = VIEW_BOUNDS;
 }
 
@@ -171,8 +166,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
-    if(!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"]) {
+    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
+    if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
         return 0;
     }
     
@@ -182,8 +177,8 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
-    if(!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"]) {
+    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
+    if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
         return nil;
     }
     
@@ -198,12 +193,12 @@
     
     UILabel *label = [[UILabel alloc] initWithFrame:container.bounds];
     NSMutableAttributedString *attributedString =
-                    [NSString attributedStringWith:taskDayList.dayName
+                    [NSString attributedStringWith:taskArrangeGroup.arrangeName
                                               font:[UIFont fontWithName:@"TaskSectionHeader"]
                                          textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
                                    backgroundColor:nil
                                             indent:36];
-    NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskDayList.taskDays.count];
+    NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskArrangeGroup.taskInfoArranges.count];
     [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
                                                                        font:[UIFont fontWithName:@"small"]
                                                                   textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
@@ -240,7 +235,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger sections ;
-    sections = self.taskInfoManager.taskDayListAtArrangeMode.count;
+    sections = self.taskInfoManager.taskArrangeGroups.count;
     return sections;
 }
 
@@ -248,14 +243,14 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger rows = 0;
-   TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[section];
+    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
     
-    if((!self.isDisplayBeforeTask && [taskDayList.dayName isEqualToString:@"之前"])
+    if((!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"])
        || [self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
         rows = 0;
     }
     else {
-        rows = taskDayList.taskDays.count;
+        rows = taskArrangeGroup.taskInfoArranges.count;
     }
     
     return rows;
@@ -265,18 +260,13 @@
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     LOG_POSTION
-    TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskCell" forIndexPath:indexPath];
-    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.imageView.layer.cornerRadius = 6;
-    cell.detailedMode = [self detailModeOnIndexPath:indexPath];
-    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
-    cell.taskDay = taskDay;
-    __weak typeof(self) _self = self;
-    cell.actionOn = ^(NSString* actionString){
-        [_self actionOnIndexPath:indexPath byString:actionString];
-    };
+    TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
+    NSArray<TaskFinishAt*> *finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskInfoArrange.taskinfo.sn on:taskInfoArrange.arrangeDays];
     
-    self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height + 10);
+    TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskCell" forIndexPath:indexPath];
+    [cell setTaskInfo:taskInfoArrange.taskinfo finishedAts:finishedAts];
+    
+    self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height);
 /*
     只有一个cell是展开状态.因此可以只记录一个优化高度.
     self.heightDetailedCell = cell.frame.size.height + 10;
@@ -295,8 +285,8 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    TaskDay* taskDay = [self dataTaskDayOnIndexPath:indexPath];
-    [self enterTaskDetail:taskDay];
+    TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
+    [self enterTaskDetailInArrangeMode:taskInfoArrange];
     
 #if 0
     
@@ -336,19 +326,20 @@
 - (void)dataTasksReload
 {
     self.taskInfoManager = [TaskInfoManager taskInfoManager];
-    [self.taskInfoManager reloadTaskInfos];
+    [self.taskInfoManager reloadAll];
     
     NSLog(@"%@", self.taskInfoManager);
 }
 
 
-- (TaskDay*)dataTaskDayOnIndexPath:(NSIndexPath*)indexPath
+- (TaskInfoArrange*)dataTaskInfoArrangeOnIndexPath:(NSIndexPath*)indexPath
 {
-    TaskDayList *taskDayList = self.taskInfoManager.taskDayListAtArrangeMode[indexPath.section];
-    TaskDay *taskDay = taskDayList.taskDays[indexPath.row];
-    
-    return taskDay;
+    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[indexPath.section];
+    return taskArrangeGroup.taskInfoArranges[indexPath.row];
 }
+
+
+
 
 
 - (void)actionMore
@@ -403,48 +394,56 @@
 }
 
 
-- (void)actionFinishOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
+- (void)actionFinishOnIndexPath:(NSIndexPath*)indexPath andTaskInfo:(TaskInfo*)taskinfo onArrangeName:(NSString*)name onDays:(NSArray*)days
 {
-    if(taskDay.finishedAt.length > 0) {
-        NSLog(@"Already finished.");
-        return ;
+    NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
+    if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
+        if(days.count == 1) {
+            BOOL result = [self.taskInfoManager addFinishedAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString stringDateTimeNow]];
+            if(result) {
+                [self actionReloadTasksViewOnIndexPath:indexPath];
+            }
+            else {
+                NSLog(@"#error - addFinishedAtOnSn(%@) error.", taskinfo.sn);
+                [self showIndicationText:@"设置任务为完成状态不成功." inTime:1];
+            }
+        }
+        else {
+            NSLog(@"#error - argument error.");
+            [self showIndicationText:@"设置任务为完成状态不成功." inTime:1];
+        }
     }
-    
-    taskDay.finishedAt = [NSString stringDateTimeNow];
-    self.indexPathDetaied = nil;
-    [self actionReloadTasksViewOnIndexPath:indexPath];
-    [[TaskRecordManager taskRecordManager] taskRecordAddFinish:taskDay.taskinfo.sn on:taskDay.dayString committedAt:taskDay.finishedAt];
+
 }
 
 
-- (void)actionRedoOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
+- (void)actionRedoOnIndexPath:(NSIndexPath*)indexPath andTaskInfo:(TaskInfo*)taskinfo onArrangeName:(NSString*)name onDays:(NSArray*)days
 {
-    if(taskDay.finishedAt == 0) {
-        NSLog(@"Already finished.");
-        return ;
+    NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
+    if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
+        if(days.count == 1) {
+            BOOL result = [self.taskInfoManager addRedoAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString stringDateTimeNow]];
+            if(result) {
+                [self actionReloadTasksViewOnIndexPath:indexPath];
+            }
+            else {
+                NSLog(@"#error - addRedoAtOnSn(%@) error.", taskinfo.sn);
+                [self showIndicationText:@"设置任务为重新完成状态不成功." inTime:1];
+            }
+        }
+        else {
+            NSLog(@"#error - argument error.");
+            [self showIndicationText:@"设置任务为重新完成状态不成功." inTime:1];
+        }
     }
     
-    if(taskDay.finishedAt.length > 0) {
-        taskDay.finishedAt = @"";
-        [self actionReloadTasksViewOnIndexPath:indexPath];
-        [[TaskRecordManager taskRecordManager] taskRecordAddRedo:taskDay.taskinfo.sn on:taskDay.dayString committedAt:[NSString stringDateTimeNow]];
-    }
-    else {
-        [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
-    }
 }
 
 
-- (void)actionEditOnIndexPath:(NSIndexPath*)indexPath andTaskDay:(TaskDay*)taskDay
-{
-    
-}
-
-
-- (void)enterTaskDetail:(TaskDay*)taskDay
+- (void)enterTaskDetailInArrangeMode:(TaskInfoArrange*)taskinfoArrange
 {
     TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
-    vc.taskDay = taskDay;
+    vc.taskinfo = taskinfoArrange.taskinfo;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -452,64 +451,65 @@
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
-    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
+    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[indexPath.section];
+    TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
     if([actionString isEqualToString:@"finish"]) {
-        [self actionFinishOnIndexPath:indexPath andTaskDay:taskDay];
+        [self actionFinishOnIndexPath:indexPath andTaskInfo:taskInfoArrange.taskinfo onArrangeName:taskArrangeGroup.arrangeName onDays:taskInfoArrange.arrangeDays];
         return ;
     }
-    
+
     if([actionString isEqualToString:@"redo"]) {
-        [self actionRedoOnIndexPath:indexPath andTaskDay:taskDay];
+        [self actionRedoOnIndexPath:indexPath andTaskInfo:taskInfoArrange.taskinfo onArrangeName:taskArrangeGroup.arrangeName onDays:taskInfoArrange.arrangeDays];
         return ;
     }
-    
-    if([actionString isEqualToString:@"edit"]) {
-        [self actionEditOnIndexPath:indexPath andTaskDay:taskDay];
-        return ;
-        
-        
-#if 0
-        //编辑时效果. row=0的滚动到row0. row>=1的滚动到row1. 然后计算frame弹出输入框控件.
-        //编辑行滚动到最上行.
-//        [self.tasksView moveRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0] toIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-        
-        [self.tasksView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        TaskCell *cell = [self.tasksView cellForRowAtIndexPath:indexPath];
-        CGRect tmp = [cell.summayView convertRect:cell.summayView.bounds toView:[UIApplication sharedApplication].keyWindow];
-        LOG_RECT(tmp, @"---")
-        
-        UIView *v0 = self.view;
-        while(v0) {
-            NSLog(@"v0 : %@", v0);
-            v0 = [v0 superview];
-        }
-        
-        UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, 100)];
-        textView.text = taskDay.taskinfo.content;
-        textView.font = [UIFont systemFontOfSize:14.5];
-        textView.backgroundColor = [UIColor whiteColor];
-        __weak typeof(self) _self = self;
-        __weak typeof(textView) _textView = textView;
-        [self showPopupView:textView containerAlpha:0.3 dismiss:^{
-            [_self actionUpdateTaskContentOn:indexPath to:_textView.text];
-        }];
-        
-        return ;
-#endif
-    }
-    
-    if([actionString isEqualToString:@"more"]) {
-        TaskCellActionMenu *menu = [[TaskCellActionMenu alloc] initWithFrame:CGRectMake(VIEW_WIDTH * 0.2, 0, VIEW_WIDTH * 0.8, VIEW_HEIGHT)];
-        [self.contentView addSubview:menu];
-        
-        menu.backgroundColor = [UIColor blueColor];
-        LOG_VIEW_RECT(menu, @"menu")
-        
-        return ;
-    }
-    
-    
-    
+//
+//    if([actionString isEqualToString:@"edit"]) {
+//        [self actionEditOnIndexPath:indexPath andTaskDay:taskDay];
+//        return ;
+//        
+//        
+//#if 0
+//        //编辑时效果. row=0的滚动到row0. row>=1的滚动到row1. 然后计算frame弹出输入框控件.
+//        //编辑行滚动到最上行.
+////        [self.tasksView moveRowAtIndexPath:[NSIndexPath indexPathForRow:5 inSection:0] toIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+//        
+//        [self.tasksView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+//        TaskCell *cell = [self.tasksView cellForRowAtIndexPath:indexPath];
+//        CGRect tmp = [cell.summayView convertRect:cell.summayView.bounds toView:[UIApplication sharedApplication].keyWindow];
+//        LOG_RECT(tmp, @"---")
+//        
+//        UIView *v0 = self.view;
+//        while(v0) {
+//            NSLog(@"v0 : %@", v0);
+//            v0 = [v0 superview];
+//        }
+//        
+//        UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, 100)];
+//        textView.text = taskDay.taskinfo.content;
+//        textView.font = [UIFont systemFontOfSize:14.5];
+//        textView.backgroundColor = [UIColor whiteColor];
+//        __weak typeof(self) _self = self;
+//        __weak typeof(textView) _textView = textView;
+//        [self showPopupView:textView containerAlpha:0.3 dismiss:^{
+//            [_self actionUpdateTaskContentOn:indexPath to:_textView.text];
+//        }];
+//        
+//        return ;
+//#endif
+//    }
+//    
+//    if([actionString isEqualToString:@"more"]) {
+//        TaskCellActionMenu *menu = [[TaskCellActionMenu alloc] initWithFrame:CGRectMake(VIEW_WIDTH * 0.2, 0, VIEW_WIDTH * 0.8, VIEW_HEIGHT)];
+//        [self.contentView addSubview:menu];
+//        
+//        menu.backgroundColor = [UIColor blueColor];
+//        LOG_VIEW_RECT(menu, @"menu")
+//        
+//        return ;
+//    }
+//    
+//    
+//    
 }
 
 
@@ -543,26 +543,7 @@
 }
 
 
-- (void)actionUpdateTaskContentOn:(NSIndexPath*)indexPath to:(NSString*)text
-{
-    //检查内容是否有更改.
-    TaskDay *taskDay = [self dataTaskDayOnIndexPath:indexPath];
-    if([taskDay.taskinfo.content isEqualToString:text]) {
-        
-        
-        return ;
-    }
-    
-    //根据sn更新数据库存储.
-    
-    
-    //根据sn更新self.tasks数据源.
-    
-    
-    //更新tasksView.
-}
-
-
+//上弹超过限定值的话,将之前显示出来.
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
 {
     CGPoint point = scrollView.contentOffset;
@@ -573,11 +554,6 @@
             self.contentOffsetYMonitor = point.y;
         }
     }
-    
-    
-
-    
-    
 }
 
 

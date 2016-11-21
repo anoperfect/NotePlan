@@ -10,7 +10,9 @@
 #import "CustomViewController.h"
 #import "TaskInfoManager.h"
 @interface TaskDetailViewController : CustomViewController
-@property (nonatomic, strong) TaskDay *taskDay;
+//@property (nonatomic, strong) TaskDay *taskDay;
+@property (nonatomic, strong) TaskInfo *taskinfo;
+@property (nonatomic, strong) NSString *arrangeName; //从arrangeMode跳转过来的使用此.
 @end
 
 

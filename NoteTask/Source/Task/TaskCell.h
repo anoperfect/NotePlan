@@ -10,12 +10,11 @@
 #import "TaskModel.h"
 #import "TaskInfoManager.h"
 @interface TaskCell : UITableViewCell
-@property (nonatomic, strong) TaskDay *taskDay;
-@property (nonatomic, assign) BOOL detailedMode;
 
 
-@property (nonatomic, strong) void(^actionOn)(NSString*);
-@property (nonatomic, strong, readonly) UILabel *summayView;
+- (void)setTaskInfo:(TaskInfo*)taskinfo finishedAts:(NSArray<TaskFinishAt*>*)finishedAts; //arrange mode使用此接口赋值.
+
+
 @end
 
 

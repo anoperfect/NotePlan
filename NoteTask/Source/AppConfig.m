@@ -21,6 +21,7 @@
 #define TABLENAME_SETTING           @"setting"
 #define TABLENAME_TASKINFO          @"taskinfo"
 #define TABLENAME_TASKRECORD        @"taskrecord"
+#define TABLENAME_TASKFINISHAT      @"taskfinishat"
 
 
 @interface AppConfig ()
@@ -565,11 +566,12 @@
     task.finishedAt = @"";
     task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16;2016-11-17;2016-11-18;2016-11-21;";
     task.time = @"07:00-23:00";
     task.period = @"period1";
     [self configTaskInfoAdd:task];
     task.sn = @"t10";
+    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-15;2016-11-16;2016-11-18;";
     [self configTaskInfoAdd:task];
     
     task = [[TaskInfo alloc] init];
@@ -977,7 +979,6 @@
             }
         }
     }
-    NSLog(@"All note number : %zd", dicts.count);
     
     return [NSArray arrayWithArray:arrayReturnM];
 }
@@ -1054,6 +1055,77 @@
                                  };
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfoUpdate:updateDict withInfoQuery:@{@"snTaskRecord":taskRecord.snTaskRecord}];
 }
+
+
+- (NSArray<TaskFinishAt*>*)configTaskFinishAtGets
+{
+    NSMutableArray<TaskFinishAt*> *arrayReturnM = [[NSMutableArray alloc] init];
+    
+    //默认降序.
+    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
+                                                       toTable:TABLENAME_TASKFINISHAT
+                                                   columnNames:nil
+                                                     withQuery:nil
+                                                     withLimit:nil];
+    NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
+    if(dicts.count > 0) {
+        for(NSDictionary *dict in dicts) {
+            TaskFinishAt *taskFinishAt = [TaskFinishAt taskFinishAtFromDictionary:dict];
+            if(taskFinishAt) {
+                [arrayReturnM addObject:taskFinishAt];
+            }
+        }
+    }
+    
+    return [NSArray arrayWithArray:arrayReturnM];
+}
+
+
+- (BOOL)configTaskFinishAtAdd:(TaskFinishAt*)taskFinishAt
+{
+    BOOL result = YES;
+    
+    NSDictionary *infoInsert = @{
+                                 DBDATA_STRING_COLUMNS:
+                                     @[
+                                         @"snTaskInfo",
+                                         @"dayString",
+                                         @"finishedAt",
+                                         ],
+                                 DBDATA_STRING_VALUES:
+                                     @[
+                                         @[
+                                             taskFinishAt.snTaskInfo,
+                                             taskFinishAt.dayString,
+                                             taskFinishAt.finishedAt,
+                                             ]
+                                         ]
+                                 };
+    
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKFINISHAT withInfo:infoInsert];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+        return result;
+    }
+    
+    return result;
+}
+
+
+- (void)configTaskFinishAtRemove:(TaskFinishAt*)taskFinishAt
+{
+    BOOL result = YES;
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG
+                                                  toTable:TABLENAME_TASKFINISHAT
+                                                withQuery:@{@"snTaskInfo":taskFinishAt.snTaskInfo,@"dayString":taskFinishAt.dayString}];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+    }
+}
+
+
 
 
 

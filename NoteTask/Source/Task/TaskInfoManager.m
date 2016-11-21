@@ -13,61 +13,63 @@
 
 
 
-@interface TaskDay ()
-@end
+@implementation TaskFinishAt
 
-@implementation TaskDay
-@end
-
-
-@interface TaskDayList ()
-@end
-
-@implementation TaskDayList
-
-+ (instancetype)taskDayListWithDayName:(NSString*)dayName andDayString:(NSString*)dayString
++ (instancetype)taskFinishAtFromDictionary:(NSDictionary*)dict
 {
-    TaskDayList *taskDayList = [[TaskDayList alloc] init];
-    taskDayList.dayName = dayName;
-    taskDayList.dayString = dayString;
-    taskDayList.taskDays = [[NSMutableArray alloc] init];
-    
-    return taskDayList;
-}
-
-
-- (void)addTaskDays:(NSArray<TaskDay*>*)taskDays
-{
-    for(TaskDay *taskDay in taskDays) {
-        BOOL existed = NO;
-        for(TaskDay *taskDayAdded in self.taskDays) {
-            if([taskDayAdded.taskinfo.sn isEqualToString:taskDay.taskinfo.sn]) {
-                existed = YES;
-                break;
-            }
-        }
-        
-        if(!existed) {
-            [self.taskDays addObject:taskDay];
-        }
-    }
+    TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
+    taskFinishAt = [TaskFinishAt mj_objectWithKeyValues:dict];
+    return taskFinishAt;
 }
 
 
 - (NSString*)description
 {
-    NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"addr:%p, \"%@\", \"%@\" [%zd]\n", self, self.dayName, self.dayString, self.taskDays.count];
-    for(TaskDay *taskDay in self.taskDays) {
-        [s appendFormat:@"---%@[%zd]:%@\n", taskDay.taskinfo.sn, taskDay.finishedAt?taskDay.finishedAt:@"", taskDay.taskinfo.content];
-    }
-    
-    return [NSString stringWithString:s];
+    return [NSString stringWithFormat:@"%@ %@ [%@]", self.snTaskInfo, self.dayString, self.finishedAt];
 }
 
 @end
 
 
+
+@implementation TaskInfoArrange
+
+
+@end
+
+
+@implementation TaskArrangeGroup
+
++ (instancetype)taskArrangeGroupWithName:(NSString*)name
+{
+    TaskArrangeGroup *group = [[TaskArrangeGroup alloc] init];
+    group.arrangeName = name;
+    group.taskInfoArranges = [[NSMutableArray alloc] init];
+    
+    return group;
+}
+
+
+- (void)addTaskInfo:(TaskInfo*)taskinfo onDays:(NSArray<NSString*>*)days
+{
+    TaskInfoArrange *add = nil;
+    for(TaskInfoArrange *taskinfoArrange in self.taskInfoArranges) {
+        if([taskinfo isEqual:taskinfoArrange.taskinfo]) {
+            add = taskinfoArrange;
+            break;
+        }
+    }
+    
+    if(!add) {
+        add = [[TaskInfoArrange alloc] init];
+        add.taskinfo = taskinfo;
+        [self.taskInfoArranges addObject:add];
+    }
+    
+    add.arrangeDays = [NSMutableArray arrayWithArray:days];
+}
+
+@end
 
 
 
@@ -76,14 +78,13 @@
 @property (nonatomic, strong) NSString *dateStringToday;
 @property (nonatomic, strong) NSString *dateStringTomorrow;
 
-@property (nonatomic, strong) TaskDayList *taskDayListBefore;
-@property (nonatomic, strong) TaskDayList *taskDayListToday;
-@property (nonatomic, strong) TaskDayList *taskDayListTomorrow;
-@property (nonatomic, strong) TaskDayList *taskDayListComming;
-@property (nonatomic, strong) NSMutableArray<TaskDayList *> *taskDayListAtArrangeMode;
+@property (nonatomic, strong) TaskArrangeGroup *taskArrangeGroupBefore;
+@property (nonatomic, strong) TaskArrangeGroup *taskArrangeGroupToday;
+@property (nonatomic, strong) TaskArrangeGroup *taskArrangeGroupTomorrow;
+@property (nonatomic, strong) TaskArrangeGroup *taskArrangeGroupComming;
 
-@property (nonatomic, strong) NSMutableDictionary<NSString*,NSMutableArray<TaskDay*>*>* taskinfosSortedByDay;
-@property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask;
+
+//@property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask;
 
 @end
 
@@ -104,114 +105,317 @@
     return instance;
 }
 
+- (void)log
+{
+    NSLog(@"%@", self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //[self log];
+    });
+}
+
 
 - (void)reloadTaskInfos
 {
-    self.dateStringToday = [NSString dayStringToday];
+    //从数据库中读取所有taskinfo.
+    self.taskinfos = [NSMutableArray arrayWithArray:[[AppConfig sharedAppConfig] configTaskInfoGets]];
+}
+
+
+- (void)reloadTaskFinishAts;
+{
+    self.taskFinishAts = [NSMutableArray arrayWithArray:[[AppConfig sharedAppConfig] configTaskFinishAtGets]];
+    self.taskFinishAtDictionary = [[NSMutableDictionary alloc] init];
+    for(TaskFinishAt *taskFinishAt in self.taskFinishAts) {
+        NSMutableArray<TaskFinishAt*> *snTaskFinishAts = self.taskFinishAtDictionary[taskFinishAt.snTaskInfo];
+        if(!snTaskFinishAts) {
+            snTaskFinishAts = [[NSMutableArray alloc] init];
+            self.taskFinishAtDictionary[taskFinishAt.snTaskInfo] = snTaskFinishAts;
+        }
+        
+        [snTaskFinishAts addObject:taskFinishAt];
+    }
+}
+
+
+- (void)reloadTaskRecords;
+{
+//    self.taskRecords = [NSMutableArray arrayWithArray:[[AppConfig sharedAppConfig] configTaskRecordGets]];
+    self.taskRecordManager = [TaskRecordManager taskRecordManager];
+}
+
+
+- (void)taskInfoDays:(NSArray<NSString*>*)days
+     arrangeToBefore:(NSMutableArray<NSString*>*)daysBefore
+      arrangeToToday:(NSMutableArray<NSString*>*)daysToday
+   arrangeToTomorrow:(NSMutableArray<NSString*>*)daysTomorrow
+    arrangeToComming:(NSMutableArray<NSString*>*)daysComming
+{
+    for(NSString *day in days) {
+        if([day compare:self.dateStringToday] == NSOrderedSame) {
+            [daysToday addObject:day];
+        }
+        else if([day compare:self.dateStringTomorrow] == NSOrderedSame) {
+            [daysTomorrow addObject:day];
+        }
+        else if([day compare:self.dateStringToday] == NSOrderedAscending) {
+            [daysBefore addObject:day];
+        }
+        else {
+            [daysComming addObject:day];
+        }
+    }
+}
+
+
+- (void)reloadTaskArrangeGroups
+{
+    self.dateStringToday    = [NSString dayStringToday];
     self.dateStringTomorrow = [NSString dayStringTomorrow];
     
-    //从数据库中读取所有taskinfo.
-    self.taskinfos = [[AppConfig sharedAppConfig] configTaskInfoGets];
+    self.taskArrangeGroupBefore = [TaskArrangeGroup taskArrangeGroupWithName:@"之前"];
+    self.taskArrangeGroupToday = [TaskArrangeGroup taskArrangeGroupWithName:@"今天"];
+    self.taskArrangeGroupTomorrow = [TaskArrangeGroup taskArrangeGroupWithName:@"明天"];
+    self.taskArrangeGroupComming = [TaskArrangeGroup taskArrangeGroupWithName:@"之后"];
     
-    //按需执行的日期排列.
-    [self countDayMode];
-    
-    //排列显示执行模式需要的列表信息.
-    [self countArrangeMode];
-}
-
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-
+    for(TaskInfo* taskinfo in self.taskinfos) {
+        //将taskinfo.daysOnTask解析到这几个days中.
+        NSMutableArray<NSString*> *daysBefore   = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString*> *daysToday    = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString*> *daysTomorrow = [[NSMutableArray alloc] init];
+        NSMutableArray<NSString*> *daysComming  = [[NSMutableArray alloc] init];
+        [self taskInfoDays:taskinfo.daysOnTask
+           arrangeToBefore:daysBefore
+            arrangeToToday:daysToday
+         arrangeToTomorrow:daysTomorrow
+          arrangeToComming:daysComming];
+        
+        if(daysBefore.count > 0) {
+            [self.taskArrangeGroupBefore addTaskInfo:taskinfo onDays:daysBefore];
+        }
+        
+        if(daysToday.count > 0) {
+            [self.taskArrangeGroupToday addTaskInfo:taskinfo onDays:daysToday];
+        }
+        
+        if(daysTomorrow.count > 0) {
+            [self.taskArrangeGroupTomorrow addTaskInfo:taskinfo onDays:daysTomorrow];
+        }
+        
+        if(daysComming.count > 0) {
+            [self.taskArrangeGroupComming addTaskInfo:taskinfo onDays:daysComming];
+        }
     }
     
-    return self;
+    self.taskArrangeGroups = [@[
+                                self.taskArrangeGroupBefore,
+                                self.taskArrangeGroupToday,
+                                self.taskArrangeGroupTomorrow,
+                                self.taskArrangeGroupComming
+                                ]
+                              mutableCopy];
 }
 
 
-- (void)countDayMode
+- (void)reloadTaskDayMode
 {
-    self.taskinfosSortedByDay = [[NSMutableDictionary alloc] init];
+    self.tasksDayMode = [[NSMutableDictionary alloc] init];
     
     for(TaskInfo *taskinfo in self.taskinfos) {
         for(NSString *dayString in taskinfo.daysOnTask) {
-            NSMutableArray *taskinfosIn1Day = self.taskinfosSortedByDay[dayString];
+            NSMutableArray<TaskInfo*> *taskinfosIn1Day = self.tasksDayMode[dayString];
             if(!taskinfosIn1Day) {
                 taskinfosIn1Day = [[NSMutableArray alloc] init];
-                self.taskinfosSortedByDay[dayString] = taskinfosIn1Day;
+                self.tasksDayMode[dayString] = taskinfosIn1Day;
             }
             
-            TaskDay *taskDay = [[TaskDay alloc] init];
-            taskDay.taskinfo = taskinfo;
-            taskDay.dayString = dayString;
-            taskDay.finishedAt = [[TaskRecordManager taskRecordManager] taskRecordQuery:taskinfo.sn finishedAtOnDay:dayString];
-            
-            [taskinfosIn1Day addObject:taskDay];
+            [taskinfosIn1Day addObject:taskinfo];
         }
     }
     
-    for(NSString *day in self.taskinfosSortedByDay.allKeys) {
+    for(NSString *day in self.tasksDayMode.allKeys) {
         NSLog(@"%@ : \n", day);
-        for(TaskDay *taskDay in self.taskinfosSortedByDay[day]) {
-            NSLog(@"\t%@", taskDay.taskinfo.sn);
+        for(TaskInfo *taskinfo in self.tasksDayMode[day]) {
+            NSLog(@"\t%@", taskinfo.sn);
         }
     }
 }
 
 
-- (void)countArrangeMode
+- (void)reloadAll
 {
-    NSMutableArray<NSString*> *days = [NSMutableArray arrayWithArray:self.taskinfosSortedByDay.allKeys];
-    [days sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        NSString *day1 = obj1;
-        NSString *day2 = obj2;
-        
-        return [day1 compare:day2];
-    }];
-    self.daysOnTask = days;
+    [self reloadTaskInfos];
+    [self reloadTaskFinishAts];
+    [self reloadTaskRecords];
+    [self reloadTaskArrangeGroups];
+    [self reloadTaskDayMode];
     
-    
-    self.taskDayListBefore = [TaskDayList taskDayListWithDayName:@"之前" andDayString:@""];
-    self.taskDayListToday = [TaskDayList taskDayListWithDayName:@"今天" andDayString:self.dateStringToday];
-    self.taskDayListTomorrow = [TaskDayList taskDayListWithDayName:@"明天" andDayString:self.dateStringTomorrow];
-    self.taskDayListComming = [TaskDayList taskDayListWithDayName:@"之后" andDayString:@""];
-    
-    for(NSString *day in days) {
-        NSMutableArray<TaskDay*> *taskDays = self.taskinfosSortedByDay[day];
-        
-        NS0Log(@"day:[%@], today:[%@], tomorrow:[%@]", day, self.dateStringToday, self.dateStringTomorrow);
-        
-        if([day compare:self.dateStringToday] == NSOrderedSame) {
-            [self.taskDayListToday addTaskDays:taskDays];
-        }
-        else if([day compare:self.dateStringTomorrow] == NSOrderedSame) {
-            [self.taskDayListTomorrow addTaskDays:taskDays];
-        }
-        else if([day compare:self.dateStringToday] == NSOrderedAscending) {
-            [self.taskDayListBefore addTaskDays:taskDays];
-        }
-        else {
-            [self.taskDayListComming addTaskDays:taskDays];
+    [self log];
+}
+
+
+- (BOOL)addFinishedAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt
+{
+    //判断是否已经在完成表中存在.
+    BOOL found = NO;
+    for(TaskFinishAt *taskFinishAt in self.taskFinishAts) {
+        if([sn isEqualToString:taskFinishAt.snTaskInfo]
+           && [day isEqualToString:taskFinishAt.dayString]) {
+            found = YES;
+            break;
         }
     }
     
-    self.taskDayListAtArrangeMode = [@[self.taskDayListBefore, self.taskDayListToday, self.taskDayListTomorrow, self.taskDayListComming] mutableCopy];
+    if(found) {
+        NSLog(@"#error - task(%@) on day(%@) already set to finished.", sn, day);
+        return NO;
+    }
+    
+    //增加信息到完成表.
+    TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
+    taskFinishAt.snTaskInfo = sn;
+    taskFinishAt.dayString = day;
+    taskFinishAt.finishedAt = committedAt;
+    [[AppConfig sharedAppConfig] configTaskFinishAtAdd:taskFinishAt];
+    
+    //增加信息到管理缓存.
+    [self.taskFinishAts addObject:taskFinishAt];
+    NSMutableArray *snTaskFinishAts = self.taskFinishAtDictionary[sn];
+    if(!snTaskFinishAts) {
+        snTaskFinishAts = [[NSMutableArray alloc] init];
+        self.taskFinishAtDictionary[sn] = snTaskFinishAts;
+    }
+    [snTaskFinishAts addObject:taskFinishAt];
+    
+    //增加TaskRecord信息到管理缓存.
+    [self.taskRecordManager taskRecordAddFinish:sn on:day committedAt:committedAt];
+    
+    return YES;
+}
+
+
+- (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
+{
+    //判断是否已经在完成表中存在.
+    TaskFinishAt *taskFinishAtFound = nil;
+    for(TaskFinishAt *taskFinishAt in self.taskFinishAts) {
+        if([sn isEqualToString:taskFinishAt.snTaskInfo]
+           && [day isEqualToString:taskFinishAt.dayString]) {
+            taskFinishAtFound = taskFinishAt;
+            break;
+        }
+    }
+    
+    if(!taskFinishAtFound) {
+        NSLog(@"#error - task(%@) on day(%@) not finished.", sn, day);
+        return NO;
+    }
+    
+    //删除信息到完成表.
+    [[AppConfig sharedAppConfig] configTaskFinishAtRemove:taskFinishAtFound];
+    
+    //删除信息到管理缓存.
+    [self.taskFinishAts removeObject:taskFinishAtFound];
+    NSMutableArray *snTaskFinishAts = self.taskFinishAtDictionary[sn];
+    [snTaskFinishAts removeObject:taskFinishAtFound];
+    if(snTaskFinishAts.count == 0) {
+        [self.taskFinishAtDictionary removeObjectForKey:sn];
+    }
+    
+    //增加TaskRecord信息到管理缓存.
+    [self.taskRecordManager taskRecordAddRedo:sn on:day committedAt:committedAt];
+    
+    return YES;
+}
+
+
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days;
+{
+    NSMutableArray<TaskFinishAt*> *taskFinishAtsQuery = [[NSMutableArray alloc] init];
+    
+    NSMutableArray<TaskFinishAt*> *taskFinishAts = self.taskFinishAtDictionary[sn];
+    NSMutableDictionary<NSString*,NSNumber*> *dayAndIndexs = [[NSMutableDictionary alloc] init];
+    
+    NSInteger idx = 0;
+    for(TaskFinishAt *taskFinishAt in taskFinishAts) {
+        dayAndIndexs[taskFinishAt.dayString] = @(idx);
+        idx ++;
+    }
+    
+    for(NSString *day in days) {
+        NSNumber *indexNumber = dayAndIndexs[day];
+        if(indexNumber) {
+            [taskFinishAtsQuery addObject:taskFinishAts[[indexNumber integerValue]]];
+        }
+        else {
+            TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
+            taskFinishAt.snTaskInfo = sn;
+            taskFinishAt.dayString = day;
+            taskFinishAt.finishedAt = @"";
+            [taskFinishAtsQuery addObject:taskFinishAt];
+         }
+    }
+    
+    return [NSArray arrayWithArray:taskFinishAtsQuery];
 }
 
 
 - (NSString*)description
 {
     NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"\n%@\n", self.taskDayListBefore];
-    [s appendFormat:@"%@\n", self.taskDayListToday];
-    [s appendFormat:@"%@\n", self.taskDayListTomorrow];
-    [s appendFormat:@"%@\n", self.taskDayListComming];
+    NSString *line = @"---------------------------------------------------------------------------------------";
+    
+    [s appendString:@"\n"];
+    [s appendFormat:@"%@%@%@\n", @"---", @"List mode", line];
+    for(TaskInfo *taskinfo in self.taskinfos) {
+        [s appendFormat:@"\t%@\n", [taskinfo summaryDescription]];
+    }
+    [s appendFormat:@"%@%@%@\n", @"---", @"List mode", line];
+    
+    [s appendFormat:@"%@%@%@\n", @"---", @"Arrange mode", line];
+    for(TaskArrangeGroup *group in self.taskArrangeGroups) {
+        [s appendFormat:@"\t%@\n", group.arrangeName];
+        NSInteger count = group.taskInfoArranges.count;
+        for(NSInteger idx = 0; idx < count; idx ++) {
+            [s appendFormat:@"\t\t%@ - %@\n", group.taskInfoArranges[idx].taskinfo.sn, group.taskInfoArranges[idx].arrangeDays];
+        }
+    }
+    [s appendFormat:@"%@%@%@\n", @"---", @"Arrange mode", line];
+    
+    [s appendFormat:@"%@%@%@\n", @"---", @"Day mode", line];
+    NSArray *sortedDays = [self.tasksDayMode.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        NSString *s1 = obj1;
+        NSString *s2 = obj2;
+        return [s1 compare:s2];
+    }];
+    for(NSString *day in sortedDays) {
+        [s appendFormat:@"\t%@ : \n", day];
+        for(TaskInfo *taskinfo in self.tasksDayMode[day]) {
+            [s appendFormat:@"\t\t%@\n", [taskinfo summaryDescription]];
+        }
+    }
+    [s appendFormat:@"%@%@%@\n", @"---", @"Day mode", line];
+    
+    [s appendFormat:@"%@%@%@\n", @"---", @"Finish At", line];
+    for(NSString *sn in self.taskFinishAtDictionary) {
+        [s appendFormat:@"\t%@:\n", sn];
+        NSMutableArray<TaskFinishAt*> *taskFinishAts = self.taskFinishAtDictionary[sn];
+        for(TaskFinishAt *taskFinishAt in taskFinishAts) {
+            [s appendFormat:@"\t\t%@:\n", taskFinishAt];
+        }
+    }
+    [s appendFormat:@"%@%@%@\n", @"---", @"Finish At", line];
+    static NSInteger ktimes = 0;
+    [s appendFormat:@"%@ [%zd] %@", line, ++ktimes, [NSDate date]];
+    
+    
+    
+    
     
     return [NSString stringWithString:s];
 }
+
+
+
 
 
 

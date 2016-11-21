@@ -213,6 +213,34 @@
            "primaryKeys":["snTaskRecord"],
            "preset":[],
            "comment":"计划"
+           },
+           {
+           "tableName":"taskfinishat",
+           "databaseNames":["config"],
+           "columnAttributes":[
+                               {
+                               "columnName":"snTaskInfo",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"dayString",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               },
+                               {
+                               "columnName":"finishedAt",
+                               "dataType":"string",
+                               "isNeedForInsert":true,
+                               "isAutoIncrement":false
+                               }
+                               ],
+           "primaryKeys":["snTaskInfo", "dayString"],
+           "preset":[],
+           "comment":"计划"
            }
+           
 ]
 }
