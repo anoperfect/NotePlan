@@ -40,6 +40,7 @@
 
 - (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
     self.contentView.frame = self.view.bounds;
 //    self.contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
 }
@@ -47,9 +48,12 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithName:@"NavigationBarBackground"];
 //    self.navigationController.navigationBar.barTintColor = [UIColor colorFromString:@"#7e9ae1@50"];
     self.navigationController.navigationBar.translucent = NO;
+    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
+    self.navigationController.toolbarHidden = YES;
     
     if(self.hiddenByPush) {
         self.hiddenByPush = NO;
@@ -62,6 +66,7 @@
 
 - (void)pushBackAction
 {
+    LOG_POSTION
     
 }
 
@@ -199,7 +204,6 @@
 //    UIView *containerView = [self.view viewWithTag:TAG_popupView_container];
     UIView *containerView = [[[UIApplication sharedApplication] keyWindow] viewWithTag:TAG_popupView_container];
     for(id obj in containerView.subviews) {
-        NSLog(@"%@", obj);
         //        [obj removeObserver:self forKeyPath:@"frame"];
         [obj removeFromSuperview];
     }

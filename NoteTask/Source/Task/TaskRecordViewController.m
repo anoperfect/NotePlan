@@ -67,8 +67,6 @@
     [self addSubview:self.contentTableView];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     
-    self.contentTableView.backgroundColor = [UIColor blueColor];
-    
     
 }
 

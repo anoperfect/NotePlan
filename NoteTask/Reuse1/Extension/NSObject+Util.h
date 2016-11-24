@@ -11,6 +11,7 @@
 
 + (void)objectClassTest:(NSObject*)obj;
 
+- (void)performSelectorByString:(NSString*)selString;
 
 
 @end

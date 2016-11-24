@@ -104,8 +104,15 @@
 //添加重新执行信息的统一接口.会同时更新缓存和数据库.
 - (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
 
+
+
+
+
 //查询多天的完成情况.
 - (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days;
+
+
+- (NSString*)queryFinishedAtsOnSn:(NSString*)sn onDay:(NSString*)day;
 
 
 

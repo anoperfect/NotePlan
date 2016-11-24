@@ -340,7 +340,7 @@ static NSInteger kno = 0;
 - (NSString*)description
 {
     NSMutableString *strm = [[NSMutableString alloc] init];
-    [strm appendFormat:@"======NoteModel description : %p, title:%@, content:%@", self, self.title, self.content];
+    [strm appendFormat:@"======NoteModel description : %p, [%@],  title:%@, content:%@", self, self.identifier, self.title, self.content];
     
     return strm;
 }
@@ -442,7 +442,7 @@ static NSInteger kno = 0;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict
 {
-    NSLog(@"noteFromDictionary : %@", dict);
+    NS0Log(@"noteFromDictionary : %@", dict);
     NoteModel *note = [[NoteModel alloc] init];
     
     note.sn
@@ -476,6 +476,8 @@ static NSInteger kno = 0;
     = dict[@"modifiedAt"];
     note.browseredAt
     = dict[@"browseredAt"];
+    note.deletedAt
+    = dict[@"deletedAt"];
     note.source
     = dict[@"source"];
     
@@ -512,7 +514,7 @@ static NSInteger kno = 0;
         title = @"无标题";
     }
     else {
-        title = [NSString stringWithFormat:@"[%@]%@", self.identifier, titleNoteParagraph.content];
+        title = [NSString stringWithFormat:@"%@"/*, self.identifier*/, titleNoteParagraph.content];
     }
 
     return title;
@@ -559,12 +561,12 @@ static NSInteger kno = 0;
 
 + (NSString*)randonIdentifierStringWithLength:(NSInteger)length
 {
-    static char kchs[36] = {'0', '1'};
     char s[100];
     
     NSInteger idx;
     for(idx = 0; idx < length && idx < 100 - 1; idx ++) {
-        s[idx] = kchs[arc4random() % 36];
+        NSInteger snNum = arc4random() % 36;
+        s[idx] = snNum <= 9 ? '0' + snNum : 'a' + snNum - 10;
     }
     s[idx] = '\0';
     

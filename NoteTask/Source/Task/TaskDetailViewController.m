@@ -5,11 +5,11 @@
 //  Created by Ben on 16/10/10.
 //  Copyright © 2016年 Ben. All rights reserved.
 //
-
 #import "TaskDetailViewController.h"
 #import "TaskModel.h"
 #import "TaskCell.h"
 #import "TaskRecordViewController.h"
+#import "TaskTickingViewController.h"
 
 
 
@@ -43,10 +43,6 @@ TaskRecord
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self test];
-    });
     
     //申请各成员.
     self.optumizeHeights = [[NSMutableDictionary alloc] init];
@@ -122,8 +118,8 @@ TaskRecord
     NSArray *titles = @[
                                  @"任务时间",
                                  @"提交时间",
-                                 /*
                                  @"任务记录",
+                                 /*
                                  @"任务记录类型筛选"
                                   */
                         ];
@@ -157,14 +153,7 @@ TaskRecord
 - (NSMutableAttributedString*)attributedStringForPropertyTitle:(NSString*)title
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:title];
-    [attributedString addAttribute:NSExpansionAttributeName value:@0 range:NSMakeRange(0, title.length)];
-    NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyleContent setHeadIndent:20];
-    [paragraphStyleContent setFirstLineHeadIndent:20];
-    [paragraphStyleContent setTailIndent:-20];
-    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:NSMakeRange(0, title.length)];
-    [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"TaskPropertyTitleLabel"] range:NSMakeRange(0, title.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithName:@"TaskDetailText"] range:NSMakeRange(0, title.length)];
+    attributedString = [NSString attributedStringWith:title font:[UIFont fontWithName:@"TaskPropertyTitleLabel"] textColor:[UIColor colorWithName:@"TaskDetailText"] backgroundColor:nil indent:20];
     
     return attributedString;
 }
@@ -173,14 +162,11 @@ TaskRecord
 - (NSMutableAttributedString*)attributedStringForPropertyContent:(NSString*)content
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:content];
-    [attributedString addAttribute:NSExpansionAttributeName value:@0 range:NSMakeRange(0, content.length)];
-    NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyleContent setHeadIndent:20];
-    [paragraphStyleContent setFirstLineHeadIndent:20];
-    [paragraphStyleContent setTailIndent:-20];
-    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:NSMakeRange(0, content.length)];
-    [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"TaskPropertyContentLabel"] range:NSMakeRange(0, content.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithName:@"TaskDetailText"] range:NSMakeRange(0, content.length)];
+    attributedString =  [NSString attributedStringWith:content
+                                                  font:[UIFont fontWithName:@"TaskPropertyContentLabel"]
+                                             textColor:[UIColor colorWithName:@"TaskDetailText"]
+                                       backgroundColor:nil
+                                                indent:20];
     
     return attributedString;
 }
@@ -388,7 +374,7 @@ TaskRecord
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger sections ;
-    sections = 2;
+    sections = 1;
     return sections;
 }
 
@@ -526,10 +512,26 @@ TaskRecord
 }
 
 
+
+
+
+
+
 - (void)actionStringOnTaskContent:(NSString*)actionString
 {
     NSLog(@"action string : %@", actionString);
-    [self transitionToTaskRecordViewController];
+    NSDictionary *actionStringToSELString = @{
+                                              @"TaskActionFinish":@"taskActionFinish",
+                                              @"TaskActionTicking":@"taskActionTicking",
+                                              
+                                              
+                                              
+                                              
+                                              
+                                              };
+    
+    NSString *selString = actionStringToSELString[actionString];
+    [self performSelectorByString:selString];
 }
 
 
@@ -541,21 +543,67 @@ TaskRecord
 }
 
 
-- (void)actionFinish
+- (void)taskActionFinish
 {
-//    if(self.taskDay.finishedAt.length > 0) {
-//        NSLog(@"Already finished.");
-//        return ;
-//    }
-//    
-//    self.taskDay.finishedAt = [NSString stringDateTimeNow];
-//    [self actionReloadTaskContent];
-//    [[TaskRecordManager taskRecordManager] taskRecordAddFinish:self.taskinfo.sn on:self.taskDay.dayString committedAt:self.taskDay.finishedAt];
+    LOG_POSTION
+    //任务已经完成的话, 则显示提示信息.
+    if(self.taskinfo.finishedAt.length > 0) {
+        NSString *finishAt = [TaskInfo dateTimeStringForDisplay:self.taskinfo.finishedAt] ;
+        [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
+        return ;
+    }
+    
+    if([self.arrangeName isEqualToString:@"今天"]) {
+        NSString *day = [NSString dayStringToday];
+        NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
+        if(queryFinishAt.length > 0) {
+            NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
+            [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
+            return ;
+        }
+        
+        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString stringDateTimeNow]];
+        [self actionReloadTaskContent];
+        
+        return ;
+    }
+    
+    if([self.arrangeName isEqualToString:@"明天"]) {
+        NSString *day = [NSString dayStringTomorrow];
+        NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
+        if(queryFinishAt.length > 0) {
+            NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
+            [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
+            return ;
+        }
+        
+        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString stringDateTimeNow]];
+        [self actionReloadTaskContent];
+        
+        return ;
+    }
 }
+
+
+- (void)taskActionSignIn
+{
+    [self showIndicationText:@"Not implemented" inTime:1];
+}
+
+
+- (void)taskActionTicking
+{
+    TaskTickingViewController *vc = [[TaskTickingViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+
+
 
 
 - (void)actionReloadTaskContent
 {
+    NSLog(@"actionReloadTaskContent");
     
     
 }
@@ -579,42 +627,7 @@ TaskRecord
 }
 
 
-- (void)test
-{return ;
-    LOG_POSTION
-    NSMutableAttributedString *text = [NSMutableAttributedString new];
-    UIFont *font = [UIFont boldSystemFontOfSize:16];
-    
-    if(1) {
-        NSString *tag = @"完成";
-        UIColor *tagStrokeColor = [UIColor blueColor];
-        UIColor *tagFillColor = [UIColor clearColor];
-        NSMutableAttributedString *tagText = [[NSMutableAttributedString alloc] initWithString:tag];
-        [tagText yy_insertString:@"   " atIndex:0];
-        [tagText yy_appendString:@"   "];
-        [tagText yy_setFont:font range:[tagText yy_rangeOfAll]];
-        [tagText yy_setColor:[UIColor whiteColor] range:[tagText yy_rangeOfAll]];
-        [tagText yy_setTextBinding:[YYTextBinding bindingWithDeleteConfirm:NO] range:tagText.yy_rangeOfAll];
-        
-        YYTextBorder *border = [YYTextBorder new];
-        border.strokeWidth = 1.5;
-        border.strokeColor = tagStrokeColor;
-        border.fillColor = tagFillColor;
-        border.cornerRadius = 100; // a huge value
-        border.insets = UIEdgeInsetsMake(-2, -5.5, -2, -8);
-        [tagText yy_setTextBackgroundBorder:border range:[tagText.string rangeOfString:tag]];
-        [text appendAttributedString:tagText];
-    }
-    
-    //YYTextView *v = [[YYTextView alloc] initWithFrame:self.contentView.bounds];
-    //[self addSubview:v];
-    //v.attributedText = text;
-    
-    YYLabel *v = [[YYLabel alloc] initWithFrame:self.contentView.bounds];
-    [self addSubview:v];
-    v.attributedText = text;
-    
-}
+
 
 
 

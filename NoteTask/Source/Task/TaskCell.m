@@ -155,7 +155,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 //        self.actionsMenu.hidden = NO;
         frameActions = CGRectMake(0, frameSummary.origin.y + frameSummary.size.height + 10, frameContainer.size.width, 36);
         self.actionsMenu.frame = frameActions;
-        NSArray<NSString*> *actionsKeyword = @[@"checkin", @"edit", @"subtask", @"finish", @"redo"];
+        NSArray<NSString*> *actionsKeyword = @[@"TaskActionSignIn", @"TaskActionTicking", @"TaskActionEdit", @"TaskActionFinish", @"TaskActionRedo", @"TaskActionMore"];
         NSInteger count = actionsKeyword.count;
         NSLog(@"actions count : %zd", count);
         
@@ -551,7 +551,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     actionsContainer.frame = frameActions;
     actionsContainer.hidden = NO;
     
-    NSArray<NSString*> *actionsKeyword = @[@"checkin", @"edit", @"subtask", @"finish", @"redo"];
+    NSArray<NSString*> *actionsKeyword = @[@"TaskActionSignIn", @"TaskActionTicking", @"TaskActionEdit", @"TaskActionFinish", @"TaskActionRedo", @"TaskActionMore"];
     NSInteger count = actionsKeyword.count;
     NSLog(@"actions count : %zd", count);
     

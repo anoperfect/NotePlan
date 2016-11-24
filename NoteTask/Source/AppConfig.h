@@ -37,6 +37,8 @@
 - (void)configNoteRemoveById:(NSString*)noteIdentifier;
 - (void)configNoteRemoveByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
+//删除.可以到回收站清除或恢复.
+- (void)configNoteDeleteByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
 - (void)configNoteUpdate:(NoteModel*)note;
 

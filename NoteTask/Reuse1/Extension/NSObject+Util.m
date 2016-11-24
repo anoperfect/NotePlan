@@ -25,6 +25,28 @@
     }
 }
 
+
+- (void)performSelectorByString:(NSString*)selString
+{
+    if(!selString) {
+        NSLog(@"#error - not perform %@.", selString);
+        return ;
+    }
+    
+    SEL sel = NSSelectorFromString(selString);
+    if(sel && [self respondsToSelector:sel]) {
+        _Pragma("clang diagnostic push")
+        _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"")
+        [self performSelector:sel];
+        _Pragma("clang diagnostic pop")
+    }
+    else {
+        NSLog(@"#error - not perform %@.", selString);
+    }
+}
+
+
+
 @end
 
 

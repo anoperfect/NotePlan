@@ -89,6 +89,12 @@
 		B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */; };
 		B5B905411D4FC3E900DF1E24 /* db.json in Resources */ = {isa = PBXBuildFile; fileRef = B5B905401D4FC3E900DF1E24 /* db.json */; };
 		B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C561E21D3942BF00F1EF82 /* NoteFilter.m */; };
+		B5CAC3071DE2B59D0051039B /* TaskTickingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */; };
+		B5CAC3121DE2EE980051039B /* GCDGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC30B1DE2EE980051039B /* GCDGroup.m */; };
+		B5CAC3131DE2EE980051039B /* GCDQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC30D1DE2EE980051039B /* GCDQueue.m */; };
+		B5CAC3141DE2EE980051039B /* GCDSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC30F1DE2EE980051039B /* GCDSemaphore.m */; };
+		B5CAC3151DE2EE980051039B /* GCDTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3111DE2EE980051039B /* GCDTimer.m */; };
+		B5CAC3181DE333FE0051039B /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3171DE333FE0051039B /* SettingViewController.m */; };
 		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
 		B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D4923C1DB5C8DC00794A97 /* TaskCell.m */; };
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
@@ -269,6 +275,19 @@
 		B5B905401D4FC3E900DF1E24 /* db.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = db.json; path = Source/db.json; sourceTree = "<group>"; };
 		B5C561E11D3942BF00F1EF82 /* NoteFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteFilter.h; path = Source/NoteFilter.h; sourceTree = "<group>"; };
 		B5C561E21D3942BF00F1EF82 /* NoteFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteFilter.m; path = Source/NoteFilter.m; sourceTree = "<group>"; };
+		B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskTickingViewController.h; sourceTree = "<group>"; };
+		B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskTickingViewController.m; sourceTree = "<group>"; };
+		B5CAC3091DE2EE980051039B /* GCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCD.h; sourceTree = "<group>"; };
+		B5CAC30A1DE2EE980051039B /* GCDGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDGroup.h; sourceTree = "<group>"; };
+		B5CAC30B1DE2EE980051039B /* GCDGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDGroup.m; sourceTree = "<group>"; };
+		B5CAC30C1DE2EE980051039B /* GCDQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDQueue.h; sourceTree = "<group>"; };
+		B5CAC30D1DE2EE980051039B /* GCDQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDQueue.m; sourceTree = "<group>"; };
+		B5CAC30E1DE2EE980051039B /* GCDSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDSemaphore.h; sourceTree = "<group>"; };
+		B5CAC30F1DE2EE980051039B /* GCDSemaphore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDSemaphore.m; sourceTree = "<group>"; };
+		B5CAC3101DE2EE980051039B /* GCDTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDTimer.h; sourceTree = "<group>"; };
+		B5CAC3111DE2EE980051039B /* GCDTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDTimer.m; sourceTree = "<group>"; };
+		B5CAC3161DE333FE0051039B /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
+		B5CAC3171DE333FE0051039B /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
 		B5D4923B1DB5C8DC00794A97 /* TaskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskCell.h; sourceTree = "<group>"; };
 		B5D4923C1DB5C8DC00794A97 /* TaskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCell.m; sourceTree = "<group>"; };
@@ -362,6 +381,7 @@
 		B5448EE31D658F3100F186BE /* YouXianMing-Animations */ = {
 			isa = PBXGroup;
 			children = (
+				B5CAC3081DE2EE980051039B /* GCD */,
 				B5448EE41D658F3100F186BE /* UI-Component */,
 				B5448EFD1D658F3100F186BE /* View */,
 			);
@@ -439,6 +459,8 @@
 				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
+				B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */,
+				B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
 				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,
 				B5A6E8681DD0AB0B0062FF80 /* TaskDaySelectViewController.h */,
@@ -608,6 +630,8 @@
 		B5A6E86B1DD0DBB40062FF80 /* VSetting */ = {
 			isa = PBXGroup;
 			children = (
+				B5CAC3161DE333FE0051039B /* SettingViewController.h */,
+				B5CAC3171DE333FE0051039B /* SettingViewController.m */,
 			);
 			name = VSetting;
 			path = Source/VSetting;
@@ -654,6 +678,22 @@
 				B5A6E86B1DD0DBB40062FF80 /* VSetting */,
 			);
 			name = Attent;
+			sourceTree = "<group>";
+		};
+		B5CAC3081DE2EE980051039B /* GCD */ = {
+			isa = PBXGroup;
+			children = (
+				B5CAC3091DE2EE980051039B /* GCD.h */,
+				B5CAC30A1DE2EE980051039B /* GCDGroup.h */,
+				B5CAC30B1DE2EE980051039B /* GCDGroup.m */,
+				B5CAC30C1DE2EE980051039B /* GCDQueue.h */,
+				B5CAC30D1DE2EE980051039B /* GCDQueue.m */,
+				B5CAC30E1DE2EE980051039B /* GCDSemaphore.h */,
+				B5CAC30F1DE2EE980051039B /* GCDSemaphore.m */,
+				B5CAC3101DE2EE980051039B /* GCDTimer.h */,
+				B5CAC3111DE2EE980051039B /* GCDTimer.m */,
+			);
+			path = GCD;
 			sourceTree = "<group>";
 		};
 		B5DC864C1D4A57C800DCE8C8 /* View */ = {
@@ -979,6 +1019,7 @@
 				B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */,
 				B564D0D31C9110FD00E903B6 /* UIButton+Badge.m in Sources */,
 				B5448F091D658F3100F186BE /* UIView+SetRect.m in Sources */,
+				B5CAC3181DE333FE0051039B /* SettingViewController.m in Sources */,
 				B56428C51DAB403300FBB1FE /* TaskViewController.m in Sources */,
 				B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */,
 				B564D0CD1C9110FD00E903B6 /* NSDate+Util.m in Sources */,
@@ -986,6 +1027,7 @@
 				B5448F001D658F3100F186BE /* UIFont+Fonts.m in Sources */,
 				B5A6E86A1DD0AB0B0062FF80 /* TaskDaySelectViewController.m in Sources */,
 				B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */,
+				B5CAC3131DE2EE980051039B /* GCDQueue.m in Sources */,
 				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B564D0CB1C9110FD00E903B6 /* UIFont+FontAwesome.m in Sources */,
 				B564D0D51C9110FD00E903B6 /* UIImage+Util.m in Sources */,
@@ -994,9 +1036,12 @@
 				B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */,
 				B56E369F1DBE658700165050 /* TaskEditDurationViewController.m in Sources */,
 				B56E36A81DBE65FB00165050 /* TaskListViewController.m in Sources */,
+				B5CAC3121DE2EE980051039B /* GCDGroup.m in Sources */,
 				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
+				B5CAC3141DE2EE980051039B /* GCDSemaphore.m in Sources */,
 				B564D0D61C9110FD00E903B6 /* UIImageView+Util.m in Sources */,
 				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
+				B5CAC3071DE2B59D0051039B /* TaskTickingViewController.m in Sources */,
 				B56E36AB1DBE662300165050 /* TaskNoteViewController.m in Sources */,
 				B564D0CE1C9110FD00E903B6 /* NSDateFormatter+Singleton.m in Sources */,
 				B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */,
@@ -1032,6 +1077,7 @@
 				B55A83481D3DC81C00814DE3 /* NoteCreateViewController.m in Sources */,
 				B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */,
 				B564D0D41C9110FD00E903B6 /* UIColor+Util.m in Sources */,
+				B5CAC3151DE2EE980051039B /* GCDTimer.m in Sources */,
 				B5448F011D658F3100F186BE /* UIView+AccessViewTag.m in Sources */,
 				B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */,
 				B5448F021D658F3100F186BE /* UIView+AnimationPracticalMethod.m in Sources */,

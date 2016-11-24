@@ -169,8 +169,9 @@
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
-            NoteModel *note = [NoteModel noteFromDictionary:dict];;
-            if(note) {
+            NoteModel *note = [NoteModel noteFromDictionary:dict];
+            NSLog(@"---%@ : %@", note.identifier, note.deletedAt);
+            if(note && note.deletedAt.length == 0) {
                 [arrayReturnM addObject:note];
             }
         }
@@ -192,15 +193,17 @@
  */
 - (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString
 {
-    NSLog(@"configNoteGetsByClassification : %@, color : %@", classification, colorString);
+    NSLog(@"configNoteGetsByClassification : [%@], color : [%@]", classification, colorString);
     
     NSMutableArray<NoteModel*> *arrayReturnM = [[NSMutableArray alloc] init];
     
     NSMutableString *sqlString = [NSMutableString stringWithString:@"SELECT rowid,* FROM note "];
     NSMutableString *queryString = [[NSMutableString alloc] init];
+    NSString *queryClassification = nil;
+    NSString *queryColor = nil;
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    if(classification.length > 0) {
-        [queryString appendFormat:@"WHERE classification = ? "];
+    if(classification.length > 0 && ![classification isEqualToString:@"*"]) {
+        queryClassification = @"WHERE classification = ? ";
         [arguments addObject:classification];
     }
     
@@ -208,72 +211,35 @@
         
     }
     else if([colorString isEqualToString:@"-"]) {
-        if(queryString.length > 0) {
-            [queryString appendString:@" AND "];
-        }
-        else {
-            [queryString appendString:@" WHERE "];
-        }
-        
-        [queryString appendString:@"LENGTH(color) > 0"];
+        queryColor = @"LENGTH(color) > 0";
     }
     else if([colorString isEqualToString:@""]) {
-        if(queryString.length > 0) {
-            [queryString appendString:@" AND "];
-        }
-        else {
-            [queryString appendString:@" WHERE "];
-        }
-        
-        [queryString appendString:@"color = ''"];
+        queryColor = @"color = ''";
     }
     else if([[NoteModel colorStrings] indexOfObject:colorString] != NSNotFound) {
-        if(queryString.length > 0) {
-            [queryString appendString:@" AND "];
-        }
-        else {
-            [queryString appendString:@" WHERE "];
-        }
-        
-        [queryString appendString:@"color = ?"];
+        queryColor = @"color = ?";
         [arguments addObject:colorString];
     }
     
-#if 0
-    
-    
-    if(classification.length == 0 && colorString.length == 0) {
-        //全部. 无约束.
-    }
-    else if(classification.length > 0 && colorString.length == 0) {
-        //栏目约束.
-        query = [[NSMutableDictionary alloc] init];
-        query[@"classification"] = classification;
-    }
-    else if(classification.length == 0 && colorString.length > 0) {
-        //颜色标记约束.
-        query = [[NSMutableDictionary alloc] init];
-        query[@"color"] = colorString;
+    if(queryClassification.length > 0) {
+        [queryString appendString:queryClassification];
+        if(queryColor.length > 0) {
+            [queryString appendString:@" AND "];
+            [queryString appendString:queryColor];
+        }
     }
     else {
-        //栏目和颜色标记同时约束.
-        query = [[NSMutableDictionary alloc] init];
-        query[@"classification"] = classification;
-        query[@"color"] = colorString;
+        if(queryColor.length > 0) {
+            [queryString appendString:@" WHERE "];
+            [queryString appendString:queryColor];
+        }
     }
-    
-    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_NOTE
-                                                   columnNames:nil
-                                                     withQuery:query
-                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY identifier DESC"}];
-#endif
     
     if(queryString.length > 0) {
         [sqlString appendString:queryString];
     }
     
-    [sqlString appendString:@" ORDER BY identifier DESC"];
+    [sqlString appendString:@" ORDER BY modifiedAt DESC"];
     
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
                                                  withSqlString:sqlString
@@ -283,7 +249,7 @@
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
             NoteModel *note = [NoteModel noteFromDictionary:dict];;
-            if(note) {
+            if(note && note.deletedAt.length == 0) {
                 [arrayReturnM addObject:note];
             }
         }
@@ -316,25 +282,6 @@
 }
 
 
-- (NoteModel*)configNoteGetByNewest
-{
-    NoteModel *noteResult = nil;
-    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                 withSqlString:@"SELECT MAX(identifier),* FROM note;"
-                                           andArgumentsInArray:nil];
-    NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
-    if(dicts.count > 0) {
-        NSDictionary *dict = dicts[0];
-        NoteModel *note = [NoteModel noteFromDictionary:dict];;
-        if(note) {
-            noteResult = note;
-        }
-    }
-    
-    return noteResult;
-}
-
-
 //返回新增note的identifier.
 - (BOOL)configNoteAdd:(NoteModel*)note
 {
@@ -354,6 +301,7 @@
                                          @"createdAt",
                                          @"modifiedAt",
                                          @"browseredAt",
+                                         @"deletedAt",
                                          @"source",
                                          @"synchronize",
                                          @"countCollect",
@@ -377,6 +325,7 @@
                                          note.createdAt,
                                          note.modifiedAt,
                                          note.browseredAt,
+                                         note.deletedAt,
                                          note.source,
                                          note.synchronize,
                                          @(note.countCollect),
@@ -417,7 +366,8 @@
 }
 
 
-- (void)configNoteRemoveByIdentifiers:(NSArray<NSNumber*>*)noteIdentifiers
+//彻底清除.
+- (void)configNoteRemoveByIdentifiers:(NSArray<NSString*>*)noteIdentifiers
 {
     BOOL result = YES;
     
@@ -430,6 +380,25 @@
     //return result;
     
     
+}
+
+
+//删除.可以到回收站清除或恢复.
+- (void)configNoteDeleteByIdentifiers:(NSArray<NSString*>*)noteIdentifiers
+{
+    BOOL result = YES;
+    NSLog(@"---%@", noteIdentifiers);
+    
+    NSInteger retDBData = [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
+                                                  toTable:TABLENAME_NOTE
+                                           withInfoUpdate:@{@"deletedAt":[NSString stringDateTimeNow]}
+                                            withInfoQuery:@{@"identifier":noteIdentifiers}];
+    if(DB_EXECUTE_OK != retDBData) {
+        NSLog(@"#error - ");
+        result = NO;
+    }
+    
+    //return result;
 }
 
 
@@ -452,6 +421,7 @@
     updateDict[@"createdAt"]        = note.createdAt;
     updateDict[@"modifiedAt"]       = note.modifiedAt;
     updateDict[@"browseredAt"]      = note.browseredAt;
+    updateDict[@"deletedAt"]        = note.deletedAt;
     updateDict[@"source"]           = note.source;
     updateDict[@"synchronize"]      = note.synchronize;
     updateDict[@"countCollect"]     = @(note.countCollect);
@@ -512,6 +482,7 @@
     note.createdAt = @"2016-08-02 01:23:45";
     note.modifiedAt = @"2016-08-08 01:23:45";
     note.browseredAt = @"2016-08-08 01:23:45";
+    note.deletedAt = @"";
     note.source = @"";
     note.synchronize = @"";
     note.countCollect = 0;
@@ -522,7 +493,7 @@
     [self configNoteAdd:note];
     
     note.identifier = @"preset2";
-    note.title = @"<p style=\"color:blue; text-align:center\">color - red    使用说明1 red使用说明2使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1</p>";
+    note.title = @"<p style=\"color:blue; text-align:center\">color - red    使用说明1 red使用</p>";
     note.content = @"<p style=\"\">第一段说明2</p> <p style=\"\">另一段说明2</p>";
     note.color = @"red";
     [self configNoteAdd:note];
@@ -608,7 +579,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r0";
-    taskRecord.type = 0;
+    taskRecord.type = TaskRecordTypeSignIn;
     taskRecord.record = @"";
     taskRecord.committedAt = @"2016-11-10 12:34:50";
     taskRecord.dayString = @"";
@@ -625,7 +596,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r1";
-    taskRecord.type = 1;
+    taskRecord.type = TaskRecordTypeSignOut;
     taskRecord.record = @"";
     taskRecord.committedAt = @"2016-11-10 12:34:51";
     taskRecord.dayString = @"";
@@ -642,7 +613,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r2";
-    taskRecord.type = 2;
+    taskRecord.type = TaskRecordTypeFinish;
     taskRecord.record = @"";
     taskRecord.committedAt = @"2016-11-10 12:34:52";
     taskRecord.dayString = @"";
@@ -659,7 +630,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r3";
-    taskRecord.type = 3;
+    taskRecord.type = TaskRecordTypeUserRecord;
     taskRecord.record = @"用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容用户填写的内容";
     taskRecord.committedAt = @"2016-11-10 12:34:53";
     taskRecord.dayString = @"";
@@ -676,7 +647,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r4";
-    taskRecord.type = 4;
+    taskRecord.type = TaskRecordTypeUserModify;
     taskRecord.record = @"";
     taskRecord.committedAt = @"2016-11-10 12:34:54";
     taskRecord.dayString = @"";
@@ -693,7 +664,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r5";
-    taskRecord.type = 5;
+    taskRecord.type = TaskRecordTypeRemoteReminder;
     taskRecord.record = @"";
     taskRecord.committedAt = @"2016-11-10 12:34:55";
     taskRecord.dayString = @"";
@@ -710,7 +681,7 @@
     taskRecord = [[TaskRecord alloc] init];
     taskRecord.snTaskInfo = @"t2";
     taskRecord.snTaskRecord = @"t2r6";
-    taskRecord.type = 6;
+    taskRecord.type = TaskRecordTypeLocalReminder;
     taskRecord.record = @"本地提醒 10:00:00";
     taskRecord.committedAt = @"2016-11-10 12:34:56";
     taskRecord.dayString = @"";

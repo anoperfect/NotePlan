@@ -14,6 +14,7 @@
 
 
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *propertyLabel;
 @property (nonatomic, strong) UILabel *bodyLabel;
 @property (nonatomic, strong) UILabel *authorLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
@@ -22,6 +23,7 @@
 
 
 @property (nonatomic, strong) NoteModel *note;
+@property (nonatomic, assign) CGFloat optumizeHeight;
  
 
 @end

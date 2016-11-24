@@ -53,11 +53,10 @@
     if (self) {
         self.contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         
-        
-        
         [self initSubviews];
         [self setLayout];
     }
+    
     return self;
 }
 
@@ -65,10 +64,17 @@
 - (void)initSubviews
 {
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.numberOfLines = 2;
+    self.titleLabel.numberOfLines = 0;
     self.titleLabel.lineBreakMode = NSLineBreakByWordWrapping | NSLineBreakByTruncatingTail;
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     [self.contentView addSubview:self.titleLabel];
+    
+    self.propertyLabel = [[UILabel alloc] init];
+    self.propertyLabel.numberOfLines = 0;
+    self.propertyLabel.lineBreakMode = NSLineBreakByWordWrapping | NSLineBreakByTruncatingTail;
+    self.propertyLabel.font = [UIFont systemFontOfSize:12];
+    self.propertyLabel.textColor = [UIColor blueColor];
+    [self.contentView addSubview:self.propertyLabel];
     
     self.bodyLabel = [[UILabel alloc] init];
     self.bodyLabel.numberOfLines = 1;
@@ -98,6 +104,13 @@
 
 - (void)setLayout
 {
+    
+}
+
+
+- (void)setLayout1
+{
+#define SUPER_WIDTH(v) v.superView.bounds.size.width
     for (UIView *view in [self.contentView subviews]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
     }
@@ -124,14 +137,56 @@
 - (void)setNote:(NoteModel*)note
 {
     _note = note;
+    
     self.titleLabel.text    = [note previewTitle];
     self.bodyLabel.text     = [note previewSummary];
+    
+    NSString *modifiedAtDay = _note.modifiedAt.length >=10 ? [_note.modifiedAt substringToIndex:10] : _note.modifiedAt;
+    NSString *classification = _note.classification.length > 0 ? _note.classification : @"未分类" ;
+    self.propertyLabel.text = [NSString stringWithFormat:@"%@   /%@/", modifiedAtDay, classification];
+    
     self.timeLabel.text     = @"2016-11-01 10:10:10";
     self.commentCount.text  = @"评论";
     
-    
+    [self layoutSubviews];
 }
 
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    //进入到编辑模式, 不重新布局. title的行数可能变多导致cell高度变化, 需手动刷新显示.
+    if(self.editing) {
+        return;
+    }
+    
+    CGFloat x = 8;
+    CGFloat y = 0;
+    CGFloat width = self.contentView.frame.size.width - 2 * x;
+    
+    y += 10;
+    CGSize sizeTitle = [self.titleLabel sizeThatFits:CGSizeMake(width, 36)];
+    CGRect frameTitleLabel = CGRectMake(x, y, width, sizeTitle.height);
+    self.titleLabel.frame = frameTitleLabel;
+    y += frameTitleLabel.size.height;
+    
+    y += 6;
+    self.propertyLabel.frame = CGRectMake(x, y, width, 20);
+    y += self.propertyLabel.frame.size.height;
+    
+    y += 6;
+    self.bodyLabel.frame = CGRectMake(x, y, width, 20);
+    y += self.bodyLabel.frame.size.height;
+    
+    y += 6;
+    
+    CGRect frameContentView = self.contentView.frame;
+    frameContentView.size.height = y;
+    self.contentView.frame = frameContentView;
+    
+    self.optumizeHeight = frameContentView.size.height;
+}
 
 
 

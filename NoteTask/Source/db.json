@@ -39,6 +39,7 @@
     {"columnName": "createdAt",      "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "modifiedAt",     "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "browseredAt",    "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
+    {"columnName": "deletedAt",      "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "source",         "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "synchronize",    "dataType": "string",  "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "countCollect",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},

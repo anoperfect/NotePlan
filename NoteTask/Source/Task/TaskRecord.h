@@ -76,6 +76,7 @@ typedef NS_ENUM (NSUInteger, TaskRecordType) {
 
 - (void)taskRecordAddFinish:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt;
 - (void)taskRecordAddRedo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt;
+//- (void)taskRecordAddSignIn:(NSString*)snTaskInfo committedAt:(NSString*)committedAt;
 
 - (void)taskRecordRemove:(TaskRecord*)taskRecord;
 - (void)taskRecordUpdate:(TaskRecord*)taskRecord;

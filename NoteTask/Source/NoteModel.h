@@ -61,6 +61,7 @@
 @property (nonatomic, strong) NSString *createdAt;
 @property (nonatomic, strong) NSString *modifiedAt;
 @property (nonatomic, strong) NSString *browseredAt;
+@property (nonatomic, strong) NSString *deletedAt;
 @property (nonatomic, strong) NSString *source;
 
 

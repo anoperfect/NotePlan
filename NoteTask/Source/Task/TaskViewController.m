@@ -117,6 +117,23 @@
     UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(actionMore)];
     self.navigationItem.rightBarButtonItem = rightItem;
     
+    PushButtonData *buttonDataCreate = [[PushButtonData alloc] init];
+    buttonDataCreate.actionString = @"taskCreate";
+    buttonDataCreate.imageName = @"TaskAdd";
+    PushButton *buttonCreate = [[PushButton alloc] init];
+    buttonCreate.frame = CGRectMake(0, 0, 44, 44);
+    buttonCreate.actionData = buttonDataCreate;
+    buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    [buttonCreate setImage:[UIImage imageNamed:buttonDataCreate.imageName] forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItems = @[
+                                                [[UIBarButtonItem alloc] initWithCustomView:buttonCreate]
+                                                
+                                                
+                                                ];
+    
+    
+    
+    
 }
 
 

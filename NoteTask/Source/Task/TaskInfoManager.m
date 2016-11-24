@@ -121,7 +121,7 @@
 }
 
 
-- (void)reloadTaskFinishAts;
+- (void)reloadTaskFinishAts
 {
     self.taskFinishAts = [NSMutableArray arrayWithArray:[[AppConfig sharedAppConfig] configTaskFinishAtGets]];
     self.taskFinishAtDictionary = [[NSMutableDictionary alloc] init];
@@ -137,7 +137,7 @@
 }
 
 
-- (void)reloadTaskRecords;
+- (void)reloadTaskRecords
 {
 //    self.taskRecords = [NSMutableArray arrayWithArray:[[AppConfig sharedAppConfig] configTaskRecordGets]];
     self.taskRecordManager = [TaskRecordManager taskRecordManager];
@@ -293,7 +293,7 @@
 }
 
 
-- (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
+- (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt
 {
     //判断是否已经在完成表中存在.
     TaskFinishAt *taskFinishAtFound = nil;
@@ -328,7 +328,7 @@
 }
 
 
-- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days;
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days
 {
     NSMutableArray<TaskFinishAt*> *taskFinishAtsQuery = [[NSMutableArray alloc] init];
     
@@ -356,6 +356,19 @@
     }
     
     return [NSArray arrayWithArray:taskFinishAtsQuery];
+}
+
+
+- (NSString*)queryFinishedAtsOnSn:(NSString*)sn onDay:(NSString*)day
+{
+    NSMutableArray<TaskFinishAt*> *taskFinishAts = self.taskFinishAtDictionary[sn];
+    for(TaskFinishAt *taskFinishAt in taskFinishAts) {
+        if([taskFinishAt.dayString isEqualToString:day] && taskFinishAt.dayString.length > 0) {
+            return taskFinishAt.dayString;
+        }
+    }
+    
+    return @"";
 }
 
 

@@ -96,6 +96,7 @@
         
         NoteModel* noteModel = [[NoteModel alloc] init];
         noteModel.identifier    = [NoteModel randonIdentifierStringWithLength:6];
+        NSLog(@"---%@", noteModel.identifier);
         noteModel.title         = @"";
         noteModel.content       = @"";
         noteModel.summary       = @"";
@@ -104,9 +105,10 @@
         noteModel.thumb = @"";
         noteModel.audio = @"",
         noteModel.location = @"CHINA";
-        noteModel.createdAt = @"2016-08-02 01:23:45";
-        noteModel.modifiedAt = @"2016-08-08 01:23:45";
-        noteModel.browseredAt = @"2016-08-08 01:23:45";
+        noteModel.createdAt = [NSString stringDateTimeNow];
+        noteModel.modifiedAt = noteModel.createdAt;
+        noteModel.browseredAt = noteModel.createdAt;
+        noteModel.deletedAt = @"";
         noteModel.source = @"";
         noteModel.synchronize = @"";
         noteModel.countCollect = 0;
@@ -162,7 +164,7 @@
     self.textViewEditingContainer = [[UIView alloc] init];
     [self addSubview:self.textViewEditingContainer];
     self.textViewEditingContainer.hidden = YES;
-        self.textViewEditingContainer.backgroundColor = [UIColor blueColor];
+    self.textViewEditingContainer.backgroundColor = [UIColor whiteColor];
         
     self.textViewEditing = [[UITextView alloc] init];
     self.textViewEditing.attributedText = [[NSAttributedString alloc] initWithString:@""];

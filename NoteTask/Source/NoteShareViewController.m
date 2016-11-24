@@ -186,7 +186,7 @@
     [f frameLayoutSet:@"WANContainer" in:@"WANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
     [f frameLayout:@"WANContainer" to:@[@"WANTitle", @"WANDetail"] withHeights:@[@36, @-1.]];
     [f frameLayoutSquare:@"WANTitle" toVertical:@[@"WANIcon", @"WANLabelAndButton"]];
-    [f frameLayout:@"WANLabelAndButton" toVertical:@[@"WANLabel", @"WANButton"] withWidths:@[@160,@-1.]];
+    [f frameLayout:@"WANLabelAndButton" toVertical:@[@"WANLabel", @"WANButton"] withWidths:@[@180,@-1.]];
     
     FrameAssign(self.fileTypeSelect, @"FileTypeSelect", f)
     
@@ -479,7 +479,7 @@
             self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入上述http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.", self.WANServer, self.htmName];
         }
         else {
-            self.labelWAN.text = @"互联网获取(上传失败)";
+            self.labelWAN.text = @"互联网获取(连接失败)";
             self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.";
         }
     }
@@ -524,8 +524,8 @@
             self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过局域网内电脑浏览器登入或下载软件下载上述http地址,\n查看/下载Pdf版本笔记内容.", self.WANServer, self.pdfName];
         }
         else {
-            self.labelWAN.text = @"互联网获取(上传失败)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
+            self.labelWAN.text = @"互联网获取(连接失败)";
+            self.labelWANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
         }
     }
 }
