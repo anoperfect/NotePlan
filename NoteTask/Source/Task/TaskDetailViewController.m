@@ -153,7 +153,7 @@ TaskRecord
 - (NSMutableAttributedString*)attributedStringForPropertyTitle:(NSString*)title
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:title];
-    attributedString = [NSString attributedStringWith:title font:[UIFont fontWithName:@"TaskPropertyTitleLabel"] textColor:[UIColor colorWithName:@"TaskDetailText"] backgroundColor:nil indent:20];
+    attributedString = [NSString attributedStringWith:title font:[UIFont fontWithName:@"TaskPropertyTitleLabel"] indent:20 textColor:[UIColor colorWithName:@"TaskDetailText"]];
     
     return attributedString;
 }
@@ -164,9 +164,9 @@ TaskRecord
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:content];
     attributedString =  [NSString attributedStringWith:content
                                                   font:[UIFont fontWithName:@"TaskPropertyContentLabel"]
+                                                indent:20
                                              textColor:[UIColor colorWithName:@"TaskDetailText"]
-                                       backgroundColor:nil
-                                                indent:20];
+                         ];
     
     return attributedString;
 }
@@ -264,15 +264,11 @@ TaskRecord
     [attributedString appendAttributedString:[self attributedStringForPropertyTitle:@"任务记录"]];
     [attributedString appendAttributedString:[NSString attributedStringWith:[NSString stringWithFormat:@" (共%zd条) ", self.taskRecords.count]
                                                                        font:[UIFont fontWithName:@"CustomTextColor"]
+                                                                     indent:20
                                                                   textColor:[UIColor colorWithName:@"CustomTextColor"]
-                                                            backgroundColor:nil
-                                                                     indent:20]];
+                                                ]
+     ];
     labelTitle.attributedText = attributedString;
-    
-    
-    
-    
-    
     
     //类型筛选. 使用YYLabel+Link的方式. 应该用一排button或者横向tableview可以.
     NSMutableAttributedString *text = [NSMutableAttributedString new];

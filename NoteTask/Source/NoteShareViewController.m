@@ -71,11 +71,6 @@
     
     self.WANServer = @"http://notetask.appben.com";
     
-
-    
-//    self.viewAirDropContainer = [[UIView alloc] init];
-//    [self addSubview:self.viewAirDropContainer];
-    
 #define NEW_AND_ADD_SUBVIEW(view, class) [self addSubview:(view = [[class alloc] init])];
     
     
@@ -420,7 +415,7 @@
     NSMutableDictionary *parameter = [NSMutableDictionary dictionary];
     parameter[@"token"] = @"param....";
     // 访问路径
-    NSString *stringURL = [NSString stringWithFormat:@"http://notetask.appben.com/upload"];
+    NSString *stringURL = [NSString stringWithFormat:@"%@/upload", self.WANServer];
     [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         // 上传文件
         [formData appendPartWithFileData:[NSData dataWithContentsOfFile:self.pdfPath] name:@"uploadfile" fileName:self.pdfName mimeType:@"application/pdf"];

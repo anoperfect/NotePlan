@@ -75,6 +75,7 @@
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
 		B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */; };
+		B59D4FE61DE9EDC600CA3C5A /* TaskEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */; };
 		B5A0544A1D41C23100791702 /* PopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A054491D41C23100791702 /* PopupViewController.m */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
@@ -249,6 +250,8 @@
 		B59AB7211D34A5B40067C4B2 /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
 		B59AB7231D35450A0067C4B2 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIpConfigDB.json; sourceTree = "<group>"; };
+		B59D4FE41DE9EDC600CA3C5A /* TaskEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskEditViewController.h; sourceTree = "<group>"; };
+		B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskEditViewController.m; sourceTree = "<group>"; };
 		B5A054481D41C23100791702 /* PopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PopupViewController.h; path = Source/PopupViewController.h; sourceTree = "<group>"; };
 		B5A054491D41C23100791702 /* PopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PopupViewController.m; path = Source/PopupViewController.m; sourceTree = "<group>"; };
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
@@ -459,6 +462,8 @@
 				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
+				B59D4FE41DE9EDC600CA3C5A /* TaskEditViewController.h */,
+				B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */,
 				B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */,
 				B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
@@ -1071,6 +1076,7 @@
 				B5448F041D658F3100F186BE /* UIView+AnimationsListViewController.m in Sources */,
 				B5C561E31D3942BF00F1EF82 /* NoteFilter.m in Sources */,
 				B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */,
+				B59D4FE61DE9EDC600CA3C5A /* TaskEditViewController.m in Sources */,
 				B564D0D21C9110FD00E903B6 /* UIBarButtonItem+Badge.m in Sources */,
 				B564D0CA1C9110FD00E903B6 /* NSString+FontAwesome.m in Sources */,
 				B564D0D11C9110FD00E903B6 /* NSTextAttachment+Util.m in Sources */,

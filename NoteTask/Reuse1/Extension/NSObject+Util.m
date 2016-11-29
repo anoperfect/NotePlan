@@ -46,6 +46,61 @@
 }
 
 
+- (void)memberObjectCreate
+{
+    YYClassInfo *c = [YYClassInfo classInfoWithClass:[self class]];
+    for(NSString *key in c.ivarInfos.allKeys) {
+        YYClassIvarInfo *ivar = c.ivarInfos[key];
+        NS0Log(@"key : %@, name : %@, typeEncoding : %@, type : %zd", key, ivar.name, ivar.typeEncoding, ivar.type);
+        
+        if(ivar.type == YYEncodingTypeObject) {
+            NSString *className = nil;
+            Class class = nil;
+            if([ivar.typeEncoding hasPrefix:@"@\""]
+                && [ivar.typeEncoding hasSuffix:@"\""]
+                && nil != (className = [ivar.typeEncoding substringWithRange:NSMakeRange(2, ivar.typeEncoding.length - 3)])
+                && nil != (class = NSClassFromString(className))
+                && ![className isEqualToString:@"UITextView"]) {
+                NS0Log(@"%@", class);
+                id value = [[class alloc] init];
+                [self setValue:value forKey:key];
+                NS0Log(@"set : %@ -> %@", key, value);
+            }
+            else {
+                NSLog(@"#error - not set : %@", key);
+            }
+        }
+    }
+}
+
+
+- (void)memberViewSetFrameWith:(NSDictionary*)nameAndFrames
+{
+    YYClassInfo *c = [YYClassInfo classInfoWithClass:[self class]];
+    for(NSString *key in c.ivarInfos.allKeys) {
+        YYClassIvarInfo *ivar = c.ivarInfos[key];
+        NS0Log(@"key : %@, name : %@, typeEncoding : %@, type : %zd", key, ivar.name, ivar.typeEncoding, ivar.type);
+        
+        if(ivar.type == YYEncodingTypeObject) {
+            id obj = [self valueForKey:key];
+            if([obj respondsToSelector:@selector(setFrame:)]) {
+                NSValue *frameValue = nameAndFrames[key];
+                if([frameValue isKindOfClass:[NSValue class]]) {
+                    CGRect frame = [frameValue CGRectValue];
+                    [obj setFrame:frame];
+                    NS0Log(@"===%@ set to [%.2f,%.2f,%.2f,%.2f]", key, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+                }
+                else {
+                    NS0Log(@"[%@] not set. no value", key);
+                }
+            }
+            else {
+                NS0Log(@"[%@] not set. not belong to UIView.", key)
+            }
+        }
+    }
+}
+
 
 @end
 
@@ -167,6 +222,14 @@
 }
 
 
++ (NSString*)dateStringOfDate:(NSDate*)date
+{
+    NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"yyyy-MM-dd"];
+    NSString * dateString = [dateformatter stringFromDate:date];
+    return dateString;
+}
+
 
 
 
@@ -273,9 +336,42 @@
 
 +(NSMutableAttributedString*)attributedStringWith:(NSString*)s
                                              font:(UIFont*)font
+                                           indent:(NSInteger)indent
+                                        textColor:(UIColor*)textColor
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s];
+    NSInteger length = attributedString.length;
+    NSRange range = NSMakeRange(0, length);
+    
+    if(font) {
+        [attributedString addAttribute:NSFontAttributeName value:font range:range];
+    }
+    
+    if(indent > 0) {
+        NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyleContent setHeadIndent:indent];
+        [paragraphStyleContent setFirstLineHeadIndent:indent];
+        [paragraphStyleContent setTailIndent:-indent];
+        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:range];
+    }
+    
+    if(textColor) {
+        [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:range];
+    }
+    
+    
+    return attributedString;
+}
+
+
++(NSMutableAttributedString*)attributedStringWith:(NSString*)s
+                                             font:(UIFont*)font
+                                           indent:(NSInteger)indent
                                         textColor:(UIColor*)textColor
                                   backgroundColor:(UIColor*)backgroundColor
-                                           indent:(NSInteger)indent
+                                   underlineColor:(UIColor*)underlineColor
+                                     throughColor:(UIColor*)throughColor
+
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s];
     NSInteger length = attributedString.length;
@@ -297,9 +393,28 @@
         [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:range];
     }
     
+    if(backgroundColor) {
+        [attributedString addAttribute:NSBackgroundColorAttributeName value:backgroundColor range:range];
+    }
+    
+    if(underlineColor) {
+        [attributedString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlinePatternSolid | NSUnderlineStyleSingle) range:range];
+        [attributedString addAttribute:NSUnderlineColorAttributeName value:underlineColor range:range];
+    }
+    
+    if(throughColor) {
+        [attributedString addAttribute:NSStrikethroughStyleAttributeName value:@(NSUnderlinePatternSolid | NSUnderlineStyleSingle) range:range];
+        [attributedString addAttribute:NSStrikethroughColorAttributeName value:throughColor range:range];
+    }
     
     return attributedString;
 }
+
+
+
+
+
+
 
 
 @end

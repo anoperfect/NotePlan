@@ -779,7 +779,11 @@
 
 - (BOOL)addNoteToLocal
 {
+    NSLog(@"addNoteToLocal : %@", self.noteModel.identifier);
     BOOL result = [[AppConfig sharedAppConfig] configNoteAdd:self.noteModel];
+    if(result) {
+        self.isStoredToLocal = YES;
+    }
     return result;
 }
 
@@ -1206,11 +1210,6 @@
 -(void)textViewDidChange:(UITextView*)textView
 {
     LOG_POSTION
-    if([textView.text length]==0){
-        textView.text =@"Foobar placeholder";
-        textView.textColor =[UIColor lightGrayColor];
-        textView.tag =0;
-    }
 }
 
 

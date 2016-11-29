@@ -74,17 +74,24 @@ time:
 @property (nonatomic, strong) NSString          *signedAt;
 @property (nonatomic, strong) NSString          *finishedAt; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
 
-@property (nonatomic, assign) NSInteger          scheduleType;
-@property (nonatomic, assign) BOOL               dayRepeat;
-@property (nonatomic, strong) NSString          *daysStrings;
+@property (nonatomic, strong) NSString          *daysType;
+@property (nonatomic, strong) NSString          *dayString; //单天模式.
+@property (nonatomic, strong) NSString          *dayStringFrom;//连续模式开始日期.
+@property (nonatomic, strong) NSString          *dayStringTo;//连续模式结束日期.
+@property (nonatomic, strong) NSString          *daysStrings;//多天模式.
 
+@property (nonatomic, strong) NSString          *weekdays;//重复模式星期几. Monday,
+@property (nonatomic, strong) NSString          *yearday;//重复模式1年的一天. MM-DD
+@property (nonatomic, strong) NSString          *monthday;//重复模式一个月的几日. 01,02
+
+@property (nonatomic, assign) BOOL               dayRepeat; //每天都重复执行此任务.
 @property (nonatomic, strong) NSString          *time; //1.单天定点hh:mm. 2.day repeat 定点. hh:mm 3.单天时间段.hh:mm-hh:mm. 4.day repeat 时间段.hh:mm-hh:mm
-@property (nonatomic, strong) NSString          *period; //5.日期段. yyyy.mm.dd-yyyy.mm.dd. 6.时间段. yyyy.mm.dd hh:mm-yyyy.mm.dd hh:mm
 
 @property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask; //从daysStrings中解析出.
 
 
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict;
++ (instancetype)taskinfo;
 - (NSString*)summaryDescription;
 
 + (NSString*)dateTimeStringForDisplay:(NSString*)at;

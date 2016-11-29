@@ -53,6 +53,24 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 }
 
 
++ (instancetype)taskinfo
+{
+    TaskInfo *taskinfo = [[TaskInfo alloc] init];
+    taskinfo.sn = @"";
+    taskinfo.content = @"";
+    taskinfo.status = 0;
+    taskinfo.committedAt = @"";
+    taskinfo.modifiedAt = @"";
+    taskinfo.signedAt = @"";
+    taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
+    taskinfo.dayRepeat = YES;
+    taskinfo.daysStrings = @"";
+    taskinfo.time = @"";
+    
+    return taskinfo;
+}
+
+
 - (void)daysStringsParseAndGetFinishedAt
 {
     [self daysStringsParse];

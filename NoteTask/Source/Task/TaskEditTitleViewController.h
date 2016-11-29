@@ -17,3 +17,10 @@
 @interface TaskCreateViewController : CustomViewController
 
 @end
+
+
+@interface TaskSelector : UIView
+
+@property (nonatomic, strong) NSArray<NSString*> *datas;
+
+@end

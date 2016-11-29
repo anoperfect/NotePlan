@@ -64,20 +64,7 @@
     self.heightOptumize = [[NSMutableDictionary alloc] init];
     
     //导航栏定制相关.
-    self.navigationController.navigationBarHidden = NO;
-    
     //self.view.layer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"NoteBackground"].CGImage);
-    self.view.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
-    //[self.navigationItem.backBarButtonItem setTintColor:[UIColor blackColor]];
-//    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:nil action:nil];
-//    self.navigationItem.backBarButtonItem = item;
-//    [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
-//    
-    //self.navigationController.navigationBar.barStyle = UIStatusBarStyleDefault;
-    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
-    
-
-    //self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(fetchDetails)];
     
     //下一个UIViewController的返回的地方文字设置.
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];

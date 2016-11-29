@@ -77,21 +77,13 @@
     self.navigationController.navigationBarHidden = NO;
     
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
-//    self.navigationController.navigationBar.translucent = YES;
-//    self.navigationController.navigationBar.alpha = 0.0;
-    
-//    [self.navigationController.navigationBar setTintColor:];
 #if 0
     //    导航栏变为透明
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:0];
     //    让黑线消失的方法
     self.navigationController.navigationBar.shadowImage=[UIImage new];
 #endif
-    
-//    self.tasksView.backgroundColor = [UIColor clearColor];
-    
-//    self.navigationController.navigationBar.barTintColor = [UIColor colorFromString:@"#9779ee"];
-    
+ 
     self.navigationController.navigationBar.translucent = NO;
 }
 
@@ -113,22 +105,32 @@
 
 - (void)navigationItemRightInit
 {
-    UIImage *rightItemImage = [UIImage imageNamed:@"more"];
-    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithImage:rightItemImage style:UIBarButtonItemStyleDone target:self action:@selector(actionMore)];
-    self.navigationItem.rightBarButtonItem = rightItem;
-    
     PushButtonData *buttonDataCreate = [[PushButtonData alloc] init];
     buttonDataCreate.actionString = @"taskCreate";
     buttonDataCreate.imageName = @"TaskAdd";
     PushButton *buttonCreate = [[PushButton alloc] init];
     buttonCreate.frame = CGRectMake(0, 0, 44, 44);
     buttonCreate.actionData = buttonDataCreate;
-    buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
     [buttonCreate setImage:[UIImage imageNamed:buttonDataCreate.imageName] forState:UIControlStateNormal];
+    [buttonCreate addTarget:self action:@selector(actionCreate) forControlEvents:UIControlEventTouchDown];
+    UIBarButtonItem *itemCreate = [[UIBarButtonItem alloc] initWithCustomView:buttonCreate];
+    
+    
+    PushButtonData *buttonDataMore = [[PushButtonData alloc] init];
+    buttonDataMore.actionString = @"more";
+    buttonDataMore.imageName = @"more";
+    PushButton *buttonMore = [[PushButton alloc] init];
+    buttonMore.frame = CGRectMake(0, 0, 44, 44);
+    buttonMore.actionData = buttonDataMore;
+    buttonMore.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+    [buttonMore setImage:[UIImage imageNamed:buttonDataMore.imageName] forState:UIControlStateNormal];
+    [buttonMore addTarget:self action:@selector(actionMore) forControlEvents:UIControlEventTouchDown];
+    UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
+    
     self.navigationItem.rightBarButtonItems = @[
-                                                [[UIBarButtonItem alloc] initWithCustomView:buttonCreate]
-                                                
-                                                
+                                                itemMore,
+                                                itemCreate,
                                                 ];
     
     
@@ -181,6 +183,7 @@
 }
 
 
+#pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
@@ -212,15 +215,16 @@
     NSMutableAttributedString *attributedString =
                     [NSString attributedStringWith:taskArrangeGroup.arrangeName
                                               font:[UIFont fontWithName:@"TaskSectionHeader"]
+                                            indent:36
                                          textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
-                                   backgroundColor:nil
-                                            indent:36];
+                     ];
     NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskArrangeGroup.taskInfoArranges.count];
     [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
                                                                        font:[UIFont fontWithName:@"small"]
+                                                                    indent:0
                                                                   textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
-                                                            backgroundColor:nil
-                                                                    indent:0]];
+                                              ]
+     ];
     label.attributedText = attributedString;
     [container addSubview:label];
     
@@ -284,45 +288,22 @@
     [cell setTaskInfo:taskInfoArrange.taskinfo finishedAts:finishedAts];
     
     self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height);
-/*
-    只有一个cell是展开状态.因此可以只记录一个优化高度.
-    self.heightDetailedCell = cell.frame.size.height + 10;
-    NSLog(@"--- heightDetailedCell : %lf", self.heightDetailedCell);
- */
-    
+
     return cell;
 }
 
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    if(0) {
-        
-    }
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
     [self enterTaskDetailInArrangeMode:taskInfoArrange];
-    
-#if 0
-    
-    if([indexPath isEqual:self.indexPathDetaied]) {
-        [self actionCloseDetailedOnIndexPath:indexPath];
-    }
-    else {
-        [self actionOpenDetailedOnIndexPath:indexPath];
-    }
-#endif
 }
 
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    if(0) {
-        
-    }
-    
     
 }
 
@@ -333,6 +314,33 @@
 }
 
 
+//上弹超过限定值的话,将之前显示出来.
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    CGPoint point = scrollView.contentOffset;
+    NSLog(@"%f, %f", point.x, point.y);
+    
+    if(!self.isDisplayBeforeTask) {
+        if(point.y < self.contentOffsetYMonitor) {
+            self.contentOffsetYMonitor = point.y;
+        }
+    }
+}
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if(self.contentOffsetYMonitor < - 100 && !self.isDisplayBeforeTask) {
+        NSLog(@"- drag to display tasks Before.")
+        self.contentOffsetYMonitor = 0;
+        self.isDisplayBeforeTask = YES;
+        [self.sectionsWrap addObject:@0];
+        [self.tasksView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+    }
+}
+
+
+#pragma mark - data
 - (BOOL)detailModeOnIndexPath:(NSIndexPath*)indexPath
 {
     return NO;
@@ -356,7 +364,20 @@
 }
 
 
+#pragma mark - action
 
+- (void)actionCreate
+{
+    [self pushViewControllerByName:@"TaskEditViewController"];
+}
+
+
+- (void)pushBackAction
+{
+    NSLog(@"--------------------------------");
+    [self dataTasksReload];
+    [self actionReloadTasksView];
+}
 
 
 - (void)actionMore
@@ -560,30 +581,7 @@
 }
 
 
-//上弹超过限定值的话,将之前显示出来.
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
-{
-    CGPoint point = scrollView.contentOffset;
-    NSLog(@"%f, %f", point.x, point.y);
-    
-    if(!self.isDisplayBeforeTask) {
-        if(point.y < self.contentOffsetYMonitor) {
-            self.contentOffsetYMonitor = point.y;
-        }
-    }
-}
 
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    if(self.contentOffsetYMonitor < - 100 && !self.isDisplayBeforeTask) {
-        NSLog(@"- drag to display tasks Before.")
-        self.contentOffsetYMonitor = 0;
-        self.isDisplayBeforeTask = YES;
-        [self.sectionsWrap addObject:@0];
-        [self.tasksView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
-    }
-}
 
 
 

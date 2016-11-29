@@ -238,9 +238,7 @@
 -(void)textViewDidChange:(UITextView*)textView
 {
     if([textView.text length]==0){
-        textView.text =@"Foobar placeholder";
-        textView.textColor =[UIColor lightGrayColor];
-        textView.tag =0;
+
     }
 }
 

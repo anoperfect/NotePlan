@@ -13,6 +13,8 @@
 
 - (void)performSelectorByString:(NSString*)selString;
 
+- (void)memberObjectCreate;
+- (void)memberViewSetFrameWith:(NSDictionary*)nameAndFrames;
 
 @end
 
@@ -28,6 +30,9 @@
 
 + (NSString*)stringDateTimeNow;
 + (NSDate*)stringToDate:(NSString*)s;
+
++ (NSString*)dateStringOfDate:(NSDate*)date;
+
 @end
 
 
@@ -52,9 +57,17 @@
 @interface NSString (NSAttributedString)
 +(NSMutableAttributedString*)attributedStringWith:(NSString*)s
                                              font:(UIFont*)font
+                                           indent:(NSInteger)indent
+                                        textColor:(UIColor*)textColor;
+
+
++(NSMutableAttributedString*)attributedStringWith:(NSString*)s
+                                             font:(UIFont*)font
+                                           indent:(NSInteger)indent
                                         textColor:(UIColor*)textColor
                                   backgroundColor:(UIColor*)backgroundColor
-                                           indent:(NSInteger)indent;
+                                   underlineColor:(UIColor*)underlineColor
+                                     throughColor:(UIColor*)throughColor;
 
 
 

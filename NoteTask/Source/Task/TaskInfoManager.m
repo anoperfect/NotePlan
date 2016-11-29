@@ -253,6 +253,21 @@
 }
 
 
+#pragma mark - taskinfo
+- (BOOL)addTaskInfo:(TaskInfo*)taskinfo
+{
+    //更新各缓存.
+    [self.taskinfos addObject:taskinfo];
+    [self reloadTaskArrangeGroups];
+    [self reloadTaskDayMode];
+    
+    [[AppConfig sharedAppConfig] configTaskInfoAdd:taskinfo];
+    
+    return YES;
+}
+
+
+#pragma mark - record
 - (BOOL)addFinishedAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt
 {
     //判断是否已经在完成表中存在.
@@ -372,6 +387,7 @@
 }
 
 
+#pragma mark - description
 - (NSString*)description
 {
     NSMutableString *s = [[NSMutableString alloc] init];
