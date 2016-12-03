@@ -215,7 +215,38 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 
 - (void)actionCreate
 {
+    NSDictionary *dict = [self.taskinfo toDictionary];
+    NSLog(@"%@", dict);
+    
+    [self dataUpdateTaskInfo];
+    
+    
     [self storeToLocal];
+}
+
+
+- (void)dataUpdateTaskInfo
+{
+    self.taskinfo.content = self.createTitleInputView.text;
+    self.taskinfo.status = 0;
+    self.taskinfo.committedAt = [NSString stringDateTimeNow];
+    self.taskinfo.modifiedAt = [NSString stringDateTimeNow];;
+    self.taskinfo.signedAt = @"";
+    self.taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
+    self.taskinfo.daysType = self.daysType;
+    self.taskinfo.dayString = self.dayString.length > 0 ? self.dayString : @""; //单天模式.
+    self.taskinfo.dayStringFrom = self.dayStringFrom.length > 0 ? self.dayStringFrom : @"";;//连续模式开始日期.
+    self.taskinfo.dayStringTo = self.dayStringTo.length > 0 ? self.dayStringTo : @"";;//连续模式开始日期.;//连续模式结束日期.
+    self.taskinfo.dayStrings = self.dayStrings.count == 0 ? @"" : [NSString arrayDescriptionConbine:self.dayStrings seprator:@","];//多天模式.
+    
+    self.taskinfo.weekdays = @"";//重复模式星期几. Monday,
+    self.taskinfo.yearday = @"";//重复模式1年的一天. MM-DD
+    self.taskinfo.monthday = @"";//重复模式一个月的几日. 01,02
+    
+    self.taskinfo.dayRepeat = YES; //每天都重复执行此任务.
+    self.taskinfo.time = @""; //1.单天定点hh:mm. 2.day repeat 定点. hh:mm 3.单天时间段.hh:mm-hh:mm. 4.day repeat 时间段.hh:mm-hh:mm
+    
+    [self.taskinfo generateDaysOnTask];
 }
 
 
@@ -255,11 +286,9 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 {
     NSLog(@"%@", self.taskinfo);
     self.taskinfo.content = self.createTitleInputView.text;
-    self.taskinfo.daysStrings = self.dayString;
+    self.taskinfo.dayString = self.dayString;
     
     [[AppConfig sharedAppConfig] configTaskInfoAdd:self.taskinfo];
-    
-    self.navigationController.delegate = self;
 }
 
 

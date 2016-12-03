@@ -113,9 +113,10 @@
     self.title = @"样式设置";
     self.view.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    backItem.title = @"";
-    self.navigationItem.backBarButtonItem = backItem;
+    
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+//    backItem.title = @"";
+//    self.navigationItem.backBarButtonItem = backItem;
     
     self.navigationItem.rightBarButtonItem
             = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finish)];

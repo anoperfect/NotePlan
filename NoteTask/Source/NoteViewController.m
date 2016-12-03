@@ -67,9 +67,9 @@
     //self.view.layer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"NoteBackground"].CGImage);
     
     //下一个UIViewController的返回的地方文字设置.
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    backItem.title = @"";
-    self.navigationItem.backBarButtonItem = backItem;
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+//    backItem.title = @"";
+//    self.navigationItem.backBarButtonItem = backItem;
     
     [self navigationItemRightInit];
 
@@ -116,10 +116,7 @@
 {
     LOG_POSTION
     [super viewWillDisappear:animated];
-    
-    
 }
-
 
 
 - (void)navigationTitleRefresh

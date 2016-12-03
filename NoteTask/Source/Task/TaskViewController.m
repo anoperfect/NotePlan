@@ -46,14 +46,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     self.title = @"任务";
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     
     //返回只有一个箭头.
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    backItem.title = @"";
-    self.navigationItem.backBarButtonItem = backItem;
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+//    backItem.title = @"";
+//    self.navigationItem.backBarButtonItem = backItem;
     
     self.sectionsWrap = [[NSMutableArray alloc] init];
     self.taskCellOptumizeHeights = [[NSMutableDictionary alloc] init];

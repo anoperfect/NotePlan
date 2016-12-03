@@ -19,7 +19,7 @@
 #define TABLENAME_CLASSIFICATION    @"classification"
 #define TABLENAME_NOTE              @"note"
 #define TABLENAME_SETTING           @"setting"
-#define TABLENAME_TASKINFO          @"taskinfo"
+#define TABLENAME_TASKINFO          @"TaskInfo"
 #define TABLENAME_TASKRECORD        @"taskrecord"
 #define TABLENAME_TASKFINISHAT      @"taskfinishat"
 
@@ -81,11 +81,17 @@
     NSData *data = [NSData dataWithContentsOfFile:resPath];
     NS0Log(@"------\n%@\n-------", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     if(data) {
-        [self.dbData buildByJsonData:data];
+        [self.dbData DBDataAddTableAttributeByJsonData:data];
     }
     else {
         NSLog(@"#error - resPath content NULL.");
     }
+    
+    TableObjectProperty *tableObjectProperty =
+    [TableObjectProperty tableObjectPropertyByName:@"TaskInfo" primaryKeys:@[@"sn"] dbNames:@[@"config"] comment:@"计划"];
+    [self.dbData DBDataAddTableAttributeFromTableObjectProperty:tableObjectProperty];
+    
+    [self.dbData buildTable];
 }
 
 
@@ -471,7 +477,7 @@
 {//return ;
     NoteModel *note = [[NoteModel alloc] init];
     note.identifier = @"preset1";
-    note.title = @"<p style=\"FONT-SIZE: 15pt; COLOR: #ffff00; FONT-FAMILY: 黑体\">使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1使用说明1</p>";
+    note.title = @"<p style=\"FONT-SIZE: 15pt; COLOR: #ffff00; FONT-FAMILY: 黑体\">简介 - 测试长度length测试长度length测试长度length测试长度length测试长度length测试长度length测试长度length测试长度length测试长度length</p>";
     note.content = @"<p style=\"\">第一段说明1</p> <p style=\"\">cnBeta 报道，多家国外媒体援引知情人111士的消息称，Twitter 董事会周四将召开一次会议，讨论公司所面临的一系列问题，其中包括出售事宜。关于 Twitter 被出售的消息早有传闻，华尔街分析师也认为，Twitter 被出售只是时间早晚的问题。近日，Twitter 联合创始人埃文·威廉姆斯(Evan Williams)的一席话再次将该话题推到风口浪尖。 威廉姆斯上周在接受彭博电视台采访时称：“我们现在的地位很有利，作为董事会成员，我们必须考虑正确的选择。”外界认为，这番话可能暗示 Twitter 将考虑出售选项，从而刺激 Twitter 股价大涨7%。 投资研究公司分析师罗伯特·派克(Robert Peck)称，Twitter 当前估值约为 150 亿美元。按照溢价 20% 的标准计算，收购 Twitter 至少需要 180 亿美元。 有业内人士认为，价格不是问题，谷歌母公司 Alphabet、Facebook、苹果公司、亚马逊和微软等都是 Twitter 的潜在收购方。对于 Alphabet 而言，在其搜索服务中部署 Twitter 的实时推送(feed)功能，可实现成本和营收的协同效应。 对于 Facebook，收购 Twitter 可实现战略匹配。对于苹果公司，收购 Twitter 可将当前的硬件业务拓展到社交领域。对于亚马逊，可拓展实时内容服务，进一步强化广告业务。至于微软，一直都对在线和广告业务感兴趣。 但派克认为，短期内 Twitter 也没有出售的紧迫性。首先，Twitter CEO 杰克·多西(Jack Dorsey)仅上任一年时间。其次，Twitter 正在推出几项新服务。此外，Twitter 董事会将继续支持多西。 等等，派克先生，你确定你计算的收购价是 180 亿美元？ 福布斯可不这么认为 《福布斯》在微软收购 LindkedIn 撰文称，即使在对未来现金流最乐观估计情况下，Alphabet 收购 Twitter 的价格也不应超过 11 亿美元，合每股 1.55 美元，比其股价低近九成。否则在经济上就是不划算的。Twitter 营收增长越快，亏损越大，相当于营收的 38%。 为什么是 Alphabet？ 《福布斯》认为，Alphabet 管理层是公司股东更称职的管家，与 Alphabet 的整合必须大幅度提升 Twitter 核心业务盈利能力。 在证明 Twitter 收购价合理方面，Alphabet 高管需要解决的主要挑战是前者有瑕疵的商业模式。Twitter 商业模式的瑕疵在于，用户的最大利益(例如迅捷、方便地访问他们选择的内容)，与广告客户的最大利益(获得用户更多关注)不一致。在修正这一瑕疵前(我不相信这一瑕疵能被修正)，很难说有公司会认真考虑收购 Twitter。Alphabet 也能增加 Twitter 的营收和税后净营业利润。 除了 Alphabet，Twitter 的潜在买家还包括微软前首席执行官史蒂夫·鲍尔默(Steve Ballmer) 以及沙特王子阿尔瓦利德·本·塔拉尔·沙特（Saudi Prince Alwaleed bin Talal Al Saud ）联合收购 Twitter。 目前 Twitter 没有对出售传闻作出回应，就像《福布斯》说的那样，收购 Twitter 的戏剧大幕拉开，远未散场。</p>";
     note.summary = @"";
     note.classification = @"个人笔记";
@@ -535,14 +541,14 @@
     task.modifiedAt = @"2016-11-01 09:10:36";
     task.signedAt = @"2016-11-01 09:10:36";
     task.finishedAt = @"";
-    task.scheduleType = 2;
+//    task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16;2016-11-17;2016-11-18;2016-11-21;";
+    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16;2016-11-17;2016-11-18;2016-11-21;";
     task.time = @"07:00-23:00";
-    task.period = @"period1";
+//    task.period = @"period1";
     [self configTaskInfoAdd:task];
     task.sn = @"t10";
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-15;2016-11-16;2016-11-18;";
+    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-15;2016-11-16;2016-11-18;";
     [self configTaskInfoAdd:task];
     
     task = [[TaskInfo alloc] init];
@@ -553,11 +559,11 @@
     task.modifiedAt = @"2016-11-01 09:16:36";
     task.signedAt = @"2016-11-01 09:16:36";
     task.finishedAt = @"";
-    task.scheduleType = 2;
+//    task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10;2016-11-15;2016-11-16";
+    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10;2016-11-15;2016-11-16";
     task.time = @"07:00-23:00";
-    task.period = @"period2k";
+//    task.period = @"period2k";
     [self configTaskInfoAdd:task];
     
     task = [[TaskInfo alloc] init];
@@ -568,11 +574,11 @@
     task.modifiedAt = @"2016-11-01 09:12:36";
     task.signedAt = @"2016-11-01 09:12:36";
     task.finishedAt = @"";
-    task.scheduleType = 2;
+//    task.scheduleType = 2;
     task.dayRepeat = YES;
-    task.daysStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08;2016-11-11;2016-11-15;2016-11-16";
+    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08;2016-11-11;2016-11-15;2016-11-16";
     task.time = @"07:00-23:00";
-    task.period = @"period3t";
+//    task.period = @"period3t";
     [self configTaskInfoAdd:task];
     
     TaskRecord *taskRecord;
@@ -843,39 +849,16 @@
 {
     BOOL result = YES;
     
+    NSDictionary *dict = [taskinfo toDictionary];
+    NSArray *columnStrings = dict.allKeys;
+    NSMutableArray *columnValues = [[NSMutableArray alloc] init];
+    for(NSString *columnString in columnStrings) {
+        [columnValues addObject:dict[columnString]];
+    }
+    
     NSDictionary *infoInsert = @{
-                                 DBDATA_STRING_COLUMNS:
-                                     @[
-                                         @"sn",
-                                         @"content",
-                                         @"status",
-                                         @"committedAt",
-                                         @"modifiedAt",
-                                         @"signedAt",
-                                         @"finishedAt",
-                                         @"scheduleType",
-                                         @"dayRepeat",
-                                         @"daysStrings",
-                                         @"time",
-                                         @"period"
-                                         ],
-                                 DBDATA_STRING_VALUES:
-                                     @[
-                                         @[
-                                         taskinfo.sn,
-                                         taskinfo.content,
-                                         @(taskinfo.status),
-                                         taskinfo.committedAt,
-                                         taskinfo.modifiedAt,
-                                         taskinfo.signedAt,
-                                         taskinfo.finishedAt,
-                                         @(taskinfo.scheduleType),
-                                         @(taskinfo.dayRepeat),
-                                         taskinfo.daysStrings,
-                                         taskinfo.time,
-                                         taskinfo.period
-                                             ]
-                                         ]
+                                 DBDATA_STRING_COLUMNS:columnStrings,
+                                 DBDATA_STRING_VALUES: @[[NSArray arrayWithArray:columnValues]]
                                  };
     
     NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfo:infoInsert];
@@ -913,11 +896,9 @@
                                  @"modifiedAt":taskinfo.modifiedAt,
                                  @"signedAt":taskinfo.signedAt,
                                  @"finishedAt":taskinfo.finishedAt,
-                                 @"scheduleType":@(taskinfo.scheduleType),
                                  @"dayRepeat":@(taskinfo.dayRepeat),
-                                 @"daysStrings":taskinfo.daysStrings,
+                                 @"daysStrings":taskinfo.dayStrings,
                                  @"time":taskinfo.time,
-                                 @"period":taskinfo.period
                                  };
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfoUpdate:updateDict withInfoQuery:@{@"sn":taskinfo.sn}];
 }

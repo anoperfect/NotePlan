@@ -62,9 +62,17 @@
                 && nil != (class = NSClassFromString(className))
                 && ![className isEqualToString:@"UITextView"]) {
                 NS0Log(@"%@", class);
-                id value = [[class alloc] init];
-                [self setValue:value forKey:key];
-                NS0Log(@"set : %@ -> %@", key, value);
+                id value = [self valueForKey:key];
+                if(!value) {
+                    value = [[class alloc] init];
+                    [self setValue:value forKey:key];
+                    NS0Log(@"set : %@ -> %@", key, value);
+                }
+                else {
+                    NS0Log(@"not set : %@. already valued.", key);
+                }
+                
+                
             }
             else {
                 NSLog(@"#error - not set : %@", key);

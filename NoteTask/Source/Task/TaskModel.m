@@ -47,9 +47,18 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 {
     TaskInfo *taskinfo = [[TaskInfo alloc] init];
     taskinfo = [TaskInfo mj_objectWithKeyValues:dict];
-    [taskinfo daysStringsParse];
+    [taskinfo generateDaysOnTask];
+    
+    NSLog(@"%@", taskinfo);
     
     return taskinfo;
+}
+
+
+- (NSDictionary*)toDictionary
+{
+    NSDictionary *dict = [self mj_keyValuesWithIgnoredKeys:@[@"daysOnTask"]];
+    return dict;
 }
 
 
@@ -63,8 +72,14 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.modifiedAt = @"";
     taskinfo.signedAt = @"";
     taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
+    
+    taskinfo.daysType = @"";
+    taskinfo.dayString = @""; //单天模式.
+    taskinfo.dayStringFrom = @"";//连续模式开始日期.
+    taskinfo.dayStringTo = @"";//连续模式结束日期.
+    taskinfo.dayStrings = @"";//多天模式.
+    
     taskinfo.dayRepeat = YES;
-    taskinfo.daysStrings = @"";
     taskinfo.time = @"";
     
     return taskinfo;
@@ -84,7 +99,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 - (void)daysStringsParse
 {
     self.daysOnTask = [[NSMutableArray alloc] init];
-    NSArray<NSString*> *days1strings = [self.daysStrings componentsSeparatedByString:@";"];
+    NSArray<NSString*> *days1strings = [self.dayStrings componentsSeparatedByString:@";"];
     for(NSString *day in days1strings) {
         if(day.length != 10) {
             
@@ -166,20 +181,31 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 - (NSString*)description
 {
     NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"[task:%@] content:%@, days:%@, finishedAt:%@", self.sn, self.content, self.daysStrings, self.finishedAt];
+    [s appendFormat:@"[task:%@] \n", self.sn];
+    [s appendFormat:@"\t\t\tcontent:%@", self.content];
+    [s appendFormat:@"\t\t\tschedule type:%@", self.daysType];
+    [s appendFormat:@"\t\t\tdays: [%@]", [NSString arrayDescriptionConbine:self.daysOnTask seprator:@","]];
     return [NSString stringWithString:s];
+}
+
+
+- (void)generateDaysOnTask
+{
+    self.daysOnTask = [[NSMutableArray alloc] init];
+    [self.daysOnTask addObject:self.dayString];
 }
 
 
 - (NSString*)summaryDescription
 {
     NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"[task:%@] content:%@, days:%@, finishedAt:%@", self.sn, self.content, self.daysStrings, self.finishedAt];
+    [s appendFormat:@"[task:%@] content:%@, days:%@, finishedAt:%@", self.sn, self.content, self.dayStrings, self.finishedAt];
     if(s.length > 60) {
         [s replaceCharactersInRange:NSMakeRange(60, s.length-60) withString:@"..."];
     }
     return [NSString stringWithString:s];
 }
+
 
 
 @end

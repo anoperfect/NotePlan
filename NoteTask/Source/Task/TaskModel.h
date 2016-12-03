@@ -78,7 +78,7 @@ time:
 @property (nonatomic, strong) NSString          *dayString; //单天模式.
 @property (nonatomic, strong) NSString          *dayStringFrom;//连续模式开始日期.
 @property (nonatomic, strong) NSString          *dayStringTo;//连续模式结束日期.
-@property (nonatomic, strong) NSString          *daysStrings;//多天模式.
+@property (nonatomic, strong) NSString          *dayStrings;//多天模式.
 
 @property (nonatomic, strong) NSString          *weekdays;//重复模式星期几. Monday,
 @property (nonatomic, strong) NSString          *yearday;//重复模式1年的一天. MM-DD
@@ -91,10 +91,14 @@ time:
 
 
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict;
+- (NSDictionary*)toDictionary;
+
 + (instancetype)taskinfo;
 - (NSString*)summaryDescription;
 
 + (NSString*)dateTimeStringForDisplay:(NSString*)at;
+
+- (void)generateDaysOnTask;
 
 
 

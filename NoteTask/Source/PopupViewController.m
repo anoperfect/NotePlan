@@ -29,11 +29,6 @@
     NSLog(@"%f, %f", self.imageBackground.size.width, self.imageBackground.size.height);
     //[self.view.layer addSublayer:layer];
     
-    
-    
-
-    
-    
     UIImageView *imageView = [[UIImageView alloc] initWithImage:self.imageBackground];
     [self.view addSubview:imageView];
     

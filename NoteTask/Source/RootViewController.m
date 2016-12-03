@@ -54,9 +54,9 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBarHidden = YES;
     
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    backItem.title = @"";
-    self.navigationItem.backBarButtonItem = backItem;
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+//    backItem.title = @"";
+//    self.navigationItem.backBarButtonItem = backItem;
     
     //上面的简介.
     _summary = [[SummaryInRoot alloc] init];

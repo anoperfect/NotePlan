@@ -32,8 +32,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     
-    self.contentView = [[UIView alloc] init];
+    if(self.contentViewScrolled) {
+        self.contentView = [[UIScrollView alloc] init];
+    }
+    else {
+        self.contentView = [[UIView alloc] init];
+    }
     [self.view addSubview:self.contentView];
 }
 
@@ -54,6 +61,12 @@
     self.navigationController.navigationBar.translucent = NO;
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     self.navigationController.toolbarHidden = YES;
+    self.navigationController.navigationBarHidden = NO;
+    
+    //返回只有一个箭头.
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = @"";
+    self.navigationItem.backBarButtonItem = backItem;
     
     if(self.hiddenByPush) {
         self.hiddenByPush = NO;
@@ -71,9 +84,24 @@
 }
 
 
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    self.hiddenByPush = YES;
+    [self.navigationController pushViewController:viewController animated:animated];
+}
+
+
 - (void)addSubview:(UIView*)view
 {
     [self.contentView addSubview:view];
+}
+
+
+- (void)addSubviews:(NSArray<UIView*>*)views
+{
+    for(UIView *view in views) {
+        [self.contentView addSubview:view];
+    }
 }
 
 
@@ -213,7 +241,16 @@
 }
 
 
-
+- (void)pushViewControllerByName:(NSString*)name
+{
+    UIViewController *vc = [[NSClassFromString(name) alloc] init];
+    if(vc) {
+        [self pushViewController:vc animated:YES];
+    }
+    else {
+        NSLog(@"#error - vc not alloced by name (%@).", name);
+    }
+}
 
 
 

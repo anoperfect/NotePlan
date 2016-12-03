@@ -197,8 +197,13 @@
  "colornightstringDefault" : "#454545"
  },
  
- 
- 
+ {
+ "name" : "TaskEditTextColor",
+ "title" : "任务列表部头文字颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "black",
+ "colornightstringDefault" : "black"
+ },
  
  
  
