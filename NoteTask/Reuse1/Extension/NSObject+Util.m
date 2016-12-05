@@ -207,7 +207,22 @@
 {
     NSDate *date = [NSDate date];
     NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
-    [dateformatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    [dateformatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString * dateString = [dateformatter stringFromDate:date];
+    
+    NSTimeInterval t = [date timeIntervalSince1970];
+    long long lt = t;
+    double dot = t - lt;
+    dateString = [dateString stringByAppendingFormat:@" %.6lf",dot];
+    
+    return dateString;
+}
+
+
++ (NSString*)stringDateTimeOfDate:(NSDate*)date
+{
+    NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSString * dateString = [dateformatter stringFromDate:date];
     
     NSTimeInterval t = [date timeIntervalSince1970];
@@ -224,7 +239,7 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     NSTimeZone *timeZone = [NSTimeZone localTimeZone];
     [formatter setTimeZone:timeZone];
-    [formatter setDateFormat : @"yyyy-MM-dd hh:mm:ss"];
+    [formatter setDateFormat : @"yyyy-MM-dd HH:mm:ss"];
     NSDate *dateTime = [formatter dateFromString:s];
     return dateTime;
 }
@@ -239,7 +254,27 @@
 }
 
 
++ (BOOL)date:(NSDate*)date isSameDayOfDate:(NSDate*)date0
+{
+    NSString *dateString = [NSString dateStringOfDate:date];
+    NSString *dateString0 = [NSString dateStringOfDate:date0];
+    
+    return [dateString isEqualToString:dateString0];
+}
 
+
++ (BOOL)date:(NSDate*)date isYestodayOfDate:(NSDate*)date0
+{
+    date = [date dateByAddingTimeInterval:86400];
+    return [self date:date isSameDayOfDate:date0];
+}
+
+
++ (BOOL)date:(NSDate*)date isTomorrowOfDate:(NSDate*)date0
+{
+    date0 = [date0 dateByAddingTimeInterval:86400];
+    return [self date:date isSameDayOfDate:date0];
+}
 
 
 

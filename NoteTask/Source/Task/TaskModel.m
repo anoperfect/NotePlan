@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.signedAt = @"";
     taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
     
-    taskinfo.daysType = @"";
+    taskinfo.scheduleType = 0;
     taskinfo.dayString = @""; //单天模式.
     taskinfo.dayStringFrom = @"";//连续模式开始日期.
     taskinfo.dayStringTo = @"";//连续模式结束日期.
@@ -173,6 +173,57 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         return @"NAN";
     }
     
+    NSDate *dateNow = [NSDate date];
+    NSInteger dayNow = [dateNow timeIntervalSince1970];
+    dayNow /= 86400;
+    NSLog(@"dayNow : %zd ", dayNow);
+    
+    NSInteger day= [date timeIntervalSince1970];
+    day/= 86400;
+    NSLog(@"dayNow : %zd ", day);
+    
+    NSString *additional = nil;
+    
+    if([NSString date:date isSameDayOfDate:dateNow]) {
+        NSInteger secsInteval = [dateNow timeIntervalSinceDate:date];
+        if(secsInteval == 0) {
+            additional = @"NOW";
+        }
+        else if(secsInteval > 0) {
+            if(secsInteval >= 3600) {
+                additional = [NSString stringWithFormat:@"%zd小时前", secsInteval/3600];
+            }
+            else if(secsInteval >= 60) {
+                additional = [NSString stringWithFormat:@"%zd分钟前", secsInteval/60];
+            }
+            else {
+                additional = [NSString stringWithFormat:@"%zd秒前", secsInteval];
+            }
+        }
+        else if(secsInteval < 0) {
+            secsInteval = -secsInteval;
+            if(secsInteval >= 3600) {
+                additional = [NSString stringWithFormat:@"%zd小时后", secsInteval/3600];
+            }
+            else if(secsInteval >= 60) {
+                additional = [NSString stringWithFormat:@"%zd分钟后", secsInteval/60];
+            }
+            else {
+                additional = [NSString stringWithFormat:@"%zd秒后", secsInteval];
+            }
+        }
+    }
+    else if([NSString date:date isYestodayOfDate:dateNow]) {
+        additional = @"昨天";
+    }
+    else if([NSString date:date isTomorrowOfDate:dateNow]) {
+        additional = @"明天";
+    }
+    
+    if(additional.length > 0) {
+        dateTimeString = [NSString stringWithFormat:@"%@(%@)", dateTimeString, additional];
+    }
+    
     NS0Log(@"from [%@] to [%@].", at, dateTimeString);
     return dateTimeString;
 }
@@ -183,7 +234,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     NSMutableString *s = [[NSMutableString alloc] init];
     [s appendFormat:@"[task:%@] \n", self.sn];
     [s appendFormat:@"\t\t\tcontent:%@", self.content];
-    [s appendFormat:@"\t\t\tschedule type:%@", self.daysType];
+    [s appendFormat:@"\t\t\tschedule type:%@", [TaskInfo scheduleStringWithType:self.scheduleType]];
     [s appendFormat:@"\t\t\tdays: [%@]", [NSString arrayDescriptionConbine:self.daysOnTask seprator:@","]];
     return [NSString stringWithString:s];
 }
@@ -207,6 +258,51 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 }
 
 
++ (NSArray<NSString*>*)scheduleStrings
+{
+    return @[
+    @"单天",
+    @"连续",
+    @"多天",
+    ];
+}
+
+
++ (NSString*)scheduleStringWithType:(NSInteger)type
+{
+    return [self scheduleTypeStringMap][@(type)];
+}
+
+
++ (NSInteger)scheduleTypeFromString:(NSString*)s
+{
+    NSDictionary *dict = [self scheduleTypeStringMap];
+    NSNumber *number = nil;
+    for(NSNumber *key in dict.allKeys) {
+        if([dict[key] isEqualToString:s]) {
+            number = key;
+            break;
+        }
+    }
+    
+    if([number isKindOfClass:[NSNumber class]]) {
+        return [number integerValue];
+    }
+    else {
+        return NSNotFound;
+    }
+}
+
+
++ (NSDictionary*)scheduleTypeStringMap
+{
+    return @{
+             @(TaskInfoScheduleTypeDay) : @"单天",
+             @(TaskInfoScheduleTypeContinues) : @"连续",
+             @(TaskInfoScheduleTypeDays) : @"多天",
+             @(TaskInfoScheduleTypeRepeat) : @"重复",
+             };
+}
 
 @end
 

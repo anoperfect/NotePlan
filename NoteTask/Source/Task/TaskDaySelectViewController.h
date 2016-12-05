@@ -11,3 +11,60 @@
 @interface TaskDaySelectViewController : CustomViewController
 
 @end
+
+
+
+#if 0
+static NSString *kStringSelectorDay = @"单天";
+static NSString *kStringSelectorDays = @"多天";
+static NSString *kStringSelectorContinuous = @"连续";
+static NSString *kStringSelectorRepeat = @"重复";
+
+
+@interface TaskDaySelector : UIView
+
+@property (nonatomic, strong, readonly) NSString *daysType;
+@property (nonatomic, strong, readonly) NSString *dayString;
+@property (nonatomic, strong, readonly) NSArray<NSString*> *mutilDays;
+@property (nonatomic, strong, readonly) NSString *dayStringFrom;
+@property (nonatomic, strong, readonly) NSString *dayStringTo;
+
+@property (nonatomic, assign) CGFloat optumizeHeight;
+
+@end
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@interface TaskCalendar : UIView
+
+
+
+
+
+@property (nonatomic, assign) BOOL mutilMode;
+@property (nonatomic, strong, readonly) NSString *dayString;
+@property (nonatomic, strong, readonly) NSArray<NSString*> *dayStrings;
+
+@end

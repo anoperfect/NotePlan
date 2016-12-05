@@ -96,7 +96,7 @@
 
 
 
-
+#if 0
 static NSString *kStringStepCreateTitle = @"1. 任务内容";
 static NSString *kStringStepScheduleDay = @"2. 执行日期";
 
@@ -666,3 +666,4 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 
 
 @end
+#endif

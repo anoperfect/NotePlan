@@ -206,7 +206,21 @@
  },
  
  
+ {
+ "name" : "TaskTextCommon",
+ "title" : "任务通用字体颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
  
+ {
+ "name" : "TaskBorderCommon",
+ "title" : "任务通用边框颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
+ },
  
  
  

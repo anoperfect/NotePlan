@@ -82,8 +82,6 @@ TaskRecord
     [self.contentTableView registerClass:[TaskDetailContentCell  class] forCellReuseIdentifier:@"TaskDetailContentCell" ];
     [self.contentTableView registerClass:[TaskDetailPropertyCell class] forCellReuseIdentifier:@"TaskDetailPropertyCell"];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
-    
-    
 }
 
 
@@ -118,8 +116,8 @@ TaskRecord
     NSArray *titles = @[
                                  @"任务时间",
                                  @"提交时间",
-                                 @"任务记录",
                                  /*
+                                 @"任务记录",
                                  @"任务记录类型筛选"
                                   */
                         ];
@@ -134,7 +132,7 @@ TaskRecord
     }
     
     if([title isEqualToString:@"提交时间"]) {
-        return [self attributedStringForPropertyContent:self.taskinfo.committedAt];
+        return [self attributedStringForPropertyContent:[TaskInfo dateTimeStringForDisplay:self.taskinfo.committedAt]];
     }
     
     if([title isEqualToString:@"任务记录"]) {

@@ -157,6 +157,7 @@
     [self addSubview:self.tableNoteParagraphs];
     self.tableNoteParagraphs.dataSource = self;
     self.tableNoteParagraphs.delegate = self;
+    self.tableNoteParagraphs.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     [self.tableNoteParagraphs registerClass:[NoteDetailCell class] forCellReuseIdentifier:@"NoteDetail"];

@@ -23,7 +23,10 @@
 
 
 
-@property (nonatomic, assign) BOOL dayMode;
+#define MODE_ARRAGE     1
+#define MODE_DAY        2
+#define MODE_LIST       3
+@property (nonatomic, assign) NSInteger mode; //0.arrange mode. 1.day mode. 2.list mode.
 
 @property (nonatomic, strong) TaskInfoManager *taskInfoManager;
 
@@ -47,14 +50,8 @@
 {
     [super viewDidLoad];
 
-    self.title = @"任务";
-    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
-    
-    //返回只有一个箭头.
-//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-//    backItem.title = @"";
-//    self.navigationItem.backBarButtonItem = backItem;
-    
+    self.mode = MODE_ARRAGE;
+
     self.sectionsWrap = [[NSMutableArray alloc] init];
     self.taskCellOptumizeHeights = [[NSMutableDictionary alloc] init];
     
@@ -74,6 +71,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.title = @"任务";
+    [self.navigationController.navigationBar setTintColor:[UIColor colorWithName:@"NavigationBackText"]];
     self.navigationController.navigationBarHidden = NO;
     
     self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
@@ -111,7 +110,7 @@
     PushButton *buttonCreate = [[PushButton alloc] init];
     buttonCreate.frame = CGRectMake(0, 0, 44, 44);
     buttonCreate.actionData = buttonDataCreate;
-    buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+    buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
     [buttonCreate setImage:[UIImage imageNamed:buttonDataCreate.imageName] forState:UIControlStateNormal];
     [buttonCreate addTarget:self action:@selector(actionCreate) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemCreate = [[UIBarButtonItem alloc] initWithCustomView:buttonCreate];
@@ -186,21 +185,25 @@
 #pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
-    if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
-        return 0;
+    CGFloat heightSectionHeader = 0.0;
+    
+    if(self.mode == MODE_ARRAGE) {
+        TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
+        if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
+            
+        }
+        else {
+            heightSectionHeader = 45.0;
+        }
     }
     
-    return 45.0;
+    return heightSectionHeader;
 }
 
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
-    if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
-        return nil;
-    }
+
     
     UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 45.0)];
     sectionHeaderView.tag = section;
@@ -212,25 +215,37 @@
     container.backgroundColor = [UIColor colorWithName:@"TaskSectionHeaderBackground"];
     
     UILabel *label = [[UILabel alloc] initWithFrame:container.bounds];
-    NSMutableAttributedString *attributedString =
-                    [NSString attributedStringWith:taskArrangeGroup.arrangeName
-                                              font:[UIFont fontWithName:@"TaskSectionHeader"]
-                                            indent:36
-                                         textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
-                     ];
-    NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskArrangeGroup.taskInfoArranges.count];
-    [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
-                                                                       font:[UIFont fontWithName:@"small"]
-                                                                    indent:0
-                                                                  textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
-                                              ]
-     ];
-    label.attributedText = attributedString;
     [container addSubview:label];
-    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionSectionTap:)];
     tap.numberOfTapsRequired = 1;
     [sectionHeaderView addGestureRecognizer:tap];
+    
+    NSMutableAttributedString *attributedString = nil;
+    
+    if(self.mode == MODE_ARRAGE) {
+        TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
+        if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
+            
+        }
+        else {
+            attributedString = [NSString attributedStringWith:taskArrangeGroup.arrangeName
+                                                         font:[UIFont fontWithName:@"TaskSectionHeader"]
+                                                       indent:36
+                                                    textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                                ];
+            NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskArrangeGroup.taskInfoArranges.count];
+            [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
+                                                                               font:[UIFont fontWithName:@"small"]
+                                                                             indent:0
+                                                                          textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                                                      ]
+             ];
+        }
+    }
+    
+    if(attributedString.length > 0) {
+        label.attributedText = attributedString;
+    }
     
     return sectionHeaderView;
 }
@@ -255,8 +270,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSInteger sections ;
-    sections = self.taskInfoManager.taskArrangeGroups.count;
+    NSInteger sections = 1;
+    
+    if(self.mode == MODE_ARRAGE) {
+        sections = self.taskInfoManager.taskArrangeGroups.count;
+    }
+    
     return sections;
 }
 
@@ -264,14 +283,17 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger rows = 0;
-    TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
     
-    if((!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"])
-       || [self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
-        rows = 0;
-    }
-    else {
-        rows = taskArrangeGroup.taskInfoArranges.count;
+    if(self.mode == MODE_ARRAGE) {
+        TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
+        
+        if((!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"])
+           || [self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
+            rows = 0;
+        }
+        else {
+            rows = taskArrangeGroup.taskInfoArranges.count;
+        }
     }
     
     return rows;
@@ -281,11 +303,18 @@
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     LOG_POSTION
-    TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
-    NSArray<TaskFinishAt*> *finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskInfoArrange.taskinfo.sn on:taskInfoArrange.arrangeDays];
     
     TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskCell" forIndexPath:indexPath];
-    [cell setTaskInfo:taskInfoArrange.taskinfo finishedAts:finishedAts];
+    
+    TaskInfo *taskinfo = nil;
+    NSArray<TaskFinishAt*> *finishedAts = nil;
+    
+    if(self.mode == MODE_ARRAGE) {
+        TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
+        taskinfo = taskInfoArrange.taskinfo;
+        finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskInfoArrange.taskinfo.sn on:taskInfoArrange.arrangeDays];
+        [cell setTaskInfo:taskinfo finishedAts:finishedAts];
+    }
     
     self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height);
 
@@ -297,8 +326,10 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
-    [self enterTaskDetailInArrangeMode:taskInfoArrange];
+    if(self.mode == MODE_ARRAGE) {
+        TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
+        [self enterTaskDetailInArrangeMode:taskInfoArrange];
+    }
 }
 
 
@@ -320,9 +351,12 @@
     CGPoint point = scrollView.contentOffset;
     NSLog(@"%f, %f", point.x, point.y);
     
-    if(!self.isDisplayBeforeTask) {
-        if(point.y < self.contentOffsetYMonitor) {
-            self.contentOffsetYMonitor = point.y;
+    if(self.mode == MODE_ARRAGE) {
+        //模式不显示之前. 当下拉回弹达到一定高度时, 显示"之前".
+        if(!self.isDisplayBeforeTask) {
+            if(point.y < self.contentOffsetYMonitor) {
+                self.contentOffsetYMonitor = point.y;
+            }
         }
     }
 }
@@ -330,6 +364,7 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    //模式不显示之前. 当下拉回弹达到一定高度时, 显示"之前".
     if(self.contentOffsetYMonitor < - 100 && !self.isDisplayBeforeTask) {
         NSLog(@"- drag to display tasks Before.")
         self.contentOffsetYMonitor = 0;
@@ -380,9 +415,46 @@
 }
 
 
+- (void)showActionMenu
+{
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = nil;
+    if(self.mode == MODE_ARRAGE) {
+        actionStrings = @[@"列表模式", @"日期模式"];
+    }
+    else if(self.mode == MODE_DAY){
+        actionStrings = @[@"列表模式", @"安排模式"];
+    }
+    else {
+        actionStrings = @[@"日期模式", @"安排模式"];
+    }
+    
+    __weak typeof(self) _self = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [_self dismissPopupView];
+        [_self actionMenuString:actionText];
+        return ;
+    }];
+    
+    [self showPopupView:v];
+}
+
+
+- (void)actionMenuString:(NSString*)actionText
+{
+    NSLog(@"actionText : %@", actionText);
+    
+    
+}
+
+
 - (void)actionMore
 {
-  
+    [self showActionMenu];
 }
 
 
@@ -411,7 +483,7 @@
 
 - (void)actionSectionTap:(UITapGestureRecognizer*)sender
 {
-    NSLog(@"---%@ \n---%zd", sender, sender.view.tag);
+    NS0Log(@"---%@ \n---%zd", sender, sender.view.tag);
     NSInteger section = sender.view.tag;
     
     [self actionSectionClick:section];

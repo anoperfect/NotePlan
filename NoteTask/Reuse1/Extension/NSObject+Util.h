@@ -32,6 +32,12 @@
 + (NSDate*)stringToDate:(NSString*)s;
 
 + (NSString*)dateStringOfDate:(NSDate*)date;
++ (NSString*)stringDateTimeOfDate:(NSDate*)date;
+
+
++ (BOOL)date:(NSDate*)date isSameDayOfDate:(NSDate*)date0;
++ (BOOL)date:(NSDate*)date isYestodayOfDate:(NSDate*)date0;
++ (BOOL)date:(NSDate*)date isTomorrowOfDate:(NSDate*)date0;
 
 @end
 

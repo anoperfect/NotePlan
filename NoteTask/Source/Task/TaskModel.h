@@ -58,8 +58,13 @@ time:
 
 
 
-
-
+typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
+    TaskInfoScheduleTypeNone = 0,
+    TaskInfoScheduleTypeDay,
+    TaskInfoScheduleTypeContinues,
+    TaskInfoScheduleTypeDays,
+    TaskInfoScheduleTypeRepeat,
+};
 
 
 
@@ -74,7 +79,7 @@ time:
 @property (nonatomic, strong) NSString          *signedAt;
 @property (nonatomic, strong) NSString          *finishedAt; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
 
-@property (nonatomic, strong) NSString          *daysType;
+@property (nonatomic, assign) NSInteger         scheduleType;
 @property (nonatomic, strong) NSString          *dayString; //单天模式.
 @property (nonatomic, strong) NSString          *dayStringFrom;//连续模式开始日期.
 @property (nonatomic, strong) NSString          *dayStringTo;//连续模式结束日期.
@@ -90,17 +95,19 @@ time:
 @property (nonatomic, strong) NSMutableArray<NSString*> *daysOnTask; //从daysStrings中解析出.
 
 
++ (instancetype)taskinfo;
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict;
 - (NSDictionary*)toDictionary;
 
-+ (instancetype)taskinfo;
 - (NSString*)summaryDescription;
 
 + (NSString*)dateTimeStringForDisplay:(NSString*)at;
 
 - (void)generateDaysOnTask;
 
-
++ (NSArray<NSString*>*)scheduleStrings;
++ (NSString*)scheduleStringWithType:(NSInteger)type;
++ (NSInteger)scheduleTypeFromString:(NSString*)s;
 
 @end
 
