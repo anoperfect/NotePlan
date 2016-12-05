@@ -548,7 +548,7 @@ TaskRecord
     }
     
     if([self.arrangeName isEqualToString:@"今天"]) {
-        NSString *day = [NSString dayStringToday];
+        NSString *day = [NSString dateStringToday];
         NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
         if(queryFinishAt.length > 0) {
             NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
@@ -556,14 +556,14 @@ TaskRecord
             return ;
         }
         
-        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString stringDateTimeNow]];
+        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
         [self actionReloadTaskContent];
         
         return ;
     }
     
     if([self.arrangeName isEqualToString:@"明天"]) {
-        NSString *day = [NSString dayStringTomorrow];
+        NSString *day = [NSString dateStringTomorrow];
         NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
         if(queryFinishAt.length > 0) {
             NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
@@ -571,7 +571,7 @@ TaskRecord
             return ;
         }
         
-        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString stringDateTimeNow]];
+        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
         [self actionReloadTaskContent];
         
         return ;
@@ -613,7 +613,7 @@ TaskRecord
 //    if(self.taskDay.finishedAt.length > 0) {
 //        self.taskDay.finishedAt = @"";
 //        [self actionReloadTaskContent];
-//        [[TaskRecordManager taskRecordManager] taskRecordAddRedo:self.taskinfo.sn on:self.taskDay.dayString committedAt:[NSString stringDateTimeNow]];
+//        [[TaskRecordManager taskRecordManager] taskRecordAddRedo:self.taskinfo.sn on:self.taskDay.dayString committedAt:[NSString dateTimeStringNow]];
 //    }
 //    else {
 //        [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];

@@ -133,7 +133,6 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     
     [self addObserver:self forKeyPath:@"daysType" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld context:nil];
     
-    
     [self addSubview:self.createContentLabel];
     [self addSubview:self.createScheduleDayLabel];
     [self addSubview:self.daysTypeSelector];
@@ -141,14 +140,24 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     [self addSubview:self.dayButtonA];
     [self addSubview:self.dayButtonB];
     [self addSubview:self.daysInMutilMode];
-    
-    
-    
+}
+
+
+- (void)test
+{
+        LOG_POSTION
+    for(NSInteger idx = 0; idx < 10; idx ++) {
+        LOG_POSTION
+        self.daysType = [NSString stringWithFormat:@"%zd", idx];
+        LOG_POSTION
+    }
+        LOG_POSTION
 }
 
 
 - (void)viewWillLayoutSubviews
 {
+    LOG_POSTION
     [super viewWillLayoutSubviews];
     
     [self updateDaysSelectorText];
@@ -239,8 +248,8 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 {
     self.taskinfo.content = self.createContentInputView.text;
     self.taskinfo.status = 0;
-    self.taskinfo.committedAt = [NSString stringDateTimeNow];
-    self.taskinfo.modifiedAt = [NSString stringDateTimeNow];;
+    self.taskinfo.committedAt = [NSString dateTimeStringNow];
+    self.taskinfo.modifiedAt = [NSString dateTimeStringNow];;
     self.taskinfo.signedAt = @"";
     self.taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
     self.taskinfo.scheduleType =  [TaskInfo scheduleTypeFromString:self.daysType];

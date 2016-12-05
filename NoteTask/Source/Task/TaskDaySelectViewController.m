@@ -252,20 +252,20 @@
 - (void)inputStringToday:(id)sender
 {
     if([self.daysType isEqualToString:kStringSelectorDay]) {
-        self.textInput1.text = [NSString dayStringToday];
+        self.textInput1.text = [NSString dateStringToday];
         [self.textInput1 resignFirstResponder];
     }
     else if([self.daysType isEqualToString:kStringSelectorDays]) {
-        self.textInput1.text = [NSString dayStringToday];
+        self.textInput1.text = [NSString dateStringToday];
     }
     else if([self.daysType isEqualToString:kStringSelectorContinuous]) {
         if(self.textInput1.editing) {
-            self.textInput1.text = [NSString dayStringToday];
+            self.textInput1.text = [NSString dateStringToday];
             [self.textInput1 resignFirstResponder];
             [self.textInput2 becomeFirstResponder];
         }
         else if(self.textInput2.editing) {
-            self.textInput2.text = [NSString dayStringToday];
+            self.textInput2.text = [NSString dateStringToday];
             [self.textInput2 resignFirstResponder];
         }
     }
@@ -275,12 +275,12 @@
 - (void)inputStringTomorrow:(id)sender
 {
     if(self.textInput1.editing) {
-        self.textInput1.text = [NSString dayStringTomorrow];
+        self.textInput1.text = [NSString dateStringTomorrow];
         [self.textInput1 resignFirstResponder];
     }
     
     if(self.textInput2.editing) {
-        self.textInput2.text = [NSString dayStringTomorrow];
+        self.textInput2.text = [NSString dateStringTomorrow];
         [self.textInput2 resignFirstResponder];
     }
 }

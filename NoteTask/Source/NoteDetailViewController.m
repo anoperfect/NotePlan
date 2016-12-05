@@ -45,6 +45,7 @@
 
 
 //关于筛选.
+@property (nonatomic, assign) CGFloat topNotesView;
 @property (nonatomic, assign) CGFloat heightNoteFilter;
 @property (nonatomic, strong) UIView *noteFilter;
 
@@ -105,7 +106,7 @@
         noteModel.thumb = @"";
         noteModel.audio = @"",
         noteModel.location = @"CHINA";
-        noteModel.createdAt = [NSString stringDateTimeNow];
+        noteModel.createdAt = [NSString dateTimeStringNow];
         noteModel.modifiedAt = noteModel.createdAt;
         noteModel.browseredAt = noteModel.createdAt;
         noteModel.deletedAt = @"";
@@ -193,7 +194,7 @@
     [super viewWillLayoutSubviews];
     
     LOG_POSTION
-    
+#if 0
     CGRect frameTitleLabel = CGRectMake(0, YBLOW, VIEW_WIDTH, 100);
     CGSize size = [self.titleLabel sizeThatFits:frameTitleLabel.size];
     frameTitleLabel.size.height = size.height;
@@ -207,6 +208,16 @@
                                             VIEW_HEIGHT - (frameTitleLabel.origin.y + frameTitleLabel.size.height));
     frameNoteParagraphs = VIEW_BOUNDS;
     self.tableNoteParagraphs.frame = frameNoteParagraphs;
+#endif
+    
+    self.noteFilter.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightNoteFilter);
+    self.noteFilter.hidden = (self.heightNoteFilter == 0);
+    
+    CGRect frameNoteParagraphs = VIEW_BOUNDS;
+    frameNoteParagraphs.origin.y += self.topNotesView ;
+    frameNoteParagraphs.size.height -= self.topNotesView;
+    self.tableNoteParagraphs.frame = frameNoteParagraphs;
+    
     
     
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
@@ -227,16 +238,27 @@
 }
 
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidDisappear:animated];
+    [super viewDidAppear:animated];
+    self.noteModel.browseredAt = [NSString dateTimeStringNow];
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
 }
+
+
+
 
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
 //    self.title = @"";
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
 }
 
 
@@ -576,6 +598,20 @@
 
 - (void)action:(NSString*)string OnIndexPath:(NSIndexPath*)indexPath
 {
+    if([string isEqualToString:@"复制"]) {
+        
+        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+        if(!noteParagraph) {
+            NSLog(@"#error - ");
+            return;
+        }
+        
+        
+        
+        
+        return ;
+    }
+    
     if([string isEqualToString:@"编辑"]) {
         
         if(self.indexPathOnEditing) {
@@ -680,6 +716,7 @@
     self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
     
     //更新到本地数据库.
+    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
     [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
     
     NSLog(@"%@", self.noteModel);
@@ -781,6 +818,10 @@
 - (BOOL)addNoteToLocal
 {
     NSLog(@"addNoteToLocal : %@", self.noteModel.identifier);
+    //时间统一为NOW.
+    self.noteModel.createdAt = [NSString dateTimeStringNow];
+    self.noteModel.modifiedAt = self.noteModel.createdAt;
+    self.noteModel.browseredAt = self.noteModel.createdAt;
     BOOL result = [[AppConfig sharedAppConfig] configNoteAdd:self.noteModel];
     if(result) {
         self.isStoredToLocal = YES;
@@ -809,6 +850,7 @@
     }
     
     //更新本地存储.
+    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
     [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
 }
 
@@ -854,11 +896,12 @@
 {
     NSLog(@"updateClassificationTo : %@", classification);
     
-    //更新存储.
-    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifiers:@[self.noteModel.identifier] classification:classification];
-    
     //更新数据.
     self.noteModel.classification = classification;
+    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
+    
+    //更新存储.
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
     
     //更新属性显示.
     [self updateNotePropertyDisplay];
@@ -870,16 +913,16 @@
     NSString *colorString = [NoteModel colorDisplayStringToColorString:colorDisplayString];
     NSLog(@"updateColorStringTo : %@", colorString); 
     
-    //更新存储.
-    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifiers:@[self.noteModel.identifier] colorString:colorString];
-    
     //更新数据.
     self.noteModel.color = colorString;
+    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
+    
+    //更新存储.
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
     
     //更新属性显示.
     [self updateNotePropertyDisplay];
 }
-
 
 
 - (void)filterViewBuild
@@ -920,6 +963,31 @@
     
     //[self showPopupView:menu];
 }
+
+
+
+
+- (void)actionOpenFilter
+{
+    [UIView animateWithDuration:0.6 animations:^{
+        self.topNotesView = 36;
+        [self viewWillLayoutSubviews];
+    }];
+    
+    
+    
+}
+
+
+- (void)actionCloseFilter
+{
+    [UIView animateWithDuration:0.6 animations:^{
+        self.topNotesView = 0;
+        [self viewWillLayoutSubviews];
+    }];
+}
+
+
 
 
 - (void)filterViewHidden

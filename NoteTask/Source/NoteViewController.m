@@ -31,8 +31,6 @@
 @property (nonatomic, strong) UITableView *notesView;
 @property (nonatomic, assign) CGFloat topNotesView;
 
-
-
 @property (nonatomic, assign) CGFloat heightNoteFilter;
 @property (nonatomic, strong) UIView *noteFilter;
 
@@ -85,7 +83,6 @@
     
     //内容加载.
     //[self loadNotesView];
-    
 }
 
 
@@ -648,7 +645,7 @@
 }
 
 - (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
-    
+   LOG_POSTION
     if(indexPath.column == 0){
         /*
         //增加新增功能.
@@ -927,11 +924,17 @@
         [self.notesView deleteRowsAtIndexPaths:indexPathsSelected withRowAnimation:UITableViewRowAnimationFade];
         [self.notesView endUpdates];
         
+        //heightOptumize全失效, 高度有错. 因此重新reload下. 为什么不一开始便使用reload? 直接reload没有挪动的效果.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.notesView reloadData];
+        });
+        
         return;
     }
     
     if([keyword isEqualToString:@"notesUpdateClassification"]) {
         
+#if 0
         UIGraphicsBeginImageContext([UIScreen mainScreen].bounds.size);
         CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -980,7 +983,7 @@
             
             
         }];
-#if 0
+
         UIViewController *vc = [[UIViewController alloc] init];
         
         
@@ -989,6 +992,15 @@
         rootViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
         [rootViewController presentModalViewController:vc animated:YES];
 #endif
+        
+//        UIView *noteFilter = [self mfilterViewBuild];
+//        noteFilter.frame = CGRectMake(0, 64, VIEW_WIDTH, 36);
+//        [self showPopupView:noteFilter];
+        
+        NoteArchiveViewController *vc = [[NoteArchiveViewController alloc] init];
+        [vc setFrom:@"NotesArchiveChange" andNoteIdentifiers:[self dataNotesIdentifierOnIndexPaths:indexPathsSelected]];
+        [self pushViewController:vc animated:YES];
+        
         return;
     }
     
@@ -1001,6 +1013,36 @@
 
     
 }
+
+
+- (UIView*)mfilterViewBuild
+{
+
+    //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
+    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, heightNoteFilter)];
+    //    [self.view addSubview:self.noteFilter];
+    //    self.noteFilter.backgroundColor = [UIColor yellowColor];
+    //
+    //    [self.view bringSubviewToFront:self.noteFilter];
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", @"个人笔记", nil];
+    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
+    if(addedClassifications.count > 0) {
+        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
+    }
+    //    [self.filterDataClassifications addObject:@"新增类别"];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
+    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
+    menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
+    menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
+    menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
+    menu.dataSource = self;
+    menu.delegate = self;
+    
+    return menu;
+}
+
 
 
 - (void)actionMuiltSelectOnPushButton:(PushButton*)button
@@ -1096,3 +1138,231 @@
 
 @end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) UITableView *tableView;
+
+@property (nonatomic, strong) NSString *from;
+@property (nonatomic, strong) NSArray<NSString*> *noteIdentifiers;
+
+@property (nonatomic, strong) NSMutableArray *classifications;
+@property (nonatomic, strong) NSMutableArray *filterDataColors;
+
+@end
+
+
+@implementation NoteArchiveViewController
+
+
+- (void)setFrom:(NSString*)from andNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers
+{
+    self.from = from;
+    self.noteIdentifiers = noteIdentifiers;
+}
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.classifications = [[NSMutableArray alloc] initWithObjects:@"个人笔记", nil];
+    [self.classifications addObjectsFromArray:[[AppConfig sharedAppConfig] configClassificationGets]];
+    [self.classifications addObject:@"测试"];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+    
+    self.tableView = [[UITableView alloc] init];
+    [self addSubview:self.tableView];
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+}
+
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    self.tableView.frame = VIEW_BOUNDS;
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.title = @"分类";
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+}
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
+
+- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @[@"类别", @"标记"][section];
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 56.0;
+    
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 0;
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 54.5;
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if(section == 0) {
+        return self.classifications.count;
+    }
+    else if(section == 1) {
+        return self.filterDataColors.count;
+    }
+    
+    return 0;
+}
+
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    if(indexPath.section == 0) {
+        cell.textLabel.text = self.classifications[indexPath.row];
+    }
+    else if(indexPath.section == 1) {
+        cell.textLabel.text = self.filterDataColors[indexPath.row];
+        NSRange range = NSMakeRange(NSNotFound, 0);
+        range = [cell.textLabel.text rangeOfString:@"红色"];
+        if(range.location != NSNotFound && range.length > 0) {
+            cell.textLabel.textColor = [UIColor redColor];
+        }
+        range = [cell.textLabel.text rangeOfString:@"黄色"];
+        if(range.location != NSNotFound && range.length > 0) {
+            cell.textLabel.textColor = [UIColor colorFromString:@"#f1cc56"];
+        }
+        range = [cell.textLabel.text rangeOfString:@"蓝色"];
+        if(range.location != NSNotFound && range.length > 0) {
+            cell.textLabel.textColor = [UIColor blueColor];
+        }
+    }
+    
+    UIImageView *imageView = [self imageLineWidth:cell.frame.size.width andHeight:0.5];
+    imageView.frame = CGRectMake(0, 54, VIEW_WIDTH, 0.5);
+    [cell addSubview:imageView];
+    
+#if 0
+    UIImageView *imageView1 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 100, 320, 20)];
+    [self.view addSubview:imageView1];
+    
+    
+    UIGraphicsBeginImageContext(imageView1.frame.size);   //开始画线
+    [imageView1.image drawInRect:CGRectMake(0, 0, imageView1.frame.size.width, imageView1.frame.size.height)];
+    CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);  //设置线条终点形状
+    
+    
+    float lengths[] = {10,5};
+    CGContextRef line = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(line, [UIColor redColor].CGColor);
+    
+    CGContextSetLineDash(line, 0, lengths, 2);  //画虚线
+    CGContextMoveToPoint(line, 0.0, 20.0);    //开始画线
+    CGContextAddLineToPoint(line, 310.0, 20.0);
+    CGContextStrokePath(line);
+    
+    imageView1.image = UIGraphicsGetImageFromCurrentImageContext();
+#endif
+    
+    return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.section == 0) {
+        [[AppConfig sharedAppConfig] configNotesUpdateClassification:self.classifications[indexPath.row] byNoteIdentifiers:self.noteIdentifiers];
+    }
+    else if(indexPath.section == 1) {
+        NSString *colorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[indexPath.row]];
+        [[AppConfig sharedAppConfig] configNotesUpdateColor:colorString byNoteIdentifiers:self.noteIdentifiers];
+    }
+    
+    if([self.from isEqualToString:@"NotesArchiveChange"]) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+
+- (UIImageView*)imageLineWidth:(CGFloat)width andHeight:(CGFloat)height
+{
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+    
+    UIGraphicsBeginImageContext(CGSizeMake(width, height));   //开始画线
+    [imageView.image drawInRect:CGRectMake(0, 0, imageView.frame.size.width, imageView.frame.size.height)];
+    CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);  //设置线条终点形状
+    
+    CGFloat lengths[] = {2,1};
+    CGContextRef line = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(line, [UIColor blueColor].CGColor);
+    
+    CGContextSetLineDash(line, 0, lengths, 2);  //画虚线
+    CGContextMoveToPoint(line, 0.0, 0.0);    //开始画线
+    CGContextAddLineToPoint(line, width, 0.0);
+    CGContextStrokePath(line);
+    
+    imageView.image = UIGraphicsGetImageFromCurrentImageContext();
+    return imageView;
+}
+
+
+
+
+
+
+@end

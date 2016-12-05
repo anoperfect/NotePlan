@@ -102,7 +102,7 @@
     taskRecord.dayString = dayString;
     taskRecord.type = 1;
     taskRecord.record = @"";
-    taskRecord.committedAt = committedAt;//[NSString stringDateTimeNow];
+    taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
     taskRecord.modifiedAt = taskRecord.committedAt;
     taskRecord.deprecatedAt = @"";
     
@@ -118,7 +118,7 @@
     taskRecord.dayString = dayString;
     taskRecord.type = 0;
     taskRecord.record = @"";
-    taskRecord.committedAt = committedAt;//[NSString stringDateTimeNow];
+    taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
     taskRecord.modifiedAt = taskRecord.committedAt;
     taskRecord.deprecatedAt = @"";
     

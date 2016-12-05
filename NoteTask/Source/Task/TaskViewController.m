@@ -196,6 +196,9 @@
             heightSectionHeader = 45.0;
         }
     }
+    else if(self.mode == MODE_DAY) {
+        heightSectionHeader = 45.0;
+    }
     
     return heightSectionHeader;
 }
@@ -242,6 +245,22 @@
              ];
         }
     }
+    else if(self.mode == MODE_DAY) {
+        NSString *day = self.taskInfoManager.tasksDay[section];
+        NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
+        attributedString = [NSString attributedStringWith:day
+                                                     font:[UIFont fontWithName:@"TaskSectionHeader"]
+                                                   indent:36
+                                                textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                            ];
+        NSString *numberTasks = [NSString stringWithFormat:@"[%zd]", taskinfos.count];
+        [attributedString appendAttributedString:[NSString attributedStringWith:numberTasks
+                                                                           font:[UIFont fontWithName:@"small"]
+                                                                         indent:0
+                                                                      textColor:[UIColor colorWithName:@"TaskSectionHeaderText"]
+                                                  ]
+         ];
+    }
     
     if(attributedString.length > 0) {
         label.attributedText = attributedString;
@@ -275,6 +294,9 @@
     if(self.mode == MODE_ARRAGE) {
         sections = self.taskInfoManager.taskArrangeGroups.count;
     }
+    else if(self.mode == MODE_DAY) {
+        sections = self.taskInfoManager.tasksDayMode.count;
+    }
     
     return sections;
 }
@@ -295,6 +317,11 @@
             rows = taskArrangeGroup.taskInfoArranges.count;
         }
     }
+    else if(self.mode == MODE_DAY) {
+        NSString *day = self.taskInfoManager.tasksDay[section];
+        NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
+        rows = taskinfos.count;
+    }
     
     return rows;
 }
@@ -303,6 +330,8 @@
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     LOG_POSTION
+    NSInteger section = indexPath.section;
+    NSInteger row = indexPath.row;
     
     TaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskCell" forIndexPath:indexPath];
     
@@ -312,9 +341,23 @@
     if(self.mode == MODE_ARRAGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         taskinfo = taskInfoArrange.taskinfo;
-        finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskInfoArrange.taskinfo.sn on:taskInfoArrange.arrangeDays];
+        finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskInfoArrange.arrangeDays];
         [cell setTaskInfo:taskinfo finishedAts:finishedAts];
     }
+    else if(self.mode == MODE_ARRAGE) {
+        NSString *day = self.taskInfoManager.tasksDay[section];
+        NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
+        taskinfo = taskinfos[row];
+        NSString *finishedAt = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDay:day];
+        TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
+        taskFinishAt.snTaskInfo = taskinfo.sn;
+        taskFinishAt.dayString = day;
+        taskFinishAt.finishedAt = finishedAt;
+        [cell setTaskInfo:taskinfo finishedAts:@[taskFinishAt]];
+    }
+    
+    
+    
     
     self.taskCellOptumizeHeights[indexPath] = @(cell.frame.size.height);
 
@@ -324,11 +367,21 @@
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
+    LOG_POSTION
+    NSInteger section = indexPath.section;
+    NSInteger row = indexPath.row;
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if(self.mode == MODE_ARRAGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         [self enterTaskDetailInArrangeMode:taskInfoArrange];
+    }
+    else if(self.mode == MODE_DAY) {
+        NSString *day = self.taskInfoManager.tasksDay[section];
+        NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
+        TaskInfo *taskinfo = taskinfos[row];
+//        [self enterTaskDetailInDayMode:taskinfo onDay:day];
     }
 }
 
@@ -417,6 +470,7 @@
 
 - (void)showActionMenu
 {
+    LOG_POSTION
     CGFloat width = 60;
     TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
     v.layoutMode = TextButtonLineLayoutModeVertical;
@@ -431,6 +485,7 @@
     else {
         actionStrings = @[@"日期模式", @"安排模式"];
     }
+    [v setTexts:actionStrings];
     
     __weak typeof(self) _self = self;
     [v setButtonActionByText:^(NSString* actionText) {
@@ -447,8 +502,34 @@
 - (void)actionMenuString:(NSString*)actionText
 {
     NSLog(@"actionText : %@", actionText);
+    NSDictionary *menuStringAndSELStrings = @{
+                                              @"安排模式":@"actionChangeToArrangeMode",
+                                              @"列表模式":@"actionChangeToListMode",
+                                              @"日期模式":@"actionChangeToDayMode",
+                                              };
     
-    
+    [self performSelectorByString:menuStringAndSELStrings[actionText]];
+}
+
+
+- (void)actionChangeToArrangeMode
+{
+    self.mode = MODE_ARRAGE;
+    [self.tasksView reloadData];
+}
+
+
+- (void)actionChangeToDayMode
+{
+    self.mode = MODE_DAY;
+    [self.tasksView reloadData];
+}
+
+
+- (void)actionChangeToListMode
+{
+    self.mode = MODE_LIST;
+    [self.tasksView reloadData];
 }
 
 
@@ -509,7 +590,7 @@
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
         if(days.count == 1) {
-            BOOL result = [self.taskInfoManager addFinishedAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString stringDateTimeNow]];
+            BOOL result = [self.taskInfoManager addFinishedAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString dateTimeStringNow]];
             if(result) {
                 [self actionReloadTasksViewOnIndexPath:indexPath];
             }
@@ -532,7 +613,7 @@
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
         if(days.count == 1) {
-            BOOL result = [self.taskInfoManager addRedoAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString stringDateTimeNow]];
+            BOOL result = [self.taskInfoManager addRedoAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString dateTimeStringNow]];
             if(result) {
                 [self actionReloadTasksViewOnIndexPath:indexPath];
             }

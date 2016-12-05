@@ -397,7 +397,7 @@
     
     NSInteger retDBData = [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
                                                   toTable:TABLENAME_NOTE
-                                           withInfoUpdate:@{@"deletedAt":[NSString stringDateTimeNow]}
+                                           withInfoUpdate:@{@"deletedAt":[NSString dateTimeStringNow]}
                                             withInfoQuery:@{@"identifier":noteIdentifiers}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
@@ -415,27 +415,82 @@
 
 - (void)configNoteUpdate:(NoteModel*)note
 {
-    NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
-    updateDict[@"title"]            = note.title;
-    updateDict[@"content"]          = note.content;
-    updateDict[@"summary"]          = note.summary;
-    updateDict[@"classification"]   = note.classification;
-    updateDict[@"color"]            = note.color;
-    updateDict[@"thumb"]            = note.thumb;
-    updateDict[@"audio"]            = note.audio;
-    updateDict[@"location"]         = note.location;
-    updateDict[@"createdAt"]        = note.createdAt;
-    updateDict[@"modifiedAt"]       = note.modifiedAt;
-    updateDict[@"browseredAt"]      = note.browseredAt;
-    updateDict[@"deletedAt"]        = note.deletedAt;
-    updateDict[@"source"]           = note.source;
-    updateDict[@"synchronize"]      = note.synchronize;
-    updateDict[@"countCollect"]     = @(note.countCollect);
-    updateDict[@"countLike"]        = @(note.countLike);
-    updateDict[@"countDislike"]     = @(note.countDislike);
-    updateDict[@"countBrowser"]     = @(note.countBrowser);
-    updateDict[@"countEdit"]        = @(note.countEdit);
+    NoteModel *notePrev = [self configNoteGetByNoteIdentifier:note.identifier];
+    NSMutableDictionary *noteDictPrev = [[NSMutableDictionary alloc] init];
+    noteDictPrev[@"title"]            = notePrev.title;
+    noteDictPrev[@"content"]          = notePrev.content;
+    noteDictPrev[@"summary"]          = notePrev.summary;
+    noteDictPrev[@"classification"]   = notePrev.classification;
+    noteDictPrev[@"color"]            = notePrev.color;
+    noteDictPrev[@"thumb"]            = notePrev.thumb;
+    noteDictPrev[@"audio"]            = notePrev.audio;
+    noteDictPrev[@"location"]         = notePrev.location;
+    noteDictPrev[@"createdAt"]        = notePrev.createdAt;
+    noteDictPrev[@"modifiedAt"]       = notePrev.modifiedAt;
+    noteDictPrev[@"browseredAt"]      = notePrev.browseredAt;
+    noteDictPrev[@"deletedAt"]        = notePrev.deletedAt;
+    noteDictPrev[@"source"]           = notePrev.source;
+    noteDictPrev[@"synchronize"]      = notePrev.synchronize;
+    noteDictPrev[@"countCollect"]     = @(notePrev.countCollect);
+    noteDictPrev[@"countLike"]        = @(notePrev.countLike);
+    noteDictPrev[@"countDislike"]     = @(notePrev.countDislike);
+    noteDictPrev[@"countBrowser"]     = @(notePrev.countBrowser);
+    noteDictPrev[@"countEdit"]        = @(notePrev.countEdit);
     
+    NSMutableDictionary *noteDict = [[NSMutableDictionary alloc] init];
+    noteDict[@"title"]            = note.title;
+    noteDict[@"content"]          = note.content;
+    noteDict[@"summary"]          = note.summary;
+    noteDict[@"classification"]   = note.classification;
+    noteDict[@"color"]            = note.color;
+    noteDict[@"thumb"]            = note.thumb;
+    noteDict[@"audio"]            = note.audio;
+    noteDict[@"location"]         = note.location;
+    noteDict[@"createdAt"]        = note.createdAt;
+    noteDict[@"modifiedAt"]       = note.modifiedAt;
+    noteDict[@"browseredAt"]      = note.browseredAt;
+    noteDict[@"deletedAt"]        = note.deletedAt;
+    noteDict[@"source"]           = note.source;
+    noteDict[@"synchronize"]      = note.synchronize;
+    noteDict[@"countCollect"]     = @(note.countCollect);
+    noteDict[@"countLike"]        = @(note.countLike);
+    noteDict[@"countDislike"]     = @(note.countDislike);
+    noteDict[@"countBrowser"]     = @(note.countBrowser);
+    noteDict[@"countEdit"]        = @(note.countEdit);
+    
+    NSArray *keys = @[
+                      @"title",
+                      @"content",
+                      @"summary",
+                      @"classification",
+                      @"color",
+                      @"thumb",
+                      @"audio",
+                      @"location",
+                      @"createdAt",
+                      @"modifiedAt",
+                      @"browseredAt",
+                      @"deletedAt",
+                      @"source",
+                      @"synchronize",
+                      @"countCollect",
+                      @"countLike",
+                      @"countDislike",
+                      @"countBrowser",
+                      @"countEdit",
+                      ];
+    
+    NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
+    for(NSString *key in keys) {
+        if([noteDict[key] isEqual:noteDictPrev[key]]) {
+            
+        }
+        else {
+            updateDict[key] = noteDict[key];
+        }
+    }
+    
+    NSLog(@"//////note update : \n%@", updateDict);
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
                             toTable:TABLENAME_NOTE
                      withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
@@ -443,7 +498,9 @@
 }
 
 
-- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers classification:(NSString*)classification
+
+
+- (void)configNotesUpdateClassification:(NSString*)classification byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers
 {
     NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
     updateDict[@"classification"]   = classification;
@@ -455,16 +512,17 @@
 }
 
 
-- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers colorString:(NSString*)colorString
+- (void)configNotesUpdateColor:(NSString*)color byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers
 {
     NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
-    updateDict[@"color"]            = colorString;
+    updateDict[@"color"]   = color;
     
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
                             toTable:TABLENAME_NOTE
                      withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
                       withInfoQuery:@{@"identifier":noteIdentifiers}];
 }
+
 
 
 - (void)testBeforeBuild

@@ -14,7 +14,6 @@
 
 @property (nonatomic, assign) BOOL      contentViewScrolled;
 @property (nonatomic, strong) UIView    *contentView;
-@property (nonatomic, assign) BOOL      hiddenByPush;
 
 
 - (void)addSubview:(UIView*)view;

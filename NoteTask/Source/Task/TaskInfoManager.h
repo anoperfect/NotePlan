@@ -84,6 +84,7 @@
 
 //day模式.按照day显示task.
 @property (nonatomic, strong) NSMutableDictionary<NSString*,NSMutableArray<TaskInfo*>*>* tasksDayMode; //将任务按照day分类.
+@property (nonatomic, strong) NSArray<NSString*> *tasksDay;
 - (void)reloadTaskDayMode;
 
 
@@ -109,7 +110,7 @@
 
 
 //查询多天的完成情况.
-- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days;
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn onDays:(NSArray<NSString*>*)days;
 
 
 - (NSString*)queryFinishedAtsOnSn:(NSString*)sn onDay:(NSString*)day;

@@ -176,7 +176,7 @@
 }
 
 
-+ (NSString*)dayStringToday
++ (NSString*)dateStringToday
 {
     NSDate *date = [NSDate date];
     
@@ -189,7 +189,7 @@
 }
 
 
-+ (NSString*)dayStringTomorrow
++ (NSString*)dateStringTomorrow
 {
     NSDate *date = [NSDate date];
     
@@ -203,7 +203,7 @@
 }
 
 
-+ (NSString*)stringDateTimeNow
++ (NSString*)dateTimeStringNow
 {
     NSDate *date = [NSDate date];
     NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
@@ -219,7 +219,7 @@
 }
 
 
-+ (NSString*)stringDateTimeOfDate:(NSDate*)date
++ (NSString*)dateTimeStringOfDate:(NSDate*)date
 {
     NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
     [dateformatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -234,7 +234,7 @@
 }
 
 
-+ (NSDate*)stringToDate:(NSString*)s
++ (NSDate*)dateFromString:(NSString*)s
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     NSTimeZone *timeZone = [NSTimeZone localTimeZone];

@@ -23,6 +23,7 @@
 @property (nonatomic, strong) MBProgressHUD *popupHUD;
 
 @property (nonatomic, strong) void(^popupViewDismissBlock)(void);
+@property (nonatomic, assign) BOOL      hiddenByPush;
 
 @end
 

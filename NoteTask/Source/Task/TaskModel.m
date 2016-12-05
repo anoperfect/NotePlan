@@ -167,7 +167,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         return @"NAN";
     }
     
-    NSDate *date = [NSString stringToDate:dateTimeString];
+    NSDate *date = [NSString dateFromString:dateTimeString];
     if(!date) {
         NSLog(@"#error - not valid format [%@].", dateTimeString);
         return @"NAN";

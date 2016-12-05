@@ -169,8 +169,8 @@
 
 - (void)reloadTaskArrangeGroups
 {
-    self.dateStringToday    = [NSString dayStringToday];
-    self.dateStringTomorrow = [NSString dayStringTomorrow];
+    self.dateStringToday    = [NSString dateStringToday];
+    self.dateStringTomorrow = [NSString dateStringTomorrow];
     
     self.taskArrangeGroupBefore = [TaskArrangeGroup taskArrangeGroupWithName:@"之前"];
     self.taskArrangeGroupToday = [TaskArrangeGroup taskArrangeGroupWithName:@"今天"];
@@ -238,6 +238,12 @@
             NSLog(@"\t%@", taskinfo.sn);
         }
     }
+    
+    self.tasksDay = [self.tasksDayMode.allKeys sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        NSString *s1 = obj1;
+        NSString *s2 = obj2;
+        return [s1 compare:s2];
+    }];
 }
 
 
@@ -343,7 +349,7 @@
 }
 
 
-- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn on:(NSArray<NSString*>*)days
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn onDays:(NSArray<NSString*>*)days
 {
     NSMutableArray<TaskFinishAt*> *taskFinishAtsQuery = [[NSMutableArray alloc] init];
     

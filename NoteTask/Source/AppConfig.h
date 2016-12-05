@@ -41,9 +41,9 @@
 - (void)configNoteDeleteByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
 - (void)configNoteUpdate:(NoteModel*)note;
+- (void)configNotesUpdateClassification:(NSString*)classification byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
+- (void)configNotesUpdateColor:(NSString*)color byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
-- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers classification:(NSString*)classification;
-- (void)configNoteUpdateBynoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers colorString:(NSString*)colorString;
 
 
 

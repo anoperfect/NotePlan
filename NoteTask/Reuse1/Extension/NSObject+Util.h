@@ -25,14 +25,14 @@
 + (BOOL)stringIsAllDigtal:(NSString*)string;
 + (BOOL)stringIsValidDayString:(NSString*)dayString;
 
-+ (NSString*)dayStringToday;
-+ (NSString*)dayStringTomorrow;
++ (NSString*)dateStringToday;
++ (NSString*)dateStringTomorrow;
 
-+ (NSString*)stringDateTimeNow;
-+ (NSDate*)stringToDate:(NSString*)s;
++ (NSString*)dateTimeStringNow;
++ (NSDate*)dateFromString:(NSString*)s;
 
 + (NSString*)dateStringOfDate:(NSDate*)date;
-+ (NSString*)stringDateTimeOfDate:(NSDate*)date;
++ (NSString*)dateTimeStringOfDate:(NSDate*)date;
 
 
 + (BOOL)date:(NSDate*)date isSameDayOfDate:(NSDate*)date0;
