@@ -36,11 +36,15 @@
     
     self.taskRecordTypesSortOrder =
     @[
-      @(TaskRecordTypeUserRecord),
-      @(TaskRecordTypeFinish),
+      @(TaskRecordTypeCreate) ,
       @(TaskRecordTypeSignIn),
       @(TaskRecordTypeSignOut),
-      @(TaskRecordTypeCreate),
+      @(TaskRecordTypeUserModify),
+      @(TaskRecordTypeUserDelete),
+      @(TaskRecordTypeUserRecord),
+      @(TaskRecordTypeLocalReminder),
+      @(TaskRecordTypeRemoteReminder),
+      @(TaskRecordTypeFinish),
       @(TaskRecordTypeRedo),
       ];
     
@@ -48,16 +52,29 @@
     self.taskRecordTypesEnabled = [[NSMutableArray alloc] init];
     
     [self setTaskRecordTypes:@[
+                               @(TaskRecordTypeCreate) ,
+                               @(TaskRecordTypeSignIn),
+                               @(TaskRecordTypeSignOut),
+                               @(TaskRecordTypeUserModify),
+                               @(TaskRecordTypeUserDelete),
                                @(TaskRecordTypeUserRecord),
+                               @(TaskRecordTypeLocalReminder),
+                               @(TaskRecordTypeRemoteReminder),
                                @(TaskRecordTypeFinish),
+                               @(TaskRecordTypeRedo),
                                ] triggerOn:YES reload:NO];
     
+    
+    
+    
+#if 0
     [self setTaskRecordTypes:@[
                                @(TaskRecordTypeSignIn),
                                @(TaskRecordTypeSignOut),
                                @(TaskRecordTypeCreate),
                                @(TaskRecordTypeRedo),
                                ] triggerOn:NO reload:NO];
+#endif
     
     [self updateTaskRecordsData];
     
@@ -81,7 +98,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    self.title = @"记录";
 }
 
 

@@ -506,10 +506,13 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     y += heightHeader;
     
     self.taskTitleLabel.attributedText = [self attributedStringForTaskTitle];
-        if(self.taskTitleLabel.attributedText.length > 0) {
-            self.taskTitleLabel.numberOfLines = 2;
-            self.taskTitleLabel.frame = CGRectMake(0, y, widthContainer, heightTitle);
-            y += heightTitle;
+    if(self.taskTitleLabel.attributedText.length > 0) {
+        self.taskTitleLabel.numberOfLines = 2;
+        self.taskTitleLabel.frame = CGRectMake(0, y, widthContainer, heightTitle);
+        y += heightTitle;
+    }
+    else {
+        y += 22;
     }
     
     self.taskContentLabel.attributedText = [self attributedStringForTaskContent];
@@ -551,7 +554,12 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     actionsContainer.frame = frameActions;
     actionsContainer.hidden = NO;
     
-    NSArray<NSString*> *actionsKeyword = @[@"TaskActionSignIn", @"TaskActionTicking", @"TaskActionEdit", @"TaskActionFinish", @"TaskActionRedo", @"TaskActionMore"];
+    NSArray<NSString*> *actionsKeyword = @[
+                                           @"TaskActionTicking",
+                                           @"TaskActionRecord",
+                                           @"TaskActionEdit",
+                                           @"TaskActionMore"];
+    
     NSInteger count = actionsKeyword.count;
     NSLog(@"actions count : %zd", count);
     
@@ -593,10 +601,9 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 }
 
 
-
 - (NSMutableAttributedString*)attributedStringForTaskTitle
 {
-    NSString *title = @"Task";
+    NSString *title = @"";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:title];
     [attributedString addAttribute:NSExpansionAttributeName value:@0 range:NSMakeRange(0, title.length)];
     NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];

@@ -64,7 +64,6 @@ typedef NS_ENUM (NSUInteger, TaskRecordType) {
 
 - (NSArray<TaskRecord*>*)taskRecordsGetAll;
 - (NSArray<TaskRecord*>*)taskRecordsOnSn:(NSString*)sn types:(NSArray<NSNumber*>*)types;
-- (NSString*)taskRecordQuery:(NSString*)sn finishedAtOnDay:(NSString*)day;
 
 - (void)taskRecordAdd:(TaskRecord*)taskRecord;
 

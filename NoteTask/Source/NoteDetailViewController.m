@@ -606,8 +606,11 @@
             return;
         }
         
-        
-        
+        if(noteParagraph.content.length > 0) {
+            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+            pasteboard.string = noteParagraph.content;
+            [self showIndicationText:@"已复制到粘贴板" inTime:1.0];
+        }
         
         return ;
     }

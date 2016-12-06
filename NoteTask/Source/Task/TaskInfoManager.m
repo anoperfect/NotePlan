@@ -269,8 +269,49 @@
     
     [[AppConfig sharedAppConfig] configTaskInfoAdd:taskinfo];
     
+    TaskRecord *taskRecord = [[TaskRecord alloc] init];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    taskRecord.snTaskInfo = taskinfo.sn;
+    taskRecord.dayString = @"";
+    taskRecord.type = TaskRecordTypeCreate;
+    taskRecord.record = @"";
+    taskRecord.committedAt = taskinfo.committedAt;
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    [self.taskRecordManager taskRecordAdd:taskRecord];
+    
     return YES;
 }
+
+
+- (BOOL)updateTaskInfo:(TaskInfo*)taskinfo addUpdateRecord:(BOOL)addUpdateRecord
+{
+    //更新各缓存.
+    [self.taskinfos addObject:taskinfo];
+    [self reloadTaskArrangeGroups];
+    [self reloadTaskDayMode];
+    
+    [[AppConfig sharedAppConfig] configTaskInfoUpdate:taskinfo];
+    
+    if(addUpdateRecord) {
+        TaskRecord *taskRecord = [[TaskRecord alloc] init];
+        taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+        taskRecord.snTaskInfo = taskinfo.sn;
+        taskRecord.dayString = @"";
+        taskRecord.type = TaskRecordTypeUserModify;
+        taskRecord.record = @"";
+        taskRecord.committedAt = taskinfo.modifiedAt;
+        taskRecord.modifiedAt = taskRecord.committedAt;
+        taskRecord.deprecatedAt = @"";
+        [self.taskRecordManager taskRecordAdd:taskRecord];
+    }
+    
+    return YES;
+}
+
+
+
+
 
 
 #pragma mark - record

@@ -6,11 +6,10 @@
 //  Copyright © 2016年 Ben. All rights reserved.
 //
 #import "TaskDetailViewController.h"
-#import "TaskModel.h"
 #import "TaskCell.h"
 #import "TaskRecordViewController.h"
 #import "TaskTickingViewController.h"
-
+#import "TaskEditViewController.h"
 
 
 @interface TaskDetailViewController () <UITableViewDataSource, UITableViewDelegate>
@@ -107,7 +106,7 @@ TaskRecord
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    self.title = @"";
+//    self.title = @"";
 }
 
 
@@ -517,10 +516,9 @@ TaskRecord
     NSDictionary *actionStringToSELString = @{
                                               @"TaskActionFinish":@"taskActionFinish",
                                               @"TaskActionTicking":@"taskActionTicking",
-                                              
-                                              
-                                              
-                                              
+                                              @"TaskActionRecord":@"taskActionRecord",
+                                              @"TaskActionEdit":@"taskActionEdit",
+                                              @"TaskActionMore":@"taskActionMore",
                                               
                                               };
     
@@ -588,11 +586,23 @@ TaskRecord
 - (void)taskActionTicking
 {
     TaskTickingViewController *vc = [[TaskTickingViewController alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
+    [self pushViewController:vc animated:YES];
 }
 
 
+- (void)taskActionRecord
+{
+    TaskRecordViewController *vc = [[TaskRecordViewController alloc] init];
+    vc.taskinfo = self.taskinfo;
+    [self pushViewController:vc animated:YES];
+}
 
+
+- (void)taskActionEdit
+{
+    TaskEditViewController *vc = [[TaskEditViewController alloc] initWithTaskInfo:self.taskinfo];
+    [self pushViewController:vc animated:YES];
+}
 
 
 - (void)actionReloadTaskContent

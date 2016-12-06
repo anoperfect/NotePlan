@@ -8,5 +8,5 @@
 
 #import "CustomViewController.h"
 @interface TaskEditViewController : CustomViewController
-
+- (instancetype)initWithTaskInfo:(TaskInfo*)taskinfo;
 @end

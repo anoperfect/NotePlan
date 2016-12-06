@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.signedAt = @"";
     taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
     
-    taskinfo.scheduleType = 0;
+    taskinfo.scheduleType = TaskInfoScheduleTypeNone;
     taskinfo.dayString = @""; //单天模式.
     taskinfo.dayStringFrom = @"";//连续模式开始日期.
     taskinfo.dayStringTo = @"";//连续模式结束日期.
@@ -83,31 +83,6 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     taskinfo.time = @"";
     
     return taskinfo;
-}
-
-
-- (void)daysStringsParseAndGetFinishedAt
-{
-    [self daysStringsParse];
-    
-}
-
-
-//2016-10-24
-//2016-10-18 - 2016-10-24
-//2016-10-18 - 2016-10-24(workday)
-- (void)daysStringsParse
-{
-    self.daysOnTask = [[NSMutableArray alloc] init];
-    NSArray<NSString*> *days1strings = [self.dayStrings componentsSeparatedByString:@";"];
-    for(NSString *day in days1strings) {
-        if(day.length != 10) {
-            
-        }
-        else {
-            [self.daysOnTask addObject:day];
-        }
-    }
 }
 
 
@@ -243,7 +218,21 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 - (void)generateDaysOnTask
 {
     self.daysOnTask = [[NSMutableArray alloc] init];
-    [self.daysOnTask addObject:self.dayString];
+    if(self.scheduleType == TaskInfoScheduleTypeDay) {
+        [self.daysOnTask addObject:self.dayString];
+    }
+    else if(self.scheduleType == TaskInfoScheduleTypeContinues) {
+        [self.daysOnTask addObject:self.dayStringFrom];
+        [self.daysOnTask addObject:self.dayStringTo];
+    }
+    else if(self.scheduleType == TaskInfoScheduleTypeDays) {
+        NSArray *days = [self.dayStrings componentsSeparatedByString:@","];
+        for(NSString *day in days) {
+            if([NSString dateStringIsValid:day]) {
+                [self.daysOnTask addObject:day];
+            }
+        }
+    }
 }
 
 

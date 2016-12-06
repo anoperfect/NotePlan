@@ -23,7 +23,8 @@
 @interface NSString (DateString)
 
 + (BOOL)stringIsAllDigtal:(NSString*)string;
-+ (BOOL)stringIsValidDayString:(NSString*)dayString;
+
++ (BOOL)dateStringIsValid:(NSString*)dayString;
 
 + (NSString*)dateStringToday;
 + (NSString*)dateStringTomorrow;

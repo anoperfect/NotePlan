@@ -134,7 +134,7 @@
 }
 
 
-+ (BOOL)stringIsValidDayString:(NSString*)dayString
++ (BOOL)dateStringIsValid:(NSString*)dayString
 {
     if(dayString.length != 10) {
         return NO;

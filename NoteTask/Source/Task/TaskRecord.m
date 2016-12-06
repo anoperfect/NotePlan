@@ -100,7 +100,7 @@
     taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
-    taskRecord.type = 1;
+    taskRecord.type = TaskRecordTypeFinish;
     taskRecord.record = @"";
     taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
     taskRecord.modifiedAt = taskRecord.committedAt;
@@ -116,7 +116,7 @@
     taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
-    taskRecord.type = 0;
+    taskRecord.type = TaskRecordTypeRedo;
     taskRecord.record = @"";
     taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
     taskRecord.modifiedAt = taskRecord.committedAt;
@@ -212,29 +212,6 @@
     
     NSLog(@"[%@][%@]task record count : %zd", sn, types, recordsResult.count);
     return [NSArray<TaskRecord*> arrayWithArray:recordsResult];
-}
-
-
-- (NSString*)taskRecordQuery:(NSString*)sn finishedAtOnDay:(NSString*)day
-{
-    NSMutableArray<TaskRecord*> *records = self.taskRecordsGrouped[sn];
-    
-    //按照修改的时间先后排序.
-    [self taskRecordSort:records byModifiedAtAscend:NO];
-    NSString *finishedAt = @"";
-    for(TaskRecord *record in records) {
-        if(record.type == 1 && record.deprecatedAt.length == 0) {
-            finishedAt = record.committedAt;
-            break;
-        }
-        
-        //最新一次是redo的纪录, 则返回未完成.
-        if(record.type == 0) {
-            break;
-        }
-    }
-    
-    return finishedAt;
 }
 
 

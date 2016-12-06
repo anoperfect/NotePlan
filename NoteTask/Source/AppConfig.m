@@ -600,14 +600,14 @@
     task.modifiedAt = @"2016-11-01 09:10:36";
     task.signedAt = @"2016-11-01 09:10:36";
     task.finishedAt = @"";
-//    task.scheduleType = 2;
+    task.scheduleType = TaskInfoScheduleTypeDays;
     task.dayRepeat = YES;
-    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-14;2016-11-15;2016-11-16;2016-11-17;2016-11-18;2016-11-21;";
+    task.dayStrings = @"2016-11-01,2016-11-02,2016-11-03,2016-11-04,2016-11-14,2016-11-15,2016-11-16,2016-11-17,2016-11-18,2016-11-21,";
     task.time = @"07:00-23:00";
 //    task.period = @"period1";
     [self configTaskInfoAdd:task];
     task.sn = @"t10";
-    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-15;2016-11-16;2016-11-18;";
+    task.dayStrings = @"2016-11-01,2016-11-02,2016-11-03,2016-11-04,2016-11-15,2016-11-16,2016-11-18,";
     [self configTaskInfoAdd:task];
     
     task = [[TaskInfo alloc] init];
@@ -618,9 +618,9 @@
     task.modifiedAt = @"2016-11-01 09:16:36";
     task.signedAt = @"2016-11-01 09:16:36";
     task.finishedAt = @"";
-//    task.scheduleType = 2;
+    task.scheduleType = TaskInfoScheduleTypeDays;
     task.dayRepeat = YES;
-    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-03;2016-11-04;2016-11-05;2016-11-06;2016-11-07;2016-11-09;2016-11-10;2016-11-15;2016-11-16";
+    task.dayStrings = @"2016-11-01,2016-11-02,2016-11-03,2016-11-04,2016-11-05,2016-11-06,2016-11-07,2016-11-09,2016-11-10,2016-11-15,2016-11-16";
     task.time = @"07:00-23:00";
 //    task.period = @"period2k";
     [self configTaskInfoAdd:task];
@@ -633,9 +633,9 @@
     task.modifiedAt = @"2016-11-01 09:12:36";
     task.signedAt = @"2016-11-01 09:12:36";
     task.finishedAt = @"";
-//    task.scheduleType = 2;
+    task.scheduleType = TaskInfoScheduleTypeDays;
     task.dayRepeat = YES;
-    task.dayStrings = @"2016-11-01;2016-11-02;2016-11-07;2016-11-08;2016-11-11;2016-11-15;2016-11-16";
+    task.dayStrings = @"2016-11-01,2016-11-02,2016-11-07,2016-11-08,2016-11-11,2016-11-15,2016-11-16";
     task.time = @"07:00-23:00";
 //    task.period = @"period3t";
     [self configTaskInfoAdd:task];
