@@ -99,6 +99,9 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict;
 - (NSDictionary*)toDictionary;
 
+- (void)copyFrom:(TaskInfo*)taskinfo;
+- (NSString*)updateFrom:(TaskInfo*)taskinfo;
+
 - (NSString*)summaryDescription;
 
 + (NSString*)dateTimeStringForDisplay:(NSString*)at;
@@ -108,6 +111,7 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 + (NSArray<NSString*>*)scheduleStrings;
 + (NSString*)scheduleStringWithType:(NSInteger)type;
 + (NSInteger)scheduleTypeFromString:(NSString*)s;
+
 
 @end
 

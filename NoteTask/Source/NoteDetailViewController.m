@@ -718,11 +718,23 @@
     self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
     self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
     
-    //更新到本地数据库.
-    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
-    
-    NSLog(@"%@", self.noteModel);
+    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromNoteIdentifier:self.noteModel.identifier];
+    if(update.count > 0) {
+        //更新到本地数据库.
+        self.noteModel.modifiedAt = [NSString dateTimeStringNow];
+        if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
+            NSString *identifier = self.noteModel.identifier;
+            self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
+            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
+        }
+        else {
+            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+        }
+        NSLog(@"%@", self.noteModel);
+    }
+    else {
+        NSLog(@"nothing update.");
+    }
     
     [self reloadNoteParagraphAtIndexPath:self.indexPathOnCustmizing due:@"after custmize"];
 }
@@ -852,9 +864,25 @@
         return ;
     }
     
-    //更新本地存储.
-    self.noteModel.modifiedAt = [NSString dateTimeStringNow];
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromNoteIdentifier:self.noteModel.identifier];
+    if(update.count > 0) {
+        //更新到本地数据库.
+        self.noteModel.modifiedAt = [NSString dateTimeStringNow];
+        if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
+            LOG_POSTION
+            NSString *identifier = self.noteModel.identifier;
+            self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
+            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
+        }
+        else {
+            LOG_POSTION
+            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+        }
+        NSLog(@"%@", self.noteModel);
+    }
+    else {
+        NSLog(@"nothing update.");
+    }
 }
 
 

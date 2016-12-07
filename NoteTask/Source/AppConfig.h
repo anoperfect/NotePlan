@@ -40,11 +40,14 @@
 //删除.可以到回收站清除或恢复.
 - (void)configNoteDeleteByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
+- (NSDictionary*)configNoteUpdateDetect:(NoteModel*)note fromNoteIdentifier:(NSString*)identifier;
 - (void)configNoteUpdate:(NoteModel*)note;
+- (void)configNoteUpdate:(NoteModel*)note fromNoteIdentifier:(NSString*)identifier;
+
 - (void)configNotesUpdateClassification:(NSString*)classification byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 - (void)configNotesUpdateColor:(NSString*)color byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
 
-
+- (void)configNoteAddPreset;
 
 
 

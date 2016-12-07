@@ -183,12 +183,21 @@
 - (UIFont*)textFont
 {
     NS0Log(@"xxx : %@", self.styleDictionay);
-    CGFloat fontSizeDefault = self.isTitle?18:16;
-    UIFont *font = [UIFont systemFontOfSize:fontSizeDefault];
+    CGFloat fontSize = self.isTitle?18:16;
     NSString *fontString = self.styleDictionay[@"font-size"];
-    CGFloat ptSize = 0.0;
+    CGFloat ptSize;
     if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
-        font = [UIFont systemFontOfSize:ptSize];
+        fontSize = ptSize;
+    }
+    UIFont *font = [UIFont systemFontOfSize:fontSize];
+    
+    if([self.styleDictionay[@"font-weight"] isEqualToString:@"bold"]) {
+        NSLog(@"---set to bold");
+        font = [UIFont boldSystemFontOfSize:fontSize];
+    }
+    else {
+        NSLog(@"--- not set to bold");
+        
     }
     
     //斜体.测试中发现对中文不支持.使用obliq方法.

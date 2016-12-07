@@ -427,7 +427,6 @@
         }
     }
     
-    NSLog(@"rows : %zd", rows);
     return rows;
 }
 

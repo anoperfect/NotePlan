@@ -391,7 +391,7 @@
         CGFloat heightTextInput = 36;
         _textInput = [[UITextField alloc] initWithFrame:CGRectMake(xTextInput, yTextInput, width - xTextInput * 2, heightTextInput)];
         _textInput.textAlignment = NSTextAlignmentCenter;
-        _textInput.layer.borderColor = [UIColor colorWithName:@"TaskEditText"].CGColor;
+        _textInput.layer.borderColor = [UIColor colorWithName:@"TaskBorderCommon"].CGColor;
         _textInput.layer.borderWidth = 1;
         _textInput.layer.cornerRadius = _textInput.frame.size.height / 2;
         

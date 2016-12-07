@@ -305,25 +305,6 @@
 }
 
 
-
-
-
-
-
-- (void)notesLoadAll
-{
-    _notes = [[NSMutableArray alloc] init];
-    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGets]];
-    
-    for(NoteModel *note in _notes) {
-        NSLog(@"title : %@", note.title);
-    }
-    
-    NSLog(@"notesLoad finish.");
-    return ;
-}
-
-
 - (void)dataNotesReload
 {
     _notes = [[NSMutableArray alloc] init];
@@ -337,10 +318,6 @@
 - (void)dataDebug
 {
     NSLog(@"%p", self.notes);
-    
-    
-    
-    
 }
 
 
@@ -828,6 +805,15 @@
         self.topNotesView = 0;
         [self viewWillLayoutSubviews];
     }];
+}
+
+
+- (void)actionResumePreset
+{
+    [self showIndicationText:@"信息 : 已经存在且未修改的\n预制文件不会重新添加 ." inTime:1];
+    [[AppConfig sharedAppConfig] configNoteAddPreset];
+    
+    [self reloadNotesVia:@"Add Preset"];
 }
 
 

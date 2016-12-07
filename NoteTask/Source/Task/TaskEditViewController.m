@@ -79,6 +79,7 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     if (self) {
         self.taskinfo = taskinfo;
         NSLog(@"%@", self.taskinfo);
+        self.added = YES;
     }
     return self;
 }
@@ -221,6 +222,7 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
                             [FrameLayoutView viewWithName:@"" value:10 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_createScheduleDayLabel" value:36 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_daysTypeSelector" value:36 edge:UIEdgeInsetsMake(2, 36, 2, 36)],
+                            [FrameLayoutView viewWithName:@"daysTypeSelectorSeprator" value:20 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_detailScheduleDayLabel" value:_heightDetailScheduleDayLabel edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_dayButtonA" value:_heightDayButtonA edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_dayButtonB" value:_heightDayButtonB edge:UIEdgeInsetsZero],
@@ -235,6 +237,8 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     
     
     f = nil;
+    
+    
 
     
     
@@ -266,40 +270,92 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     NSDictionary *dict = [self.taskinfo toDictionary];
     NSLog(@"%@", dict);
     
-    [self dataUpdateTaskInfo];
+    TaskInfo *taskinfo = [TaskInfo taskinfo];
+    NSString *errorMessage = [self dataUpdateToTaskInfo:taskinfo];
+    if(errorMessage.length > 0) {
+        [self showIndicationText:errorMessage inTime:1];
+        return ;
+    }
     
+    //新增的话, 直接使用所有内容.
     if(!self.added) {
+        [self.taskinfo copyFrom:taskinfo];
         [[TaskInfoManager taskInfoManager] addTaskInfo:self.taskinfo];
         self.added = YES;
     }
     else {
-        [[TaskInfoManager taskInfoManager] updateTaskInfo:self.taskinfo addUpdateRecord:NO];
+        NSString *updateDetail = [self.taskinfo updateFrom:taskinfo];
+        if(updateDetail.length > 0) {
+            [[TaskInfoManager taskInfoManager] updateTaskInfo:self.taskinfo addUpdateDetail:updateDetail];
+        }
     }
+    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
-- (void)dataUpdateTaskInfo
+//更新taskinfo. 如果有内容填写不充足的则返回错误信息.
+- (NSString*)dataUpdateToTaskInfo:(TaskInfo*)taskinfo
 {
-    self.taskinfo.content = self.createContentInputView.text;
-    self.taskinfo.status = 0;
-    self.taskinfo.committedAt = [NSString dateTimeStringNow];
-    self.taskinfo.modifiedAt = [NSString dateTimeStringNow];;
-    self.taskinfo.signedAt = @"";
-    self.taskinfo.finishedAt = @""; //全部day的完成后, 赋值此值. 发生redo后, 需清除此值. 可强行标记任务全部完成.
-    self.taskinfo.scheduleType =  [TaskInfo scheduleTypeFromString:self.daysType];
-    self.taskinfo.dayString = self.dayString.length > 0 ? self.dayString : @""; //单天模式.
-    self.taskinfo.dayStringFrom = self.dayStringFrom.length > 0 ? self.dayStringFrom : @"";;//连续模式开始日期.
-    self.taskinfo.dayStringTo = self.dayStringTo.length > 0 ? self.dayStringTo : @"";;//连续模式开始日期.;//连续模式结束日期.
-    self.taskinfo.dayStrings = self.dayStrings.count == 0 ? @"" : [NSString arrayDescriptionConbine:self.dayStrings seprator:@","];//多天模式.
+    NSMutableString *errorMessage = [[NSMutableString alloc] init];
+    taskinfo.content = self.createContentInputView.text;
+    if(taskinfo.content.length == 0) {
+        [errorMessage appendString:@"请设置任务内容.\n"];
+        return [NSString stringWithString:errorMessage];
+    }
+    taskinfo.status = 0;
+    taskinfo.committedAt = [NSString dateTimeStringNow];
+    taskinfo.modifiedAt = taskinfo.committedAt;
     
-    self.taskinfo.weekdays = @"";//重复模式星期几. Monday,
-    self.taskinfo.yearday = @"";//重复模式1年的一天. MM-DD
-    self.taskinfo.monthday = @"";//重复模式一个月的几日. 01,02
+    taskinfo.scheduleType =  [TaskInfo scheduleTypeFromString:self.daysType];
+    if(taskinfo.scheduleType == TaskInfoScheduleTypeNone) {
+        [errorMessage appendString:@"请设置执行日期类型,然后设置对应日期."];
+        return [NSString stringWithString:errorMessage];
+    }
+    else if(taskinfo.scheduleType == TaskInfoScheduleTypeDay) {
+        if([NSString dateStringIsValid:self.dayString]) {
+            taskinfo.dayString = self.dayString;
+        }
+        else {
+            [errorMessage appendString:@"请正确设置单天执行日期."];
+            return [NSString stringWithString:errorMessage];
+        }
+    }
+    else if(taskinfo.scheduleType == TaskInfoScheduleTypeContinues) {
+        if([NSString dateStringIsValid:self.dayStringFrom]
+           && [NSString dateStringIsValid:self.dayStringTo]
+           && [self.dayStringFrom compare:self.dayStringTo] == NSOrderedAscending) {
+            taskinfo.dayStringFrom = self.dayStringFrom;
+            taskinfo.dayStringTo = self.dayStringTo;
+        }
+        else {
+            [errorMessage appendString:@"请正确设置开始日期和结束日期."];
+            return [NSString stringWithString:errorMessage];
+        }
+    }
+    else if(taskinfo.scheduleType == TaskInfoScheduleTypeDays) {
+        BOOL checked = YES;
+        for(NSString *day in self.dayStrings) {
+            if([NSString dateStringIsValid:day]) {
+                
+            }
+            else {
+                checked = NO;
+                break;
+            }
+        }
+        if(self.dayStrings.count > 0 && checked) {
+            taskinfo.dayStrings = [NSString arrayDescriptionConbine:self.dayStrings seprator:@","];//多天模式.
+        }
+        else {
+            [errorMessage appendString:@"请正确设置多个执行日期."];
+            return [NSString stringWithString:errorMessage];
+        }
+    }
     
-    self.taskinfo.dayRepeat = YES; //每天都重复执行此任务.
-    self.taskinfo.time = @""; //1.单天定点hh:mm. 2.day repeat 定点. hh:mm 3.单天时间段.hh:mm-hh:mm. 4.day repeat 时间段.hh:mm-hh:mm
-    
-    [self.taskinfo generateDaysOnTask];
+    NSDictionary *dict = [taskinfo toDictionary];
+    NSLog(@"%@", dict);
+    return @"";
 }
 
 
@@ -342,7 +398,10 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
         NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务执行日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
-        NSString *dayString = self.dayString.length == 0 ? @"yyyy-MM-dd" : self.dayString;
+        if(self.dayString.length == 0) {
+            self.dayString = [NSString dateStringToday];
+        }
+        NSString *dayString = self.dayString;
         NSMutableAttributedString *attributedStringDayString =
                 [NSString attributedStringWith:dayString
                                           font:FONT_SYSTEM
@@ -373,7 +432,11 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
         NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务开始日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
-        NSString *dayString = self.dayStringFrom.length == 0 ? @"yyyy-MM-dd" : self.dayStringFrom;
+        
+        if(![NSString dateStringIsValid:self.dayStringFrom]) {
+            self.dayStringFrom = [NSString dateStringToday];
+        }
+        NSString *dayString = self.dayStringFrom;
         NSMutableAttributedString *attributedStringDayString =
         [NSString attributedStringWith:dayString
                                   font:FONT_SYSTEM
@@ -385,8 +448,12 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
         [attributedString appendAttributedString:attributedStringDayString];
         self.dayButtonA.attributedText = attributedString;
         
-        attributedString = [NSString attributedStringWith:@"任务开始日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
-        dayString = self.dayStringTo.length == 0 ? @"yyyy-MM-dd" : self.dayStringTo;
+        attributedString = [NSString attributedStringWith:@"任务结束日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
+        if(![NSString dateStringIsValid:self.dayStringTo]) {
+            self.dayStringTo = [NSString dateStringTomorrow];
+        }
+        
+        dayString = self.dayStringTo;
         attributedStringDayString =
         [NSString attributedStringWith:dayString
                                   font:FONT_SYSTEM
@@ -397,11 +464,6 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
                           throughColor:nil];
         [attributedString appendAttributedString:attributedStringDayString];
         self.dayButtonB.attributedText = attributedString;
-        
-        
-        
-        
-        
     }
     
     

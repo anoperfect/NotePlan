@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath*,NSNumber*> *optumizeHeights;
 
 @property (nonatomic, strong) UITableView *contentTableView;
+@property (nonatomic, assign) BOOL moveToBottom; //直接执行一次移动到底部, 可能不能执行到.
 @end
 
 @implementation TaskRecordViewController
@@ -81,10 +82,13 @@
     self.contentTableView = [[UITableView alloc] init];
     self.contentTableView.dataSource = self;
     self.contentTableView.delegate = self;
+    self.contentTableView.bounces = NO;
     [self addSubview:self.contentTableView];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     
-    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.contentTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.taskRecords.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    });
 }
 
 
@@ -144,7 +148,7 @@
 - (void)updateTaskRecordsData
 {
     self.taskRecords = [[[TaskRecordManager taskRecordManager] taskRecordsOnSn:self.taskinfo.sn types:self.taskRecordTypesEnabled] mutableCopy];
-    [[TaskRecordManager taskRecordManager] taskRecordSort:self.taskRecords byModifiedAtAscend:NO];
+    [[TaskRecordManager taskRecordManager] taskRecordSort:self.taskRecords byModifiedAtAscend:YES];
     NSLog(@"rrrrrr : %zd", self.taskRecords.count);
 }
 
@@ -236,6 +240,14 @@
 }
 
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.row == self.taskRecords.count - 1 && !self.moveToBottom) {
+        [self.contentTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.taskRecords.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        
+        self.moveToBottom = YES;
+    }
+}
 
 
 

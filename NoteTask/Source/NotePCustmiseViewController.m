@@ -55,6 +55,9 @@
 @property (nonatomic, strong) UILabel  *borderLable;
 @property (nonatomic, strong) UISwitch *borderSwitch;
 
+@property (nonatomic, strong) UILabel  *boldLable;
+@property (nonatomic, strong) UISwitch *boldSwitch;
+
 
 @property (nonatomic, strong) UILabel       *textColorLabel;
 @property (nonatomic, strong) UITextField   *textColorInput;
@@ -208,6 +211,21 @@
         self.borderSwitch.on = YES;
     }
     
+    self.boldLable = [[UILabel alloc] init];
+    [self.contentView addSubview:self.boldLable];
+    self.boldLable.text = @"粗体";
+    self.boldLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.boldLable.textAlignment = NSTextAlignmentCenter;
+    self.boldSwitch = [[UISwitch alloc] init];
+    [self.contentView addSubview:self.boldSwitch];
+    [self.boldSwitch addTarget:self action:@selector(switchValueChangeBold) forControlEvents:UIControlEventValueChanged];
+    if([self.sampleNoteParagraph.styleDictionay[@"font-weight"] isEqualToString:@"bold"]) {
+        self.boldSwitch.on = YES;
+    }
+    
+    
+    
+    
 #if 0
     //可以设置颜色和大小. 大小通过变换.
     self.borderSwitch.onTintColor = [UIColor colorWithRed:0.984 green:0.478 blue:0.224 alpha:1.000];
@@ -259,81 +277,40 @@
 {
     [super viewWillLayoutSubviews];
     
-    FrameLayout *frameLayout = [[FrameLayout alloc] initWithRootView:self.contentView];
-    [frameLayout frameLayout:FRAMELAYOUT_NAME_MAIN
-                          to:@[@"sample",
-                               @"colorsDefault",
-                               @"colorsRecent",
-                               @"fontSizeLabel",
-                               @"fontSize",
-                               @"padding0",
-                               @"switchs",
-                               @"padding1",
-                               @"textColorLine",
-                               @"paddingTextColor",
-                               @"textBackgroundColorLine"]
-             withPercentages:@[@(0.45),    @(0.01),          @(0.01),          @(0.06),          @(0.02),     @(0.06),      @(0.06),    @(0.06),         @(0.036),         @(0.01),
-                                @(0.036)]];
+    FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
+    [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
+                  toViews:@[
+                            [FrameLayoutView viewWithName:@"_sampleText" percentage:0.6 edge:UIEdgeInsetsMake(10, 27, 10, 27)],
+                            [FrameLayoutView viewWithName:@"fontSizeLinePadding" value:20 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"fontSizeLine" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"_fontSizeSlider" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"paddingTextColorLine" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"textColorLine" value:28 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"switchLine1Padding" value:20 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"switchLine1" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"switchLine2Padding" value:20 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"switchLine2" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"bottomBlank" percentage:0.4 edge:UIEdgeInsetsZero],
+                            ]
+     ];
     
-//    [frameLayout frameLayoutEqual:@"switchs" to:@[@"switchLabelLine", @"switchLine"]];
-//    [frameLayout frameLayoutEqual:@"switchLabelLine" toVertical:@[@"italicLabel", @"underlineLabel", @"borderLabel"]];
-//    [frameLayout frameLayoutEqual:@"switchLine" toVertical:@[@"italicSwitch", @"underlineSwitch", @"borderSwitch"]];
+    [f      frameLayout:@"fontSizeLine"
+             toVertical:@[@"_fontSizeNameLabel", @"fontSizePadding", @"_fontSizeValueLabel"]
+        withPercentages:@[@0.18, @0.7, @0.12]];
     
-    [frameLayout frameLayout:@"switchs"
-                  toVertical:@[@"italicLabel", @"italicSwitch", @"underlineLabel", @"underlineSwitch", @"borderLabel", @"borderSwitch"]
-             withPercentages:@[@(.12), @(.21), @(.12), @(.21), @(.12), @(.21)]];
+    [f      frameLayout:@"textColorLine"
+             toVertical:@[@"_textColorLabel", @"_textColorInput", @"_textColorButton"]
+        withPercentages:@[@(.20), @(.40), @(.20)]];
     
-    FrameAssign(self.sampleText, @"sample", frameLayout)
+    [f      frameLayout:@"switchLine1"
+             toVertical:@[@"_italicLable", @"_italicSwitch", @"switchLine1Padding", @"_underlineLable", @"_underlineSwitch"]
+        withPercentages:@[@0.10, @0.16, @0.24, @0.10, @0.16]];
     
+    [f      frameLayout:@"switchLine2"
+             toVertical:@[@"_borderLable", @"_borderSwitch", @"switchLine2Padding", @"_boldLable", @"_boldSwitch"]
+        withPercentages:@[@0.10, @0.16, @0.24, @0.10, @0.16]];
     
-    
-    
-//    self.fontsizeView.frame = [frameLayout frameLayoutGet:@"fontSize"];
-//    self.fontSizeSlider.frame = [frameLayout frameLayoutGet:@"fontSize"];
-    
-    //font-size.
-    [frameLayout frameLayout:@"fontSizeLabel"
-                  toVertical:@[@"fontSizeName", @"fontSizeNamePadding", @"fontSizeValue"]
-             withPercentages:@[@(0.18), @(0.7), @(0.12)]];
-    FrameAssign(self.fontSizeNameLabel,     @"fontSizeName",    frameLayout)
-    FrameAssign(self.fontSizeValueLabel,    @"fontSizeValue",   frameLayout)
-    
-    [frameLayout frameLayout:@"fontSize"
-                  toVertical:@[@"fontSizeSliderPaddingLeft", @"fontSizeSlider", @"fontSizeSliderRight"]
-             withPercentages:@[@(0.03), @(0.94), @(0.03)]];
-    FrameAssign(self.fontSizeSlider,        @"fontSizeSlider",  frameLayout)
-    
-    
-    
-    
-    self.italicLable.frame      = [frameLayout frameLayoutGet:@"italicLabel"];
-    self.italicSwitch.frame     = [frameLayout frameLayoutGet:@"italicSwitch"];
-    
-    self.underlineLable.frame   = [frameLayout frameLayoutGet:@"underlineLabel"];
-    self.underlineSwitch.frame  = [frameLayout frameLayoutGet:@"underlineSwitch"];
-    
-    self.borderLable.frame      = [frameLayout frameLayoutGet:@"borderLabel"];
-    self.borderSwitch.frame     = [frameLayout frameLayoutGet:@"borderSwitch"];
-    
-    
-    [frameLayout frameLayout:@"textColorLine"
-                  toVertical:@[@"textColorLabel", @"textColorInput", @"textColorButton"]
-             withPercentages:@[@(.20), @(.40), @(.20)]];
-    
-    FrameAssign(self.textColorLabel, @"textColorLabel", frameLayout)
-    FrameAssign(self.textColorInput, @"textColorInput", frameLayout)
-    FrameAssign(self.textColorButton, @"textColorButton", frameLayout)
-    
-    [frameLayout frameLayout:@"textBackgroundColorLine"
-                  toVertical:@[@"textBackgroundColorLabel", @"textBackgroundColorInput"]
-             withPercentages:@[@(.36), @(.60), @(.12), @(.21), @(.12), @(.21)]];
-    
-    FrameAssign(self.textBackgroundColorLabel, @"textBackgroundColorLabel", frameLayout)
-    FrameAssign(self.textBackgroundColorInput, @"textBackgroundColorInput", frameLayout)
-    
-    
-    
-
+    [self memberViewSetFrameWith:[f nameAndFrames]];
 }
 
 
@@ -429,6 +406,23 @@
     
     [self updateSampleText];
 }
+
+
+- (void)switchValueChangeBold
+{
+    NSLog(@"Bold : %d", self.boldSwitch.on);
+    
+    if(self.boldSwitch.on) {
+        self.sampleNoteParagraph.styleDictionay[@"font-weight"] = @"bold";
+    }
+    else {
+        [self.sampleNoteParagraph.styleDictionay removeObjectForKey:@"font-weight"];
+    }
+    
+    [self updateSampleText];
+}
+
+
 
 
 - (void)finish

@@ -86,6 +86,100 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 }
 
 
+
+- (void)copyFrom:(TaskInfo*)taskinfo
+{
+    self.content        = taskinfo.content ;
+    self.status         = taskinfo.status ;
+    self.committedAt    = taskinfo.committedAt ;
+    self.modifiedAt     = taskinfo.modifiedAt ;
+    self.signedAt       = taskinfo.signedAt ;
+    self.finishedAt     = taskinfo.finishedAt ;
+    
+    self.scheduleType   = taskinfo.scheduleType ;
+    self.dayString      = taskinfo.dayString ;
+    self.dayStringFrom  = taskinfo.dayStringFrom ;
+    self.dayStringTo    = taskinfo.dayStringTo ;
+    self.dayStrings     = taskinfo.dayStrings ;
+    
+    self.dayRepeat      = taskinfo.dayRepeat ;
+    self.time           = taskinfo.time ;
+    
+    [self generateDaysOnTask];
+}
+
+
+- (NSString*)updateFrom:(TaskInfo*)taskinfo
+{
+    NSMutableString *s = [[NSMutableString alloc] init];
+    if(![self.content isEqualToString:taskinfo.content]) {
+        [s appendString:@" 任务内容"];
+        self.content = taskinfo.content;
+    }
+    
+    if(self.scheduleType != taskinfo.scheduleType) {
+        [s appendString:@" 执行日期"];
+        self.scheduleType = taskinfo.scheduleType;
+        switch (self.scheduleType) {
+            case TaskInfoScheduleTypeDay:
+                self.dayString = taskinfo.dayString;
+                break;
+                
+            case TaskInfoScheduleTypeContinues:
+                self.dayStringFrom = taskinfo.dayStringFrom;
+                self.dayStringTo = taskinfo.dayStringTo;
+                break;
+                
+            case TaskInfoScheduleTypeDays:
+                self.dayStrings = taskinfo.dayStrings;
+                break;
+                
+            default:
+                break;
+        }
+    }
+    else {
+        switch (self.scheduleType) {
+            case TaskInfoScheduleTypeDay:
+                if(![self.dayString isEqualToString:taskinfo.dayString]) {
+                    [s appendString:@"任务执行日期[单天] "];
+                    self.dayString = taskinfo.dayString;
+                }
+                break;
+                
+            case TaskInfoScheduleTypeContinues:
+                if(![self.dayStringFrom isEqualToString:taskinfo.dayStringFrom]) {
+                    [s appendString:@"任务开始日期 "];
+                    self.dayStringFrom = taskinfo.dayStringFrom;
+                }
+                
+                if(![self.dayStringTo isEqualToString:taskinfo.dayStringTo]) {
+                    [s appendString:@"任务结束日期 "];
+                    self.dayStringTo = taskinfo.dayStringTo;
+                }
+                
+                break;
+                
+            case TaskInfoScheduleTypeDays:
+                if(![self.dayStrings isEqualToString:self.dayStrings]) {
+                    [s appendString:@"任务执行日期[多天] "];
+                    self.dayStrings = taskinfo.dayStrings;
+                }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    [taskinfo generateDaysOnTask];
+    if(s.length > 0) {
+        self.modifiedAt = taskinfo.modifiedAt;
+    }
+    return [NSString stringWithString:s];
+}
+
+
 - (BOOL)isFinishOnDayString:(NSString*)dayString
 {
     return NO;
@@ -148,17 +242,8 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         return @"NAN";
     }
     
-    NSDate *dateNow = [NSDate date];
-    NSInteger dayNow = [dateNow timeIntervalSince1970];
-    dayNow /= 86400;
-    NSLog(@"dayNow : %zd ", dayNow);
-    
-    NSInteger day= [date timeIntervalSince1970];
-    day/= 86400;
-    NSLog(@"dayNow : %zd ", day);
-    
     NSString *additional = nil;
-    
+    NSDate *dateNow = [NSDate date];
     if([NSString date:date isSameDayOfDate:dateNow]) {
         NSInteger secsInteval = [dateNow timeIntervalSinceDate:date];
         if(secsInteval == 0) {
@@ -278,7 +363,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         return [number integerValue];
     }
     else {
-        return NSNotFound;
+        return TaskInfoScheduleTypeNone;
     }
 }
 

@@ -116,7 +116,7 @@
 - (NSString*)queryFinishedAtsOnSn:(NSString*)sn onDay:(NSString*)day;
 
 - (BOOL)addTaskInfo:(TaskInfo*)taskinfo;
-- (BOOL)updateTaskInfo:(TaskInfo*)taskinfo addUpdateRecord:(BOOL)addUpdateRecord;
+- (BOOL)updateTaskInfo:(TaskInfo*)taskinfo addUpdateDetail:(NSString*)updateDetail;
 
 
 @end
