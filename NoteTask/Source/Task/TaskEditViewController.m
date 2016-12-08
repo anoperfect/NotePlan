@@ -346,6 +346,7 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
         }
         if(self.dayStrings.count > 0 && checked) {
             taskinfo.dayStrings = [NSString arrayDescriptionConbine:self.dayStrings seprator:@","];//多天模式.
+            NSLog(@"---%@", taskinfo.dayStrings);
         }
         else {
             [errorMessage appendString:@"请正确设置多个执行日期."];
@@ -478,36 +479,13 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 
 - (void)actionClickDayButtonA:(id)sender
 {
-    LOG_POSTION
-    TaskCalendar *taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS];
-    __weak TaskCalendar *_taskCalendar = taskCalendar;
-    __weak typeof(self) _self = self;
-    [self showPopupView:taskCalendar containerAlpha:0.9 dismiss:^{
-        if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
-            _self.dayString = _taskCalendar.dayString;
-        }
-        else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-            _self.dayStringFrom = _taskCalendar.dayString;
-        }
-        
-        [_self updateDaysSelectorText];
-    }];
+    [self openCalendarMutilMode:NO withName:@"ButtonA"];
 }
 
 
 - (void)actionClickDayButtonB:(id)sender
 {
-    LOG_POSTION
-    TaskCalendar *taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS];
-    __weak TaskCalendar *_taskCalendar = taskCalendar;
-    __weak typeof(self) _self = self;
-    [self showPopupView:taskCalendar containerAlpha:0.9 dismiss:^{
-        if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-            _self.dayStringTo = _taskCalendar.dayString;
-        }
-        
-        [_self updateDaysSelectorText];
-    }];
+    [self openCalendarMutilMode:NO withName:@"ButtonB"];
 }
 
 
@@ -519,7 +497,51 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     if(idx >= 0 && idx < self.daysTypes.count) {
         self.daysType = self.daysTypes[idx];
         [self viewWillLayoutSubviews];
+        
+        if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDays) {
+            __weak typeof(self) _self = self;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [_self openCalendarMutilMode:YES withName:@"MutilMode"];
+            });
+        }
     }
+}
+
+
+- (void)openCalendarMutilMode:(BOOL)mutilMode withName:(NSString*)name
+{
+    TaskCalendar *taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS];
+    if(mutilMode) {
+        taskCalendar.mutilMode = YES;
+    }
+    __weak typeof(self) _self = self;
+    __weak typeof(taskCalendar) _taskCalendar = taskCalendar;
+    __block BOOL _bMuiltMode = mutilMode;
+    [self showPopupView:taskCalendar containerAlpha:0.9 dismiss:^{
+        if(_bMuiltMode) {
+            NSLog(@"%@", _taskCalendar.dayStrings);
+            _self.dayStrings = _taskCalendar.dayStrings;
+        }
+        else {
+            if([name isEqualToString:@"ButtonA"]) {
+                if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
+                    _self.dayString = _taskCalendar.dayString;
+                }
+                else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                    _self.dayStringFrom = _taskCalendar.dayString;
+                }
+                
+            }
+            else if([name isEqualToString:@"ButtonB"]) {
+                if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                    _self.dayStringTo = _taskCalendar.dayString;
+                }
+            }
+        }
+        
+        //更新显示.
+        [_self updateDaysSelectorText];
+    }];
 }
 
 

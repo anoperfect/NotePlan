@@ -102,11 +102,13 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 - (void)copyFrom:(TaskInfo*)taskinfo;
 - (NSString*)updateFrom:(TaskInfo*)taskinfo;
 
+- (void)generateDaysOnTask;
+
+- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent andTextColor:(UIColor*)textColor;
+
 - (NSString*)summaryDescription;
 
 + (NSString*)dateTimeStringForDisplay:(NSString*)at;
-
-- (void)generateDaysOnTask;
 
 + (NSArray<NSString*>*)scheduleStrings;
 + (NSString*)scheduleStringWithType:(NSInteger)type;
@@ -116,6 +118,8 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 @end
 
 
-
+#define TASKINFO_MODE_ARRAGE     1
+#define TASKINFO_MODE_DAY        2
+#define TASKINFO_MODE_LIST       3
 
 

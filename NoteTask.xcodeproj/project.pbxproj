@@ -71,6 +71,7 @@
 		B56E36A81DBE65FB00165050 /* TaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36A71DBE65FB00165050 /* TaskListViewController.m */; };
 		B56E36AB1DBE662300165050 /* TaskNoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36AA1DBE662300165050 /* TaskNoteViewController.m */; };
 		B56E36AE1DBE664800165050 /* TaskTimeLineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */; };
+		B58D5D711DF9030800133C60 /* NotePreset.json in Resources */ = {isa = PBXBuildFile; fileRef = B58D5D701DF9030800133C60 /* NotePreset.json */; };
 		B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B58DE9791D6AB302002B7697 /* ColorSelector.m */; };
 		B595C25E1C7829E10087744D /* TableViewLastCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B595C25D1C7829E10087744D /* TableViewLastCell.m */; };
 		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
@@ -241,6 +242,7 @@
 		B56E36AA1DBE662300165050 /* TaskNoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskNoteViewController.m; sourceTree = "<group>"; };
 		B56E36AC1DBE664800165050 /* TaskTimeLineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskTimeLineViewController.h; sourceTree = "<group>"; };
 		B56E36AD1DBE664800165050 /* TaskTimeLineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskTimeLineViewController.m; sourceTree = "<group>"; };
+		B58D5D701DF9030800133C60 /* NotePreset.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = NotePreset.json; path = Source/Note/NotePreset.json; sourceTree = "<group>"; };
 		B58DE9781D6AB302002B7697 /* ColorSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorSelector.h; path = Source/ColorSelector.h; sourceTree = "<group>"; };
 		B58DE9791D6AB302002B7697 /* ColorSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorSelector.m; path = Source/ColorSelector.m; sourceTree = "<group>"; };
 		B595C25C1C7829E10087744D /* TableViewLastCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewLastCell.h; path = ViewPublic/TableViewLastCell.h; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 				B520931F1DC19E0E000349A5 /* NoteDetailCell.m */,
 				B56632D81DAF3179006EE40A /* note.htm */,
 				B5056A961DC85A9000979758 /* NoteTemplate.htm */,
+				B58D5D701DF9030800133C60 /* NotePreset.json */,
 			);
 			name = Note;
 			sourceTree = "<group>";
@@ -933,6 +936,7 @@
 				B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
+				B58D5D711DF9030800133C60 /* NotePreset.json in Resources */,
 				B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */,
 				B5B905411D4FC3E900DF1E24 /* db.json in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,

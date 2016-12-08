@@ -212,6 +212,11 @@
         self.notesView.dataSource = self;
         self.notesView.delegate = self;
         self.notesView.backgroundColor = [UIColor colorWithName:@"NotesBackground"];
+        self.notesView.separatorColor = [UIColor blueColor];
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:blurEffect];
+        self.notesView.separatorEffect = vibrancyEffect;
         
         //UIPanGestureRecognizer *panGesture=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tableViewPan:)];
         //[_notesView addGestureRecognizer:panGesture];

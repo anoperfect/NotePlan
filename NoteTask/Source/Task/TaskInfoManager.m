@@ -63,6 +63,7 @@
     if(!add) {
         add = [[TaskInfoArrange alloc] init];
         add.taskinfo = taskinfo;
+        add.arrangeName = self.arrangeName;
         [self.taskInfoArranges addObject:add];
     }
     
@@ -229,13 +230,6 @@
             }
             
             [taskinfosIn1Day addObject:taskinfo];
-        }
-    }
-    
-    for(NSString *day in self.tasksDayMode.allKeys) {
-        NSLog(@"%@ : \n", day);
-        for(TaskInfo *taskinfo in self.tasksDayMode[day]) {
-            NSLog(@"\t%@", taskinfo.sn);
         }
     }
     

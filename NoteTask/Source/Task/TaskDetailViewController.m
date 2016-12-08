@@ -23,20 +23,59 @@ TaskRecord
  */
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath*,NSNumber*> *optumizeHeights;
 
-
 @property (nonatomic, strong) NSMutableArray<TaskRecord*> *taskRecords;
 
 @property (nonatomic, strong) NSArray<NSNumber*> *taskRecordTypesSortOrder;
 @property (nonatomic, strong) NSMutableArray<NSNumber*> *taskRecordTypes;
 @property (nonatomic, strong) NSMutableArray<NSNumber*> *taskRecordTypesEnabled;
 
-@end
+@property (nonatomic, strong) TaskInfo *taskinfo;
 
+@property (nonatomic, assign) NSInteger mode;
+@property (nonatomic, strong) TaskInfoArrange *arrange;
+@property (nonatomic, strong) NSString *dayString;
+
+@end
 
 
 @implementation TaskDetailViewController
 
 
+
+
+- (instancetype)initWithArrangeMode:(TaskInfo*)taskinfo arrange:(TaskInfoArrange*)arrange
+{
+    self = [super init];
+    if(self) {
+        self.taskinfo = taskinfo;
+        self.mode = TASKINFO_MODE_ARRAGE;
+        self.arrange = arrange;
+    }
+    return self;
+}
+
+
+- (instancetype)initWithDayMode:(TaskInfo*)taskinfo day:(NSString*)dayString
+{
+    self = [super init];
+    if(self) {
+        self.taskinfo = taskinfo;
+        self.mode = TASKINFO_MODE_DAY;
+        self.dayString = dayString;
+    }
+    return self;
+}
+
+
+- (instancetype)initWithListMode:(TaskInfo*)taskinfo
+{
+    self = [super init];
+    if(self) {
+        self.taskinfo = taskinfo;
+        self.mode = TASKINFO_MODE_LIST;
+    }
+    return self;
+}
 
 
 - (void)viewDidLoad
@@ -113,6 +152,7 @@ TaskRecord
 - (NSArray*)taskPropertyTitles
 {
     NSArray *titles = @[
+                                 @"当前模式",
                                  @"任务时间",
                                  @"提交时间",
                                  /*
@@ -126,8 +166,20 @@ TaskRecord
 
 - (NSMutableAttributedString*)attributedStringForPropertyContentOfTitle:(NSString*)title
 {
+    if([title isEqualToString:@"当前模式"]) {
+        if(self.mode == TASKINFO_MODE_ARRAGE) {
+            return [self attributedStringForPropertyContent:@"安排模式"];
+        }
+        else if(self.mode == TASKINFO_MODE_DAY) {
+            return [self attributedStringForPropertyContent:@"日期模式"];
+        }
+        else if(self.mode == TASKINFO_MODE_LIST) {
+            return [self attributedStringForPropertyContent:@"列表模式"];
+        }
+    }
+    
     if([title isEqualToString:@"任务时间"]) {
-        return [self attributedStringForPropertyContent:@"2016-11-01"];
+        return [self.taskinfo scheduleDateAtrributedStringWithIndent:20.0 andTextColor:[UIColor colorWithName:@"TaskDetailText"]];
     }
     
     if([title isEqualToString:@"提交时间"]) {
@@ -535,6 +587,26 @@ TaskRecord
 }
 
 
+- (NSArray<NSString*>*)dataTaskInfoOnDays
+{
+    return nil;
+}
+
+
+- (void)taskActionFinishOnDay:(NSString*)day
+{
+    NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
+    if(queryFinishAt.length > 0) {
+        NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
+        [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
+        return ;
+    }
+    
+    [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
+    [self actionReloadTaskContent];
+}
+
+
 - (void)taskActionFinish
 {
     LOG_POSTION
@@ -545,34 +617,13 @@ TaskRecord
         return ;
     }
     
-    if([self.arrangeName isEqualToString:@"今天"]) {
-        NSString *day = [NSString dateStringToday];
-        NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
-        if(queryFinishAt.length > 0) {
-            NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
-            [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
-            return ;
-        }
-        
-        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
-        [self actionReloadTaskContent];
-        
-        return ;
-    }
+    NSArray<NSString*> *days = [self dataTaskInfoOnDays];
     
-    if([self.arrangeName isEqualToString:@"明天"]) {
-        NSString *day = [NSString dateStringTomorrow];
-        NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
-        if(queryFinishAt.length > 0) {
-            NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
-            [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
-            return ;
-        }
-        
-        [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
-        [self actionReloadTaskContent];
-        
-        return ;
+    if(days.count == 1) {
+        [self taskActionFinishOnDay:days[0]];
+    }
+    else {
+        [self showIndicationText:@"NotImplemented" inTime:1];
     }
 }
 

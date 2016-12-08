@@ -32,6 +32,9 @@
 - (void)pushViewControllerByName:(NSString*)name;
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
+
+- (void)showMenus:(NSArray<NSDictionary*>*)menus withSelectAction:(void(^)(NSInteger idx, NSDictionary* menu))action;
+
 //override.
 - (void)pushBackAction;
 

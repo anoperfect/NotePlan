@@ -29,6 +29,7 @@
 
 @property (nonatomic, strong) TaskInfo *taskinfo;
 @property (nonatomic, strong) NSMutableArray<NSString*> *arrangeDays;
+@property (nonatomic, strong) NSString *arrangeName;
 
 @end
 

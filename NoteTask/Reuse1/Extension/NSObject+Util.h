@@ -35,6 +35,7 @@
 + (NSString*)dateStringOfDate:(NSDate*)date;
 + (NSString*)dateTimeStringOfDate:(NSDate*)date;
 
++ (NSInteger)dateStringCountCompareToday:(NSString*)dayString;
 
 + (BOOL)date:(NSDate*)date isSameDayOfDate:(NSDate*)date0;
 + (BOOL)date:(NSDate*)date isYestodayOfDate:(NSDate*)date0;

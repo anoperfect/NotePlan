@@ -289,6 +289,58 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 }
 
 
++ (NSString*)dateStringForDisplay:(NSString*)dateString
+{
+    NSString *dateStringDisplay = dateString;
+    NSString *additional = nil;
+    
+    NSInteger compare = [NSString dateStringCountCompareToday:dateString];
+    if(compare == 0) {
+        additional = @"今天";
+    }
+    else if(compare == -1) {
+        additional = @"昨天";
+    }
+    else if(compare == 1) {
+        additional = @"明天";
+    }
+    
+    if(additional.length > 0) {
+        dateStringDisplay = [NSString stringWithFormat:@"%@(%@)", dateString, additional];
+    }
+    
+    NS0Log(@"from [%@] to [%@].", at, dateTimeString);
+    return dateStringDisplay;
+}
+
+
+- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent andTextColor:(UIColor*)textColor
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    switch (self.scheduleType) {
+        case TaskInfoScheduleTypeDay:
+            attributedString = [NSString attributedStringWith:[TaskInfo dateStringForDisplay:self.dayString] font:FONT_SYSTEM indent:indent textColor:textColor];
+            break;
+            
+        case TaskInfoScheduleTypeContinues:
+            attributedString = [NSString attributedStringWith:[NSString stringWithFormat:@"从 %@ 到 %@", self.dayStringFrom, self.dayStringTo]
+                                                         font:FONT_SYSTEM
+                                                       indent:indent
+                                                    textColor:textColor];
+            break;
+            
+        case TaskInfoScheduleTypeDays:
+            attributedString = [NSString attributedStringWith:self.dayStrings font:FONT_SYSTEM indent:indent textColor:textColor];
+            break;
+            
+        default:
+            break;
+    }
+    
+    return attributedString;
+}
+
+
 - (NSString*)description
 {
     NSMutableString *s = [[NSMutableString alloc] init];

@@ -23,9 +23,7 @@
 
 
 
-#define MODE_ARRAGE     1
-#define MODE_DAY        2
-#define MODE_LIST       3
+
 @property (nonatomic, assign) NSInteger mode; //0.arrange mode. 1.day mode. 2.list mode.
 
 @property (nonatomic, strong) TaskInfoManager *taskInfoManager;
@@ -50,7 +48,7 @@
 {
     [super viewDidLoad];
 
-    self.mode = MODE_ARRAGE;
+    self.mode = TASKINFO_MODE_ARRAGE;
 
     self.sectionsWrap = [[NSMutableArray alloc] init];
     self.taskCellOptumizeHeights = [[NSMutableDictionary alloc] init];
@@ -187,7 +185,7 @@
 {
     CGFloat heightSectionHeader = 0.0;
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
             
@@ -196,10 +194,10 @@
             heightSectionHeader = 45.0;
         }
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         heightSectionHeader = 45.0;
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         heightSectionHeader = 45.0;
     }
     
@@ -239,7 +237,7 @@
     NSInteger number = 0;
     NSMutableAttributedString *attributedString = nil;
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
             
@@ -260,7 +258,7 @@
              ];
         }
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         NSString *day = self.taskInfoManager.tasksDay[section];
         NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
         attributedString = [NSString attributedStringWith:day
@@ -277,7 +275,7 @@
                                                   ]
          ];
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         attributedString = [NSString attributedStringWith:@"任务列表"
                                                      font:font
                                                    indent:indent
@@ -379,13 +377,13 @@
 {
     NSInteger sections = 1;
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         sections = self.taskInfoManager.taskArrangeGroups.count;
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         sections = self.taskInfoManager.tasksDayMode.count;
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         sections = 1;
     }
     
@@ -397,7 +395,7 @@
 {
     NSInteger rows = 0;
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         
         if((!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"])
@@ -408,7 +406,7 @@
             rows = taskArrangeGroup.taskInfoArranges.count;
         }
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         if([self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
             rows = 0;
         }
@@ -418,7 +416,7 @@
             rows = taskinfos.count;
         }
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         if([self.sectionsWrap indexOfObject:@(section)] != NSNotFound) {
             rows = 0;
         }
@@ -442,13 +440,13 @@
     TaskInfo *taskinfo = nil;
     NSArray<TaskFinishAt*> *finishedAts = nil;
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         taskinfo = taskInfoArrange.taskinfo;
         finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskInfoArrange.arrangeDays];
         [cell setTaskInfo:taskinfo finishedAts:finishedAts];
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         NSString *day = self.taskInfoManager.tasksDay[section];
         NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
         taskinfo = taskinfos[row];
@@ -459,7 +457,7 @@
         taskFinishAt.finishedAt = finishedAt;
         [cell setTaskInfo:taskinfo finishedAts:@[taskFinishAt]];
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         taskinfo = self.taskInfoManager.taskinfos[row];
         finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskinfo.daysOnTask];
         NSLog(@"row %zd : %@", row, taskinfo);
@@ -480,17 +478,17 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         [self enterTaskDetail:taskInfoArrange.taskinfo arrange:taskInfoArrange];
     }
-    else if(self.mode == MODE_DAY) {
+    else if(self.mode == TASKINFO_MODE_DAY) {
         NSString *day = self.taskInfoManager.tasksDay[section];
         NSMutableArray<TaskInfo*> *taskinfos = self.taskInfoManager.tasksDayMode[day];
         TaskInfo *taskinfo = taskinfos[row];
         [self enterTaskDetail:taskinfo onDay:day];
     }
-    else if(self.mode == MODE_LIST) {
+    else if(self.mode == TASKINFO_MODE_LIST) {
         TaskInfo *taskinfo = self.taskInfoManager.taskinfos[row];
         [self enterTaskDetail:taskinfo];
     }
@@ -515,7 +513,7 @@
     CGPoint point = scrollView.contentOffset;
     NSLog(@"%f, %f", point.x, point.y);
     
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         //模式不显示之前. 当下拉回弹达到一定高度时, 显示"之前".
         if(!self.isDisplayBeforeTask) {
             if(point.y < self.contentOffsetYMonitor) {
@@ -587,10 +585,10 @@
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
     NSArray<NSString*> *actionStrings = nil;
-    if(self.mode == MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRAGE) {
         actionStrings = @[@"列表模式", @"日期模式"];
     }
-    else if(self.mode == MODE_DAY){
+    else if(self.mode == TASKINFO_MODE_DAY){
         actionStrings = @[@"列表模式", @"安排模式"];
     }
     else {
@@ -625,21 +623,21 @@
 
 - (void)actionChangeToArrangeMode
 {
-    self.mode = MODE_ARRAGE;
+    self.mode = TASKINFO_MODE_ARRAGE;
     [self actionReloadTasksView];
 }
 
 
 - (void)actionChangeToDayMode
 {
-    self.mode = MODE_DAY;
+    self.mode = TASKINFO_MODE_DAY;
     [self actionReloadTasksView];
 }
 
 
 - (void)actionChangeToListMode
 {
-    self.mode = MODE_LIST;
+    self.mode = TASKINFO_MODE_LIST;
     [self actionReloadTasksView];
 }
 
@@ -744,24 +742,21 @@
 
 - (void)enterTaskDetail:(TaskInfo*)taskinfo arrange:(TaskInfoArrange*)taskinfoArrange
 {
-    TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
-    vc.taskinfo = taskinfo;
+    TaskDetailViewController *vc = [[TaskDetailViewController alloc] initWithArrangeMode:taskinfo arrange:taskinfoArrange];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 
 - (void)enterTaskDetail:(TaskInfo*)taskinfo onDay:(NSString*)day
 {
-    TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
-    vc.taskinfo = taskinfo;
+    TaskDetailViewController *vc = [[TaskDetailViewController alloc] initWithDayMode:taskinfo day:day];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 
 - (void)enterTaskDetail:(TaskInfo*)taskinfo
 {
-    TaskDetailViewController *vc = [[TaskDetailViewController alloc] init];
-    vc.taskinfo = taskinfo;
+    TaskDetailViewController *vc = [[TaskDetailViewController alloc] initWithListMode:taskinfo];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

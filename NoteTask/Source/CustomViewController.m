@@ -17,13 +17,16 @@
 
 
 
-@interface CustomViewController () <MBProgressHUDDelegate>
+@interface CustomViewController () <MBProgressHUDDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) MBProgressHUD *messageIndicationHUD;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) MBProgressHUD *popupHUD;
 
 @property (nonatomic, strong) void(^popupViewDismissBlock)(void);
 @property (nonatomic, assign) BOOL      hiddenByPush;
+
+@property (nonatomic, strong) void(^menuSelectAction)(NSInteger idx, NSDictionary* menu);
+@property (nonatomic, strong) NSArray<NSDictionary*>* menus;
 
 @end
 
@@ -252,6 +255,87 @@
         NSLog(@"#error - vc not alloced by name (%@).", name);
     }
 }
+
+
+- (void)showMenus:(NSArray<NSDictionary*>*)menus withSelectAction:(void(^)(NSInteger idx, NSDictionary* menu))action
+{
+    self.menuSelectAction = action;
+    self.menus = menus;
+    
+    CGFloat width = 100;
+    UITableView *menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, width, VIEW_HEIGHT) style:UITableViewStyleGrouped];
+    [self addSubview:menuTableView];
+    menuTableView.tag = 100045;
+    menuTableView.dataSource = self;
+    menuTableView.delegate = self;
+    menuTableView.rowHeight = 36;
+    [UIView animateWithDuration:0.5 animations:^{
+        menuTableView.frame = CGRectMake(VIEW_WIDTH - width, 0, width, VIEW_HEIGHT);
+        
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
+
+- (void)dismissMenus
+{
+    CGFloat width = 100;
+    UIView *menuTableView = [self.contentView viewWithTag:100045];
+    [UIView animateWithDuration:0.5 animations:^{
+        menuTableView.frame = CGRectMake(VIEW_WIDTH , 0, width, VIEW_HEIGHT);
+    } completion:^(BOOL finished) {
+        [menuTableView removeFromSuperview];
+    }];
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.menus.count;
+}
+
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MenuCell"];
+    NSDictionary *menu = self.menus[indexPath.row];
+    cell.textLabel.text = menu[@"text"];
+    return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(self.menuSelectAction) {
+        self.menuSelectAction(indexPath.row, self.menus[indexPath.row]);
+    }
+    
+    [self dismissMenus];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

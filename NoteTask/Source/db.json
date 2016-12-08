@@ -48,7 +48,7 @@
     {"columnName": "countBrowser",   "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
     {"columnName": "countEdit",      "dataType": "integer", "isNeedForInsert": true, "isAutoIncrement": false},
   ],
-"primaryKeys": [ ],
+"primaryKeys": ["identifier"],
 "preset": [],
 "comment": "笔记"
 },

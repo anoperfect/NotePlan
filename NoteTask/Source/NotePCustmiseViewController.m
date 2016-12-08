@@ -304,11 +304,11 @@
     
     [f      frameLayout:@"switchLine1"
              toVertical:@[@"_italicLable", @"_italicSwitch", @"switchLine1Padding", @"_underlineLable", @"_underlineSwitch"]
-        withPercentages:@[@0.10, @0.16, @0.24, @0.10, @0.16]];
+        withPercentages:@[@0.12, @0.16, @0.22, @0.12, @0.16]];
     
     [f      frameLayout:@"switchLine2"
              toVertical:@[@"_borderLable", @"_borderSwitch", @"switchLine2Padding", @"_boldLable", @"_boldSwitch"]
-        withPercentages:@[@0.10, @0.16, @0.24, @0.10, @0.16]];
+        withPercentages:@[@0.12, @0.16, @0.22, @0.12, @0.16]];
     
     [self memberViewSetFrameWith:[f nameAndFrames]];
 }

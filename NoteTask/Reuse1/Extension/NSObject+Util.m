@@ -239,8 +239,19 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     NSTimeZone *timeZone = [NSTimeZone localTimeZone];
     [formatter setTimeZone:timeZone];
-    [formatter setDateFormat : @"yyyy-MM-dd HH:mm:ss"];
+    if(s.length == 19) {
+        [formatter setDateFormat : @"yyyy-MM-dd HH:mm:ss"];
+    }
+    else if(s.length == 10) {
+        [formatter setDateFormat : @"yyyy-MM-dd"];
+    }
+    
     NSDate *dateTime = [formatter dateFromString:s];
+    
+    if(!dateTime) {
+        NSLog(@"#error - not valid date string : [%@]", s);
+    }
+    
     return dateTime;
 }
 
@@ -251,6 +262,28 @@
     [dateformatter setDateFormat:@"yyyy-MM-dd"];
     NSString * dateString = [dateformatter stringFromDate:date];
     return dateString;
+}
+
+
++ (NSInteger)dateStringCountCompareToday:(NSString*)dayString
+{
+    //直接取since1970的话可能有时区的问题.
+    NSDate *dateToday = [NSDate date];
+    NSString *dateTodayString = [self dateStringOfDate:dateToday];
+    dateToday = [self dateFromString:dateTodayString];
+    NSDate *dateCompare = [self dateFromString:dayString];
+    
+    NSLog(@"%@", dayString);
+    
+    NSTimeInterval t = [dateCompare timeIntervalSinceDate:dateToday];
+    
+    NSLog(@"%@", dateCompare);
+    NSLog(@"%@", dateToday);
+    
+    NSLog(@"%f", t);
+    NSInteger secs = t;
+    NSLog(@"%zd", secs);
+    return secs / (3600 * 24);
 }
 
 
@@ -470,10 +503,14 @@
     NSMutableString *s = [[NSMutableString alloc] init];
     NSInteger idx = 0;
     for(id obj in array) {
-        if(idx != 0) {
-            [s appendString:seprator];
+        if(idx == 0) {
+            [s appendFormat:@"%@", obj];
         }
-        [s appendFormat:@"%@", obj];
+        else {
+            [s appendFormat:@"%@%@", seprator, obj];
+        }
+        
+        idx ++;
     }
     
     return [NSString stringWithString:s];
