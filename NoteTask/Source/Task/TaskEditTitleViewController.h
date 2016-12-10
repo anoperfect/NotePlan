@@ -9,21 +9,8 @@
 #import "CustomViewController.h"
 
 @interface TaskEditTitleViewController : CustomViewController
-
 @end
 
 
 
-#if 0
-@interface TaskCreateViewController : CustomViewController
 
-@end
-
-
-@interface TaskSelector : UIView
-
-@property (nonatomic, strong) NSArray<NSString*> *datas;
-
-@end
-
-#endif

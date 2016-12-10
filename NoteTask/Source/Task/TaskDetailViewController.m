@@ -659,6 +659,27 @@ TaskRecord
 {
     TaskEditViewController *vc = [[TaskEditViewController alloc] initWithTaskInfo:self.taskinfo];
     [self pushViewController:vc animated:YES];
+    
+    NSMutableArray *vcs = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
+    [vcs removeObject:self];
+    self.navigationController.viewControllers = [NSArray arrayWithArray:vcs];
+}
+
+
+- (void)taskActionMore
+{
+    LOG_POSTION
+    [self showMenus:@[
+                      @{@"text":@"完成"}, 
+                      
+                      
+                      ]
+       selectAction:^(NSInteger idx, NSDictionary *menu) {
+           [self dismissMenus];
+       }
+     ];
+    
+    
 }
 
 

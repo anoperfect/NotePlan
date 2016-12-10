@@ -97,6 +97,7 @@
 + (TaskRecord*)taskRecordWithFinishTaskInfo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt
 {
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
+//    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
     taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;

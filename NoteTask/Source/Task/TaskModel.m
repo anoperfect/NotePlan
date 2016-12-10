@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
                 break;
                 
             case TaskInfoScheduleTypeDays:
-                if(![self.dayStrings isEqualToString:self.dayStrings]) {
+                if(![self.dayStrings isEqualToString:taskinfo.dayStrings]) {
                     [s appendString:@"任务执行日期[多天] "];
                     self.dayStrings = taskinfo.dayStrings;
                 }

@@ -33,7 +33,8 @@
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
 
-- (void)showMenus:(NSArray<NSDictionary*>*)menus withSelectAction:(void(^)(NSInteger idx, NSDictionary* menu))action;
+- (void)showMenus:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction;
+- (void)dismissMenus;
 
 //override.
 - (void)pushBackAction;
@@ -57,7 +58,11 @@
 
 
 
+@interface CustomTableView : UIView
 
+- (void)setMenuDatas:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction;
+
+@end
 
 
 

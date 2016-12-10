@@ -17,7 +17,7 @@
 
 
 
-@interface CustomViewController () <MBProgressHUDDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface CustomViewController () <MBProgressHUDDelegate>
 @property (nonatomic, strong) MBProgressHUD *messageIndicationHUD;
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) MBProgressHUD *popupHUD;
@@ -25,8 +25,7 @@
 @property (nonatomic, strong) void(^popupViewDismissBlock)(void);
 @property (nonatomic, assign) BOOL      hiddenByPush;
 
-@property (nonatomic, strong) void(^menuSelectAction)(NSInteger idx, NSDictionary* menu);
-@property (nonatomic, strong) NSArray<NSDictionary*>* menus;
+
 
 @end
 
@@ -257,20 +256,16 @@
 }
 
 
-- (void)showMenus:(NSArray<NSDictionary*>*)menus withSelectAction:(void(^)(NSInteger idx, NSDictionary* menu))action
+- (void)showMenus:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
 {
-    self.menuSelectAction = action;
-    self.menus = menus;
-    
     CGFloat width = 100;
-    UITableView *menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, width, VIEW_HEIGHT) style:UITableViewStyleGrouped];
-    [self addSubview:menuTableView];
-    menuTableView.tag = 100045;
-    menuTableView.dataSource = self;
-    menuTableView.delegate = self;
-    menuTableView.rowHeight = 36;
+    CustomTableView *customTableView = [[CustomTableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, width, VIEW_HEIGHT)];
+    customTableView.tag = 100045;
+    [self addSubview:customTableView];
+    [customTableView setMenuDatas:menus selectAction:selectAction];
+    
     [UIView animateWithDuration:0.5 animations:^{
-        menuTableView.frame = CGRectMake(VIEW_WIDTH - width, 0, width, VIEW_HEIGHT);
+        customTableView.frame = CGRectMake(VIEW_WIDTH - width, 0, width, VIEW_HEIGHT);
         
     } completion:^(BOOL finished) {
         
@@ -280,39 +275,18 @@
 
 - (void)dismissMenus
 {
-    CGFloat width = 100;
-    UIView *menuTableView = [self.contentView viewWithTag:100045];
+    UIView *customTableView = [self.contentView viewWithTag:100045];
+    CGRect frame = customTableView.frame;
+    frame.origin.x = VIEW_WIDTH;
     [UIView animateWithDuration:0.5 animations:^{
-        menuTableView.frame = CGRectMake(VIEW_WIDTH , 0, width, VIEW_HEIGHT);
+        customTableView.frame = frame;
     } completion:^(BOOL finished) {
-        [menuTableView removeFromSuperview];
+        [customTableView removeFromSuperview];
     }];
 }
 
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return self.menus.count;
-}
 
-
-- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MenuCell"];
-    NSDictionary *menu = self.menus[indexPath.row];
-    cell.textLabel.text = menu[@"text"];
-    return cell;
-}
-
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if(self.menuSelectAction) {
-        self.menuSelectAction(indexPath.row, self.menus[indexPath.row]);
-    }
-    
-    [self dismissMenus];
-}
 
 
 
@@ -356,5 +330,83 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+@end
+
+
+
+
+
+@interface CustomTableView ()<UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) UITableView *menuTableView;
+@property (nonatomic, strong) NSArray<NSDictionary*>* menus;
+@property (nonatomic, strong) void(^selectAction)(NSInteger idx, NSDictionary* menu);
+
+
+@end
+
+
+@implementation CustomTableView
+
+- (void)setMenuDatas:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
+{
+    _menus = menus;
+    _selectAction = selectAction;
+}
+
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    BOOL reload = YES;
+    if(!_menuTableView) {
+        _menuTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+        [self addSubview:_menuTableView];
+        _menuTableView.tag = 100045;
+        _menuTableView.dataSource = self;
+        _menuTableView.delegate = self;
+        _menuTableView.rowHeight = 36;
+    }
+    else {
+        CGRect framePrev = _menuTableView.frame;
+        if(CGRectEqualToRect(framePrev, self.bounds)) {
+            reload = NO;
+        }
+    }
+    
+    _menuTableView.backgroundColor = [UIColor colorWithName:@"CustomMenu"];
+    
+    _menuTableView.frame = self.bounds;
+    if(reload) {
+        [_menuTableView reloadData];
+    }
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.menus.count;
+}
+
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    LOG_POSTION
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MenuCell"];
+    LOG_POSTION
+    NSDictionary *menu = self.menus[indexPath.row];
+    cell.textLabel.text = menu[@"text"];
+    return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(self.selectAction) {
+        self.selectAction(indexPath.row, self.menus[indexPath.row]);
+    }
+    
+}
 
 @end

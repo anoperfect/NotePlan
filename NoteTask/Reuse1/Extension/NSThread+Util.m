@@ -1,6 +1,6 @@
 //
-//  NSThread.m
-//  NoteTask
+//  NSThread+Util.m
+//  Reuse0
 //
 //  Created by Ben on 16/2/24.
 //  Copyright © 2016年 Ben. All rights reserved.

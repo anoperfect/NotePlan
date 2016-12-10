@@ -7,7 +7,6 @@
 //
 
 #import "SummaryInRoot.h"
-#import "UIColor+Util.h"
 @implementation SummaryInRoot
 
 
@@ -15,8 +14,7 @@
 
 - (void)fromMenuName:(NSString*)name
 {
-    self.backgroundColor = [UIColor colorWithHex:0xe1eaeb alpha:1.0];
-    
+    self.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
 }
 
 

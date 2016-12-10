@@ -18,10 +18,3 @@
 - (instancetype)initWithListMode:(TaskInfo*)taskinfo;
 
 @end
-
-
-
-@interface TaskRecordView : UIView
-@property (nonatomic, strong) TaskInfo* taskinfo;
-- (void)setTaskRecordTypes:(NSArray<NSNumber*>*)taskRecordTypes triggerOn:(BOOL)on;
-@end

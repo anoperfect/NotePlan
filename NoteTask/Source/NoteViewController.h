@@ -16,11 +16,7 @@
 @end
 
 
-@interface NoteArchiveViewController  : CustomViewController
 
-- (void)setFrom:(NSString*)from andNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
-
-@end
 
 
 

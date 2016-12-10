@@ -33,7 +33,11 @@
 
 
 
-
+static NSString *kStringNoteDefaultStyle = @"默认显示格式";
+static NSString *kStringNoteDefaultTilteSize = @"笔记默认标题字体大小";
+static NSString *kStringNoteDefaultContentSize = @"笔记默认文章字体大小";
+static NSString *kStringTaskDefaultMode = @"默认显示模式";
+static NSString *kStringAppDetail = @"关于NoteTask";
 
 
 
@@ -56,9 +60,10 @@
     
     self.menuNames =  @[@"笔记", @"任务", @"应用"];
     self.menu = @{
-                  @"笔记":@[@"默认标题字体大小", @"默认文章字体大小"],
-                  @"任务":@[@"首页始终显示为安排模式"],
-                  @"应用":@[@"自动同步到云服务器", @"版本"],
+//                  @"笔记":@[kStringNoteDefaultTilteSize, kStringNoteDefaultContentSize],
+                  @"笔记":@[kStringNoteDefaultStyle],
+                  @"任务":@[kStringTaskDefaultMode],
+                  @"应用":@[kStringAppDetail],
                   };
     
     self.tableView1 = [[UITableView alloc] initWithFrame:CGRectMake(0, 100, 60, 180)];
@@ -77,6 +82,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.estimatedRowHeight = 100;
+    self.tableView.separatorColor = [UIColor clearColor];
 }
 
 
@@ -106,12 +112,14 @@
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     return self.menuNames[section];
+//    return @"";
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 56;
+//    return 20;
 }
 
 
@@ -140,16 +148,46 @@
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     NSLog(@"%zd : <%@> %@", indexPath.row, cell.textLabel.text, cell);
     
-    [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 36)];
-    [cell addSubview:label];
-    label.text = [NSString stringWithFormat:@"%@", name];
+    cell.textLabel.text = name;
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    LOG_VIEW_RECT(cell, @"---");
-    LOG_VIEW_RECT(cell.contentView, @"---");
-    LOG_VIEW_RECT(cell.textLabel, @"---");
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 36)];
+//    label.text = @"111";
+//    cell.accessoryView = label;
+    
+    
+    
+//    [cell.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 36)];
+//    [cell addSubview:label];
+//    label.text = [NSString stringWithFormat:@"%@", name];
+//    
+//    LOG_VIEW_RECT(cell, @"---");
+//    LOG_VIEW_RECT(cell.contentView, @"---");
+//    LOG_VIEW_RECT(cell.textLabel, @"---");
     
     return cell;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger section = indexPath.section;
+    NSInteger row = indexPath.row;
+    NSArray<NSString*> *namesBelongToMenu = self.menu[self.menuNames[section]];
+    NSString *name = namesBelongToMenu[row];
+    
+    if([name isEqualToString:kStringNoteDefaultStyle]) {
+        
+    }
+    else if([name isEqualToString:kStringTaskDefaultMode]) {
+        
+    }
+    else if([name isEqualToString:kStringAppDetail]){
+        
+    }
+    
+    
 }
 
 

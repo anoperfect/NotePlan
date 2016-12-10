@@ -25,7 +25,7 @@
 #import "UIpConfig.h"
 #import "DBData.h"
 #import "NSObject+Util.h"
-
+#import "NSString+Util.h"
 
 #import "YYText/YYText.h"
 #import <YYText/YYLabel.h>

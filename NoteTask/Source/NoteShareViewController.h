@@ -1,5 +1,5 @@
 //
-//  NotePdfViewController.h
+//  NoteShareViewController.h
 //  NoteTask
 //
 //  Created by Ben on 16/11/1.

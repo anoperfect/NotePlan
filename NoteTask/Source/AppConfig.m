@@ -291,6 +291,10 @@
 //返回新增note的identifier.
 - (BOOL)configNoteAdd:(NoteModel*)note
 {
+    if(note.identifier.length == 0) {
+        note.identifier = [NSString randomStringWithLength:6 andType:36];
+    }
+    
     BOOL result = YES;
     NSDictionary *infoInsert = @{
                                  DBDATA_STRING_COLUMNS:
@@ -411,6 +415,11 @@
 
 - (NSDictionary*)configNoteUpdateDetect:(NoteModel*)note fromNoteIdentifier:(NSString*)identifier
 {
+    
+#if F
+   \[\@"[a-z]+"\][ ]+=
+#endif
+    
     NoteModel *notePrev = [self configNoteGetByNoteIdentifier:identifier];
     NSMutableDictionary *noteDictPrev = [[NSMutableDictionary alloc] init];
     noteDictPrev[@"identifier"]       = notePrev.identifier;
@@ -1198,9 +1207,6 @@
 }
 
 
-
-
-
 - (AFHTTPSessionManager *)HTTPSessionManager
 {
     if(!self.session) {
@@ -1212,6 +1218,5 @@
     
     return self.session;
 }
-
 
 @end

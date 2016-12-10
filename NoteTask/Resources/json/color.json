@@ -8,6 +8,14 @@
 },
  
  {
+ "name" : "CustomMenu",
+ "title" : "弹出菜单背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eaeb@60",
+ "colornightstringDefault" : "#e1eaeb"
+ },
+ 
+ {
  "name" : "CustomTextColor",
  "title" : "通用字体颜色",
  "enableCustmize" : true,
@@ -30,6 +38,23 @@
 "colorstringDefault" : "#1e2324",
 "colornightstringDefault" : "#1e2324"
 },
+ 
+ {
+ "name" : "MenuBackgroundHighlighted",
+ "title" : "菜单按钮选中时背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#009ed3",
+ "colornightstringDefault" : "#1e2324"
+ },
+ 
+ {
+ "name" : "MenuUnderBackground",
+ "title" : "菜单按钮下栏背景颜色",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#1e2324@80",
+ "colornightstringDefault" : "#1e2324"
+ },
+ 
 
 {
  "name" : "NavigationBackText",
@@ -38,6 +63,14 @@
  "colorstringDefault" : "#1e2324",
  "colornightstringDefault" : "#1e2324"
 },
+ 
+ {
+ "name" : "PopupContainerBackground",
+ "title" : "弹出按钮的背景",
+ "enableCustmize" : true,
+ "colorstringDefault" : "#e1eeee",
+ "colornightstringDefault" : "#e1eeee"
+ },
  
 {
  "name" : "NotesBackground",
@@ -64,20 +97,20 @@
 },
  
 {
- "name" : "PopupContainerBackground",
- "title" : "弹出按钮的背景",
+ "name" : "NoteCustomSectionHeader",
+ "title" : "笔记表格式的表头文本",
  "enableCustmize" : true,
- "colorstringDefault" : "#e1eeee",
- "colornightstringDefault" : "#e1eeee"
+ "colorstringDefault" : "#454545",
+ "colornightstringDefault" : "#454545"
 },
  
-{
- "name" : "CellOnEditingBackground",
- "title" : "编辑行的背景",
+ {
+ "name" : "NoteCustomSectionBackground",
+ "title" : "笔记表格式的表头背景",
  "enableCustmize" : true,
- "colorstringDefault" : "blue",
- "colornightstringDefault" : "blue"
-},
+ "colorstringDefault" : "#e1eaeb@60",
+ "colornightstringDefault" : ""
+ },
  
 {
  "name" : "NoteParagraphs",

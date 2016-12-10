@@ -6,9 +6,6 @@
 //  Copyright © 2016年 Ben. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #include "CustomViewController.h"
 @interface RootViewController : CustomViewController
-
-
 @end

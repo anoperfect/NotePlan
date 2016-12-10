@@ -1,5 +1,5 @@
 //
-//  TaskGroup.m
+//  TaskInfoManager.m
 //  NoteTask
 //
 //  Created by Ben on 16/11/1.

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-
 @interface SummaryInRoot : UIView
 - (void)fromMenuName:(NSString*)name;
 @end

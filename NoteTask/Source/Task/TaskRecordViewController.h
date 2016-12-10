@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-
 @interface TaskRecordViewController : CustomViewController
 @property (nonatomic, strong) TaskInfo *taskinfo;
 @end

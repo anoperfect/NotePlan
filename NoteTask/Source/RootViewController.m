@@ -10,7 +10,7 @@
 #import "SummaryInRoot.h"
 
 #import "MenuButton.h"
-#import "UIColor+Util.h"
+
 
 
 @interface RootViewController ()
@@ -340,10 +340,10 @@
     for(MenuButton *buttonTraversal in _buttons) {
         BOOL equal = [buttonTraversal isEqual:button];
         if(equal) {
-            buttonTraversal.backgroundColor = [UIColor colorWithHex:0x009ed3 alpha:1.0];
+            buttonTraversal.backgroundColor = [UIColor colorWithName:@"MenuBackgroundHighlighted"];
         }
         else {
-            buttonTraversal.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:1.0];
+            buttonTraversal.backgroundColor = [UIColor colorWithName:@"MenuBackground"];
         }
     }
     
@@ -395,7 +395,7 @@
 {
     _settingView = [[UIView alloc] init];
     _settingView.tag = 3;
-    _settingView.backgroundColor = [UIColor colorWithHex:0x1e2324 alpha:0.8];
+    _settingView.backgroundColor = [UIColor colorWithName:@"MenuUnderBackground"];
     
     [self addSubview:_settingView];
     

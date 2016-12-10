@@ -8,9 +8,9 @@
 
 #import "TaskEditViewController.h"
 #import "TaskCell.h"
-#import "TaskDaySelectViewController.h"
-static NSString *kStringStepcreateContent = @"1. 任务内容";
-static NSString *kStringStepScheduleDay = @"2. 执行日期";
+#import "TaskCalendar.h"
+static NSString *kStringStepCreateContent = @"1.任务内容";
+static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 
 
@@ -104,7 +104,8 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.createContentInputView = [[UITextView alloc] init];
-        self.createContentInputView.layer.borderWidth = 0.5;
+        self.createContentInputView.font = FONT_SYSTEM;
+        self.createContentInputView.layer.borderWidth = 1;
         self.createContentInputView.layer.borderColor = [UIColor colorWithName:@"TaskBorderCommon"].CGColor;
         if(self.taskinfo.content.length > 0) {
             self.createContentInputView.text = self.taskinfo.content;
@@ -113,11 +114,20 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
         [self viewWillLayoutSubviews];
     });
     
-    self.createContentLabel.text          = kStringStepcreateContent;
-    self.createScheduleDayLabel.text    = kStringStepScheduleDay;
+    
+    UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:20];
+    CGFloat indent = 10.0;
+    UIColor *textColor = [UIColor colorWithName:@"TaskSectionHeaderText"];
+    
+    self.createContentLabel.attributedText = [NSString attributedStringWith:kStringStepCreateContent font:font indent:indent textColor:textColor];
+    self.createScheduleDayLabel.attributedText = [NSString attributedStringWith:kStringStepScheduleDay font:font indent:indent textColor:textColor];
     
     self.daysInMutilMode.numberOfLines = 0;
     self.daysInMutilMode.font = [UIFont fontWithName:@"Terminus" size:36];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionOpenCalendarMuiltMode)];
+    tap.numberOfTapsRequired = 1;
+    [self.daysInMutilMode addGestureRecognizer:tap];
+    self.daysInMutilMode.userInteractionEnabled = YES;
     
     NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"单天 : \n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]];
     [attributedString appendAttributedString:[NSString attributedStringWith:@"只给任务设置一个执行日期.\n" font:FONT_SMALL indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
@@ -197,7 +207,7 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     }
     
     if(_optumizeHeightcreateContentInputView == 0.0) {
-        _optumizeHeightcreateContentInputView = 72;
+        _optumizeHeightcreateContentInputView = 100;
     }
     
     _heightDetailScheduleDayLabel = _heightDayButtonA = _heightDayButtonB = _heightDaysInMutilMode = 0;
@@ -209,6 +219,10 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDays) {
         _heightDaysInMutilMode = 100;
+        CGSize sizeFit = [self.daysInMutilMode sizeThatFits:CGSizeMake(VIEW_WIDTH, 100)];
+        if(sizeFit.height > _heightDaysInMutilMode) {
+            _heightDaysInMutilMode = sizeFit.height;
+        }
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
         _heightDayButtonA = _heightDayButtonB = 36;
@@ -218,9 +232,11 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
                   toViews:@[
                             [FrameLayoutView viewWithName:@"_createContentLabel"     value:36 edge:UIEdgeInsetsZero],
-                            [FrameLayoutView viewWithName:@"_createContentInputView" value:self.optumizeHeightcreateContentInputView edge:UIEdgeInsetsMake(0, 2, 0, 2)],
+                            [FrameLayoutView viewWithName:@"createContentLabelBottom" value:10 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"_createContentInputView" value:self.optumizeHeightcreateContentInputView edge:UIEdgeInsetsMake(0, 36, 0, 36)],
                             [FrameLayoutView viewWithName:@"" value:10 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_createScheduleDayLabel" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"createScheduleDayLabelBottom" value:10 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_daysTypeSelector" value:36 edge:UIEdgeInsetsMake(2, 36, 2, 36)],
                             [FrameLayoutView viewWithName:@"daysTypeSelectorSeprator" value:20 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_detailScheduleDayLabel" value:_heightDetailScheduleDayLabel edge:UIEdgeInsetsZero],
@@ -287,10 +303,14 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
         NSString *updateDetail = [self.taskinfo updateFrom:taskinfo];
         if(updateDetail.length > 0) {
             [[TaskInfoManager taskInfoManager] updateTaskInfo:self.taskinfo addUpdateDetail:updateDetail];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        else {
+            [self showIndicationText:@"任务信息未修改" inTime:1];
         }
     }
     
-    [self.navigationController popViewControllerAnimated:YES];
+    
 }
 
 
@@ -497,14 +517,13 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
     if(idx >= 0 && idx < self.daysTypes.count) {
         self.daysType = self.daysTypes[idx];
         [self viewWillLayoutSubviews];
-        
-        if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDays) {
-            __weak typeof(self) _self = self;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [_self openCalendarMutilMode:YES withName:@"MutilMode"];
-            });
-        }
     }
+}
+
+
+- (void)actionOpenCalendarMuiltMode
+{
+    [self openCalendarMutilMode:YES withName:@"MutilMode"];
 }
 
 
