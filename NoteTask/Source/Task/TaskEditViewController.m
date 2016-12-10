@@ -510,10 +510,28 @@ static NSString *kStringStepScheduleDay = @"2. 执行日期";
 
 - (void)openCalendarMutilMode:(BOOL)mutilMode withName:(NSString*)name
 {
-    TaskCalendar *taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS];
+    LOG_POSTION
+    TaskCalendar *taskCalendar = nil;
     if(mutilMode) {
-        taskCalendar.mutilMode = YES;
+        taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayStrings:self.dayStrings];
     }
+    else {
+        if([name isEqualToString:@"ButtonA"]) {
+            if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
+                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayString];
+            }
+            else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringFrom];
+            }
+            
+        }
+        else if([name isEqualToString:@"ButtonB"]) {
+            if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringTo];
+            }
+        }
+    }
+    
     __weak typeof(self) _self = self;
     __weak typeof(taskCalendar) _taskCalendar = taskCalendar;
     __block BOOL _bMuiltMode = mutilMode;

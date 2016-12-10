@@ -63,8 +63,10 @@ static NSString *kStringSelectorRepeat = @"重复";
 
 
 
-@property (nonatomic, assign) BOOL mutilMode;
 @property (nonatomic, strong, readonly) NSString *dayString;
 @property (nonatomic, strong, readonly) NSArray<NSString*> *dayStrings;
+
+- (instancetype)initWithFrame:(CGRect)frame andDayString:(NSString*)dayString;
+- (instancetype)initWithFrame:(CGRect)frame andDayStrings:(NSArray<NSString*>*)dayStrings;
 
 @end

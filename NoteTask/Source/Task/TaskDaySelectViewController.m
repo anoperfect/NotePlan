@@ -53,12 +53,15 @@
     //多选模式.
     NSMutableArray *_datesSelected;
     BOOL _selectionMode;
+    YYLabel *_datesDisplay;
+    UIScrollView *_scrollView;
 }
 
 @property (nonatomic, strong) JTCalendarManager *calendarManager;
 @property (nonatomic, strong) JTCalendarMenuView *calendarMenuView;
 @property (nonatomic, strong) JTHorizontalCalendarView *calendarContentView;
 
+@property (nonatomic, assign) BOOL mutilMode;
 @property (nonatomic, strong) NSString *dayString;
 @property (nonatomic, strong) NSArray<NSString*> *dayStrings;
 
@@ -104,6 +107,40 @@
         
         _datesSelected = [[NSMutableArray alloc] init];
     }
+    return self;
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame andDayString:(NSString*)dayString
+{
+    LOG_POSTION
+    self = [self initWithFrame:frame];
+    self.mutilMode = NO;
+    if(dayString) {
+        _dateSelected = [NSString dateFromString:dayString];
+        _textInput.text = dayString;
+        _textInput.userInteractionEnabled = NO;
+    }
+    
+    NSLog(@"TaskCalendar init : date %@", _datesSelected);
+    [_calendarManager reload];
+    return self;
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame andDayStrings:(NSArray<NSString*>*)dayStrings
+{
+    LOG_POSTION
+    self = [self initWithFrame:frame];
+    self.mutilMode = YES;
+    if(dayStrings.count > 0) {
+        for(NSString *dayString in dayStrings) {
+            [_datesSelected addObject:[NSString dateFromString:dayString]];
+        }
+    }
+    
+    NSLog(@"TaskCalendar init : selected %zd (%@)", _datesSelected.count, dayStrings);
+    [_calendarManager reload];
     return self;
 }
 

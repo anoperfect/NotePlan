@@ -1,10 +1,10 @@
 [
 {
-"identifier" : "[presetNoteTask]",
+"identifier" : "",
 "title" : "<p style=\"FONT-SIZE: 18pt; text-align : center\">NoteTask简介</p>",
 "content" : "<p style=\"\">NoteTask是一款记录笔记和计划任务的应用. 主要功能是笔记和任务.</p><p style=\"\">笔记</p><p style=\"\">笔记可用于记载文本内容. 可利用内置web服务器实现局域网内的远程访问. 以及网络web服务器实现互联网环境下的笔记远程访问.</p></p><p style=\"\">任务</p><p style=\"\">任务可用于计划任务, 跟踪任务, 记录历史执行情况. </p>",
 "summary" : "",
-"classification" : "个人笔记",
+"classification" : "使用简介",
 "color" : "",
 "thumb" : "",
 "audio" : "",

@@ -142,6 +142,9 @@
     self.bodyLabel.text     = [note previewSummary];
     
     NSString *modifiedAtDay = _note.modifiedAt.length >=10 ? [_note.modifiedAt substringToIndex:10] : _note.modifiedAt;
+    
+    NSLog(@"%@ : %@", [_note.classification class], _note.classification);
+    
     NSString *classification = _note.classification.length > 0 ? _note.classification : @"未分类" ;
     self.propertyLabel.text = [NSString stringWithFormat:@"%@   /%@/", modifiedAtDay, classification];
     

@@ -330,7 +330,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
             break;
             
         case TaskInfoScheduleTypeDays:
-            attributedString = [NSString attributedStringWith:self.dayStrings font:FONT_SYSTEM indent:indent textColor:textColor];
+            attributedString = [NSString attributedStringWith:[NSString stringWithFormat:@"多天 : %@", self.dayStrings] font:FONT_SYSTEM indent:indent textColor:textColor];
             break;
             
         default:

@@ -368,6 +368,12 @@ static NSInteger kno = 0;
 }
 
 
++ (NSArray<NSString*>*)classificationPreset
+{
+    return @[@"个人笔记", @"使用简介"];
+}
+
+
 + (NSArray<NSString*> *)colorFilterDisplayStrings
 {
     return @[@"所有", @"◉红色", @"未标记", @"◉黄色", @"已标记", @"◉蓝色"];
@@ -451,65 +457,10 @@ static NSInteger kno = 0;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict
 {
-    NS0Log(@"noteFromDictionary : %@", dict);
+    NSLog(@"noteFromDictionary : %@", dict);
     NoteModel *note = [[NoteModel alloc] init];
-    
-    note.sn
-    = [dict[@"rowid"] integerValue];
-    
-    note.identifier
-    = dict[@"identifier"];
-    
-    note.title
-    = dict[@"title"];
-    note.content
-    = dict[@"content"];
-    
-    note.summary
-    = dict[@"summary"];
-    note.classification
-    = dict[@"classification"];
-    note.color
-    = dict[@"color"];
-    note.thumb
-    = dict[@"thumb"];
-    note.audio
-    = dict[@"audio"];
-    
-    
-    note.location
-    = dict[@"location"];
-    note.createdAt
-    = dict[@"createdAt"];
-    note.modifiedAt
-    = dict[@"modifiedAt"];
-    note.browseredAt
-    = dict[@"browseredAt"];
-    note.deletedAt
-    = dict[@"deletedAt"];
-    note.source
-    = dict[@"source"];
-    
-    note.synchronize
-    = dict[@"synchronize"];
-    
-    
-    note.countCollect
-    = [dict[@"countCollect"] integerValue];
-    note.countLike
-    = [dict[@"countLike"] integerValue];
-    note.countDislike
-    = [dict[@"countDislike"] integerValue];
-    note.countBrowser
-    = [dict[@"countBrowser"] integerValue];
-    note.countEdit
-    = [dict[@"countEdit"] integerValue];
-    
-#if 0
-    
-    [NoteParagraphModel fromParagraphString:note.title];
-#endif
-    
+    note = [NoteModel mj_objectWithKeyValues:dict];
+
     return note;
 }
 

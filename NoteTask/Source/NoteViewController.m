@@ -256,12 +256,12 @@
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", @"个人笔记", nil];
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
     NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
     if(addedClassifications.count > 0) {
         [self.filterDataClassifications addObjectsFromArray:addedClassifications];
     }
-//    [self.filterDataClassifications addObject:@"新增类别"];
+    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
     
     self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
     [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
@@ -710,10 +710,10 @@
     
     NSArray<NSString*> *actionStrings = nil;
     if(self.topNotesView == 0) {
-        actionStrings = @[/*@"创建", */@"筛选ON", @"多选", @"恢复预制"];
+        actionStrings = @[/*@"创建", */@"筛选ON", @"多选", @"类别", @"恢复预制"];
     }
     else {
-        actionStrings = @[/*@"创建", */@"筛选OFF", @"多选", @"恢复预制"];
+        actionStrings = @[/*@"创建", */@"筛选OFF", @"多选", @"类别", @"恢复预制"];
     }
     [v setTexts:actionStrings];
     
@@ -757,6 +757,7 @@
                                               @"筛选ON":@"actionOpenFilter",
                                               @"筛选OFF":@"actionCloseFilter",
                                               @"恢复预制":@"actionResumePreset",
+                                              @"类别":@"actionEnterArchive",
                                               @"":@"",
                                               };
     
@@ -815,10 +816,16 @@
 
 - (void)actionResumePreset
 {
-    [self showIndicationText:@"信息 : 已经存在且未修改的\n预制文件不会重新添加 ." inTime:1];
     [[AppConfig sharedAppConfig] configNoteAddPreset];
     
     [self reloadNotesVia:@"Add Preset"];
+}
+
+
+- (void)actionEnterArchive
+{
+    NoteArchiveViewController *vc = [[NoteArchiveViewController alloc] init];
+    [self pushViewController:vc animated:YES];
 }
 
 
@@ -1015,12 +1022,12 @@
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", @"个人笔记", nil];
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
     NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
     if(addedClassifications.count > 0) {
         [self.filterDataClassifications addObjectsFromArray:addedClassifications];
     }
-    //    [self.filterDataClassifications addObject:@"新增类别"];
+    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
     
     self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
     [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
@@ -1154,9 +1161,12 @@
 
 
 
-@interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
+
+@property (nonatomic, strong) UITextField *inputView;
+@property (nonatomic, strong) UIButton *addButton;
 
 @property (nonatomic, strong) NSString *from;
 @property (nonatomic, strong) NSArray<NSString*> *noteIdentifiers;
@@ -1181,12 +1191,7 @@
 {
     [super viewDidLoad];
     
-    self.classifications = [[NSMutableArray alloc] initWithObjects:@"个人笔记", nil];
-    [self.classifications addObjectsFromArray:[[AppConfig sharedAppConfig] configClassificationGets]];
-    [self.classifications addObject:@"测试"];
-    
-    self.filterDataColors = [[NSMutableArray alloc] init];
-    [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+    [self dateReloadAll];
     
     self.tableView = [[UITableView alloc] init];
     [self addSubview:self.tableView];
@@ -1230,16 +1235,76 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 56.0;
+#define kheightSection 56.0
+    return kheightSection;
+}
+
+
+- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIColor *colorText              = [UIColor colorWithName:@"NoteCustomSectionHeader"];
+    UIColor *colorSectionBackground = [UIColor colorWithName:@"NoteCustomSectionBackground"];
+    UIFont *fontText                = [UIFont fontWithName:@"NoteCustomSectionHeader"];
     
+    UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, kheightSection)];
+    sectionView.backgroundColor = colorSectionBackground;
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, kheightSection)];
+    [sectionView addSubview:titleLabel];
+    titleLabel.attributedText = [NSString attributedStringWith:@[@"类别", @"标记"][section]
+                                                          font:fontText
+                                                        indent:20
+                                                     textColor:colorText];
+    FrameLayout *f = [[FrameLayout alloc] initWithRootView:sectionView];
+    [f frameLayoutVertical:FRAMELAYOUT_NAME_MAIN
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_titleLabel" value:60 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"padding" percentage:1.0 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_inputView" value:160 edge:UIEdgeInsetsMake(10, 0, 10, 0)],
+                             [FrameLayoutView viewWithName:@"_addButton" value:60 edge:UIEdgeInsetsZero],
+                             ]
+     ];
+    
+    NSLog(@"%@", f);
+    
+    titleLabel.frame    = [f frameLayoutGet:@"_titleLabel"];
+    
+    if(section == 0) {
+        _inputView = [[UITextField alloc] init];
+        [sectionView addSubview:_inputView];
+        _inputView.hidden = YES;
+        _inputView.delegate = self;
+        _inputView.layer.borderColor = colorText.CGColor;
+        _inputView.layer.borderWidth = 1.5;
+        _inputView.layer.cornerRadius = 6;
+        
+        _addButton = [[UIButton alloc] init];
+        [sectionView addSubview:_addButton];
+        [_addButton setTitle:@"增加" forState:UIControlStateNormal];
+        [_addButton setTitleColor:colorText forState:UIControlStateNormal];
+        [_addButton addTarget:self action:@selector(actionAddClassification:) forControlEvents:UIControlEventTouchDown];
+    
+        _inputView.frame     = [f frameLayoutGet:@"_inputView"];
+        _addButton.frame     = [f frameLayoutGet:@"_addButton"];
+    }
+    
+    return sectionView;
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 0;
-    
+    return 20;
 }
+
+
+- (UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 20)];
+    sectionView.backgroundColor = [UIColor clearColor];
+    return sectionView;
+}
+
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -1316,15 +1381,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.section == 0) {
-        [[AppConfig sharedAppConfig] configNotesUpdateClassification:self.classifications[indexPath.row] byNoteIdentifiers:self.noteIdentifiers];
-    }
-    else if(indexPath.section == 1) {
-        NSString *colorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[indexPath.row]];
-        [[AppConfig sharedAppConfig] configNotesUpdateColor:colorString byNoteIdentifiers:self.noteIdentifiers];
-    }
-    
     if([self.from isEqualToString:@"NotesArchiveChange"]) {
+        
+        if(indexPath.section == 0) {
+            [[AppConfig sharedAppConfig] configNotesUpdateClassification:self.classifications[indexPath.row] byNoteIdentifiers:self.noteIdentifiers];
+        }
+        else if(indexPath.section == 1) {
+            NSString *colorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[indexPath.row]];
+            [[AppConfig sharedAppConfig] configNotesUpdateColor:colorString byNoteIdentifiers:self.noteIdentifiers];
+        }
+        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -1352,8 +1418,58 @@
 }
 
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    if (toBeString.length > 10) {
+        textField.text = [toBeString substringToIndex:10];
+        [self showIndicationText:@"限定类别长度10" inTime:1.0];
+        return NO;
+    }
+    
+    return YES;
+}
 
 
+- (void)actionAddClassification:(UIButton*)button
+{
+    if([_addButton.titleLabel.text isEqualToString:@"增加"]) {
+        _inputView.hidden = NO;
+        [_inputView becomeFirstResponder];
+        [_addButton setTitle:@"完成" forState:UIControlStateNormal];
+    }
+    else if([_addButton.titleLabel.text isEqualToString:@"完成"]) {
+        _inputView.hidden = YES;
+        [_inputView resignFirstResponder];
+        [self addClassification:_inputView.text];
+        [_addButton setTitle:@"增加" forState:UIControlStateNormal];
+    }
+}
+
+
+- (void)addClassification:(NSString*)text
+{
+    if(text.length == 0) {
+        [self showIndicationText:@"类别为空, 无法添加" inTime:1.0];
+        return ;
+    }
+    
+    [[AppConfig sharedAppConfig] configClassificationAdd:text];
+    [self dateReloadAll];
+    [self.tableView reloadData];
+}
+
+
+- (void)dateReloadAll
+{
+    self.classifications = [[NSMutableArray alloc] init];
+    [self.classifications addObjectsFromArray:[[AppConfig sharedAppConfig] configClassificationGets]];
+    [self.classifications addObjectsFromArray:[NoteModel classificationPreset]];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+}
 
 
 @end

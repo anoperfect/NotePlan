@@ -166,12 +166,18 @@ TaskRecord
 
 - (NSMutableAttributedString*)attributedStringForPropertyContentOfTitle:(NSString*)title
 {
+    NSString *s ;
     if([title isEqualToString:@"当前模式"]) {
         if(self.mode == TASKINFO_MODE_ARRAGE) {
-            return [self attributedStringForPropertyContent:@"安排模式"];
+            s = [NSString stringWithFormat:@"安排模式 : %@(%@)",
+                           self.arrange.arrangeName,
+                           [NSString arrayDescriptionConbine:self.arrange.arrangeDays seprator:@","]
+                ];
+            return [self attributedStringForPropertyContent:s];
         }
         else if(self.mode == TASKINFO_MODE_DAY) {
-            return [self attributedStringForPropertyContent:@"日期模式"];
+            s = [NSString stringWithFormat:@"日期模式 : %@", self.dayString];
+            return [self attributedStringForPropertyContent:s];
         }
         else if(self.mode == TASKINFO_MODE_LIST) {
             return [self attributedStringForPropertyContent:@"列表模式"];

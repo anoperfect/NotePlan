@@ -83,6 +83,7 @@
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict;
 
++ (NSArray<NSString*>*)classificationPreset;
 
 //颜色标记相关.
 + (NSArray<NSString*> *)colorFilterDisplayStrings;

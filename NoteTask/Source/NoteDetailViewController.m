@@ -722,14 +722,8 @@
     if(update.count > 0) {
         //更新到本地数据库.
         self.noteModel.modifiedAt = [NSString dateTimeStringNow];
-        if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
-            NSString *identifier = self.noteModel.identifier;
-            self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
-            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
-        }
-        else {
-            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
-        }
+        [self noteUpdate:self.noteModel];
+
         NSLog(@"%@", self.noteModel);
     }
     else {
@@ -737,6 +731,26 @@
     }
     
     [self reloadNoteParagraphAtIndexPath:self.indexPathOnCustmizing due:@"after custmize"];
+}
+
+
+- (void)noteUpdate:(NoteModel*)note
+{
+    LOG_POSTION
+#if 0
+    LOG_POSTION
+    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+#else
+    LOG_POSTION
+    if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
+        NSString *identifier = self.noteModel.identifier;
+        self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
+        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
+    }
+    else {
+        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    }
+#endif
 }
 
 
@@ -868,16 +882,8 @@
     if(update.count > 0) {
         //更新到本地数据库.
         self.noteModel.modifiedAt = [NSString dateTimeStringNow];
-        if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
-            LOG_POSTION
-            NSString *identifier = self.noteModel.identifier;
-            self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
-            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
-        }
-        else {
-            LOG_POSTION
-            [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
-        }
+        [self noteUpdate:self.noteModel];
+
         NSLog(@"%@", self.noteModel);
     }
     else {
@@ -932,7 +938,7 @@
     self.noteModel.modifiedAt = [NSString dateTimeStringNow];
     
     //更新存储.
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    [self noteUpdate:self.noteModel];
     
     //更新属性显示.
     [self updateNotePropertyDisplay];
@@ -949,7 +955,7 @@
     self.noteModel.modifiedAt = [NSString dateTimeStringNow];
     
     //更新存储.
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    [self noteUpdate:self.noteModel];
     
     //更新属性显示.
     [self updateNotePropertyDisplay];
@@ -972,12 +978,12 @@
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"个人笔记", nil];
+    self.filterDataClassifications = [[NSMutableArray alloc] init];
     NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
     if(addedClassifications.count > 0) {
         [self.filterDataClassifications addObjectsFromArray:addedClassifications];
     }
-    [self.filterDataClassifications addObject:@"新增类别"];
+    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
     
     self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
     [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
@@ -1241,15 +1247,16 @@
         self.idxClassifications = indexPath.row;
         
         //新增栏目.
-        if(self.filterDataClassifications.count - 1 == indexPath.row) {
-            [self filterViewAddClassification];
-            [self filterViewHidden];
-        }
-        else {
-            [self updateClassificationTo:self.filterDataClassifications[indexPath.row]];
-            //选择后关闭属性栏. 是不是会修改多项时需重新打开...
-            [self filterViewHidden];
-        }
+//        if(self.filterDataClassifications.count - 1 == indexPath.row) {
+//            [self filterViewAddClassification];
+//            [self filterViewHidden];
+//        }
+//        else {
+//        }
+        
+        [self updateClassificationTo:self.filterDataClassifications[indexPath.row]];
+        //选择后关闭属性栏. 是不是会修改多项时需重新打开...
+        [self filterViewHidden];
     } else{
         
         self.idxColor = indexPath.row;

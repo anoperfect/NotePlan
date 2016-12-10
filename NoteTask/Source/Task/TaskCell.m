@@ -655,6 +655,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 @property (nonatomic, strong) UILabel    *titleLabel;
 @property (nonatomic, strong) YYLabel    *contentLabel;
+@property (nonatomic, strong) UIScrollView *scrollView;
 
 @property (nonatomic, strong) NSAttributedString *titleAttributedString;
 @property (nonatomic, strong) NSAttributedString *contentAttributedString;
@@ -704,6 +705,28 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self.contentLabel.attributedText = self.contentAttributedString;
     self.contentLabel.numberOfLines = 1;
     self.contentLabel.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
+    
+    CGSize size = self.contentLabel.frame.size;
+    CGSize sizeFit = [self.contentLabel sizeThatFits:CGSizeMake(100000, size.height)];
+    if(sizeFit.width > size.width || sizeFit.height > size.height) {
+        if(!self.scrollView) {
+            self.scrollView = [[UIScrollView alloc] init];
+        }
+        
+        self.scrollView.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
+        self.scrollView.contentSize = sizeFit;
+        [self.scrollView addSubview:self.contentLabel];
+        
+        [self addSubview:self.scrollView];
+        [self.scrollView addSubview:self.contentLabel];
+        
+        self.contentLabel.frame = CGRectMake(0, 0, sizeFit.width + 100, size.height);
+    }
+    else {
+        [self addSubview:self.contentLabel];
+        [self.scrollView removeFromSuperview];
+        self.scrollView = nil;
+    }
     
     self.frame = frameCell;
 }
