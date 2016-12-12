@@ -179,17 +179,15 @@
     CGFloat fontSize = self.isTitle?18:16;
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize;
-    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
+    if([fontString hasSuffix:@"px"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         fontSize = ptSize;
     }
     UIFont *font = [UIFont systemFontOfSize:fontSize];
     
     if([self.styleDictionay[@"font-weight"] isEqualToString:@"bold"]) {
-        NSLog(@"---set to bold");
         font = [UIFont boldSystemFontOfSize:fontSize];
     }
     else {
-        NSLog(@"--- not set to bold");
         
     }
     

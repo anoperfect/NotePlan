@@ -162,7 +162,7 @@ static NSInteger kno = 0;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict
 {
-    NSLog(@"noteFromDictionary : %@", dict);
+    NS0Log(@"noteFromDictionary : %@", dict);
     NoteModel *note = [[NoteModel alloc] init];
     note = [NoteModel mj_objectWithKeyValues:dict];
 

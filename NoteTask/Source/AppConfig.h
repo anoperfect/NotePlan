@@ -85,4 +85,5 @@
 - (AFHTTPSessionManager *)HTTPSessionManager;
 #define HTTPMANAGE [[AppConfig sharedAppConfig] HTTPSessionManager]
 
+
 @end

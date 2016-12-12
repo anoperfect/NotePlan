@@ -219,9 +219,11 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     //模拟一个立体效果.
     self.container.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.container.layer.shadowOffset = CGSizeMake(1, 1);
+    self.container.layer.shadowOffset = CGSizeMake(0, 0);
     self.container.layer.shadowOpacity = 0.8;
     self.container.layer.shadowRadius = 1;
+    
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 
@@ -316,6 +318,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self.container.layer.shadowOffset = CGSizeMake(1, 1);
     self.container.layer.shadowOpacity = 0.8;
     self.container.layer.shadowRadius = 1;
+    
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 
@@ -520,6 +524,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self.taskContentLabel.frame = CGRectMake(0, y, widthContainer, heightContent);
     CGSize sizeFit = [self.taskContentLabel sizeThatFits:self.taskContentLabel.frame.size];
     heightContent = sizeFit.height;
+    NSLog(@"0-0-- fit(%f) to %f", self.taskContentLabel.frame.size.width, heightContent);
     self.taskContentLabel.frame = CGRectMake(0, y, widthContainer, heightContent);
     y += heightContent;
     
@@ -620,16 +625,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 - (NSMutableAttributedString*)attributedStringForTaskContent
 {
-    NSString *taskContentString = self.taskinfo.content;
-    NSMutableAttributedString *attributedContentString = [[NSMutableAttributedString alloc] initWithString:taskContentString];
-    [attributedContentString addAttribute:NSExpansionAttributeName value:@0 range:NSMakeRange(0, taskContentString.length)];
-    NSMutableParagraphStyle * paragraphStyleContent = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyleContent setHeadIndent:20];
-    [paragraphStyleContent setFirstLineHeadIndent:20];
-    [paragraphStyleContent setTailIndent:-20];
-    [attributedContentString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:NSMakeRange(0, taskContentString.length)];
-    [attributedContentString addAttribute:NSFontAttributeName value:[UIFont fontWithName:@"TaskDetailContent"] range:NSMakeRange(0, taskContentString.length)];
-    [attributedContentString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithName:@"TaskDetailText"] range:NSMakeRange(0, taskContentString.length)];
+    NSMutableAttributedString *attributedContentString;
+    attributedContentString = [NSString attributedStringWith:self.taskinfo.content font:[UIFont fontWithName:@"TaskDetailContent"] indent:20 textColor:[UIColor colorWithName:@"TaskDetailText"]];
     
     return attributedContentString;
 }

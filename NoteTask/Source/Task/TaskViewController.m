@@ -48,7 +48,7 @@
 {
     [super viewDidLoad];
 
-    self.mode = TASKINFO_MODE_ARRAGE;
+    self.mode = TASKINFO_MODE_ARRANGE;
 
     self.sectionsWrap = [[NSMutableArray alloc] init];
     self.taskCellOptumizeHeights = [[NSMutableDictionary alloc] init];
@@ -185,7 +185,7 @@
 {
     CGFloat heightSectionHeader = 0.0;
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
             
@@ -237,7 +237,7 @@
     NSInteger number = 0;
     NSMutableAttributedString *attributedString = nil;
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         if(!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"]) {
             
@@ -377,7 +377,7 @@
 {
     NSInteger sections = 1;
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         sections = self.taskInfoManager.taskArrangeGroups.count;
     }
     else if(self.mode == TASKINFO_MODE_DAY) {
@@ -395,7 +395,7 @@
 {
     NSInteger rows = 0;
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[section];
         
         if((!self.isDisplayBeforeTask && [taskArrangeGroup.arrangeName isEqualToString:@"之前"])
@@ -440,7 +440,7 @@
     TaskInfo *taskinfo = nil;
     NSArray<TaskFinishAt*> *finishedAts = nil;
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         taskinfo = taskInfoArrange.taskinfo;
         finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskInfoArrange.arrangeDays];
@@ -478,7 +478,7 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         [self enterTaskDetail:taskInfoArrange.taskinfo arrange:taskInfoArrange];
     }
@@ -513,7 +513,7 @@
     CGPoint point = scrollView.contentOffset;
     NSLog(@"%f, %f", point.x, point.y);
     
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         //模式不显示之前. 当下拉回弹达到一定高度时, 显示"之前".
         if(!self.isDisplayBeforeTask) {
             if(point.y < self.contentOffsetYMonitor) {
@@ -585,7 +585,7 @@
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
     NSArray<NSString*> *actionStrings = nil;
-    if(self.mode == TASKINFO_MODE_ARRAGE) {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
         actionStrings = @[@"列表模式", @"日期模式"];
     }
     else if(self.mode == TASKINFO_MODE_DAY){
@@ -623,7 +623,7 @@
 
 - (void)actionChangeToArrangeMode
 {
-    self.mode = TASKINFO_MODE_ARRAGE;
+    self.mode = TASKINFO_MODE_ARRANGE;
     [self actionReloadTasksView];
 }
 

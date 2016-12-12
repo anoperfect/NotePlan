@@ -121,7 +121,8 @@
         self.messageIndicationHUD.yOffset = 100 - VIEW_HEIGHT / 2;
     }
     
-    self.messageIndicationHUD.labelText = text;
+    self.messageIndicationHUD.detailsLabelFont = [UIFont systemFontOfSize:18];
+    self.messageIndicationHUD.detailsLabelText = text;
     [self.messageIndicationHUD show:YES];
     
     if(secs > 0.0) {
@@ -258,14 +259,15 @@
 
 - (void)showMenus:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
 {
-    CGFloat width = 100;
-    CustomTableView *customTableView = [[CustomTableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, width, VIEW_HEIGHT)];
+    CustomTableView *customTableView = [[CustomTableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, VIEW_WIDTH, VIEW_HEIGHT)];
     customTableView.tag = 100045;
     [self addSubview:customTableView];
     [customTableView setMenuDatas:menus selectAction:selectAction];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissMenus)];
+    [customTableView addGestureRecognizer:tap];
     
     [UIView animateWithDuration:0.5 animations:^{
-        customTableView.frame = CGRectMake(VIEW_WIDTH - width, 0, width, VIEW_HEIGHT);
+        customTableView.frame = CGRectMake(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
         
     } completion:^(BOOL finished) {
         
@@ -278,7 +280,7 @@
     UIView *customTableView = [self.contentView viewWithTag:100045];
     CGRect frame = customTableView.frame;
     frame.origin.x = VIEW_WIDTH;
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.36 animations:^{
         customTableView.frame = frame;
     } completion:^(BOOL finished) {
         [customTableView removeFromSuperview];
@@ -359,9 +361,15 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+    
+    CGFloat widthPercentage = 0.64;
+    CGRect frame = self.frame;
+    CGRect frameTableView = CGRectMake((1-widthPercentage) * frame.size.width, 0, widthPercentage * frame.size.width, frame.size.height);
+    
     BOOL reload = YES;
     if(!_menuTableView) {
-        _menuTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+        
+        _menuTableView = [[UITableView alloc] initWithFrame:frameTableView style:UITableViewStyleGrouped];
         [self addSubview:_menuTableView];
         _menuTableView.tag = 100045;
         _menuTableView.dataSource = self;
@@ -370,14 +378,13 @@
     }
     else {
         CGRect framePrev = _menuTableView.frame;
-        if(CGRectEqualToRect(framePrev, self.bounds)) {
+        if(CGRectEqualToRect(framePrev, frameTableView)) {
             reload = NO;
         }
     }
     
     _menuTableView.backgroundColor = [UIColor colorWithName:@"CustomMenu"];
-    
-    _menuTableView.frame = self.bounds;
+    _menuTableView.frame = frameTableView;
     if(reload) {
         [_menuTableView reloadData];
     }
@@ -397,6 +404,8 @@
     LOG_POSTION
     NSDictionary *menu = self.menus[indexPath.row];
     cell.textLabel.text = menu[@"text"];
+    cell.detailTextLabel.text = menu[@"text"];
+    
     return cell;
 }
 

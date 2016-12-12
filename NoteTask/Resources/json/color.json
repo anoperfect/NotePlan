@@ -11,7 +11,7 @@
  "name" : "CustomMenu",
  "title" : "弹出菜单背景颜色",
  "enableCustmize" : true,
- "colorstringDefault" : "#e1eaeb@60",
+ "colorstringDefault" : "#e1eaeb@80",
  "colornightstringDefault" : "#e1eaeb"
  },
  

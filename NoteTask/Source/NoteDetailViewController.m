@@ -386,12 +386,12 @@
     //属性栏.
     if(indexPath.row == 1) {
         [cell setClassification:self.noteModel.classification color:self.noteModel.color];
-        NSLog(@"property height : %f", cell.optumizeHeight);
+        NS0Log(@"property height : %f", cell.optumizeHeight);
     }
     else {
         NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
         [cell setNoteParagraph:noteParagraph isTitle:indexPath.row == 0 sn:indexPath.row - 1 onDisplayMode:!self.isCreateMode];
-        NSLog(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
+        NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
     }
     
     self.optumizeHeights[indexPath] = @(cell.optumizeHeight);

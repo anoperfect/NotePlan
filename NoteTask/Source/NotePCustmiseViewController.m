@@ -156,7 +156,7 @@
     [self.fontSizeSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
     NSString *fontString = self.sampleNoteParagraph.styleDictionay[@"font-size"];
     CGFloat ptSize = 16.0;
-    if([fontString hasSuffix:@"pt"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
+    if([fontString hasSuffix:@"px"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         
     }
     self.fontSizeSlider.value = ptSize;
@@ -169,11 +169,11 @@
     
     self.fontSizeValueLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.fontSizeValueLabel];
-    self.fontSizeValueLabel.text = @"8pt";
+    self.fontSizeValueLabel.text = @"8px";
     self.fontSizeValueLabel.textAlignment = NSTextAlignmentCenter;
     self.fontSizeValueLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     NSInteger ptSizeInt = ptSize;
-    self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpt", ptSizeInt];
+    self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", ptSizeInt];
     
     self.italicLable = [[UILabel alloc] init];
     [self.contentView addSubview:self.italicLable];
@@ -247,6 +247,7 @@
     self.textColorInput.delegate = self;
     self.textColorInput.returnKeyType = UIReturnKeyDone;
     self.textColorInput.keyboardType = UIKeyboardTypeDefault;
+    self.textColorInput.text = self.sampleNoteParagraph.styleDictionay[@"color"];
     
     self.textColorButton = [[UIButton alloc] init];
     [self.contentView addSubview:self.textColorButton];
@@ -317,15 +318,10 @@
 - (void)sliderChanged:(UISlider*)slider
 {
     CGFloat value        = slider.value;
-    NSLog(@"%f", value);
-    
     value = roundf(value);
-    NSLog(@"%f", value);
-    
     NSInteger valuex = value;
-    NSLog(@"%zd", valuex);
     
-    NSString *fontSizeString = [NSString stringWithFormat:@"%zdpt", valuex];
+    NSString *fontSizeString = [NSString stringWithFormat:@"%zdpx", valuex];
     if([fontSizeString isEqualToString:self.fontSizeValueLabel.text]) {
         
     }

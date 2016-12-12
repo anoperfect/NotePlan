@@ -98,6 +98,9 @@
     frameNotesView.origin.y += self.topNotesView ;
     frameNotesView.size.height -= self.topNotesView;
     self.notesView.frame = frameNotesView;
+    
+    //筛选off的时候,可能notefilter覆盖到NotesView.将notefilter放到最下层.
+    [self.noteFilter.superview sendSubviewToBack:self.noteFilter];
 }
 
 

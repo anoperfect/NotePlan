@@ -83,7 +83,7 @@
     self.notePropertyView = [[NotePropertyView alloc] init];
     [self.container addSubview:self.notePropertyView];
     
-    self.noteParagraphYYLabel = [[YYLabel alloc] init];
+//    self.noteParagraphYYLabel = [[YYLabel alloc] init];
     [self.container addSubview:self.noteParagraphYYLabel];
     self.noteParagraphYYLabel.numberOfLines = 0;
     
@@ -91,7 +91,7 @@
     [self.container addSubview:self.noteParagraphLabel];
     self.noteParagraphLabel.numberOfLines = 0;
     
-    self.noteParagraphTextView = [[UITextView alloc] init];
+//    self.noteParagraphTextView = [[UITextView alloc] init];
     [self.container addSubview:self.noteParagraphTextView];
 //    self.noteParagraphTextView.numberOfLines = 0;
     self.noteParagraphTextView.editable = NO;
@@ -139,54 +139,62 @@
 {
     CGFloat heightOptumize = 100.0;
     
+    self.noteParagraphYYLabel.hidden    = YES;
+    self.noteParagraphLabel.hidden      = NO;
+    self.noteParagraphTextView.hidden   = YES;
+    self.notePropertyView.hidden        = YES;
+    
     CGRect frame = self.frame;
     CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, NOTEDETAILCELL_EDGE_CONTAINER);
     CGSize sizeOptumizeLabel;
     CGRect frameLabel;
     
+    UIEdgeInsets edgeLabel = UIEdgeInsetsZero;
+    
     frameLabel = CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
-    frameLabel = UIEdgeInsetsInsetRect(frameLabel, NOTEDETAILCELL_EDGE_LABEL);
     
-    self.noteParagraphYYLabel.textAlignment = NSTextAlignmentLeft;
-    self.noteParagraphYYLabel.attributedText = [noteParagraph attributedTextGenerated];
-    sizeOptumizeLabel = [self.noteParagraphYYLabel sizeThatFits:frameLabel.size];
-    frameLabel.size.height = sizeOptumizeLabel.height;
-    self.noteParagraphYYLabel.frame = frameLabel;
-    
-    self.noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
-    self.noteParagraphLabel.attributedText = [noteParagraph attributedTextGenerated];
-    sizeOptumizeLabel = [self.noteParagraphLabel sizeThatFits:frameLabel.size];
-    frameLabel.size.height = sizeOptumizeLabel.height;
-    self.noteParagraphLabel.frame = frameLabel;
-    
-    self.noteParagraphTextView.textAlignment = NSTextAlignmentLeft;
-    self.noteParagraphTextView.attributedText = [noteParagraph attributedTextGenerated];
-    sizeOptumizeLabel = [self.noteParagraphTextView sizeThatFits:frameLabel.size];
-    frameLabel.size.height = sizeOptumizeLabel.height;
-    if(self.onEditing) {
-        frameLabel.size.height = 200.;
-        if(self.heightFitToKeyboard > 0.0) {
-            frameLabel.size.height = self.heightFitToKeyboard
-                    - (NOTEDETAILCELL_EDGE_LABEL.top + NOTEDETAILCELL_EDGE_LABEL.bottom)
-                    - (NOTEDETAILCELL_EDGE_CONTAINER.top + NOTEDETAILCELL_EDGE_CONTAINER.bottom);
-        }
-        self.noteParagraphTextView.editable = YES;
-        self.noteParagraphTextView.scrollEnabled = YES;
-        self.noteParagraphTextView.userInteractionEnabled = YES;
-    }
-    else {
+    if(self.noteParagraphTextView && !self.noteParagraphTextView.hidden) {
+        
+        edgeLabel = UIEdgeInsetsZero;
+        frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
+        
+        self.noteParagraphTextView.attributedText = [noteParagraph attributedTextGenerated];
+        sizeOptumizeLabel = [self.noteParagraphTextView sizeThatFits:frameLabel.size];
+        frameLabel.size.height = sizeOptumizeLabel.height;
+
         self.noteParagraphTextView.editable = NO;
         self.noteParagraphTextView.scrollEnabled = NO;
         self.noteParagraphTextView.userInteractionEnabled = NO;
+    
+        self.noteParagraphTextView.frame = frameLabel;
+        self.noteParagraphTextView.delegate = self;
     }
-    self.noteParagraphTextView.frame = frameLabel;
-    self.noteParagraphTextView.delegate = self;
+    else if(self.noteParagraphYYLabel && !self.noteParagraphYYLabel.hidden) {
+        
+        edgeLabel = NOTEDETAILCELL_EDGE_LABEL;
+        frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
+        
+        self.noteParagraphYYLabel.attributedText = [noteParagraph attributedTextGenerated];
+        sizeOptumizeLabel = [self.noteParagraphYYLabel sizeThatFits:frameLabel.size];
+        frameLabel.size.height = sizeOptumizeLabel.height;
+        self.noteParagraphYYLabel.frame = frameLabel;
+    }
+    else if(self.noteParagraphLabel && !self.noteParagraphLabel.hidden) {
+        edgeLabel = NOTEDETAILCELL_EDGE_LABEL;
+        frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
+        
+        self.noteParagraphLabel.attributedText = [noteParagraph attributedTextGenerated];
+        sizeOptumizeLabel = [self.noteParagraphLabel sizeThatFits:frameLabel.size];
+        frameLabel.size.height = sizeOptumizeLabel.height;
+        self.noteParagraphLabel.frame = frameLabel;
+    }
+    
     if(!displayMode && self.noteParagraphTextView.attributedText.string.length == 0) {
         
         
     }
     
-    frameContainer.size.height = frameLabel.size.height + NOTEDETAILCELL_EDGE_LABEL.top + NOTEDETAILCELL_EDGE_LABEL.bottom;
+    frameContainer.size.height = frameLabel.size.height + edgeLabel.top + edgeLabel.bottom;
     frame.size.height = frameContainer.size.height + NOTEDETAILCELL_EDGE_CONTAINER.top + NOTEDETAILCELL_EDGE_CONTAINER.bottom;
     self.frame = frame;
     self.container.frame = frameContainer;
@@ -199,11 +207,6 @@
     else {
         self.container.layer.borderWidth = 0.0;
     }
-    
-    self.noteParagraphYYLabel.hidden    = YES;
-    self.noteParagraphLabel.hidden      = YES;
-    self.noteParagraphTextView.hidden   = NO;
-    self.notePropertyView.hidden        = YES;
     
     heightOptumize = frame.size.height;
     self.optumizeHeight = heightOptumize;

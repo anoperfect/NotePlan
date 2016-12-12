@@ -29,6 +29,8 @@
 + (BOOL)date:(NSDate*)date isYestodayOfDate:(NSDate*)date0;
 + (BOOL)date:(NSDate*)date isTomorrowOfDate:(NSDate*)date0;
 
++ (NSArray<NSString*>*)dateFrom:(NSString*)dateStringFrom to:(NSString*)dateStringTo;
+
 @end
 
 

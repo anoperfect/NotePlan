@@ -34,7 +34,7 @@
         return NO;
     }
     
-    NSString *yyyyString = [dayString substringToIndex:3];
+    NSString *yyyyString = [dayString substringToIndex:4];
     NSString *c1 = [dayString substringWithRange:NSMakeRange(4, 1)];
     NSString *mmString = [dayString substringWithRange:NSMakeRange(5, 2)];
     NSString *c2 = [dayString substringWithRange:NSMakeRange(7, 1)];
@@ -204,6 +204,80 @@
 }
 
 
++ (NSString*)dateNextDayTo:(NSString*)dateString
+{
+    NSString *yyyyString = [dateString substringToIndex:4];
+    NSString *mmString = [dateString substringWithRange:NSMakeRange(5, 2)];
+    NSString *ddString = [dateString substringWithRange:NSMakeRange(8, 2)];
+    
+    NSInteger yyyy = [yyyyString integerValue];
+    NSInteger mm = [mmString integerValue];
+    NSInteger dd = [ddString integerValue];
+    
+
+    
+    if(mm == 12 && dd == 31) {
+        yyyy += 1;
+        mm = 1;
+        dd = 1;
+    }
+    else {
+        static NSInteger numberOfDayArray[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        static NSInteger numberOfDayLeepArray[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        NSInteger *numberOfDays;
+        if((yyyy % 4 == 0 && yyyy % 100 != 0) || yyyy % 400 == 0) {
+            numberOfDays = numberOfDayLeepArray;
+        }
+        else {
+            numberOfDays = numberOfDayArray;
+        }
+        
+        if(dd == numberOfDays[mm-1]) {
+            mm += 1;
+            dd = 1;
+        }
+        else {
+            dd += 1;
+        }
+    }
+    
+    return [NSString stringWithFormat:@"%04zd-%02zd-%02zd", yyyy, mm, dd];
+}
+
+
++ (NSArray<NSString*>*)dateFrom:(NSString*)dateStringFrom to:(NSString*)dateStringTo
+{
+    if(!([self dateStringIsValid:dateStringFrom] && [NSString dateStringIsValid:dateStringTo])) {
+        NSLog(@"#error - dateString invalid [%@][%@]", dateStringFrom, dateStringTo);
+        return nil;
+    }
+    
+    NSMutableArray *dateStrings = [[NSMutableArray alloc] init];
+    
+    NSComparisonResult comparisonResult = [dateStringFrom compare:dateStringTo];
+    if(comparisonResult == NSOrderedAscending) {
+        [dateStrings addObject:dateStringFrom];
+        NSString *nextDay = dateStringFrom;
+        NSLog(@"- %@", nextDay);
+        while(1) {
+            nextDay = [self dateNextDayTo:nextDay];
+            [dateStrings addObject:nextDay];
+            NSLog(@"- %@", nextDay);
+            if([nextDay isEqualToString:dateStringTo]) {
+                break;
+            }
+        }
+    }
+    else if(comparisonResult == NSOrderedSame) {
+        [dateStrings addObject:dateStringFrom];
+    }
+    else {
+        NSLog(@"#error - sequence sames not expected.[%@][%@]", dateStringFrom, dateStringTo);
+        return nil;
+    }
+    
+    return [NSArray arrayWithArray:dateStrings];
+}
 
 
 

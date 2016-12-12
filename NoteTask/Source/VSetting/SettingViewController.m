@@ -97,8 +97,7 @@ static NSString *kStringAppDetail = @"关于NoteTask";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.title = @"设置1";
-    self.navigationController.navigationBarHidden = NO;
+    self.title = @"设置";
     
 }
 
@@ -178,13 +177,14 @@ static NSString *kStringAppDetail = @"关于NoteTask";
     NSString *name = namesBelongToMenu[row];
     
     if([name isEqualToString:kStringNoteDefaultStyle]) {
-        
+        [self pushViewControllerByName:@"SettingNoteStyleViewController"];
     }
     else if([name isEqualToString:kStringTaskDefaultMode]) {
+        [self pushViewControllerByName:@"SettingTaskModeViewController"];
         
     }
     else if([name isEqualToString:kStringAppDetail]){
-        
+        [self pushViewControllerByName:@"SettingAppDetailViewController"];
     }
     
     

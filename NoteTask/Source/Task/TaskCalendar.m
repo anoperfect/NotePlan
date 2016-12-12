@@ -53,6 +53,16 @@
         _textInput.layer.borderWidth = 1;
         _textInput.layer.cornerRadius = _textInput.frame.size.height / 2;
         
+        _scrollView = [[UIScrollView alloc] init];
+        _datesDisplay = [[YYLabel alloc] init];
+        _datesDisplay.numberOfLines = 0;
+        _datesDisplay.font = [UIFont fontWithName:@"ArialMT" size:18];
+        _datesDisplay.textAlignment = NSTextAlignmentCenter;
+        CGRect frameDatesDisplay = CGRectMake(0, 64, width, height - 64 - 36 - width);
+        frameDatesDisplay = UIEdgeInsetsInsetRect(frameDatesDisplay, UIEdgeInsetsMake(10, 10, 10, 10));
+        _scrollView.frame = frameDatesDisplay;
+        _datesDisplay.frame = frameDatesDisplay;
+        
         _calendarMenuView = [[JTCalendarMenuView alloc] initWithFrame:CGRectMake(0, height - width - 50, width, 36)];
         _calendarContentView = [[JTHorizontalCalendarView alloc] initWithFrame:CGRectMake(0, height - width, width, width)];
         _calendarManager = [[JTCalendarManager alloc] init];
@@ -115,13 +125,44 @@
     _scrollView.hidden      = NO;
     
     NSLog(@"TaskCalendar init : selected %zd (%@)", _datesSelected.count, dayStrings);
+    
     [_calendarManager reload];
+    
+    [self updateDatesSelected];
+    
     return self;
 }
 
 
 - (void)updateDatesSelected
 {
+    LOG_POSTION
+    NSMutableArray *dayStrings = [[NSMutableArray alloc] init];
+    for(NSDate *date in _datesSelected) {
+        [dayStrings addObject:[NSString dateStringOfDate:date]];
+    }
+    
+    NSString *s = [NSString arrayDescriptionConbine:dayStrings seprator:@"  "];
+    _datesDisplay.text = s;
+    
+    CGSize sizeFit = [_datesDisplay sizeThatFits:_scrollView.frame.size];
+    if(sizeFit.height > _scrollView.frame.size.height) {
+        _datesDisplay.hidden = NO;
+        _scrollView.hidden = NO;
+        [_scrollView addSubview:_datesDisplay];
+        [self addSubview:_scrollView];
+        
+        _datesDisplay.frame = CGRectMake(0, 0, _scrollView.frame.size.width, sizeFit.height);
+        _scrollView.contentSize = _datesDisplay.frame.size;
+    }
+    else {
+        _datesDisplay.hidden = NO;
+        _scrollView.hidden = YES;
+        [self addSubview:_datesDisplay];
+        _datesDisplay.frame = _scrollView.frame;
+    }
+    
+    
     
     
 }

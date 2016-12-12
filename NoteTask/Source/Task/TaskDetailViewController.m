@@ -48,7 +48,7 @@ TaskRecord
     self = [super init];
     if(self) {
         self.taskinfo = taskinfo;
-        self.mode = TASKINFO_MODE_ARRAGE;
+        self.mode = TASKINFO_MODE_ARRANGE;
         self.arrange = arrange;
     }
     return self;
@@ -168,7 +168,7 @@ TaskRecord
 {
     NSString *s ;
     if([title isEqualToString:@"当前模式"]) {
-        if(self.mode == TASKINFO_MODE_ARRAGE) {
+        if(self.mode == TASKINFO_MODE_ARRANGE) {
             s = [NSString stringWithFormat:@"安排模式 : %@(%@)",
                            self.arrange.arrangeName,
                            [NSString arrayDescriptionConbine:self.arrange.arrangeDays seprator:@","]
@@ -458,6 +458,7 @@ TaskRecord
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell *cell = nil;
     if([self tableViewCellIsTaskContentForRowAtIndexPath:indexPath]) {
         TaskDetailContentCell *contentCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailContentCell" forIndexPath:indexPath];
         contentCell.taskinfo = self.taskinfo;
@@ -469,7 +470,7 @@ TaskRecord
         self.optumizeHeights[indexPath] = @(contentCell.frame.size.height);
         UIEdgeInsets edge = contentCell.separatorInset;
         NSLog(@"%f, %f, %f, %f", edge.top, edge.left, edge.bottom, edge.right);
-        return contentCell;
+        cell = contentCell;
     }
     
     NSInteger idx = 0;
@@ -480,7 +481,7 @@ TaskRecord
                        content:[self attributedStringForPropertyContentOfTitle:title]
          ];
         self.optumizeHeights[indexPath] = @(propertyCell.frame.size.height);
-        return propertyCell;
+        cell = propertyCell;
     }
     
     if(NSNotFound != (idx=[self tableViewCellIndexOfTaskRecordAtIndexPath:indexPath])) {
@@ -488,11 +489,15 @@ TaskRecord
         TaskRecord *taskRecord = [self taskRecordOnIndexPath:indexPath];
         recordCell.taskRecord = taskRecord;
         self.optumizeHeights[indexPath] = @(recordCell.frame.size.height);
-        return recordCell;
+        cell = recordCell;
     }
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailDefaultCell" forIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"%zd:%zd", indexPath.section, indexPath.row];
+    if(!cell) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailDefaultCell" forIndexPath:indexPath];
+        cell.textLabel.text = [NSString stringWithFormat:@"%zd:%zd", indexPath.section, indexPath.row];
+    }
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
@@ -660,9 +665,9 @@ TaskRecord
     TaskEditViewController *vc = [[TaskEditViewController alloc] initWithTaskInfo:self.taskinfo];
     [self pushViewController:vc animated:YES];
     
-    NSMutableArray *vcs = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
-    [vcs removeObject:self];
-    self.navigationController.viewControllers = [NSArray arrayWithArray:vcs];
+//    NSMutableArray *vcs = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
+//    [vcs removeObject:self];
+//    self.navigationController.viewControllers = [NSArray arrayWithArray:vcs];
 }
 
 

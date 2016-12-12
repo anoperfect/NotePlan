@@ -113,12 +113,12 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 {
     NSMutableString *s = [[NSMutableString alloc] init];
     if(![self.content isEqualToString:taskinfo.content]) {
-        [s appendString:@" 任务内容"];
+        [s appendString:@"任务内容 "];
         self.content = taskinfo.content;
     }
     
     if(self.scheduleType != taskinfo.scheduleType) {
-        [s appendString:@" 执行日期"];
+        [s appendString:@"执行日期 "];
         self.scheduleType = taskinfo.scheduleType;
         switch (self.scheduleType) {
             case TaskInfoScheduleTypeDay:
@@ -177,6 +177,93 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         self.modifiedAt = taskinfo.modifiedAt;
     }
     return [NSString stringWithString:s];
+}
+
+
+/*返回比较的信息.
+{
+    detail : 文字描述.
+    diffKeys: [修改的内容key, 只比较内容.]
+    diffAllkeys : [ 修改的所有key];
+}
+*/
+- (NSDictionary*)differentFrom:(TaskInfo*)taskinfo
+{
+    NSMutableDictionary *diffs      = [[NSMutableDictionary alloc] init];
+    NSMutableString *s              = [[NSMutableString alloc] init];
+    NSMutableArray *diffKeys        = [[NSMutableArray alloc] init];
+    NSMutableArray *diffAllKeys     = [[NSMutableArray alloc] init];
+    if(![self.content isEqualToString:taskinfo.content]) {
+        [s appendString:@"任务内容 "];
+        [diffKeys addObject:@"content"];
+        [diffAllKeys addObject:@"content"];
+    }
+    
+    if(self.scheduleType != taskinfo.scheduleType) {
+        [s appendFormat:@"执行日期[%@修改为%@]",
+         [TaskInfo scheduleStringWithType:taskinfo.scheduleType],
+         [TaskInfo scheduleStringWithType:self.scheduleType]
+         ];
+        [diffKeys addObject:@"scheduleType"];
+        [diffAllKeys addObject:@"scheduleType"];
+    }
+    else {
+        switch (self.scheduleType) {
+            case TaskInfoScheduleTypeDay:
+                if(![self.dayString isEqualToString:taskinfo.dayString]) {
+                    [s appendString:@"任务执行日期[单天] "];
+                    [diffKeys addObject:@"dayString"];
+                    [diffAllKeys addObject:@"dayString"];
+                }
+                break;
+                
+            case TaskInfoScheduleTypeContinues:
+                if(![self.dayStringFrom isEqualToString:taskinfo.dayStringFrom]) {
+                    [s appendString:@"任务开始日期 "];
+                    [diffKeys addObject:@"dayStringFrom"];
+                    [diffAllKeys addObject:@"dayStringFrom"];
+                }
+                
+                if(![self.dayStringTo isEqualToString:taskinfo.dayStringTo]) {
+                    [s appendString:@"任务结束日期 "];
+                    [diffKeys addObject:@"dayStringTo"];
+                    [diffAllKeys addObject:@"dayStringTo"];
+                }
+                
+                break;
+                
+            case TaskInfoScheduleTypeDays:
+                if(![self.dayStrings isEqualToString:taskinfo.dayStrings]) {
+                    [s appendString:@"任务执行日期[多天] "];
+                    [diffKeys addObject:@"dayStrings"];
+                    [diffAllKeys addObject:@"dayStrings"];
+                }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    if(s.length > 0) {
+        diffs[@"detail"] = [NSString stringWithString:s];
+    }
+    
+    if(diffKeys.count > 0) {
+        diffs[@"diffKeys"] = [NSArray arrayWithArray:diffKeys];
+    }
+    
+    if(diffAllKeys.count > 0) {
+        diffs[@"diffAllKeys"] = [NSArray arrayWithArray:diffAllKeys];
+    }
+    
+    if(diffs.count > 0) {
+        diffs[@"sn"] = self.sn;
+        return [NSDictionary dictionaryWithDictionary:diffs];
+    }
+    else {
+        return nil;
+    }
 }
 
 
@@ -359,8 +446,9 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         [self.daysOnTask addObject:self.dayString];
     }
     else if(self.scheduleType == TaskInfoScheduleTypeContinues) {
-        [self.daysOnTask addObject:self.dayStringFrom];
-        [self.daysOnTask addObject:self.dayStringTo];
+        LOG_POSTION
+        [self.daysOnTask addObjectsFromArray:[NSString dateFrom:self.dayStringFrom to:self.dayStringTo]];
+        LOG_POSTION
     }
     else if(self.scheduleType == TaskInfoScheduleTypeDays) {
         NSArray *days = [self.dayStrings componentsSeparatedByString:@","];
