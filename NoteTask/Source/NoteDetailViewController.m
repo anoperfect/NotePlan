@@ -42,7 +42,7 @@
 @property (nonatomic, strong) UITableView *tableNoteParagraphs;
 @property (nonatomic, strong) UITextView *textViewEditing;
 @property (nonatomic, strong) UIView *textViewEditingContainer;
-
+@property (nonatomic, strong) NotePropertyView *notePropertyView;
 
 //关于筛选.
 @property (nonatomic, assign) CGFloat topNotesView;
@@ -142,6 +142,7 @@
     // Do any additional setup after loading the view.
     
     self.view.backgroundColor = [UIColor whiteColor];
+    self.topNotesView = 0;
 
     
     self.titleLabel = [[UILabel alloc] init];
@@ -150,7 +151,6 @@
     //[self.view addSubview:self.titleLabel];
     
     //UITextView导致加载卡顿,因此延迟加载.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     
     LOG_POSTION
         
@@ -163,62 +163,39 @@
     self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     [self.tableNoteParagraphs registerClass:[NoteDetailCell class] forCellReuseIdentifier:@"NoteDetail"];
     
-    self.textViewEditingContainer = [[UIView alloc] init];
-    [self addSubview:self.textViewEditingContainer];
-    self.textViewEditingContainer.hidden = YES;
-    self.textViewEditingContainer.backgroundColor = [UIColor whiteColor];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.textViewEditingContainer = [[UIView alloc] init];
+        [self addSubview:self.textViewEditingContainer];
+        self.textViewEditingContainer.hidden = YES;
+        self.textViewEditingContainer.backgroundColor = [UIColor whiteColor];
         
-    self.textViewEditing = [[UITextView alloc] init];
-    self.textViewEditing.attributedText = [[NSAttributedString alloc] initWithString:@""];
-    self.textViewEditing.editable = NO;
-    [self addSubview:self.textViewEditing];
-    self.textViewEditing.hidden = YES;
-    self.textViewEditing.delegate = self;
-        
-        //显式调用一次布局.否则显示有问题.
-        [self.view setNeedsLayout];
-        
+        self.textViewEditing = [[UITextView alloc] init];
+        self.textViewEditing.attributedText = [[NSAttributedString alloc] initWithString:@""];
+        self.textViewEditing.editable = NO;
+        [self addSubview:self.textViewEditing];
+        self.textViewEditing.hidden = YES;
+        self.textViewEditing.delegate = self;
     });
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    self.notePropertyView = [[NotePropertyView alloc] init];
+    
+    [self filterViewBuild];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     NSLog(@"%@", self.noteModel);
-    
-
-
 }
 
-#define YBLOW 64
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    
-    LOG_POSTION
+
 #if 0
-    CGRect frameTitleLabel = CGRectMake(0, YBLOW, VIEW_WIDTH, 100);
-    CGSize size = [self.titleLabel sizeThatFits:frameTitleLabel.size];
-    frameTitleLabel.size.height = size.height;
-    self.titleLabel.frame = frameTitleLabel;
-    
-    frameTitleLabel.size.height = 0;
-    
-    CGRect frameNoteParagraphs = CGRectMake(0,
-                                            0, /*frameTitleLabel.origin.y + frameTitleLabel.size.height,*/
-                                            VIEW_WIDTH,
-                                            VIEW_HEIGHT - (frameTitleLabel.origin.y + frameTitleLabel.size.height));
-    frameNoteParagraphs = VIEW_BOUNDS;
-    self.tableNoteParagraphs.frame = frameNoteParagraphs;
-#endif
-    
-    self.noteFilter.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightNoteFilter);
-    self.noteFilter.hidden = (self.heightNoteFilter == 0);
-    
     CGRect frameNoteParagraphs = VIEW_BOUNDS;
     frameNoteParagraphs.origin.y += self.topNotesView ;
     frameNoteParagraphs.size.height -= self.topNotesView;
     self.tableNoteParagraphs.frame = frameNoteParagraphs;
-    
-    
     
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
     CGRect frameTextViewEditingContainer = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
@@ -227,6 +204,20 @@
     frameTextViewEditing = UIEdgeInsetsInsetRect(frameTextViewEditing, NOTEDETAILCELL_EDGE_LABEL);
     self.textViewEditing.frame = frameTextViewEditing;
     self.textViewEditingContainer.frame = frameTextViewEditingContainer;
+#endif
+    
+    self.noteFilter.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightNoteFilter);
+    self.noteFilter.hidden = (self.heightNoteFilter == 0);
+    
+    CGRect frameNotesView = VIEW_BOUNDS;
+    frameNotesView.origin.y += self.topNotesView ;
+    frameNotesView.size.height -= self.topNotesView;
+    self.tableNoteParagraphs.frame = frameNotesView;
+    
+    //筛选off的时候,可能notefilter覆盖到NotesView.将notefilter放到最下层.
+    [self.noteFilter.superview sendSubviewToBack:self.noteFilter];
+    
+    
 }
 
 
@@ -275,6 +266,13 @@
 }
 
 
+- (void)notePropertySetClassification:(NSString*)classification color:(NSString*)color frame:(CGRect)frame
+{
+    self.notePropertyView.frame = frame;
+    [self.notePropertyView setClassification:classification color:color];
+}
+
+
 - (void)parseNoteParagraphs
 {
     NSLog(@"identifier : %zd", self.noteModel.identifier);
@@ -288,31 +286,6 @@
     
     return ;
 }
-
-
-#if 0
-- (NSMutableAttributedString*)titleParagraphAttrbutedStringOnDisplay:(BOOL)onDisplay
-{
-    NoteParagraphModel* noteParagraphModel = self.titleParagraph;
-    NSString *string = noteParagraphModel.content;
-    //在非显示模式下, 内容为空的话显示placehold.
-    if(string.length == 0) {
-        if(onDisplay) {
-            if(!self.isCreateMode) {
-                string = @"无标题";
-            }
-            else {
-                string = CREATE_PLACEHOLD_TITLE;
-            }
-        }
-    }
-    
-    noteParagraphModel.content = string;
-    return [noteParagraphModel attributedTextGenerated];
-    
-
-}
-#endif
 
 
 //noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
@@ -346,6 +319,10 @@
 {
     CGFloat height = 100.0;
     
+    if(indexPath.row == 1) {
+        height = 45;
+    }
+    
     if([indexPath isEqual:self.indexPathOnEditing]) {
         
     }
@@ -375,30 +352,29 @@
 }
 
 
-
-
-
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NoteDetailCell *cell
-            = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
+    UITableViewCell *cell = nil;
 
     //属性栏.
     if(indexPath.row == 1) {
-        [cell setClassification:self.noteModel.classification color:self.noteModel.color];
-        NS0Log(@"property height : %f", cell.optumizeHeight);
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PropertyViewCell"];
+        [self notePropertySetClassification:self.noteModel.classification
+                                      color:self.noteModel.color
+                                      frame:CGRectMake(0, 0, tableView.frame.size.width, 45)];
+        [cell addSubview:self.notePropertyView];
     }
     else {
+        NoteDetailCell *noteDetailCell = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
         NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        [cell setNoteParagraph:noteParagraph isTitle:indexPath.row == 0 sn:indexPath.row - 1 onDisplayMode:!self.isCreateMode];
+        [noteDetailCell setNoteParagraph:noteParagraph isTitle:indexPath.row == 0 sn:indexPath.row - 1 onDisplayMode:!self.isCreateMode];
         NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
+        self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
+        cell = noteDetailCell;
     }
     
-    self.optumizeHeights[indexPath] = @(cell.optumizeHeight);
     return cell;
 }
-
-
 
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -408,15 +384,13 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     //属性框显示的时候. 点击任意栏会执行关闭属性框.
-    if([self filterViewisShow]) {
-        NSLog(@"filterViewHidden");
-        [self filterViewHidden];
+    if([self filterViewIsShow]) {
+        [self filterViewHide];
         return ;
     }
     
     if(indexPath.row == 1) {
-        [self filterViewBuild];
-        
+        [self filterViewShow];
         return ;
     }
     
@@ -959,12 +933,6 @@
 
 - (void)filterViewBuild
 {
-    if(self.noteFilter) {
-        NSLog(@"filterView already built.");
-        [self.view bringSubviewToFront:self.noteFilter];
-        return ;
-    }
-    
     self.heightNoteFilter = 36;
     
     //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
@@ -991,95 +959,38 @@
     
     self.noteFilter = menu;
     
-    [self.contentView addSubview:menu];
-    
-    //[self showPopupView:menu];
+    [self addSubview:menu];
 }
 
 
 
 
-- (void)actionOpenFilter
+- (void)filterViewShow
 {
-    [UIView animateWithDuration:0.6 animations:^{
+    LOG_POSTION
+    [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 36;
         [self viewWillLayoutSubviews];
     }];
-    
-    
-    
 }
 
 
-- (void)actionCloseFilter
+- (void)filterViewHide
 {
-    [UIView animateWithDuration:0.6 animations:^{
+    LOG_POSTION
+    [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 0;
         [self viewWillLayoutSubviews];
     }];
 }
 
 
-
-
-- (void)filterViewHidden
+- (BOOL)filterViewIsShow
 {
-    self.noteFilter.hidden = YES;
-    [self.noteFilter removeFromSuperview];
-    self.noteFilter = nil;
-    //[self dismissPopupView];
-}
-
-
-- (BOOL)filterViewisShow
-{
-    return (nil != self.noteFilter);
-}
-
-
-//新增栏目.
-- (void)filterViewAddClassification
-{
-    CGRect frame = self.noteFilter.frame;
-#if 0
-    UIView *container = [[UIView alloc] initWithFrame:frame];
-    [self.noteFilter addSubview:container];
-    container.backgroundColor = [UIColor whiteColor];
-    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
-#endif
-    
-    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
-    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
-    //[container addSubview:classificationInputView];
-    classificationInputView.borderStyle     = UITextBorderStyleLine;
-//    classificationInputView.backgroundColor = [UIColor blueColor];
-    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-    classificationInputView.placeholder     = @"请输入新增的栏目";
-    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
-    classificationInputView.returnKeyType = UIReturnKeyDone;
-    classificationInputView.delegate        = self;
-    
-    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
-    classificationInputView.leftView = leftview;
-    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
-    
-    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
-    classificationInputView.layer.borderWidth = 1.5;
-    
-    [classificationInputView becomeFirstResponder];
-    
-    [self showPopupView:classificationInputView];
-    
-}
-
-
-- (void)filterViewDidAddClassification:(NSString*)classification
-{
-    //添加到栏目数据库.
-    [[AppConfig sharedAppConfig] configClassificationAdd:classification];
-    
-    //执行修改classification动作. 包括更新存储, 更新数据, 更新属性显示.
-    [self updateClassificationTo:classification];
+    static CGFloat EPSILON = 0.000001;
+    BOOL isShow = (fabs(self.topNotesView) > EPSILON);
+    NSLog(@"%f %zd", self.topNotesView, isShow);
+    return isShow;
 }
 
 
@@ -1099,62 +1010,7 @@
 }
 
 
-//栏目增加的delegate.
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-{
-    LOG_POSTION
-    return YES;
-}
 
-
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    LOG_POSTION
-}
-
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    LOG_POSTION
-    
-    //官方 取消第一响应者（就是退出编辑模式收键盘）
-    [textField resignFirstResponder];
-    [self dismissPopupView];
-    
-    if(textField.text.length > 0) {
-        [self filterViewDidAddClassification:textField.text];
-    }
-    
-    return YES;
-}
-
-
-//方法一
-
-- (BOOL)textField1:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    if (range.location>= 10) {
-        return NO;
-    }
-    
-    return YES;
-    
-}
-
-
-//方法二
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    
-    if (toBeString.length > 10) {
-        textField.text = [toBeString substringToIndex:10];
-        return NO;
-    }
-    
-    return YES;
-}
 
 
 //关于筛选.
@@ -1241,22 +1097,14 @@
         
         self.idxClassifications = indexPath.row;
         
-        //新增栏目.
-//        if(self.filterDataClassifications.count - 1 == indexPath.row) {
-//            [self filterViewAddClassification];
-//            [self filterViewHidden];
-//        }
-//        else {
-//        }
-        
         [self updateClassificationTo:self.filterDataClassifications[indexPath.row]];
         //选择后关闭属性栏. 是不是会修改多项时需重新打开...
-        [self filterViewHidden];
+        [self filterViewHide];
     } else{
         
         self.idxColor = indexPath.row;
         [self updateColorStringTo:self.filterDataColors[indexPath.row]];
-        [self filterViewHidden];
+        [self filterViewHide];
     }
     
     NSLog(@"Classification : %@, color : %@", self.filterDataClassifications[self.idxClassifications], self.filterDataColors[self.idxColor]);
@@ -1358,6 +1206,11 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 
 - (void)didReceiveMemoryWarning {
@@ -1628,6 +1481,100 @@ return attributedString;
     }
     
     return noteParagraphTextView;
+}
+
+
+//新增栏目.
+- (void)filterViewAddClassification
+{
+    CGRect frame = self.noteFilter.frame;
+#if 0
+    UIView *container = [[UIView alloc] initWithFrame:frame];
+    [self.noteFilter addSubview:container];
+    container.backgroundColor = [UIColor whiteColor];
+    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
+#endif
+    
+    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
+    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
+    //[container addSubview:classificationInputView];
+    classificationInputView.borderStyle     = UITextBorderStyleLine;
+    //    classificationInputView.backgroundColor = [UIColor blueColor];
+    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    classificationInputView.placeholder     = @"请输入新增的栏目";
+    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
+    classificationInputView.returnKeyType = UIReturnKeyDone;
+    classificationInputView.delegate        = self;
+    
+    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
+    classificationInputView.leftView = leftview;
+    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
+    
+    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
+    classificationInputView.layer.borderWidth = 1.5;
+    
+    [classificationInputView becomeFirstResponder];
+    
+    [self showPopupView:classificationInputView];
+    
+}
+
+
+//栏目增加的delegate.
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    LOG_POSTION
+    return YES;
+}
+
+
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    LOG_POSTION
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    LOG_POSTION
+    
+    //官方 取消第一响应者（就是退出编辑模式收键盘）
+    [textField resignFirstResponder];
+    [self dismissPopupView];
+    
+    if(textField.text.length > 0) {
+        [self filterViewDidAddClassification:textField.text];
+    }
+    
+    return YES;
+}
+
+
+//方法一
+
+- (BOOL)textField1:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    if (range.location>= 10) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
+
+//方法二
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    if (toBeString.length > 10) {
+        textField.text = [toBeString substringToIndex:10];
+        return NO;
+    }
+    
+    return YES;
 }
 
 

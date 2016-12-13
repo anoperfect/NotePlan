@@ -106,7 +106,6 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    LOG_POSTION
     [super viewWillAppear:animated];
     [self navigationTitleRefresh];
     [self loadNotesView];
@@ -799,7 +798,7 @@
 
 - (void)actionOpenFilter
 {
-    [UIView animateWithDuration:0.6 animations:^{
+    [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 36;
         [self viewWillLayoutSubviews];
     }];
@@ -811,7 +810,7 @@
 
 - (void)actionCloseFilter
 {
-    [UIView animateWithDuration:0.6 animations:^{
+    [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 0;
         [self viewWillLayoutSubviews];
     }];

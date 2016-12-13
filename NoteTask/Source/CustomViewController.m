@@ -52,7 +52,6 @@
 {
     [super viewWillLayoutSubviews];
     self.contentView.frame = self.view.bounds;
-//    self.contentView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64);
 }
 
 
@@ -77,7 +76,19 @@
         [self pushBackAction];
     }
     
+    NSLog(@"\nAppear %@, vcs :%@", self, self.navigationController.viewControllers);
+    
 }
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    NSLog(@"\nDisappear %@, vcs :%@", self, self.navigationController.viewControllers);
+}
+
+
 
 
 - (void)pushBackAction

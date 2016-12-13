@@ -45,6 +45,8 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 @property (nonatomic, strong) UILabel               *dayButtonB;
 @property (nonatomic, strong) UILabel               *daysInMutilMode;
 
+@property (nonatomic, strong) UIFont                *fontScheduleDay;
+
 
 @property (nonatomic, strong) NSString *daysType;
 
@@ -109,7 +111,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         }
         [self addSubview:self.contentInputView];
         self.contentInputView.hidden = YES;
-//        [self viewWillLayoutSubviews];
     });
     
 
@@ -125,36 +126,26 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     self.createContentLabel.attributedText = [NSString attributedStringWith:kStringStepCreateContent font:font indent:indent textColor:textColor];
     self.createScheduleDayLabel.attributedText = [NSString attributedStringWith:kStringStepScheduleDay font:font indent:indent textColor:textColor];
     
+    CGFloat fontSize = (SCREEN_WIDTH/22.0);
+    self.fontScheduleDay = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
+    
     self.daysInMutilMode.numberOfLines = 0;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionOpenCalendarMuiltMode)];
     [self.daysInMutilMode addGestureRecognizer:tap];
     self.daysInMutilMode.userInteractionEnabled = YES;
     
-    NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"单天 : \n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"只给任务设置一个执行日期.\n" font:FONT_SMALL indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"连续 : \n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"设定任务日期起始.\n任务执行时间范围为此日期范围.\n" font:FONT_SMALL indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"多天 : \n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"选择多个日期执行此任务.\n" font:FONT_SMALL indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskTextCommon"]]];
-    self.detailScheduleDayLabel.attributedText = attributedString;
+    self.detailScheduleDayLabel.attributedText = [self detailScheduleAttributedString];
     self.detailScheduleDayLabel.numberOfLines = 0;
     
-    self.dayButtonA.text     = @"A";
     self.dayButtonA.textAlignment = NSTextAlignmentCenter;
     UITapGestureRecognizer *tapA = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionClickDayButtonA:)];
     [self.dayButtonA addGestureRecognizer:tapA];
     self.dayButtonA.userInteractionEnabled = YES;
     
-    self.dayButtonB.text     = @"B";
     self.dayButtonB.textAlignment = NSTextAlignmentCenter;
     UITapGestureRecognizer *tapB = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionClickDayButtonB:)];
     [self.dayButtonB addGestureRecognizer:tapB];
     self.dayButtonB.userInteractionEnabled = YES;
-    
-    self.daysInMutilMode.text           = @"qwertyuiop";
     
     self.daysTypes = [TaskInfo scheduleStrings];
     for(NSInteger idx = 0; idx < self.daysTypes.count; idx ++) {
@@ -194,7 +185,9 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     [self addSubview:self.dayButtonB];
     [self addSubview:self.daysInMutilMode];
     
-     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    [self updateDaysSelectorText];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
 }
 
 
@@ -202,8 +195,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 {
     LOG_POSTION
     [super viewWillLayoutSubviews];
-    
-    [self updateDaysSelectorText];
     
     UIScrollView *scrollView = (UIScrollView*)self.contentView;
     if([scrollView isKindOfClass:[UIScrollView class]]) {
@@ -215,7 +206,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     CGFloat widthContentLabel = VIEW_WIDTH - (edgeContentLabel.left + edgeContentLabel.right);
     CGSize sizeContentLabelFit = [self.contentLabel sizeThatFits:CGSizeMake(widthContentLabel, 1000)];
     CGFloat heightContentLabel = sizeContentLabelFit.height;
-    NSLog(@"0-0-- fit(%f) to %f", widthContentLabel, heightContentLabel);
     heightContentLabel += (edgeContentLabel.left + edgeContentLabel.right);
     
     if(_optumizeHeightcreateContentInputView == 0.0) {
@@ -224,7 +214,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     
     _heightDetailScheduleDayLabel = _heightDayButtonA = _heightDayButtonB = _heightDaysInMutilMode = 0;
     if(self.daysType.length == 0) {
-        _heightDetailScheduleDayLabel = 136;
+        _heightDetailScheduleDayLabel = 180;
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
         _heightDayButtonA = 36;
@@ -243,6 +233,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
     [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
                   toViews:@[
+                            [FrameLayoutView viewWithName:@"createContentLabelPadding" value:10 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_createContentLabel"     value:36 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"createContentLabelBottom" value:10 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"_contentLabel" value:heightContentLabel edge:edgeContentLabel],
@@ -260,15 +251,15 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
      
     [self memberViewSetFrameWith:[f nameAndFrames]];
     
-    NSLog(@"%@", f);
-    
-    
-    
     f = nil;
-    
-    
+}
 
-    
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.title = self.isCreate ? @"创建任务" : @"编辑任务" ;
+    [self navigationItemRightInit];
     
 }
 
@@ -303,11 +294,24 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 }
 
 
+- (NSAttributedString*)detailScheduleAttributedString
+{
+    NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"单天 : \n" font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"只给任务设置一个执行日期.\n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"连续 : \n" font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"设定任务日期起始.\n任务执行时间范围为此日期范围.\n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"多天 : \n" font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"选择多个日期执行此任务.\n" font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    [attributedString appendAttributedString:[NSString attributedStringWith:@"\n" font:[UIFont systemFontOfSize:6] indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]]];
+    
+    return [[NSAttributedString alloc] initWithAttributedString:attributedString];
+}
+
+
 - (void)actionCreate
 {
-    NSDictionary *dict = [self.taskinfoEdit toDictionary];
-    NSLog(@"%@", dict);
-    
     NSString *errorMessage = [self dataUpdateToTaskInfo];
     if(errorMessage.length > 0) {
         [self showIndicationText:errorMessage inTime:1];
@@ -326,6 +330,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
             NSString *updateDetail = diffs[@"detail"];
             [[TaskInfoManager taskInfoManager] updateTaskInfo:self.taskinfo addUpdateDetail:updateDetail];
             [self.navigationController popViewControllerAnimated:YES];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:diffs userInfo:nil];
         }
         else {
             [self showIndicationText:@"任务信息未修改" inTime:1];
@@ -347,7 +352,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     
     //重用cell中的textview有刷新逻辑设计的问题. 用一个单独的textview用于编辑.
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
-    self.contentInputView.frame = CGRectMake(10, 36, VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - 36);
+    self.contentInputView.frame = CGRectMake(10, 10 + 36, VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - (10 + 36));
     self.contentInputView.text = self.taskinfoEdit.content;
     self.contentInputView.hidden = NO;
     self.contentInputView.editable = YES;
@@ -367,15 +372,10 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 - (void)actionEditTaskContentFinish
 {
     self.taskinfoEdit.content = self.contentInputView.text;
-    NSDictionary *dict = [self.taskinfoEdit toDictionary];
-    NSLog(@"%@", dict);
     
     [self.contentInputView resignFirstResponder];
     self.contentInputView.hidden = YES;
-    [self viewWillLayoutSubviews];
-    
-   dict = [self.taskinfoEdit toDictionary];
-    NSLog(@"%@", dict);
+    [self.view setNeedsLayout];
 }
 
 
@@ -396,7 +396,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         }
     }
     
-    self.contentInputView.frame = CGRectMake(10, 36, VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - 36);
+    self.contentInputView.frame = CGRectMake(10, (10 + 36), VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - (10 + 36));
 }
 
 
@@ -404,8 +404,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 //更新taskinfo. 如果有内容填写不充足的则返回错误信息.
 - (NSString*)dataUpdateToTaskInfo
 {
-    NSLog(@"%@", [self.taskinfoEdit toDictionary]);
-    
     NSMutableString *errorMessage = [[NSMutableString alloc] init];
     if(self.taskinfoEdit.content.length == 0) {
         [errorMessage appendString:@"请设置任务内容"];
@@ -467,41 +465,19 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         }
     }
     
-    NSLog(@"%@", [self.taskinfoEdit toDictionary]);
+    [self.taskinfoEdit generateDaysOnTask];
+    NSLog(@"%@", self.taskinfoEdit);
+    
     return @"";
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    self.title = self.isCreate ? @"创建任务" : @"编辑任务" ;
-    [self navigationItemRightInit];
-
-}
 
 
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-}
 
 
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-
-}
 
 
 - (void)updateDaysSelectorText
@@ -510,19 +486,20 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
-        NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务执行日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
+        NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务执行日期 : " font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]];
         if(self.dayString.length == 0) {
             self.dayString = [NSString dateStringToday];
         }
         NSString *dayString = self.dayString;
         NSMutableAttributedString *attributedStringDayString =
                 [NSString attributedStringWith:dayString
-                                          font:FONT_SYSTEM
+                                          font:self.fontScheduleDay
                                         indent:0
-                                     textColor:[UIColor colorWithName:@"TaskEditTextColor"]
+                                     textColor:[UIColor colorWithName:@"TaskDetailText"]
                                backgroundColor:nil
-                                underlineColor:[UIColor colorWithName:@"TaskEditTextColor"]
-                                  throughColor:nil];
+                                underlineColor:[UIColor colorWithName:@"TaskDetailText"]
+                                  throughColor:nil
+                                 textAlignment:NSTextAlignmentLeft];
         [attributedString appendAttributedString:attributedStringDayString];
         self.dayButtonA.attributedText = attributedString;
     }
@@ -537,16 +514,11 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
             }
         }
         
-        UIFont *font = FONT_SYSTEM;
-        CGFloat fontSize = (VIEW_WIDTH/22.0);
-        font = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
-        NSLog(@"-0-0-0 font size : %f", fontSize);
-        NSMutableAttributedString *attributedString = [NSString attributedStringWith:s font:font indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"] backgroundColor:nil underlineColor:nil throughColor:nil];
+        NSMutableAttributedString *attributedString = [NSString attributedStringWith:s font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"] backgroundColor:nil underlineColor:nil throughColor:nil textAlignment:NSTextAlignmentCenter];
         self.daysInMutilMode.attributedText = attributedString;
-    
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-        NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务开始日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
+        NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务开始日期 : " font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]];
         
         if(![NSString dateStringIsValid:self.dayStringFrom]) {
             self.dayStringFrom = [NSString dateStringToday];
@@ -554,16 +526,17 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         NSString *dayString = self.dayStringFrom;
         NSMutableAttributedString *attributedStringDayString =
         [NSString attributedStringWith:dayString
-                                  font:FONT_SYSTEM
+                                  font:self.fontScheduleDay
                                 indent:0
-                             textColor:[UIColor colorWithName:@"TaskEditTextColor"]
+                             textColor:[UIColor colorWithName:@"TaskDetailText"]
                        backgroundColor:nil
-                        underlineColor:[UIColor colorWithName:@"TaskEditTextColor"]
-                          throughColor:nil];
+                        underlineColor:[UIColor colorWithName:@"TaskDetailText"]
+                          throughColor:nil
+                         textAlignment:NSTextAlignmentLeft];
         [attributedString appendAttributedString:attributedStringDayString];
         self.dayButtonA.attributedText = attributedString;
         
-        attributedString = [NSString attributedStringWith:@"任务结束日期 : " font:FONT_SYSTEM indent:36 textColor:[UIColor colorWithName:@"TaskEditTextColor"]];
+        attributedString = [NSString attributedStringWith:@"任务结束日期 : " font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]];
         if(![NSString dateStringIsValid:self.dayStringTo]) {
             self.dayStringTo = [NSString dateStringTomorrow];
         }
@@ -571,21 +544,18 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         dayString = self.dayStringTo;
         attributedStringDayString =
         [NSString attributedStringWith:dayString
-                                  font:FONT_SYSTEM
+                                  font:self.fontScheduleDay
                                 indent:0
-                             textColor:[UIColor colorWithName:@"TaskEditTextColor"]
+                             textColor:[UIColor colorWithName:@"TaskDetailText"]
                        backgroundColor:nil
-                        underlineColor:[UIColor colorWithName:@"TaskEditTextColor"]
-                          throughColor:nil];
+                        underlineColor:[UIColor colorWithName:@"TaskDetailText"]
+                          throughColor:nil
+                         textAlignment:NSTextAlignmentLeft];
         [attributedString appendAttributedString:attributedStringDayString];
         self.dayButtonB.attributedText = attributedString;
     }
     
-    
-    
-    
-    
-    
+    [self.view setNeedsLayout];
 }
 
 
@@ -610,7 +580,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     NSInteger idx = segmentedControl.selectedSegmentIndex;
     if(idx >= 0 && idx < self.daysTypes.count) {
         self.daysType = self.daysTypes[idx];
-        [self viewWillLayoutSubviews];
+        [self updateDaysSelectorText];
     }
 }
 
@@ -679,7 +649,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if([keyPath isEqualToString:@"daysType"]) {
-        [self updateDayScheduleLayout];
+        [self updateDaysSelectorText];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -687,15 +657,10 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 }
 
 
-- (void)updateDayScheduleLayout
-{
-    [self viewWillLayoutSubviews];
-}
-
-
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"daysType" context:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 

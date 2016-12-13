@@ -77,7 +77,6 @@
     NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
     [dateformatter setDateFormat:@"yyyy-MM-dd"];
     NSString * dateString = [dateformatter stringFromDate:date];
-    NSLog(@"%@", dateString);
     
     return dateString;
 }
@@ -415,6 +414,7 @@
                                   backgroundColor:(UIColor*)backgroundColor
                                    underlineColor:(UIColor*)underlineColor
                                      throughColor:(UIColor*)throughColor
+                                    textAlignment:(NSTextAlignment)textAlignment
 
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s];
@@ -426,6 +426,7 @@
         [paragraphStyleContent setHeadIndent:indent];
         [paragraphStyleContent setFirstLineHeadIndent:indent];
         [paragraphStyleContent setTailIndent:-indent];
+        [paragraphStyleContent setAlignment:textAlignment];
         [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyleContent range:range];
     }
     

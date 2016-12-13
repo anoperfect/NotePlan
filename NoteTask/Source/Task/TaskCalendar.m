@@ -56,7 +56,9 @@
         _scrollView = [[UIScrollView alloc] init];
         _datesDisplay = [[YYLabel alloc] init];
         _datesDisplay.numberOfLines = 0;
-        _datesDisplay.font = [UIFont fontWithName:@"ArialMT" size:18];
+        CGFloat fontSize = (SCREEN_WIDTH/22.0);
+        UIFont *font = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
+        _datesDisplay.font = font;
         _datesDisplay.textAlignment = NSTextAlignmentCenter;
         CGRect frameDatesDisplay = CGRectMake(0, 64, width, height - 64 - 36 - width);
         frameDatesDisplay = UIEdgeInsetsInsetRect(frameDatesDisplay, UIEdgeInsetsMake(10, 10, 10, 10));

@@ -78,7 +78,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString*)reuseIdentifier
 {
-    NSLog(@"111");
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.container = [[UIView alloc] init];
@@ -303,12 +302,10 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     CGSize size = [self.summayView sizeThatFits:frameSummary.size];
     frameSummary.size.height = size.height;
     self.summayView.frame = frameSummary;
-    NSLog(@"fit --- %lf, %lf", size.width, size.height);
 
     frameContainer.size.height = frameSummary.size.height + edgeSummary.top + edgeSummary.bottom;
     frameCell.size.height = frameContainer.size.height + edgeContainer.top + edgeContainer.bottom;
 
-    NSLog(@"--- cell height : %lf", frameCell.size.height);
     self.frame = frameCell;
     self.container.frame = frameContainer;
     self.container.backgroundColor = [UIColor whiteColor];
@@ -481,7 +478,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 - (void)setTaskinfo:(TaskInfo*)taskinfo
 {
-    LOG_POSTION
     _taskinfo = taskinfo;
     [self updateDisplay];
 }
@@ -489,7 +485,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 - (void)updateDisplay
 {
-    LOG_POSTION
     if(!self.taskinfo) {
         return ;
     }
@@ -524,7 +519,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self.taskContentLabel.frame = CGRectMake(0, y, widthContainer, heightContent);
     CGSize sizeFit = [self.taskContentLabel sizeThatFits:self.taskContentLabel.frame.size];
     heightContent = sizeFit.height;
-    NSLog(@"0-0-- fit(%f) to %f", self.taskContentLabel.frame.size.width, heightContent);
     self.taskContentLabel.frame = CGRectMake(0, y, widthContainer, heightContent);
     y += heightContent;
     
@@ -540,11 +534,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     frameCell.size.height = y + edgeContainer.top + edgeContainer.bottom;
     self.frame = frameCell;
-    
-    for(UIView *v in self.container.subviews) {
-        NSLog(@"---%@", v);
-    }
-    
 }
 
 
@@ -585,9 +574,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
         [button setImage:[UIImage imageNamed:s] forState:UIControlStateNormal];
         [button setImageEdgeInsets:UIEdgeInsetsMake(edgeTop, edgeLeft, edgeTop, edgeLeft)];
         button.frame = CGRectMake(idx * frameActions.size.width / actionsKeyword.count, 0, frameActions.size.width / actionsKeyword.count, heightActions);
-        LOG_RECT(button.frame, @"button")
-        NSLog(@"%lf, %lf", edgeTop, edgeLeft);
-        
         
         [button addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchDown];
     }
@@ -703,9 +689,15 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self.contentLabel.numberOfLines = 1;
     self.contentLabel.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
     
+    NSLog(@"%@", self.contentLabel.attributedText);
+    NSLog(@"%@", self.contentLabel.attributedText.string);
+    
     CGSize size = self.contentLabel.frame.size;
     CGSize sizeFit = [self.contentLabel sizeThatFits:CGSizeMake(100000, size.height)];
-    if(sizeFit.width > size.width || sizeFit.height > size.height) {
+    
+    NSLog(@"size : %f, sizeFit : %f", size.width, sizeFit.width);
+    
+    if(sizeFit.width > (size.width - 36) || sizeFit.height > size.height) {
         if(!self.scrollView) {
             self.scrollView = [[UIScrollView alloc] init];
         }

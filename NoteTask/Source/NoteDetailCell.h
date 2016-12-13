@@ -16,36 +16,12 @@
 @interface NoteDetailCell : UITableViewCell
 
 
-
-
-@property (nonatomic, strong, readonly) UIView *container;
-
-@property (nonatomic, strong, readonly) YYLabel *noteParagraphYYLabel;
-@property (nonatomic, strong, readonly) UILabel *noteParagraphLabel;
-@property (nonatomic, strong, readonly) UITextView *noteParagraphTextView;
-@property (nonatomic, strong, readonly) NotePropertyView *notePropertyView;
-
-@property (nonatomic, assign, readonly) UIEdgeInsets edgeContainer;
-@property (nonatomic, assign, readonly) UIEdgeInsets edgeLabel;
-
-
 @property (nonatomic, assign, readonly) CGFloat optumizeHeight;
-
-
-- (void)setClassification:(NSString*)classification color:(NSString*)color;
 
 - (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph isTitle:(BOOL)isTitle sn:(NSInteger)sn onDisplayMode:(BOOL)displayMode;
 
-- (void)setCellDisplayHeight:(CGFloat)height;
-
-
-
 @end
-
-
-
-
-
+//同时给NoteDetailViewController使用, 以便使编辑控件的布局尽量跟NoteDetailCell匹配.
 #define NOTEDETAILCELL_EDGE_CONTAINER   UIEdgeInsetsMake(10, 10, 10, 10)
 #define NOTEDETAILCELL_EDGE_TEXTVIEW    UIEdgeInsertMake(0, 0, 0, 0)
 #define NOTEDETAILCELL_EDGE_LABEL       UIEdgeInsetsMake(6, 6, 6, 6)

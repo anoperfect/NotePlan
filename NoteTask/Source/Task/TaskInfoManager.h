@@ -37,10 +37,7 @@
 
 @interface TaskArrangeGroup : NSObject
 
-@property (nonatomic, strong) NSString                      *arrangeName;
-//@property (nonatomic, strong) NSString                      *dayString;
-
-//@property (nonatomic, strong) NSMutableDictionary<TaskInfo*, NSMutableArray<NSString*>*> *taskDays;
+@property (nonatomic, strong) NSString                          *arrangeName;
 @property (nonatomic, strong) NSMutableArray<TaskInfoArrange*>  *taskInfoArranges;
 
 + (instancetype)taskArrangeGroupWithName:(NSString*)name;
@@ -81,7 +78,7 @@
 
 @property (nonatomic, strong) NSMutableArray<TaskArrangeGroup*> *taskArrangeGroups;
 - (void)reloadTaskArrangeGroups;
-
++ (NSDictionary*)taskinfoArrange:(TaskInfo*)taskinfo;
 
 //day模式.按照day显示task.
 @property (nonatomic, strong) NSMutableDictionary<NSString*,NSMutableArray<TaskInfo*>*>* tasksDayMode; //将任务按照day分类.

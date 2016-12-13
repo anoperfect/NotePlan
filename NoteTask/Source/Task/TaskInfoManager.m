@@ -108,8 +108,8 @@
 
 - (void)log
 {
-    NSLog(@"%@", self);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //NSLog(@"%@", self);
         //[self log];
     });
 }
@@ -482,6 +482,51 @@
 }
 
 
++ (NSDictionary*)taskinfoArrange:(TaskInfo*)taskinfo
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    NSString *dateStringToday = [NSString dateStringToday];
+    NSString *dateStringTomorrow = [NSString dateStringTomorrow];
+    
+    //将taskinfo.daysOnTask解析到这几个days中.
+    NSMutableArray<NSString*> *daysBefore   = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString*> *daysToday    = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString*> *daysTomorrow = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString*> *daysComming  = [[NSMutableArray alloc] init];
+    for(NSString *day in taskinfo.daysOnTask) {
+        if([day compare:dateStringToday] == NSOrderedSame) {
+            [daysToday addObject:day];
+        }
+        else if([day compare:dateStringTomorrow] == NSOrderedSame) {
+            [daysTomorrow addObject:day];
+        }
+        else if([day compare:dateStringToday] == NSOrderedAscending) {
+            [daysBefore addObject:day];
+        }
+        else {
+            [daysComming addObject:day];
+        }
+    }
+    
+    if(daysBefore.count > 0) {
+        dict[@"之前"] = [NSArray arrayWithArray:daysBefore];
+    }
+    
+    if(daysToday.count > 0) {
+        dict[@"今天"] = @[dateStringToday];
+    }
+    
+    if(daysTomorrow.count > 0) {
+        dict[@"明天"] = @[dateStringTomorrow];
+    }
+    
+    if(daysComming.count > 0) {
+        dict[@"之后"] = [NSArray arrayWithArray:daysComming];
+    }
+    
+    return [NSDictionary dictionaryWithDictionary:dict];
+}
 
 
 

@@ -348,7 +348,6 @@
                                  };
     
     NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withInfo:infoInsert];
-    LOG_POSTION
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -646,9 +645,16 @@
 
 
 - (void)testAfterBuild
-{//return ;
+{
     [self configNoteAddPreset];
     
+    [self configNoteAddTest];
+    //[self configTaskAddTest];
+}
+
+
+- (void)configTaskAddTest
+{
     TaskInfo *task;
     task = [[TaskInfo alloc] init];
     task.sn = @"t1";
@@ -1017,28 +1023,9 @@
 
 - (void)configTaskInfoUpdate:(TaskInfo*)taskinfo
 {
-    NSDictionary *updateDict = @{
-                                 //@"sn":taskinfo.sn,
-                                 @"content":taskinfo.content,
-                                 @"status":@(taskinfo.status),
-                                 @"committedAt":taskinfo.committedAt,
-                                 @"modifiedAt":taskinfo.modifiedAt,
-                                 @"signedAt":taskinfo.signedAt,
-                                 @"finishedAt":taskinfo.finishedAt,
-                                 @"dayRepeat":@(taskinfo.dayRepeat),
-                                 @"dayStrings":taskinfo.dayStrings,
-                                 @"time":taskinfo.time,
-                                 };
+    NSDictionary *updateDict = [taskinfo toDictionary];
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfoUpdate:updateDict withInfoQuery:@{@"sn":taskinfo.sn}];
 }
-
-
-
-
-
-
-
-
 
 
 - (NSArray<TaskRecord*>*)configTaskRecordGets

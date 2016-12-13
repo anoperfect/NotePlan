@@ -172,7 +172,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         }
     }
     
-    [taskinfo generateDaysOnTask];
+    [self generateDaysOnTask];
     if(s.length > 0) {
         self.modifiedAt = taskinfo.modifiedAt;
     }
@@ -431,10 +431,17 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 - (NSString*)description
 {
     NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"[task:%@] \n", self.sn];
-    [s appendFormat:@"\t\t\tcontent:%@", self.content];
-    [s appendFormat:@"\t\t\tschedule type:%@", [TaskInfo scheduleStringWithType:self.scheduleType]];
-    [s appendFormat:@"\t\t\tdays: [%@]", [NSString arrayDescriptionConbine:self.daysOnTask seprator:@","]];
+    [s appendFormat:@"\n[task:%@ %p] \n", self.sn, self];
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"content", self.content];
+    [s appendFormat:@"\t\t\t%@ : %zd\n", @"scheduleType", self.scheduleType];
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"scheduleType", [TaskInfo scheduleStringWithType:self.scheduleType]];
+    
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"dayString", self.dayString];
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"dayStringFrom", self.dayStringFrom];
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"dayStringTo", self.dayStringTo];
+    [s appendFormat:@"\t\t\t%@ : %@\n", @"dayStrings", self.dayStrings];
+
+    [s appendFormat:@"\t\t\tdays: [%@]\n", [NSString arrayDescriptionConbine:self.daysOnTask seprator:@","]];
     return [NSString stringWithString:s];
 }
 
@@ -446,9 +453,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         [self.daysOnTask addObject:self.dayString];
     }
     else if(self.scheduleType == TaskInfoScheduleTypeContinues) {
-        LOG_POSTION
         [self.daysOnTask addObjectsFromArray:[NSString dateFrom:self.dayStringFrom to:self.dayStringTo]];
-        LOG_POSTION
     }
     else if(self.scheduleType == TaskInfoScheduleTypeDays) {
         NSArray *days = [self.dayStrings componentsSeparatedByString:@","];
@@ -458,13 +463,15 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
             }
         }
     }
+    
+    NSLog(@"%@", self);
 }
 
 
 - (NSString*)summaryDescription
 {
     NSMutableString *s = [[NSMutableString alloc] init];
-    [s appendFormat:@"[task:%@] content:%@, days:%@, finishedAt:%@", self.sn, self.content, self.dayStrings, self.finishedAt];
+    [s appendFormat:@"[task:%@] content:%@, days:[%@].", self.sn, self.content, [NSString arrayDescriptionConbine:self.daysOnTask seprator:@","]];
     if(s.length > 60) {
         [s replaceCharactersInRange:NSMakeRange(60, s.length-60) withString:@"..."];
     }

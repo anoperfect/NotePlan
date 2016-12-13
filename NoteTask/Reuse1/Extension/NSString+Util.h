@@ -65,7 +65,9 @@
                                         textColor:(UIColor*)textColor
                                   backgroundColor:(UIColor*)backgroundColor
                                    underlineColor:(UIColor*)underlineColor
-                                     throughColor:(UIColor*)throughColor;
+                                     throughColor:(UIColor*)throughColor
+                                    textAlignment:(NSTextAlignment)textAlignment;
+                                    
 
 
 

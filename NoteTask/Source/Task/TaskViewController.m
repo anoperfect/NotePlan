@@ -56,6 +56,8 @@
     [self dataTasksReload];
     
     [self subviewBuild];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
 }
 
 
@@ -88,7 +90,12 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBarHidden = YES;
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
 }
 
 
@@ -368,7 +375,6 @@
         height = [heightNumber floatValue];
     }
     
-    NSLog(@"---tableview height row : %lf", height);
     return height;
 }
 
@@ -742,6 +748,7 @@
 
 - (void)enterTaskDetail:(TaskInfo*)taskinfo arrange:(TaskInfoArrange*)taskinfoArrange
 {
+    NSLog(@"%@", taskinfo);
     TaskDetailViewController *vc = [[TaskDetailViewController alloc] initWithArrangeMode:taskinfo arrange:taskinfoArrange];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -859,6 +866,20 @@
 }
 
 
+- (void)actionDetectTaskUpdate:(NSNotification*)notification
+{
+    NSDictionary *diffs = notification.object;
+    NSLog(@"%@", diffs);
+    
+    [self dataTasksReload];
+    [self actionReloadTasksView];
+}
+
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 
 

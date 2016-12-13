@@ -18,16 +18,8 @@
 /*
 TaskContent 
 TaskProperty
-TaskRecordSummary
-TaskRecord
  */
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath*,NSNumber*> *optumizeHeights;
-
-@property (nonatomic, strong) NSMutableArray<TaskRecord*> *taskRecords;
-
-@property (nonatomic, strong) NSArray<NSNumber*> *taskRecordTypesSortOrder;
-@property (nonatomic, strong) NSMutableArray<NSNumber*> *taskRecordTypes;
-@property (nonatomic, strong) NSMutableArray<NSNumber*> *taskRecordTypesEnabled;
 
 @property (nonatomic, strong) TaskInfo *taskinfo;
 
@@ -50,6 +42,8 @@ TaskRecord
         self.taskinfo = taskinfo;
         self.mode = TASKINFO_MODE_ARRANGE;
         self.arrange = arrange;
+        
+        NSLog(@"arrange mode : %@, [%@]", self.arrange.arrangeName, [NSString arrayDescriptionConbine:self.arrange.arrangeDays seprator:@","]);
     }
     return self;
 }
@@ -85,33 +79,6 @@ TaskRecord
     //申请各成员.
     self.optumizeHeights = [[NSMutableDictionary alloc] init];
     
-    self.taskRecordTypesSortOrder =
-                            @[
-                              @(TaskRecordTypeUserRecord),
-                              @(TaskRecordTypeFinish),
-                              @(TaskRecordTypeSignIn),
-                              @(TaskRecordTypeSignOut),
-                              @(TaskRecordTypeCreate),
-                              @(TaskRecordTypeRedo),
-                              ];
-    
-    self.taskRecordTypes = [self.taskRecordTypesSortOrder  mutableCopy];
-    self.taskRecordTypesEnabled = [[NSMutableArray alloc] init];
-    
-    [self setTaskRecordTypes:@[
-                               @(TaskRecordTypeUserRecord),
-                               @(TaskRecordTypeFinish),
-                               ] triggerOn:YES reload:NO];
-    
-    [self setTaskRecordTypes:@[
-                               @(TaskRecordTypeSignIn),
-                               @(TaskRecordTypeSignOut),
-                               @(TaskRecordTypeCreate),
-                               @(TaskRecordTypeRedo),
-                               ] triggerOn:NO reload:NO];
-    
-    [self updateTaskRecordsData];
-    
     self.contentTableView = [[UITableView alloc] init];
     self.contentTableView.dataSource = self;
     self.contentTableView.delegate = self;
@@ -120,6 +87,8 @@ TaskRecord
     [self.contentTableView registerClass:[TaskDetailContentCell  class] forCellReuseIdentifier:@"TaskDetailContentCell" ];
     [self.contentTableView registerClass:[TaskDetailPropertyCell class] forCellReuseIdentifier:@"TaskDetailPropertyCell"];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
 }
 
 
@@ -137,8 +106,6 @@ TaskRecord
     self.title = @"任务详情";
     self.navigationController.navigationBarHidden = NO;
     self.view.backgroundColor = [UIColor purpleColor];
-    
-    [self.contentTableView reloadData];
 }
 
 
@@ -173,6 +140,7 @@ TaskRecord
                            self.arrange.arrangeName,
                            [NSString arrayDescriptionConbine:self.arrange.arrangeDays seprator:@","]
                 ];
+            NSLog(@"%@", s);
             return [self attributedStringForPropertyContent:s];
         }
         else if(self.mode == TASKINFO_MODE_DAY) {
@@ -227,7 +195,55 @@ TaskRecord
 }
 
 
+- (void)actionDetectTaskUpdate:(NSNotification*)notification
+{
+    NSDictionary *diffs = notification.object;
+    NSLog(@"%@", diffs);
+    BOOL needToPop = YES;
 
+    NSArray *diffKeys = diffs[@"diffKeys"];
+    LOG_POSTION
+    if(diffKeys.count == 0) {
+        needToPop = NO;
+        NSLog(@"NO need to pop. diffKeys count 0");
+    }
+    else if(diffKeys.count == 1 && [diffKeys[0] isEqualToString:@"content"]) {
+        needToPop = NO;
+        NSLog(@"NO need to pop. diffKeys is content");
+    }
+    else {
+        if(self.mode == TASKINFO_MODE_LIST) {
+            needToPop = NO;
+            NSLog(@"NO need to pop. TASKINFO_MODE_LIST");
+        }
+        else if(self.mode == TASKINFO_MODE_DAY) {
+            if([self.taskinfo.daysOnTask indexOfObject:self.dayString] != NSNotFound) {
+                needToPop = NO;
+                NSLog(@"NO need to pop. TASKINFO_MODE_DAY. day task still on.")
+            }
+            else {
+                NSLog(@"need to pop. day task off.")
+            }
+        }
+        else if(self.mode == TASKINFO_MODE_ARRANGE){
+            NSDictionary *arrangeParse = [TaskInfoManager taskinfoArrange:self.taskinfo];
+            NSString *name = self.arrange.arrangeName;
+            NSArray *days ;
+            if(name.length > 0 && nil != (days = arrangeParse[name]) && days.count > 0) {
+                needToPop = NO;
+                NSLog(@"NO need to pop. TASKINFO_MODE_ARRANGE. day task still on(%@).", name);
+            }
+        }
+    }
+    
+    if(needToPop) {
+        [self showIndicationText:@"任务执行信息修改.\n返回到上一页." inTime:1];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    else {
+        [self.contentTableView reloadData];
+    }
+}
 
 
 - (void)actionClickScheduleDays
@@ -257,151 +273,12 @@ TaskRecord
 }
 
 
-- (void)setTaskRecordTypes:(NSArray<NSNumber*>*)taskRecordTypes triggerOn:(BOOL)on reload:(BOOL)reload
-{
-    NSLog(@"all : %@. enabled : %@", self.taskRecordTypes, self.taskRecordTypesEnabled);
-    NSLog(@"set %@ to %zd", taskRecordTypes, on);
-    for(NSNumber *taskRecordType in taskRecordTypes) {
-        if(NSNotFound == [self.taskRecordTypes indexOfObject:taskRecordType]) {
-            continue;
-        }
-        
-        if(on && NSNotFound == [self.taskRecordTypesEnabled indexOfObject:taskRecordType]) {
-            [self.taskRecordTypesEnabled addObject:taskRecordType];
-        }
-        else if(!on && NSNotFound != [self.taskRecordTypesEnabled indexOfObject:taskRecordType]) {
-            [self.taskRecordTypesEnabled removeObject:taskRecordType];
-        }
-        else {
-            NSLog(@"#error - ");
-        }
-    }
-    
-    
-    NSLog(@"all : %@. enabled : %@", self.taskRecordTypes, self.taskRecordTypesEnabled);
-    
-    [self updateTaskRecordsData];
-    
-    if(reload) {
-        [self.contentTableView reloadData];
-    }
-}
-
-
-- (void)updateTaskRecordsData
-{
-    self.taskRecords = [[[TaskRecordManager taskRecordManager] taskRecordsOnSn:self.taskinfo.sn types:self.taskRecordTypesEnabled] mutableCopy];
-    [[TaskRecordManager taskRecordManager] taskRecordSort:self.taskRecords byModifiedAtAscend:NO];
-    NSLog(@"rrrrrr : %zd", self.taskRecords.count);
-}
-
-
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if(section == 0) {
         return 0;
     }
     return 72.0;
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 72.0)];
-    sectionHeaderView.backgroundColor = [UIColor colorWithName:@"TaskDetailRecordHeaderBackground"];
-    
-    //标题.
-    CGFloat heightTitle = 36;
-    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, sectionHeaderView.frame.size.width, heightTitle)];
-    [sectionHeaderView addSubview:labelTitle];
-    
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    [attributedString appendAttributedString:[self attributedStringForPropertyTitle:@"任务记录"]];
-    [attributedString appendAttributedString:[NSString attributedStringWith:[NSString stringWithFormat:@" (共%zd条) ", self.taskRecords.count]
-                                                                       font:[UIFont fontWithName:@"CustomTextColor"]
-                                                                     indent:20
-                                                                  textColor:[UIColor colorWithName:@"CustomTextColor"]
-                                                ]
-     ];
-    labelTitle.attributedText = attributedString;
-    
-    //类型筛选. 使用YYLabel+Link的方式. 应该用一排button或者横向tableview可以.
-    NSMutableAttributedString *text = [NSMutableAttributedString new];
-    UIFont *font = [UIFont boldSystemFontOfSize:16];
-    UIColor *colorEnabled = [UIColor colorWithName:@"TaskDetailRecordTypeEnabledBackground"];
-    UIColor *colorDisabled = [UIColor colorWithName:@"TaskDetailRecordTypeDisabledBackground"];
-    for (int idx = 0; idx < self.taskRecordTypes.count; idx ++) {
-        NSString *tag = [TaskRecord stringOfType:[self.taskRecordTypes[idx] integerValue]];
-        BOOL enabled = (NSNotFound != [self.taskRecordTypesEnabled indexOfObject:self.taskRecordTypes[idx]]);
-        UIColor *tagStrokeColor = colorEnabled;
-        UIColor *tagFillColor = enabled ? colorEnabled : colorDisabled;
-        NSMutableAttributedString *tagText = [[NSMutableAttributedString alloc] initWithString:tag];
-        [tagText yy_insertString:@"  " atIndex:0];
-        [tagText yy_appendString:@"  "];
-        [tagText yy_setFont:font range:NSMakeRange(0, tagText.length)];
-        [tagText yy_setColor:[UIColor colorWithName:@"TaskRecordTimeLine"] range:NSMakeRange(0, tagText.length)];
-        [tagText yy_setTextBinding:[YYTextBinding bindingWithDeleteConfirm:NO] range:[tagText yy_rangeOfAll]];
-        
-        YYTextBorder *border = [YYTextBorder new];
-        border.strokeWidth = 2;
-        border.strokeColor = tagStrokeColor;
-        border.strokeColor = [UIColor clearColor];
-        border.fillColor = tagFillColor;
-        border.strokeColor = tagFillColor;
-        border.fillColor = [UIColor clearColor];
-        border.cornerRadius = 1; // a huge value
-        border.insets = UIEdgeInsetsMake(-2, -2, -2, -2);
-        [tagText yy_setTextBackgroundBorder:border range:[tagText.string rangeOfString:tag]];
-        
-        YYTextHighlight *highlight = [YYTextHighlight new];
-        [highlight setColor:[UIColor whiteColor]];
-        //        [highlight setBackgroundBorder:highlightBorder];
-        highlight.tapAction = ^(UIView *containerView, NSAttributedString *text, NSRange range, CGRect rect) {
-            NSLog(@"Tap - %@", [NSString stringWithFormat:@"Tap: %@",[text.string substringWithRange:range]]);
-            NSInteger type = [TaskRecord typeOfString:[text.string substringWithRange:range]];
-            if(NSNotFound != type) {
-                if(NSNotFound == [self.taskRecordTypesEnabled indexOfObject:@(type)]) {
-                    [self setTaskRecordTypes:@[@(type)] triggerOn:YES reload:YES];
-                }
-                else {
-                    [self setTaskRecordTypes:@[@(type)] triggerOn:NO reload:YES];
-                }
-            }
-        };
-        [tagText yy_setTextHighlight:highlight range:tagText.yy_rangeOfAll];
-        
-        [text appendAttributedString:tagText];
-    }
-    [text yy_setLineSpacing:10 range:[text yy_rangeOfAll]];
-    [text yy_setLineBreakMode:NSLineBreakByCharWrapping range:[text yy_rangeOfAll]];
-    
-//    [text yy_appendString:@"\n"];
-    
-    CGFloat heightOptions = 36;
-    
-    UIScrollView *labelContainer = [sectionHeaderView viewWithTag:1000];
-    YYTextView *label;
-    if(!labelContainer) {
-        labelContainer = [[UIScrollView alloc] init];
-        labelContainer.tag = 1000;
-        [sectionHeaderView addSubview:labelContainer];
-        
-        label = [[YYTextView alloc] init];
-        [labelContainer addSubview:label];
-    }
-    
-    [labelContainer setShowsHorizontalScrollIndicator:NO];
-    labelContainer.frame = CGRectMake(0, heightOptions, sectionHeaderView.frame.size.width, heightOptions);
-    label.frame = CGRectMake(0, 0, 1000, heightOptions);
-    label.attributedText = text;
-    label.editable = NO;
-    CGSize size = [label sizeThatFits:label.frame.size];
-    NSLog(@"---%f", size.width);
-    //填充的边框会超过几个像素.
-    label.frame = CGRectMake(0, 0, size.width + 6, heightOptions);
-    labelContainer.contentSize = label.frame.size;
-    
-    return sectionHeaderView;
 }
 
 
@@ -447,10 +324,11 @@ TaskRecord
 {
     NSInteger rows = 0;
     if(section == 0) {
+        rows = 1 + [self taskPropertyTitles].count;
         rows = 10;
     }
     else if(section == 1) {
-        rows = self.taskRecords.count;
+        
     }
     return rows;
 }
@@ -482,14 +360,6 @@ TaskRecord
          ];
         self.optumizeHeights[indexPath] = @(propertyCell.frame.size.height);
         cell = propertyCell;
-    }
-    
-    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskRecordAtIndexPath:indexPath])) {
-        TaskRecordCell *recordCell = [tableView dequeueReusableCellWithIdentifier:@"TaskRecordCell" forIndexPath:indexPath];
-        TaskRecord *taskRecord = [self taskRecordOnIndexPath:indexPath];
-        recordCell.taskRecord = taskRecord;
-        self.optumizeHeights[indexPath] = @(recordCell.frame.size.height);
-        cell = recordCell;
     }
     
     if(!cell) {
@@ -554,23 +424,6 @@ TaskRecord
     
     return NSNotFound;
 }
-
-
-- (TaskRecord*)taskRecordOnIndexPath:(NSIndexPath*)indexPath
-{
-    NSInteger idx = [self tableViewCellIndexOfTaskRecordAtIndexPath:indexPath];
-    if(NSNotFound != idx && idx < self.taskRecords.count) {
-        return self.taskRecords[idx];
-    }
-    else {
-        return nil;
-    }
-}
-
-
-
-
-
 
 
 - (void)actionStringOnTaskContent:(NSString*)actionString
@@ -662,6 +515,7 @@ TaskRecord
 
 - (void)taskActionEdit
 {
+    NSLog(@"original : %@", self.taskinfo);
     TaskEditViewController *vc = [[TaskEditViewController alloc] initWithTaskInfo:self.taskinfo];
     [self pushViewController:vc animated:YES];
     
@@ -698,33 +552,17 @@ TaskRecord
 
 - (void)actionRedo
 {
-//    if(self.taskDay.finishedAt == 0) {
-//        NSLog(@"Already finished.");
-//        return ;
-//    }
-//    
-//    if(self.taskDay.finishedAt.length > 0) {
-//        self.taskDay.finishedAt = @"";
-//        [self actionReloadTaskContent];
-//        [[TaskRecordManager taskRecordManager] taskRecordAddRedo:self.taskinfo.sn on:self.taskDay.dayString committedAt:[NSString dateTimeStringNow]];
-//    }
-//    else {
-//        [self showIndicationText:@"任务未完成, 无需执行重做." inTime:1.0];
-//    }
+    LOG_POSTION
+}
+
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 
 
 
 
-
-
 @end
-
-
-
-
-
-
-
-

@@ -19,15 +19,13 @@
 @property (nonatomic, strong) YYLabel *noteParagraphYYLabel;
 @property (nonatomic, strong) UILabel *noteParagraphLabel;
 @property (nonatomic, strong) UITextView *noteParagraphTextView;
-@property (nonatomic, strong) NotePropertyView *notePropertyView;
 
 @property (nonatomic, assign) CGFloat optumizeHeight;
 
 @property (nonatomic, assign) UIEdgeInsets edgeContainer;
 @property (nonatomic, assign) UIEdgeInsets edgeLabel;
 
-//not use.
-@property (nonatomic, assign) BOOL onEditing;
+
 @property (nonatomic, assign) CGFloat heightFitToKeyboard;
 
 @end
@@ -80,8 +78,7 @@
     self.container = [[UIView alloc] init];
     [self addSubview:self.container];
     
-    self.notePropertyView = [[NotePropertyView alloc] init];
-    [self.container addSubview:self.notePropertyView];
+
     
 //    self.noteParagraphYYLabel = [[YYLabel alloc] init];
     [self.container addSubview:self.noteParagraphYYLabel];
@@ -93,45 +90,15 @@
     
 //    self.noteParagraphTextView = [[UITextView alloc] init];
     [self.container addSubview:self.noteParagraphTextView];
-//    self.noteParagraphTextView.numberOfLines = 0;
     self.noteParagraphTextView.editable = NO;
     self.noteParagraphTextView.scrollEnabled = NO;
     self.noteParagraphTextView.userInteractionEnabled = NO;
-    
-
 }
 
 
 - (void)setLayout
 {
     
-}
-
-
-- (void)setClassification:(NSString*)classification color:(NSString*)color
-{
-    CGFloat height = 45.0;
-    CGRect frame = self.frame;
-    frame.size.height = height;
-    self.frame = frame;
-    
-    CGRect frameContainer = self.bounds;
-    self.container.frame = frameContainer;
-    self.notePropertyView.frame = self.container.bounds;
-    
-    [self.notePropertyView setClassification:classification color:color];
-    LOG_VIEW_RECT(self.notePropertyView, @"ppp");
-//    self.notePropertyView.backgroundColor = [UIColor blueColor];
-    for(UIView *view in self.notePropertyView.subviews) {
-        NSLog(@"---%@", view);
-    }
-    
-    self.noteParagraphYYLabel.hidden    = YES;
-    self.noteParagraphLabel.hidden      = YES;
-    self.noteParagraphTextView.hidden   = YES;
-    self.notePropertyView.hidden        = NO;
-    
-    self.optumizeHeight = height;
 }
 
 
@@ -142,7 +109,6 @@
     self.noteParagraphYYLabel.hidden    = YES;
     self.noteParagraphLabel.hidden      = NO;
     self.noteParagraphTextView.hidden   = YES;
-    self.notePropertyView.hidden        = YES;
     
     CGRect frame = self.frame;
     CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, NOTEDETAILCELL_EDGE_CONTAINER);
@@ -211,25 +177,6 @@
     heightOptumize = frame.size.height;
     self.optumizeHeight = heightOptumize;
 }
-
-
-- (void)setCellDisplayHeight:(CGFloat)height
-{
-    CGRect frame = self.frame;
-    frame.size.height = height;
-    CGRect frameContainer = UIEdgeInsetsInsetRect(self.bounds, NOTEDETAILCELL_EDGE_CONTAINER);
-    
-    CGRect frameLabel = CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
-    frameLabel = UIEdgeInsetsInsetRect(frameLabel, NOTEDETAILCELL_EDGE_LABEL);
-    
-    
-    self.frame = frame;
-    self.container.frame = frameContainer;
-    self.noteParagraphTextView.frame = frameLabel;
-    
-    NSLog(@"cell height fit to keyboard : %f", self.frame.size.height);
-}
-
 
 
 -(BOOL) textViewShouldBeginEditing:(UITextView*)textView
