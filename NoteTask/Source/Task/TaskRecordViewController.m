@@ -82,7 +82,7 @@
     self.contentTableView = [[UITableView alloc] init];
     self.contentTableView.dataSource = self;
     self.contentTableView.delegate = self;
-    self.contentTableView.bounces = NO;
+//    self.contentTableView.bounces = NO;
     [self addSubview:self.contentTableView];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     

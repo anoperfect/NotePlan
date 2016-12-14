@@ -449,7 +449,7 @@
     if(self.mode == TASKINFO_MODE_ARRANGE) {
         TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
         taskinfo = taskInfoArrange.taskinfo;
-        finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskInfoArrange.arrangeDays];
+        finishedAts = [self.taskInfoManager queryFinishedAtsOnTaskInfo:taskinfo onDays:taskInfoArrange.arrangeDays];
         [cell setTaskInfo:taskinfo finishedAts:finishedAts];
     }
     else if(self.mode == TASKINFO_MODE_DAY) {
@@ -465,7 +465,7 @@
     }
     else if(self.mode == TASKINFO_MODE_LIST) {
         taskinfo = self.taskInfoManager.taskinfos[row];
-        finishedAts = [self.taskInfoManager queryFinishedAtsOnSn:taskinfo.sn onDays:taskinfo.daysOnTask];
+        finishedAts = [self.taskInfoManager queryFinishedAtsOnTaskInfo:taskinfo onDays:taskinfo.daysOnTask];
         NSLog(@"row %zd : %@", row, taskinfo);
         [cell setTaskInfo:taskinfo finishedAts:finishedAts];
     }
@@ -705,7 +705,7 @@
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
         if(days.count == 1) {
-            BOOL result = [self.taskInfoManager addFinishedAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString dateTimeStringNow]];
+            BOOL result = [self.taskInfoManager addFinishedAtOnTaskInfo:taskinfo on:days[0] committedAt:[NSString dateTimeStringNow]];
             if(result) {
                 [self actionReloadTasksViewOnIndexPath:indexPath];
             }

@@ -23,6 +23,27 @@
 }
 
 
++ (NSString*)checkAllFinishAts:(NSArray<TaskFinishAt*>*)finishAts
+{
+    NSString *dateTimeString = nil;
+    
+    for(TaskFinishAt *status in finishAts) {
+        if(status.finishedAt.length == 0) {
+            return nil;
+        }
+        
+        if(!dateTimeString) {
+            dateTimeString = status.finishedAt;
+        }
+        else if([dateTimeString compare:status.finishedAt] == NSOrderedAscending) {
+            dateTimeString = status.finishedAt;
+        }
+    }
+    
+    return dateTimeString;
+}
+
+
 - (NSString*)description
 {
     return [NSString stringWithFormat:@"%@ %@ [%@]", self.snTaskInfo, self.dayString, self.finishedAt];
@@ -280,22 +301,24 @@
 
 - (BOOL)updateTaskInfo:(TaskInfo*)taskinfo addUpdateDetail:(NSString*)updateDetail;
 {
+    [[AppConfig sharedAppConfig] configTaskInfoUpdate:taskinfo];
+    
     //更新各缓存.
     [self reloadTaskArrangeGroups];
     [self reloadTaskDayMode];
     
-    [[AppConfig sharedAppConfig] configTaskInfoUpdate:taskinfo];
-    
-    TaskRecord *taskRecord = [[TaskRecord alloc] init];
-    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
-    taskRecord.snTaskInfo = taskinfo.sn;
-    taskRecord.dayString = @"";
-    taskRecord.type = TaskRecordTypeUserModify;
-    taskRecord.record = updateDetail;
-    taskRecord.committedAt = taskinfo.modifiedAt;
-    taskRecord.modifiedAt = taskRecord.committedAt;
-    taskRecord.deprecatedAt = @"";
-    [self.taskRecordManager taskRecordAdd:taskRecord];
+    if(updateDetail.length > 0) {
+        TaskRecord *taskRecord = [[TaskRecord alloc] init];
+        taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+        taskRecord.snTaskInfo = taskinfo.sn;
+        taskRecord.dayString = @"";
+        taskRecord.type = TaskRecordTypeUserModify;
+        taskRecord.record = updateDetail;
+        taskRecord.committedAt = taskinfo.modifiedAt;
+        taskRecord.modifiedAt = taskRecord.committedAt;
+        taskRecord.deprecatedAt = @"";
+        [self.taskRecordManager taskRecordAdd:taskRecord];
+    }
     
     return YES;
 }
@@ -306,8 +329,9 @@
 
 
 #pragma mark - record
-- (BOOL)addFinishedAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt
+- (BOOL)addFinishedAtOnTaskInfo:(TaskInfo*)taskinfo on:(NSString*)day committedAt:(NSString*)committedAt
 {
+    NSString *sn = taskinfo.sn;
     //判断是否已经在完成表中存在.
     BOOL found = NO;
     for(TaskFinishAt *taskFinishAt in self.taskFinishAts) {
@@ -341,6 +365,14 @@
     
     //增加TaskRecord信息到管理缓存.
     [self.taskRecordManager taskRecordAddFinish:sn on:day committedAt:committedAt];
+    
+//    //判断是否已经完成全部任务.
+//    NSArray<TaskFinishAt*> *finishStatus = [self queryFinishedAtsOnTaskInfo:taskinfo onDays:nil];
+//    NSString *allFinishedAt = [TaskFinishAt checkAllFinishAts:finishStatus];
+//    if(allFinishedAt.length > 0) {
+//        taskinfo.finishedAt = committedAt;
+//        [self updateTaskInfo:taskinfo addUpdateDetail:@"任务标记为全部完成"];
+//    }
     
     return YES;
 }
@@ -381,11 +413,15 @@
 }
 
 
-- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn onDays:(NSArray<NSString*>*)days
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnTaskInfo:(TaskInfo*)taskinfo onDays:(NSArray<NSString*>*)days
 {
     NSMutableArray<TaskFinishAt*> *taskFinishAtsQuery = [[NSMutableArray alloc] init];
     
-    NSMutableArray<TaskFinishAt*> *taskFinishAts = self.taskFinishAtDictionary[sn];
+    NSMutableArray<TaskFinishAt*> *taskFinishAts = self.taskFinishAtDictionary[taskinfo.sn];
+    if(days.count == 0) {
+        days = [NSArray arrayWithArray:taskinfo.daysOnTask];
+    }
+    
     NSMutableDictionary<NSString*,NSNumber*> *dayAndIndexs = [[NSMutableDictionary alloc] init];
     
     NSInteger idx = 0;
@@ -401,7 +437,7 @@
         }
         else {
             TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
-            taskFinishAt.snTaskInfo = sn;
+            taskFinishAt.snTaskInfo = taskinfo.sn;
             taskFinishAt.dayString = day;
             taskFinishAt.finishedAt = @"";
             [taskFinishAtsQuery addObject:taskFinishAt];

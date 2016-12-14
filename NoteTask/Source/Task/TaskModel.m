@@ -464,7 +464,9 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
         }
     }
     
-    NSLog(@"%@", self);
+    [self.daysOnTask sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [(NSString*)obj1 compare:(NSString*)obj2];
+    }];
 }
 
 

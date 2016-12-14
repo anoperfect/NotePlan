@@ -328,7 +328,7 @@
     else {
         self.fontSizeValueLabel.text = fontSizeString;
         self.sampleNoteParagraph.styleDictionay[@"font-size"] = fontSizeString;
-        self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGenerated];
+        self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGeneratedOnSn:0 andEditMode:NO];
     }
     
     return ;
@@ -501,7 +501,7 @@
 - (NSMutableAttributedString*)sampleNoteParagraphAttrbutedString
 {
     NoteParagraphModel *noteParagraph = self.sampleNoteParagraph;
-    return [noteParagraph attributedTextGenerated];
+    return [noteParagraph attributedTextGeneratedOnSn:0 andEditMode:NO];
 }
 
 

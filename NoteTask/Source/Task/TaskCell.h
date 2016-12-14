@@ -28,6 +28,7 @@
 
 
 @interface TaskDetailPropertyCell : UITableViewCell
+@property (nonatomic, assign) CGFloat optumizeHeight;
 - (void)setTitle:(NSAttributedString*)titleAttributedString content:(NSAttributedString*)contentAttributedString;
 @end
 

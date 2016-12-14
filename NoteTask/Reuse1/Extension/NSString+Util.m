@@ -257,11 +257,9 @@
     if(comparisonResult == NSOrderedAscending) {
         [dateStrings addObject:dateStringFrom];
         NSString *nextDay = dateStringFrom;
-        NSLog(@"- %@", nextDay);
         while(1) {
             nextDay = [self dateNextDayTo:nextDay];
             [dateStrings addObject:nextDay];
-            NSLog(@"- %@", nextDay);
             if([nextDay isEqualToString:dateStringTo]) {
                 break;
             }

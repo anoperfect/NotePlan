@@ -640,7 +640,7 @@
 
 - (void)testBeforeBuild
 {
-    [self.dbData removeDBName:@"config"];
+    //[self.dbData removeDBName:@"config"];
 }
 
 

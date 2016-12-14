@@ -27,6 +27,12 @@ TaskProperty
 @property (nonatomic, strong) TaskInfoArrange *arrange;
 @property (nonatomic, strong) NSString *dayString;
 
+//根据mode和对应的参数,计算出当前任务的schedule days, 以及对应的完成状态.
+@property (nonatomic, strong) NSArray<NSString*> *scheduleDateStrings;
+@property (nonatomic, strong) NSArray<TaskFinishAt*> *finishedAts;
+@property (nonatomic, strong) NSArray<TaskFinishAt*> *finishedAtsAll;
+
+
 @end
 
 
@@ -89,6 +95,10 @@ TaskProperty
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self actionUpdateDue:@"FinishAtCount"];
+    });
 }
 
 
@@ -122,12 +132,37 @@ TaskProperty
                                  @"当前模式",
                                  @"任务时间",
                                  @"提交时间",
+                                 @"完成情况",
                                  /*
                                  @"任务记录",
                                  @"任务记录类型筛选"
                                   */
                         ];
     return titles;
+}
+
+
+- (void)actionUpdateDue:(NSString*)due
+{
+    self.scheduleDateStrings = [NSArray arrayWithArray:[self dataTaskInfoOnDays]];
+    self.finishedAts = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:self.scheduleDateStrings];
+    self.finishedAtsAll = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:nil];
+    self.finishedAts = [self.finishedAts sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        TaskFinishAt *taskFinishAt1 = obj1;
+        TaskFinishAt *taskFinishAt2 = obj1;
+        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
+    }];
+    
+    self.finishedAtsAll = [self.finishedAtsAll sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        TaskFinishAt *taskFinishAt1 = obj1;
+        TaskFinishAt *taskFinishAt2 = obj1;
+        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
+    }];
+    
+    NSLog(@"%@", self.finishedAts);
+    NSLog(@"%@", self.finishedAtsAll);
+    
+    [self.contentTableView reloadData];
 }
 
 
@@ -160,6 +195,10 @@ TaskProperty
         return [self attributedStringForPropertyContent:[TaskInfo dateTimeStringForDisplay:self.taskinfo.committedAt]];
     }
     
+    if([title isEqualToString:@"完成情况"]) {
+        return [self attributedStringForTaskFinishStatus];
+    }
+    
     if([title isEqualToString:@"任务记录"]) {
         return [self attributedStringForPropertyContent:@"签到:1"];
     }
@@ -190,6 +229,48 @@ TaskProperty
                                                 indent:20
                                              textColor:[UIColor colorWithName:@"TaskDetailText"]
                          ];
+    
+    return attributedString;
+}
+
+
+- (NSMutableAttributedString*)attributedStringForTaskFinishStatusString:(NSString*)s
+{
+    UIFont *font = FONT_SMALL;
+    font = [UIFont fontWithName:@"Menlo-Regular" size:11];
+    UIColor *textColor = [UIColor colorWithName:@"TaskDetailText"];
+    return [NSString attributedStringWith:s font:font indent:20 textColor:textColor backgroundColor:nil underlineColor:nil throughColor:nil textAlignment:NSTextAlignmentLeft];
+}
+
+
+- (NSMutableAttributedString*)attributedStringForTaskFinishStatus
+{
+
+    NSString *s = @"";
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    if(self.taskinfo.finishedAt.length > 0) {
+        s = [NSString stringWithFormat:@"总任务完成 : %@\n", [TaskInfo dateTimeStringForDisplay:self.taskinfo.finishedAt]];
+    }
+    else {
+        s = @"总任务未完成\n";
+    }
+    
+    [attributedString appendAttributedString:[NSString attributedStringWith:s
+                                                                       font:[UIFont fontWithName:@"TaskPropertyContentLabel"]
+                                                                     indent:20
+                                                                  textColor:[UIColor colorWithName:@"TaskDetailText"]
+                                              ]];
+    
+//    for(TaskFinishAt *status in self.finishedAtsAll) {
+//        if(status.finishedAt.length > 0) {
+//            s = [NSString stringWithFormat:@"%@ : %@\n", status.dayString, [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
+//        }
+//        else {
+//            s = [NSString stringWithFormat:@"%@\n", status.dayString];
+//        }
+//        [attributedString appendAttributedString:[self attributedStringForTaskFinishStatusString:s]];
+//    }
     
     return attributedString;
 }
@@ -241,7 +322,7 @@ TaskProperty
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {
-        [self.contentTableView reloadData];
+        [self actionUpdateDue:@"TaskInfoEdit"];
     }
 }
 
@@ -289,10 +370,11 @@ TaskProperty
     if([heightNumber isKindOfClass:[NSNumber class]]) {
         height = [heightNumber floatValue];
     }
-    
-    NSInteger idx;
-    if(NSNotFound != (idx = [self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
-        height = 72;
+    else {
+        NSInteger idx;
+        if(NSNotFound != (idx = [self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
+            height = 72;
+        }
     }
     
     return height;
@@ -355,11 +437,17 @@ TaskProperty
     if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
         TaskDetailPropertyCell *propertyCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailPropertyCell" forIndexPath:indexPath];
         NSString *title = [self taskPropertyTitles][idx];
+        propertyCell.optumizeHeight = 72;
         [propertyCell setTitle:[self attributedStringForPropertyTitle:title]
                        content:[self attributedStringForPropertyContentOfTitle:title]
          ];
         self.optumizeHeights[indexPath] = @(propertyCell.frame.size.height);
+        self.optumizeHeights[indexPath] = @(propertyCell.optumizeHeight);
         cell = propertyCell;
+        if([title isEqualToString:@"完成情况"]) {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+        }
     }
     
     if(!cell) {
@@ -374,7 +462,13 @@ TaskProperty
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
-    
+    NSInteger idx = 0;
+    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
+        NSString *title = [self taskPropertyTitles][idx];
+        if([title isEqualToString:@"完成情况"]) {
+            [self taskActionShowScheduleDaysFinishStatus];
+        }
+    }
 }
 
 
@@ -451,23 +545,26 @@ TaskProperty
 }
 
 
-- (NSArray<NSString*>*)dataTaskInfoOnDays
+- (NSMutableArray<NSString*>*)dataTaskInfoOnDays
 {
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
+        return self.arrange.arrangeDays;
+    }
+    else if(self.mode == TASKINFO_MODE_DAY) {
+        return [[NSMutableArray alloc] initWithObjects:self.dayString, nil];
+    }
+    else if(self.mode == TASKINFO_MODE_LIST) {
+        return self.taskinfo.daysOnTask;
+    }
+    
     return nil;
 }
 
 
-- (void)taskActionFinishOnDay:(NSString*)day
+- (void)taskActionFinishOnDay:(NSString*)day at:(NSString*)dateTimeString
 {
-    NSString *queryFinishAt = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnSn:self.taskinfo.sn onDay:day];
-    if(queryFinishAt.length > 0) {
-        NSString *finishAt = [TaskInfo dateTimeStringForDisplay:queryFinishAt] ;
-        [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
-        return ;
-    }
-    
-    [[TaskInfoManager taskInfoManager] addFinishedAtOnSn:self.taskinfo.sn on:day committedAt:[NSString dateTimeStringNow]];
-    [self actionReloadTaskContent];
+    [[TaskInfoManager taskInfoManager] addFinishedAtOnTaskInfo:self.taskinfo on:day committedAt:dateTimeString];
+    [self actionUpdateDue:@"FinishOnDay"];
 }
 
 
@@ -476,19 +573,93 @@ TaskProperty
     LOG_POSTION
     //任务已经完成的话, 则显示提示信息.
     if(self.taskinfo.finishedAt.length > 0) {
+        NSLog(@"Task already set to finished at : %@", self.taskinfo.finishedAt);
         NSString *finishAt = [TaskInfo dateTimeStringForDisplay:self.taskinfo.finishedAt] ;
         [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
         return ;
     }
     
-    NSArray<NSString*> *days = [self dataTaskInfoOnDays];
+    if(self.finishedAts.count == 0) {
+        NSLog(@"#error : scheduleDateStrings count 0.");
+        [self showIndicationText:@"任务信息解析出错" inTime:1];
+        return ;
+    }
     
-    if(days.count == 1) {
-        [self taskActionFinishOnDay:days[0]];
+    if(self.finishedAts.count == 1) {
+        TaskFinishAt *finishAt = [self.finishedAts firstObject];
+        NSString *finishAtDateTime = finishAt.finishedAt;
+        if(finishAtDateTime.length > 0) {
+            NSLog(@"Task on %@ already set to finished at : %@", finishAt.dayString, finishAtDateTime);
+            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)已经设定为完成:\n%@", finishAt.dayString, [TaskInfo dateTimeStringForDisplay:finishAtDateTime]] inTime:1];
+        }
+        else {
+            NSString *dateTimeNow = [NSString dateTimeStringNow];
+            [self taskActionFinishOnDay:finishAt.dayString at:dateTimeNow];
+            finishAt.finishedAt = dateTimeNow;
+            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", finishAt.dayString] inTime:2];
+        }
     }
     else {
-        [self showIndicationText:@"NotImplemented" inTime:1];
+//        [self showIndicationText:@"NotImplemented" inTime:1];
+        
+        NSString *totalFinishAt = [TaskFinishAt checkAllFinishAts:self.finishedAts];
+        if(totalFinishAt.length > 0) {
+            [self showIndicationText:[NSString stringWithFormat:@"任务(%@)已经完成", self.mode==TASKINFO_MODE_ARRANGE? self.arrange.arrangeName:@"全部"] inTime:3];
+        }
+        else {
+            NSLog(@"show days menu.");
+            NSMutableArray *menus = [[NSMutableArray alloc] init];
+            
+            if(self.mode == TASKINFO_MODE_ARRANGE) {
+                [menus addObject:@{
+                                   @"text" : self.arrange.arrangeName,
+                                   @"disableSelction" : @1
+                                   }];
+            }
+            
+            for(TaskFinishAt *status in self.finishedAts) {
+                NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+                dict[@"text"] = status.dayString;
+                if(status.finishedAt.length > 0) {
+                    dict[@"detailText"] = [NSString stringWithFormat:@"%@", [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
+                    dict[@"accessoryType"] = @(UITableViewCellAccessoryCheckmark);
+                    dict[@"disableSelction"] = @1;
+                }
+                
+                [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
+            }
+            
+            __weak typeof(self) _self = self;
+            [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
+                NSLog(@"select %@", menu);
+                [_self dismissMenus];
+                NSString *dateString = menu[@"text"];
+                [_self taskActionFinishOnDay:dateString at:[NSString dateTimeStringNow]];
+                [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", dateString] inTime:2];
+            }];
+        }
     }
+}
+
+
+- (void)taskActionShowScheduleDaysFinishStatus
+{
+    NSMutableArray *menus = [[NSMutableArray alloc] init];
+    for(TaskFinishAt *status in self.finishedAtsAll) {
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        dict[@"text"] = status.dayString;
+        if(status.finishedAt.length > 0) {
+            dict[@"detailText"] = [NSString stringWithFormat:@"%@", [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
+            dict[@"accessoryType"] = @(UITableViewCellAccessoryCheckmark);
+            dict[@"disableSelction"] = @1;
+        }
+        
+        [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
+    }
+    
+    [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
+
+    }];
 }
 
 

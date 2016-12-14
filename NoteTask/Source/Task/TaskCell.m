@@ -550,6 +550,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     NSArray<NSString*> *actionsKeyword = @[
                                            @"TaskActionTicking",
+                                           @"TaskActionFinish",
                                            @"TaskActionRecord",
                                            @"TaskActionEdit",
                                            @"TaskActionMore"];
@@ -678,6 +679,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     LOG_POSTION
     
     CGRect frameCell = self.frame;
+    frameCell.size.height = self.optumizeHeight;
+    CGFloat optumizeHeight ;
     
     CGFloat heightTitle = frameCell.size.height * 0.6;
     self.titleLabel.attributedText = self.titleAttributedString;
@@ -686,36 +689,45 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     CGFloat heightContent = frameCell.size.height * 0.4;
     self.contentLabel.attributedText = self.contentAttributedString;
-    self.contentLabel.numberOfLines = 1;
+    self.contentLabel.numberOfLines = 0;
     self.contentLabel.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
     
-    NSLog(@"%@", self.contentLabel.attributedText);
-    NSLog(@"%@", self.contentLabel.attributedText.string);
-    
     CGSize size = self.contentLabel.frame.size;
-    CGSize sizeFit = [self.contentLabel sizeThatFits:CGSizeMake(100000, size.height)];
+    CGSize sizeFit = [self.contentLabel sizeThatFits:CGSizeMake(100000, 100000)];
     
-    NSLog(@"size : %f, sizeFit : %f", size.width, sizeFit.width);
-    
-    if(sizeFit.width > (size.width - 36) || sizeFit.height > size.height) {
-        if(!self.scrollView) {
-            self.scrollView = [[UIScrollView alloc] init];
-        }
+    if(sizeFit.height > heightContent) {
+        optumizeHeight = heightTitle + sizeFit.height + 10 ;
         
-        self.scrollView.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
-        self.scrollView.contentSize = sizeFit;
-        [self.scrollView addSubview:self.contentLabel];
-        
-        [self addSubview:self.scrollView];
-        [self.scrollView addSubview:self.contentLabel];
-        
-        self.contentLabel.frame = CGRectMake(0, 0, sizeFit.width + 100, size.height);
-    }
-    else {
+        self.contentLabel.frame = CGRectMake(0, heightTitle, frameCell.size.width, sizeFit.height + 10);
         [self addSubview:self.contentLabel];
         [self.scrollView removeFromSuperview];
         self.scrollView = nil;
     }
+    else {
+        optumizeHeight = heightTitle + heightContent;
+        if(sizeFit.width > (size.width - 36) || sizeFit.height > size.height) {
+            if(!self.scrollView) {
+                self.scrollView = [[UIScrollView alloc] init];
+            }
+            
+            self.scrollView.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
+            self.scrollView.contentSize = sizeFit;
+            [self.scrollView addSubview:self.contentLabel];
+            
+            [self addSubview:self.scrollView];
+            [self.scrollView addSubview:self.contentLabel];
+            
+            self.contentLabel.frame = CGRectMake(0, 0, sizeFit.width + 100, size.height);
+        }
+        else {
+            [self addSubview:self.contentLabel];
+            [self.scrollView removeFromSuperview];
+            self.scrollView = nil;
+        }
+    }
+    
+    self.optumizeHeight = optumizeHeight;
+    frameCell.size.height = self.optumizeHeight;
     
     self.frame = frameCell;
 }

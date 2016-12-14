@@ -132,7 +132,7 @@
         self.messageIndicationHUD.yOffset = 100 - VIEW_HEIGHT / 2;
     }
     
-    self.messageIndicationHUD.detailsLabelFont = [UIFont systemFontOfSize:18];
+    self.messageIndicationHUD.detailsLabelFont = [UIFont systemFontOfSize:16];
     self.messageIndicationHUD.detailsLabelText = text;
     [self.messageIndicationHUD show:YES];
     
@@ -274,15 +274,31 @@
     customTableView.tag = 100045;
     [self addSubview:customTableView];
     [customTableView setMenuDatas:menus selectAction:selectAction];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissMenus)];
-    [customTableView addGestureRecognizer:tap];
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissMenus1:)];
+//    [customTableView addGestureRecognizer:tap];
+    
+    UISwipeGestureRecognizer *swipeGestureToRight=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(menusSwipeToRight:)];
+    //swipeGestureToRight.direction=UISwipeGestureRecognizerDirectionRight;//默认为向右轻扫
+    [customTableView addGestureRecognizer:swipeGestureToRight];
     
     [UIView animateWithDuration:0.5 animations:^{
         customTableView.frame = CGRectMake(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
-        
     } completion:^(BOOL finished) {
         
     }];
+}
+
+
+- (void)menusSwipeToRight:(UISwipeGestureRecognizer*)recognizer
+{
+    [self dismissMenus];
+}
+
+
+- (void)dismissMenus1:(id)sender
+{
+    NSLog(@"%@", sender);
+    
 }
 
 
@@ -385,7 +401,7 @@
         _menuTableView.tag = 100045;
         _menuTableView.dataSource = self;
         _menuTableView.delegate = self;
-        _menuTableView.rowHeight = 36;
+        _menuTableView.rowHeight = 45;
     }
     else {
         CGRect framePrev = _menuTableView.frame;
@@ -402,6 +418,24 @@
 }
 
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 45;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 1;
+}
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.menus.count;
@@ -410,12 +444,34 @@
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    LOG_POSTION
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MenuCell"];
-    LOG_POSTION
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MenuCell"];
+    cell.backgroundColor = [UIColor clearColor];
     NSDictionary *menu = self.menus[indexPath.row];
-    cell.textLabel.text = menu[@"text"];
-    cell.detailTextLabel.text = menu[@"text"];
+    
+    /*
+     text : 
+     image : 
+     detailText :
+     accessoryType :
+     */
+    
+    if(menu[@"text"]) {
+        cell.textLabel.text = menu[@"text"];
+    }
+    
+    if(menu[@"detailText"]) {
+        cell.detailTextLabel.text = menu[@"detailText"];
+    }
+    
+    UIImage *image = menu[@"image"];
+    if([image isKindOfClass:[UIImage class]]) {
+         cell.imageView.image = [UIImage imageNamed:@"finish"];
+    }
+    
+    if(menu[@"accessoryType"]) {
+//        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        cell.accessoryType = [menu[@"accessoryType"] integerValue];
+    }
     
     return cell;
 }
@@ -423,10 +479,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(self.selectAction) {
-        self.selectAction(indexPath.row, self.menus[indexPath.row]);
+    NSDictionary *menu = self.menus[indexPath.row];
+    if([menu[@"disableSelction"] boolValue]) {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
-    
+    else {
+        if(self.selectAction) {
+            self.selectAction(indexPath.row, self.menus[indexPath.row]);
+        }
+        else {
+            LOG_POSTION
+        }
+    }
 }
+
+
 
 @end

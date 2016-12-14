@@ -21,7 +21,8 @@
 
 + (instancetype)taskFinishAtFromDictionary:(NSDictionary*)dict;
 
-
+//检查一组数据, 如果全部完成, 则返回最近的一个完成事件. 未全部完成的话, 则返回nil.
++ (NSString*)checkAllFinishAts:(NSArray<TaskFinishAt*>*)finishAts;
 @end
 
 
@@ -98,7 +99,7 @@
 
 
 //添加完成信息的统一接口.会同时更新缓存和数据库.
-- (BOOL)addFinishedAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
+- (BOOL)addFinishedAtOnTaskInfo:(TaskInfo*)taskinfo on:(NSString*)day committedAt:(NSString*)committedAt;
 
 //添加重新执行信息的统一接口.会同时更新缓存和数据库.
 - (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
@@ -108,7 +109,7 @@
 
 
 //查询多天的完成情况.
-- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnSn:(NSString*)sn onDays:(NSArray<NSString*>*)days;
+- (NSArray<TaskFinishAt*>*)queryFinishedAtsOnTaskInfo:(TaskInfo*)taskinfo onDays:(NSArray<NSString*>*)days;
 
 
 - (NSString*)queryFinishedAtsOnSn:(NSString*)sn onDay:(NSString*)day;

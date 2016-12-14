@@ -219,20 +219,36 @@
 }
 
 
-- (NSMutableAttributedString*)attributedTextGenerated
+- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn andEditMode:(BOOL)editMode
 {
-    if(!self.content) {
-        self.content = @"";
+    NSString *content = @"";
+    BOOL textLight = NO;
+    if(self.content.length == 0) {
+        if(editMode) {
+            textLight = YES;
+            if(self.isTitle) {
+                content = @"请输入标题.";
+            }
+            else {
+                content = [NSString stringWithFormat:@"第 %zd 段.", sn];
+            }
+        }
+        else {
+            content = @"";
+        }
+    }
+    else {
+        content = self.content;
     }
     
-    NS0Log(@"NoteParagraph content : %@, style : %@", self.content, self.styleDictionay);
+    NSLog(@"sn: %zd, editMode: %zd, self.content: %@, content: %@", sn, editMode, self.content, content);
     
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.content];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:content];
     NSRange rangeAll = NSMakeRange(0, attributedString.length);
     
     //字体,颜色.
     UIFont *font    = [self textFont];
-    UIColor *color  = [self textColor];
+    UIColor *color  = textLight ? [UIColor lightGrayColor] : [self textColor];
     [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
     [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
     [attributedString addAttribute:NSForegroundColorAttributeName value:color range:rangeAll];
@@ -242,7 +258,7 @@
     paragraphStyle.alignment = NSTextAlignmentLeft;
     paragraphStyle.headIndent = 0.0;
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 2.0;
+    paragraphStyle.lineSpacing = 6.0;
     if([self.styleDictionay[@"text-align"] isEqualToString:@"center"]) {
         paragraphStyle.alignment = NSTextAlignmentCenter;
     }

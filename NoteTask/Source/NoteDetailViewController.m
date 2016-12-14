@@ -24,7 +24,8 @@
                                         JSDropDownMenuDataSource,JSDropDownMenuDelegate>
 
 @property (nonatomic, strong) NoteModel                *noteModel;
-@property (nonatomic, assign) BOOL                      isCreateMode;
+@property (nonatomic, assign) BOOL                      createMode;
+@property (nonatomic, assign) BOOL                      editMode;
 @property (nonatomic, assign) BOOL                      isStoredToLocal;
 
 @property (nonatomic, strong) NoteParagraphModel       *titleParagraph;
@@ -93,7 +94,8 @@
 {
     self = [super init];
     if (self) {
-        self.isCreateMode = YES;
+        self.createMode = YES;
+        self.editMode = YES;
         
         NoteModel* noteModel = [[NoteModel alloc] init];
         noteModel.identifier    = [NoteModel randonIdentifierStringWithLength:6];
@@ -190,21 +192,6 @@
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-
-#if 0
-    CGRect frameNoteParagraphs = VIEW_BOUNDS;
-    frameNoteParagraphs.origin.y += self.topNotesView ;
-    frameNoteParagraphs.size.height -= self.topNotesView;
-    self.tableNoteParagraphs.frame = frameNoteParagraphs;
-    
-    self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
-    CGRect frameTextViewEditingContainer = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
-    CGRect frameTextViewEditing = frameTextViewEditingContainer;
-    frameTextViewEditing = UIEdgeInsetsInsetRect(frameTextViewEditing, NOTEDETAILCELL_EDGE_CONTAINER);
-    frameTextViewEditing = UIEdgeInsetsInsetRect(frameTextViewEditing, NOTEDETAILCELL_EDGE_LABEL);
-    self.textViewEditing.frame = frameTextViewEditing;
-    self.textViewEditingContainer.frame = frameTextViewEditingContainer;
-#endif
     
     self.noteFilter.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightNoteFilter);
     self.noteFilter.hidden = (self.heightNoteFilter == 0);
@@ -217,14 +204,23 @@
     //筛选off的时候,可能notefilter覆盖到NotesView.将notefilter放到最下层.
     [self.noteFilter.superview sendSubviewToBack:self.noteFilter];
     
-    
+    if(self.textViewEditingContainer.hidden) {
+        
+    }
+    else {
+        self.textViewEditingContainer.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
+        self.textViewEditing.frame = UIEdgeInsetsInsetRect(self.textViewEditingContainer.frame, UIEdgeInsetsMake(10, 10, 10, 10));
+        
+        [self.contentView bringSubviewToFront:self.textViewEditingContainer];
+        [self.contentView bringSubviewToFront:self.textViewEditing];
+    }
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.title = !self.isCreateMode? @"笔记详情":@"新笔记";
+    self.title = !self.createMode? @"笔记详情":@"新笔记";
     [self navigationItemRightInit];
 }
 
@@ -255,6 +251,11 @@
 
 - (void)navigationItemRightInit
 {
+    if(self.createMode) {
+        self.navigationItem.rightBarButtonItem = nil;
+        return ;
+    }
+    
     UIImage *rightItemImage = [UIImage imageNamed:@"NoteShare"];
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [button setImageEdgeInsets:UIEdgeInsetsMake(6, 6, 6, 6)];
@@ -285,27 +286,6 @@
     NSLog(@"content paragraph count : %zd", self.contentParagraphs.count);
     
     return ;
-}
-
-
-//noteParagraph内容显示到Lable和Text的NSMutableAttributedString.
-- (NSMutableAttributedString*)noteParagraphAttrbutedString:(NoteParagraphModel*)noteParagraphModel onDisplay:(BOOL)onDisplay
-{
-    NSString *string = noteParagraphModel.content;
-    //在非显示模式下, 内容为空的话显示placehold.
-    if(string.length == 0) {
-        if(onDisplay) {
-            if(!self.isCreateMode) {
-                string = @"   ";
-            }
-            else {
-                string = CREATE_PLACEHOLD_CONTENTPARAGRAPH;
-            }
-        }
-    }
-    
-    noteParagraphModel.content = string;
-    return [noteParagraphModel attributedTextGenerated];
 }
 
 
@@ -367,7 +347,8 @@
     else {
         NoteDetailCell *noteDetailCell = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
         NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        [noteDetailCell setNoteParagraph:noteParagraph isTitle:indexPath.row == 0 sn:indexPath.row - 1 onDisplayMode:!self.isCreateMode];
+        NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
+        [noteDetailCell setNoteParagraph:noteParagraph sn:sn onEditMode:self.editMode];
         NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
         self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
         cell = noteDetailCell;
@@ -477,7 +458,8 @@
     
     //重用cell中的textview有刷新逻辑设计的问题. 用一个单独的textview用于编辑.
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
-    self.textViewEditing.attributedText = [noteParagraph attributedTextGenerated];
+    NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
+    self.textViewEditing.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:NO];
     self.textViewEditing.editable = YES;
     self.textViewEditing.inputAccessoryView = keyboardAccessory;
     [self.contentView bringSubviewToFront:self.textViewEditing];
@@ -546,7 +528,7 @@
     //标记indexPathOnEditing.
     self.indexPathOnEditing = nil;
     
-    self.title = !self.isCreateMode? @"笔记详情":@"新笔记";
+    self.title = !self.createMode? @"笔记详情":@"新笔记";
 }
 
 
@@ -833,7 +815,7 @@
     NSLog(@"updateNoteToLocal");
     
     //新建模式下, 保存之前先写入存储.
-    if(self.isCreateMode && !self.isStoredToLocal) {
+    if(self.createMode && !self.isStoredToLocal) {
         //内容不为空的话才保存.
         if(self.titleParagraph.content.length > 0
            || self.contentParagraphs.count > 1
@@ -1163,9 +1145,6 @@
 }
 
 
-
-
-
 - (void)actionMore
 {
     CGFloat width = 60;
@@ -1285,300 +1264,18 @@
 #endif
 
 
-#if 0
-- (NSMutableAttributedString*)noteParagraphCreateAttributedString
-{
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@""];
-    UIFont *font = [UIFont systemFontOfSize:16];
-    UIColor *color = [UIColor blackColor];
-    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-    
-    //对齐方式.
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-    paragraphStyle.headIndent = 20.0;
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    paragraphStyle.lineSpacing = 2.0;
-    NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-    [attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-    
-    return attributedString;
-}
-#endif
-
-
-#if 0
-NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-UIFont *font    = [noteParagraphModel titleFont];
-UIColor *color  = [noteParagraphModel textColor];
-
-[attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-[attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-[attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-
-//对齐方式.
-NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-paragraphStyle.alignment = NSTextAlignmentCenter;
-paragraphStyle.headIndent = 4.0;
-paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-paragraphStyle.lineSpacing = 2.0;
-NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-[attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-
-return attributedString;
-#endif
-
-#if 0
-NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-
-//字体,颜色.
-UIFont *font    = [noteParagraphModel textFont];
-UIColor *color  = [noteParagraphModel textColor];
-[attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedString.length)];
-[attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)color.CGColor range:NSMakeRange(0, attributedString.length)];
-[attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, attributedString.length)];
-
-//对齐方式.
-NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-paragraphStyle.alignment = NSTextAlignmentLeft;
-paragraphStyle.headIndent = 20.0;
-paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-paragraphStyle.lineSpacing = 2.0;
-NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
-[attributedString addAttributes:attributes range:NSMakeRange(0, attributedString.length)];
-
-return attributedString;
-#endif
-
-
-#if 0
-- (UITableViewCell*)tableView1:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-#define TAG_noteParagraphLabel          1000000 + 10
-#define TAG_noteParagraphTextView       1000000 + 11
-#define TAG_notePropertyView            1000000 + 12
-    
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NoteParagraph"];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        CGRect frame = cell.frame;
-        frame.size.width = tableView.frame.size.width;
-        [cell setFrame:frame];
-        
-    }
-    else {
-        
-    }
-    
-    //属性栏.
-    if(indexPath.row == 1) {
-        //cell.textLabel.text = @"附加信息";
-        CGFloat height = 36.0;
-        
-        self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:height];
-        
-        NotePropertyView *notePropertyView = [cell viewWithTag:TAG_notePropertyView];
-        if(!notePropertyView) {
-            notePropertyView = [[NotePropertyView alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, height)];
-            
-            [cell addSubview:notePropertyView];
-            [notePropertyView setTag:TAG_notePropertyView];
-        }
-        [[cell viewWithTag:TAG_noteParagraphLabel] removeFromSuperview];
-        [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
-        
-        
-        [notePropertyView setClassification:self.noteModel.classification color:self.noteModel.color];
-        
-        [notePropertyView setActionPressed:^(NSString *item) {
-            if([item isEqualToString:@"Classification"]) {
-                //                __weak typeof(self) weakSelf = self;
-                //                [weakSelf openClassificationMenu];
-            }
-        }];
-        
-        return cell;
-    }
-    
-    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-    
-#define USE_UILABEL 1
-    
-#if USE_UILABEL
-    //显示用的具体控件的创建.
-    UILabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
-    if(!noteParagraphLabel) {
-        noteParagraphLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
-        noteParagraphLabel.numberOfLines = 0;
-    }
-    
-    //内容设置.
-    noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
-    noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
-    
-    //计算可变高度. 同时保存给UITableviewCell的高度计算.
-    CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
-    sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
-    
-    
-    
-#endif
-    
-#if USE_YYLABEL
-    //显示用的具体控件的创建.
-    YYLabel *noteParagraphLabel = [cell viewWithTag:TAG_noteParagraphLabel];
-    if(!noteParagraphLabel) {
-        noteParagraphLabel = [[YYLabel alloc] initWithFrame:CGRectMake(10, 0, cell.frame.size.width - 10 * 2, 100)];
-        noteParagraphLabel.numberOfLines = 0;
-    }
-    
-    //内容设置.
-    noteParagraphLabel.textAlignment = NSTextAlignmentLeft;
-    noteParagraphLabel.attributedText = [self noteParagraphAttrbutedString:noteParagraph onDisplay:YES];
-    
-    //计算可变高度. 同时保存给UITableviewCell的高度计算.
-    CGSize sizeOptumize = CGSizeMake(noteParagraphLabel.frame.size.width, 1000);
-    sizeOptumize = [noteParagraphLabel sizeThatFits:sizeOptumize];
-#endif
-    
-    //设置边框.
-    if([noteParagraph.styleDictionay[@"border"] isEqualToString:@"1px solid #000"]) {
-        noteParagraphLabel.layer.borderWidth = 1.0;
-        noteParagraphLabel.layer.borderColor = [UIColor blackColor].CGColor;
-    }
-    
-    //设置高度.
-    CGFloat heightOptumize = sizeOptumize.height + 20 ;
-    self.optumizeHeights[indexPath] = [NSNumber numberWithFloat:heightOptumize];
-    CGRect frame = noteParagraphLabel.frame;
-    frame.size.height = heightOptumize;
-    noteParagraphLabel.frame = frame;
-    
-    [[cell viewWithTag:TAG_notePropertyView] removeFromSuperview];
-    [[cell viewWithTag:TAG_noteParagraphTextView] removeFromSuperview];
-    [cell addSubview:noteParagraphLabel];
-    [noteParagraphLabel setTag:TAG_noteParagraphLabel];
-    
-    return cell;
-}
-
-
-- (YYTextView*)textViewOnEditing
-{
-    YYTextView *noteParagraphTextView = nil;
-    
-    if(self.indexPathOnEditing
-       && [self.tableNoteParagraphs visibleCells].count > 0
-       ) {
-        
-        UITableViewCell *cell = [self.tableNoteParagraphs cellForRowAtIndexPath:self.indexPathOnEditing];
-        if(cell) {
-            noteParagraphTextView = [cell viewWithTag:TAG_noteParagraphTextView];
-        }
-    }
-    
-    return noteParagraphTextView;
-}
-
-
-//新增栏目.
-- (void)filterViewAddClassification
-{
-    CGRect frame = self.noteFilter.frame;
-#if 0
-    UIView *container = [[UIView alloc] initWithFrame:frame];
-    [self.noteFilter addSubview:container];
-    container.backgroundColor = [UIColor whiteColor];
-    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
-#endif
-    
-    frame = CGRectMake(0, 64, self.contentView.bounds.size.width, 36);
-    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
-    //[container addSubview:classificationInputView];
-    classificationInputView.borderStyle     = UITextBorderStyleLine;
-    //    classificationInputView.backgroundColor = [UIColor blueColor];
-    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-    classificationInputView.placeholder     = @"请输入新增的栏目";
-    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
-    classificationInputView.returnKeyType = UIReturnKeyDone;
-    classificationInputView.delegate        = self;
-    
-    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
-    classificationInputView.leftView = leftview;
-    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
-    
-    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
-    classificationInputView.layer.borderWidth = 1.5;
-    
-    [classificationInputView becomeFirstResponder];
-    
-    [self showPopupView:classificationInputView];
-    
-}
-
-
-//栏目增加的delegate.
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-{
-    LOG_POSTION
-    return YES;
-}
 
 
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    LOG_POSTION
-}
 
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    LOG_POSTION
-    
-    //官方 取消第一响应者（就是退出编辑模式收键盘）
-    [textField resignFirstResponder];
-    [self dismissPopupView];
-    
-    if(textField.text.length > 0) {
-        [self filterViewDidAddClassification:textField.text];
-    }
-    
-    return YES;
-}
 
 
-//方法一
-
-- (BOOL)textField1:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    if (range.location>= 10) {
-        return NO;
-    }
-    
-    return YES;
-    
-}
 
 
-//方法二
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    
-    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    
-    if (toBeString.length > 10) {
-        textField.text = [toBeString substringToIndex:10];
-        return NO;
-    }
-    
-    return YES;
-}
 
 
-#endif
+
 
 
 

@@ -30,7 +30,7 @@
 
 - (UIColor*)backgroundColor;
 
-- (NSMutableAttributedString*)attributedTextGenerated;
+- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn andEditMode:(BOOL)editMode;
 
 
 @end

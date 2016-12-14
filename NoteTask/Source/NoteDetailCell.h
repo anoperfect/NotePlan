@@ -18,7 +18,8 @@
 
 @property (nonatomic, assign, readonly) CGFloat optumizeHeight;
 
-- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph isTitle:(BOOL)isTitle sn:(NSInteger)sn onDisplayMode:(BOOL)displayMode;
+//sn : 0 title. sn > 0 content paragraph.
+- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode;
 
 @end
 //同时给NoteDetailViewController使用, 以便使编辑控件的布局尽量跟NoteDetailCell匹配.
