@@ -26,8 +26,10 @@
 - (void)showProgressText:(NSString*)text inTime:(NSTimeInterval)secs;
 - (void)dismissProgressText;
 
-- (void)showPopupView:(UIView*)view;
-- (void)showPopupView:(UIView*)view containerAlpha:(CGFloat)alpha dismiss:(void(^)(void))dismiss;
+- (void)showPopupView:(UIView*)view
+           commission:(NSDictionary*)commission
+       clickToDismiss:(BOOL)clickToDismiss
+              dismiss:(void(^)(void))dismiss;
 - (void)dismissPopupView;
 - (void)pushViewControllerByName:(NSString*)name;
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;

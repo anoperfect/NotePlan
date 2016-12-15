@@ -185,51 +185,23 @@
 
 
 - (void)showPopupView:(UIView*)view
+           commission:(NSDictionary*)commission
+       clickToDismiss:(BOOL)clickToDismiss
+              dismiss:(void(^)(void))dismiss
 {
     #define TAG_popupView_container     1000000002
     UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
     containerView.tag = TAG_popupView_container;
-//    [self.view addSubview:containerView];
-    [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
-    
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
-    tapGestureRecognizer.numberOfTapsRequired = 1;
-    [containerView addGestureRecognizer:tapGestureRecognizer];
-    
-    [containerView addSubview:view];
-    
-    
-    //    CustomViewController *pvc = [[CustomViewController alloc] init];
-    //    [pvc.view addSubview:view];
-    //    pvc.view.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
-    //    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:pvc action:@selector(dismissPopupView)];
-    //    tapGestureRecognizer.numberOfTapsRequired = 1;
-    //    [pvc.view addGestureRecognizer:tapGestureRecognizer];
-    //
-    //    [self presentViewController:pvc animated:NO completion:^{
-    //        [pvc.navigationController setNavigationBarHidden:YES];
-    //    }];
-    ////    [self.navigationController pushViewController:pvc animated:NO];
-    
-    
-}
-
-
-- (void)showPopupView:(UIView*)view containerAlpha:(CGFloat)alpha dismiss:(void(^)(void))dismiss
-{
-    #define TAG_popupView_container     1000000002
-    UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
-    containerView.alpha = alpha;
-    containerView.tag = TAG_popupView_container;
     //    [self.view addSubview:containerView];
     [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
-    [containerView addGestureRecognizer:tapGestureRecognizer];
+    if(clickToDismiss) {
+        [containerView addGestureRecognizer:tapGestureRecognizer];
+    }
     [containerView addSubview:view];
     
     self.popupViewDismissBlock = dismiss;

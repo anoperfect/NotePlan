@@ -32,7 +32,7 @@
     self.labelTicking = [[UILabel alloc] init];
     [self addSubview:self.labelTicking];
     
-    UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:36];
+    UIFont *font = FONT_MTSIZE(36);
     self.labelTicking.font = [UIFont systemFontOfSize:36];
     self.labelTicking.font = font;
     

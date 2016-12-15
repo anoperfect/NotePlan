@@ -16,7 +16,11 @@
 @property (nonatomic, strong, readonly) NSString *dayString;
 @property (nonatomic, strong, readonly) NSArray<NSString*> *dayStrings;
 
+@property (nonatomic, strong, readonly) UIButton *buttonOK;
+@property (nonatomic, strong, readonly) UIButton *buttonDelete;
+
 - (instancetype)initWithFrame:(CGRect)frame andDayString:(NSString*)dayString;
 - (instancetype)initWithFrame:(CGRect)frame andDayStrings:(NSArray<NSString*>*)dayStrings;
 
 @end
+

@@ -408,7 +408,7 @@
         [weakSelf action:actionText OnIndexPath:indexPath];
     }];
     
-    [self showPopupView:v];
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
 }
 
 
@@ -1174,7 +1174,7 @@
         
     }];
     
-    [self showPopupView:v];
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
 }
 
 

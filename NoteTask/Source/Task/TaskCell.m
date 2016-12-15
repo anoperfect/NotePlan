@@ -249,18 +249,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     }
     else {
         if(finishedAts.count > 0) {
-            BOOL allDayFinished = YES;
-            for(TaskFinishAt *taskFinishAt in finishedAts) {
-                if(taskFinishAt.finishedAt.length > 0) {
-                    NSLog(@"%@ %@ : %@", taskFinishAt.snTaskInfo, taskFinishAt.dayString, taskFinishAt.finishedAt);
-                }
-                else {
-                    allDayFinished = NO;
-                    break;
-                }
-            }
-            
-            isFinished = allDayFinished;
+            isFinished = ([TaskFinishAt checkAllFinishAts:finishedAts].length > 0);
         }
     }
     

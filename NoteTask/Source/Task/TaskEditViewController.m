@@ -13,7 +13,6 @@ static NSString *kStringStepCreateContent = @"1.任务内容";
 static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 
-
 @interface TaskEditViewController () <UINavigationBarDelegate, UINavigationControllerDelegate>
 {
     CGFloat _heightDetailScheduleDayLabel;
@@ -21,9 +20,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     CGFloat _heightDayButtonB;
     CGFloat _heightDaysInMutilMode;
 }
-
-
-
 @property (nonatomic, strong) TaskInfo *taskinfo;
 @property (nonatomic, strong) TaskInfo *taskinfoEdit;
 
@@ -34,6 +30,12 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 @property (nonatomic, strong) UITextView    *contentInputView;
 @property (nonatomic, assign) CGFloat       heightFitToKeyboard;
 @property (nonatomic, strong) UILabel       *contentLabel;
+
+
+
+@property (nonatomic, strong) TaskCalendar  *taskCalendar;
+@property (nonatomic, assign) BOOL          taskCalendarMutilMode;
+@property (nonatomic, strong) NSString      *taskCalendarName;
 
 
 @property (nonatomic, strong) UILabel               *createScheduleDayLabel;
@@ -119,15 +121,15 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     [self.contentLabel addGestureRecognizer:tapContentLabel];
     self.contentLabel.userInteractionEnabled = YES;
     
-    UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:20];
+    UIFont *font = FONT_MTSIZE(20);
     CGFloat indent = 10.0;
     UIColor *textColor = [UIColor colorWithName:@"TaskSectionHeaderText"];
     
     self.createContentLabel.attributedText = [NSString attributedStringWith:kStringStepCreateContent font:font indent:indent textColor:textColor];
     self.createScheduleDayLabel.attributedText = [NSString attributedStringWith:kStringStepScheduleDay font:font indent:indent textColor:textColor];
     
-    CGFloat fontSize = (SCREEN_WIDTH/22.0);
-    self.fontScheduleDay = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
+    CGFloat fontSize = (SCREEN_WIDTH/28.0);
+    self.fontScheduleDay = FONT_MTSIZE(fontSize);
     
     self.daysInMutilMode.numberOfLines = 0;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionOpenCalendarMuiltMode)];
@@ -594,55 +596,81 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 - (void)openCalendarMutilMode:(BOOL)mutilMode withName:(NSString*)name
 {
     LOG_POSTION
-    TaskCalendar *taskCalendar = nil;
+    
+    self.taskCalendarMutilMode = mutilMode;
+    self.taskCalendarName = name;
+    
     if(mutilMode) {
-        taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayStrings:self.dayStrings];
+        self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayStrings:self.dayStrings];
     }
     else {
         if([name isEqualToString:@"ButtonA"]) {
             if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
-                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayString];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayString];
             }
             else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringFrom];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringFrom];
             }
             
         }
         else if([name isEqualToString:@"ButtonB"]) {
             if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringTo];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringTo];
             }
         }
     }
     
+    [self.taskCalendar.buttonOK addTarget:self action:@selector(actionTaskCalendarInput) forControlEvents:UIControlEventTouchDown];
+    [self.taskCalendar.buttonDelete addTarget:self action:@selector(actionTaskCalendarInputDelete) forControlEvents:UIControlEventTouchDown];
+    
+    [self showPopupView:self.taskCalendar commission:nil clickToDismiss:NO dismiss:nil];
+    
+#if 0
     __weak typeof(self) _self = self;
     __weak typeof(taskCalendar) _taskCalendar = taskCalendar;
     __block BOOL _bMuiltMode = mutilMode;
     [self showPopupView:taskCalendar containerAlpha:0.9 dismiss:^{
-        if(_bMuiltMode) {
-            NSLog(@"%@", _taskCalendar.dayStrings);
-            _self.dayStrings = _taskCalendar.dayStrings;
-        }
-        else {
-            if([name isEqualToString:@"ButtonA"]) {
-                if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
-                    _self.dayString = _taskCalendar.dayString;
-                }
-                else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                    _self.dayStringFrom = _taskCalendar.dayString;
-                }
-                
-            }
-            else if([name isEqualToString:@"ButtonB"]) {
-                if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                    _self.dayStringTo = _taskCalendar.dayString;
-                }
-            }
-        }
-        
-        //更新显示.
-        [_self updateDaysSelectorText];
+
     }];
+#endif
+}
+
+
+- (void)actionTaskCalendarInput
+{
+    [self dismissPopupView];
+    if(self.taskCalendarMutilMode) {
+        NSLog(@"%@", _taskCalendar.dayStrings);
+        self.dayStrings = _taskCalendar.dayStrings;
+    }
+    else {
+        if([self.taskCalendarName isEqualToString:@"ButtonA"]) {
+            if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
+                self.dayString = _taskCalendar.dayString;
+            }
+            else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                self.dayStringFrom = _taskCalendar.dayString;
+            }
+            
+        }
+        else if([self.taskCalendarName isEqualToString:@"ButtonB"]) {
+            if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
+                self.dayStringTo = _taskCalendar.dayString;
+            }
+        }
+    }
+    
+    self.taskCalendar = nil;
+    
+    //更新显示.
+    [self updateDaysSelectorText];
+}
+
+
+- (void)actionTaskCalendarInputDelete
+{
+    [self dismissPopupView];
+    self.taskCalendar = nil;
 }
 
 

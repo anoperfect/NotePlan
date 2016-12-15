@@ -278,8 +278,6 @@
     self.noteFilter = menu;
     
     [self.contentView addSubview:menu];
-    
-    //[self showPopupView:menu];
 }
 
 
@@ -632,17 +630,6 @@
 - (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
    LOG_POSTION
     if(indexPath.column == 0){
-        /*
-        //增加新增功能.
-        if(self.filterDataClassifications.count - 1 == indexPath.row) {
-            //[self filterViewAddClassification];
-            //[self refreshView];
-            
-            [self showIndicationText:@"not implement" inTime:1.0];
-            return ;
-        }
-        */
-        
         self.idxClassifications = indexPath.row;
         self.currentClassification = self.filterDataClassifications[self.idxClassifications];
         if([self.currentClassification isEqualToString:@"全部类别"]) {
@@ -660,48 +647,6 @@
     //刷新notes的UITableView和filterView.
     [self refreshView];
 }
-
-
-- (void)filterViewAddClassification
-{
-    CGRect frame = self.noteFilter.frame;
-#if 0
-    UIView *container = [[UIView alloc] initWithFrame:frame];
-    [self.noteFilter addSubview:container];
-    container.backgroundColor = [UIColor whiteColor];
-    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(2, 70, 2, 10));
-#endif
-    
-    frame = CGRectMake(0, 64, VIEW_WIDTH, 36);
-    UITextField *classificationInputView = [[UITextField alloc] initWithFrame:frame];
-    //[container addSubview:classificationInputView];
-    classificationInputView.borderStyle     = UITextBorderStyleLine;
-    //    classificationInputView.backgroundColor = [UIColor blueColor];
-    classificationInputView.font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-    classificationInputView.placeholder     = @"请输入新增的栏目";
-    classificationInputView.clearButtonMode = UITextFieldViewModeAlways;
-    classificationInputView.returnKeyType = UIReturnKeyDone;
-    classificationInputView.delegate        = self;
-    
-    UIView *leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, classificationInputView.bounds.size.height / 2, 100)];
-    classificationInputView.leftView = leftview;
-    classificationInputView.leftViewMode = UITextFieldViewModeAlways;
-    
-    classificationInputView.layer.cornerRadius = classificationInputView.bounds.size.height / 2;
-    classificationInputView.layer.borderWidth = 1.5;
-    
-    [classificationInputView becomeFirstResponder];
-    
-    [self showPopupView:classificationInputView];
-    
-}
-
-
-
-
-
-
-
 
 
 #pragma mark - action
@@ -728,7 +673,7 @@
         return ;
     }];
     
-    [self showPopupView:v];
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
 }
         
 
@@ -993,10 +938,6 @@
         rootViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
         [rootViewController presentModalViewController:vc animated:YES];
 #endif
-        
-//        UIView *noteFilter = [self mfilterViewBuild];
-//        noteFilter.frame = CGRectMake(0, 64, VIEW_WIDTH, 36);
-//        [self showPopupView:noteFilter];
         
         NoteArchiveViewController *vc = [[NoteArchiveViewController alloc] init];
         [vc setFrom:@"NotesArchiveChange" andNoteIdentifiers:[self dataNotesIdentifierOnIndexPaths:indexPathsSelected]];

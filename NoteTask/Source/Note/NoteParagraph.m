@@ -24,17 +24,13 @@
     if(range0.length > 0 && range1.length > 0 && range2.length > 0
        && range0.location == 0 && range2.location == string.length - @"</p>".length
        && range1.location > range0.location && range2.location > range1.location) {
-        NS0Log(@"ParagraphString format checked.");
         
         NSString *styleString = [string substringWithRange:NSMakeRange(range0.location + range0.length, range1.location - (range0.location + range0.length))];
-        NS0Log(@"ParagraphString style : %@", styleString);
         
         noteParagraph.content = [string substringWithRange:NSMakeRange(range1.location + range1.length, range2.location - (range1.location + range1.length))];
         noteParagraph.content = [NSString htmDecode:noteParagraph.content];
-        NS0Log(@"ParagraphString content : %@", noteParagraph.content);
         
         noteParagraph.styleDictionay = [self styleParseFromString:styleString];
-        NS0Log(@"ParagraphString style : %@", noteParagraph.styleDictionay);
     }
     else {
         NSLog(@"#error - ParagraphString format checked failed. [%@]", string);
@@ -175,7 +171,6 @@
 
 - (UIFont*)textFont
 {
-    NS0Log(@"xxx : %@", self.styleDictionay);
     CGFloat fontSize = self.isTitle?18:16;
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize;
@@ -190,10 +185,8 @@
     else {
         
     }
-    
     //斜体.测试中发现对中文不支持.使用obliq方法.
     //font = [UIFont fontWithDescriptor:[font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic] size:font.pointSize];
-    
     return font;
 }
 
@@ -234,7 +227,12 @@
             }
         }
         else {
-            content = @"";
+            if(sn == 0) {
+                content = @"无标题";
+            }
+            else {
+                content = @"";
+            }
         }
     }
     else {
@@ -259,7 +257,7 @@
     paragraphStyle.headIndent = 0.0;
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     paragraphStyle.lineSpacing = 6.0;
-    if([self.styleDictionay[@"text-align"] isEqualToString:@"center"]) {
+    if([self.styleDictionay[@"text-align"] isEqualToString:@"center"] ||  sn == 0) {
         paragraphStyle.alignment = NSTextAlignmentCenter;
     }
     NSDictionary * attributes = @{NSParagraphStyleAttributeName:paragraphStyle};
@@ -315,6 +313,5 @@
     
     return noteParagraphCopy;
 }
-
 
 @end

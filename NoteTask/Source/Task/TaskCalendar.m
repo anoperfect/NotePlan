@@ -26,6 +26,11 @@
 @property (nonatomic, strong) JTCalendarMenuView *calendarMenuView;
 @property (nonatomic, strong) JTHorizontalCalendarView *calendarContentView;
 
+@property (nonatomic, strong) UIView *container;
+@property (nonatomic, strong) UIButton *buttonOK;
+@property (nonatomic, strong) UIButton *buttonDelete;
+
+
 @property (nonatomic, assign) BOOL mutilMode;
 @property (nonatomic, strong) NSString *dayString;
 @property (nonatomic, strong) NSArray<NSString*> *dayStrings;
@@ -44,6 +49,14 @@
         CGFloat width = frame.size.width;
         CGFloat height = frame.size.height;
         
+        _buttonOK = [[UIButton alloc] init];
+        [_buttonOK setTitle:@"确认" forState:UIControlStateNormal];
+        [_buttonOK setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
+        _buttonDelete = [[UIButton alloc] init];
+        [_buttonDelete setTitle:@"取消" forState:UIControlStateNormal];
+        [_buttonDelete setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
         CGFloat xTextInput = 60;
         CGFloat yTextInput = 60;
         CGFloat heightTextInput = 36;
@@ -57,7 +70,8 @@
         _datesDisplay = [[YYLabel alloc] init];
         _datesDisplay.numberOfLines = 0;
         CGFloat fontSize = (SCREEN_WIDTH/22.0);
-        UIFont *font = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
+        UIFont *font = FONT_MTSIZE(fontSize);
+        
         _datesDisplay.font = font;
         _datesDisplay.textAlignment = NSTextAlignmentCenter;
         CGRect frameDatesDisplay = CGRectMake(0, 64, width, height - 64 - 36 - width);
@@ -78,9 +92,48 @@
         [_calendarManager setContentView:_calendarContentView];
         [_calendarManager setDate:[NSDate date]];
         
-        [self addSubview:_textInput];
-        [self addSubview:_calendarMenuView];
-        [self addSubview:_calendarContentView];
+        self.container = [[UIView alloc] init];
+        [self addSubview:self.container];
+        self.container.frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(10, 10, 10, 10));
+        
+        FrameLayout *f = [[FrameLayout alloc] initWithSize:self.container.frame.size];
+        [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
+                      toViews:@[
+                                [FrameLayoutView viewWithName:@"ButtonLine" value:64 edge:UIEdgeInsetsZero],
+                                [FrameLayoutView viewWithName:@"Display" percentage:1 edge:UIEdgeInsetsZero],
+                                [FrameLayoutView viewWithName:@"_calendarMenuView" value:36 edge:UIEdgeInsetsZero],
+                                [FrameLayoutView viewWithName:@"_calendarContentView" value:self.container.frame.size.width edge:UIEdgeInsetsZero],
+                               ]
+         ];
+        
+        [f frameLayoutSet:@"_datesDisplay" withFrame:[f frameLayoutGet:@"Display"]];
+        [f frameLayoutSet:@"_scrollView" withFrame:[f frameLayoutGet:@"Display"]];
+        
+        [f frameLayoutSet:@"_datesDisplay" in:@"Display" withEdgeInserts:UIEdgeInsetsZero];
+        [f frameLayoutSet:@"_scrollView" in:@"Display" withEdgeInserts:UIEdgeInsetsZero];
+        CGRect frameDisplay = [f frameLayoutGet:@"Display"];
+        CGFloat xPadding = 64;
+        CGFloat yPadding = (frameDisplay.size.height - heightTextInput) / 2 ;
+        [f frameLayoutSet:@"_textInput" in:@"Display" withEdgeInserts:UIEdgeInsetsMake(yPadding, xPadding, yPadding, xPadding)];
+        
+        [f frameLayoutEqual:@"ButtonLine" toVertical:@[@"_buttonOK", @"_buttonDelete"]];
+        
+        [self memberViewSetFrameWith:[f nameAndFrames]];
+        
+        [self.container addSubview:_buttonOK];
+        [self.container addSubview:_buttonDelete];
+        [self.container addSubview:_textInput];
+        [self.container addSubview:_datesDisplay];
+        [self.container addSubview:_calendarMenuView];
+        [self.container addSubview:_calendarContentView];
+        
+        
+        
+        
+        
+        
+        
+        
         
         _datesSelected = [[NSMutableArray alloc] init];
     }
@@ -152,7 +205,7 @@
         _datesDisplay.hidden = NO;
         _scrollView.hidden = NO;
         [_scrollView addSubview:_datesDisplay];
-        [self addSubview:_scrollView];
+        [self.container addSubview:_scrollView];
         
         _datesDisplay.frame = CGRectMake(0, 0, _scrollView.frame.size.width, sizeFit.height);
         _scrollView.contentSize = _datesDisplay.frame.size;
@@ -160,7 +213,7 @@
     else {
         _datesDisplay.hidden = NO;
         _scrollView.hidden = YES;
-        [self addSubview:_datesDisplay];
+        [self.container addSubview:_datesDisplay];
         _datesDisplay.frame = _scrollView.frame;
     }
     
@@ -344,6 +397,10 @@
                 [_calendarContentView loadPreviousPageWithAnimation];
             }
         }
+        
+        [_datesSelected sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return [(NSDate*)obj1 compare:(NSDate*)obj2];
+        }];
         
         NSMutableArray *dayStrings = [[NSMutableArray alloc] init];
         for(NSDate *date in _datesSelected) {
