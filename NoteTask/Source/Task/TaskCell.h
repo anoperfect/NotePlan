@@ -32,6 +32,7 @@
 - (void)setTitle:(NSAttributedString*)titleAttributedString content:(NSAttributedString*)contentAttributedString;
 @end
 
+
 @interface TaskRecordCell : UITableViewCell
 @property (nonatomic, strong) TaskRecord *taskRecord;
 @end

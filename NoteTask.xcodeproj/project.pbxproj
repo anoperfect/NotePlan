@@ -78,6 +78,7 @@
 		B5CAC3181DE333FE0051039B /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3171DE333FE0051039B /* SettingViewController.m */; };
 		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
 		B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D4923C1DB5C8DC00794A97 /* TaskCell.m */; };
+		B5DC698C1E038A5300FFAC68 /* LineBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */; };
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
 		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
 		B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B11D33F28000395CF0 /* UIpConfig.m */; };
@@ -232,6 +233,8 @@
 		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
 		B5D4923B1DB5C8DC00794A97 /* TaskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskCell.h; sourceTree = "<group>"; };
 		B5D4923C1DB5C8DC00794A97 /* TaskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCell.m; sourceTree = "<group>"; };
+		B5DC698A1E038A5300FFAC68 /* LineBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBackgroundView.h; sourceTree = "<group>"; };
+		B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineBackgroundView.m; sourceTree = "<group>"; };
 		B5DC864D1D4A57F600DCE8C8 /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
 		B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextButtonLine.m; sourceTree = "<group>"; };
 		B5E9D0A31D32815500395CF0 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = Source/NoteCell.h; sourceTree = "<group>"; };
@@ -357,6 +360,8 @@
 				B5448EFA1D658F3100F186BE /* UIView+Shake.m */,
 				B5448EFB1D658F3100F186BE /* UIView+UserInteraction.h */,
 				B5448EFC1D658F3100F186BE /* UIView+UserInteraction.m */,
+				B5DC698A1E038A5300FFAC68 /* LineBackgroundView.h */,
+				B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */,
 			);
 			path = "UI-Component";
 			sourceTree = "<group>";
@@ -396,12 +401,12 @@
 			isa = PBXGroup;
 			children = (
 				B56428C31DAB403300FBB1FE /* TaskViewController.h */,
-				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
 				B59D4FE41DE9EDC600CA3C5A /* TaskEditViewController.h */,
 				B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */,
 				B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */,
+				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
 				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,
@@ -872,6 +877,7 @@
 			files = (
 				B5056A8C1DC82A8F00979758 /* TaskRecord.m in Sources */,
 				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
+				B5DC698C1E038A5300FFAC68 /* LineBackgroundView.m in Sources */,
 				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
 				B56230631DDAA8B2000BBB46 /* YYWeakProxy.m in Sources */,
 				B5BF33E21DFBF3FD00624154 /* NoteArchiveViewController.m in Sources */,

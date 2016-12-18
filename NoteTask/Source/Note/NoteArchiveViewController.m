@@ -7,7 +7,7 @@
 //
 
 #import "NoteArchiveViewController.h"
-
+#import "LineBackgroundView.h"
 
 
 @interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
@@ -91,12 +91,21 @@
 
 - (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+
+    
     UIColor *colorText              = [UIColor colorWithName:@"NoteCustomSectionHeader"];
     UIColor *colorSectionBackground = [UIColor colorWithName:@"NoteCustomSectionBackground"];
     UIFont *fontText                = [UIFont fontWithName:@"NoteCustomSectionHeader"];
     
     UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, kheightSection)];
     sectionView.backgroundColor = colorSectionBackground;
+    
+    LineBackgroundView *lineBackgroundView = [LineBackgroundView createViewWithFrame:CGRectMake(0, 0, Width, 56) lineWidth:4 lineGap:4
+                                                                           lineColor:[[UIColor blackColor] colorWithAlphaComponent:0.015]];
+    
+    
+    [sectionView addSubview:lineBackgroundView];
+    
     
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, kheightSection)];
     [sectionView addSubview:titleLabel];
@@ -113,6 +122,7 @@
                              [FrameLayoutView viewWithName:@"_addButton" value:60 edge:UIEdgeInsetsZero],
                              ]
      ];
+    
     
     NSLog(@"%@", f);
     

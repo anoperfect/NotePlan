@@ -27,5 +27,6 @@
 @interface MenuButton : UIButton
 
 - (void)setMenuButtonData:(MenuButtonData*)data;
+//- (void)setMenuButtonData:(MenuButtonData*)data;
 
 @end

@@ -814,9 +814,7 @@
         button.actionData = data;
         [button addTarget:self action:@selector(actionMuiltSelectOnPushButton:) forControlEvents:UIControlEventTouchDown];
         [button setFrame:CGRectMake(0, 0, 60, 60)];
-        if(data.triggerOn) {
-            button.backgroundColor = [UIColor colorWithName:@"CustomButtonTriggerOnBackground"];
-        }
+
         UIBarButtonItem *item = nil;
         if(nil != data.imageName) {
             UIImage *image = [UIImage imageNamed:data.imageName];

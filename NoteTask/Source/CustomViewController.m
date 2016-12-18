@@ -194,12 +194,26 @@
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
     containerView.tag = TAG_popupView_container;
-    //    [self.view addSubview:containerView];
     [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
     
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
-    tapGestureRecognizer.numberOfTapsRequired = 1;
+    if([commission[@"containerBackgroundColor"] isKindOfClass:[UIColor class]]) {
+        containerView.backgroundColor = commission[@"containerBackgroundColor"];
+    }
+    
+    if([commission[@"popAnimation"] isKindOfClass:[NSNumber class]]) {
+        CGRect frameView = view.frame;
+        frameView.origin.y = containerView.frame.size.height;
+        view.frame = frameView;
+        [UIView animateWithDuration:0.5 animations:^{
+            CGRect frameView = view.frame;
+            frameView.origin.y = containerView.frame.size.height - frameView.size.height;
+            view.frame = frameView;
+        }];
+    }
+    
     if(clickToDismiss) {
+        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
+        tapGestureRecognizer.numberOfTapsRequired = 1;
         [containerView addGestureRecognizer:tapGestureRecognizer];
     }
     [containerView addSubview:view];

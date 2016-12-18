@@ -541,8 +541,9 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
                                            @"TaskActionTicking",
                                            @"TaskActionFinish",
                                            @"TaskActionRecord",
-                                           @"TaskActionEdit",
-                                           @"TaskActionMore"];
+                                           @"TaskActionUserRecord",
+                                           @"TaskActionMore"
+                                           ];
     
     NSInteger count = actionsKeyword.count;
     NSLog(@"actions count : %zd", count);
@@ -818,6 +819,9 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     y += heightCommittedAt;
     
     s = [TaskRecord stringOfType:self.taskRecord.type];
+    if(self.taskRecord.dayString.length > 0) {
+        s = [s stringByAppendingFormat:@"@%@", self.taskRecord.dayString];
+    }
     attributedString = [NSString attributedStringWith:s
                                                  font:[UIFont fontWithName:@"NoteRecordType"]
                                                indent:20

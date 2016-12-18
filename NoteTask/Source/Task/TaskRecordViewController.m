@@ -116,8 +116,6 @@
 
 - (void)setTaskRecordTypes:(NSArray<NSNumber*>*)taskRecordTypes triggerOn:(BOOL)on reload:(BOOL)reload
 {
-    NSLog(@"all : %@. enabled : %@", self.taskRecordTypes, self.taskRecordTypesEnabled);
-    NSLog(@"set %@ to %zd", taskRecordTypes, on);
     for(NSNumber *taskRecordType in taskRecordTypes) {
         if(NSNotFound == [self.taskRecordTypes indexOfObject:taskRecordType]) {
             continue;
@@ -133,9 +131,6 @@
             NSLog(@"#error - ");
         }
     }
-    
-    
-    NSLog(@"all : %@. enabled : %@", self.taskRecordTypes, self.taskRecordTypesEnabled);
     
     [self updateTaskRecordsData];
     

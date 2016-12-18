@@ -102,8 +102,10 @@
 - (BOOL)addFinishedAtOnTaskInfo:(TaskInfo*)taskinfo on:(NSString*)day committedAt:(NSString*)committedAt;
 
 //添加重新执行信息的统一接口.会同时更新缓存和数据库.
-- (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt;
+- (BOOL)addRedoAtOnTaskInfo:(TaskInfo*)taskinfo on:(NSString*)day committedAt:(NSString*)committedAt;
 
+//添加用户记录信息的统一接口.会同时更新缓存和数据库.
+- (BOOL)addUserRecordOnTaskInfo:(TaskInfo*)taskinfo text:(NSString*)text on:(NSString*)day committedAt:(NSString*)committedAt;
 
 
 

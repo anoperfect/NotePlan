@@ -378,8 +378,9 @@
 }
 
 
-- (BOOL)addRedoAtOnSn:(NSString*)sn on:(NSString*)day committedAt:(NSString*)committedAt
+- (BOOL)addRedoAtOnTaskInfo:(TaskInfo*)taskinfo on:(NSString*)day committedAt:(NSString*)committedAt
 {
+    NSString *sn = taskinfo.sn;
     //判断是否已经在完成表中存在.
     TaskFinishAt *taskFinishAtFound = nil;
     for(TaskFinishAt *taskFinishAt in self.taskFinishAts) {
@@ -411,6 +412,16 @@
     
     return YES;
 }
+
+//添加用户记录信息的统一接口.会同时更新缓存和数据库.
+- (BOOL)addUserRecordOnTaskInfo:(TaskInfo*)taskinfo text:(NSString*)text on:(NSString*)day committedAt:(NSString*)committedAt
+{
+    NSString *sn = taskinfo.sn;
+    [self.taskRecordManager taskRecordAddUserRecord:sn text:text on:day committedAt:committedAt];
+    return YES;
+}
+
+
 
 
 - (NSArray<TaskFinishAt*>*)queryFinishedAtsOnTaskInfo:(TaskInfo*)taskinfo onDays:(NSArray<NSString*>*)days

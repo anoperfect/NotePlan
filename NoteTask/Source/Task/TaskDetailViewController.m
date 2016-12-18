@@ -12,7 +12,7 @@
 #import "TaskEditViewController.h"
 
 
-@interface TaskDetailViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TaskDetailViewController () <UITableViewDataSource, UITableViewDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) UITableView *contentTableView;
 /*
@@ -32,6 +32,13 @@ TaskProperty
 @property (nonatomic, strong) NSArray<TaskFinishAt*> *finishedAts;
 @property (nonatomic, strong) NSArray<TaskFinishAt*> *finishedAtsAll;
 
+
+@property (nonatomic, strong) UITextView *textViewEditing;
+@property (nonatomic, strong) UIView *textViewEditingContainer;
+@property (nonatomic, assign) CGFloat           heightFitToKeyboard;
+
+
+@property (nonatomic, strong) NSArray<NSString*> *actionsKeyword;
 
 @end
 
@@ -94,11 +101,37 @@ TaskProperty
     [self.contentTableView registerClass:[TaskDetailPropertyCell class] forCellReuseIdentifier:@"TaskDetailPropertyCell"];
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.textViewEditingContainer = [[UIView alloc] init];
+        [self addSubview:self.textViewEditingContainer];
+        self.textViewEditingContainer.hidden = YES;
+        self.textViewEditingContainer.backgroundColor = [UIColor whiteColor];
+        
+        self.textViewEditing = [[UITextView alloc] init];
+        self.textViewEditing.attributedText = [[NSAttributedString alloc] initWithString:@""];
+        self.textViewEditing.editable = NO;
+        [self addSubview:self.textViewEditing];
+        self.textViewEditing.hidden = YES;
+        self.textViewEditing.delegate = self;
+    });
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self actionUpdateDue:@"FinishAtCount"];
     });
+    
+    
+    _actionsKeyword = @[
+                        @"TaskActionTicking", @"嘀嗒",
+                        @"TaskActionFinish", @"完成",
+                        @"TaskActionRedo", @"重新开始",
+                        @"TaskActionRecord", @"执行记录",
+                        @"TaskActionEdit", @"编辑",
+                        @"TaskActionUserRecord", @"笔记",
+                        @"TaskActionDelete", @"删除",
+                        ];
 }
 
 
@@ -107,6 +140,16 @@ TaskProperty
     [super viewWillLayoutSubviews];
     self.contentTableView.frame = self.contentView.bounds;
     
+    if(self.textViewEditingContainer.hidden) {
+        
+    }
+    else {
+        self.textViewEditingContainer.frame = CGRectMake(0, 0, VIEW_WIDTH, self.heightFitToKeyboard);
+        self.textViewEditing.frame = UIEdgeInsetsInsetRect(self.textViewEditingContainer.frame, UIEdgeInsetsMake(10, 10, 10, 10));
+        
+        [self.contentView bringSubviewToFront:self.textViewEditingContainer];
+        [self.contentView bringSubviewToFront:self.textViewEditing];
+    }
 }
 
 
@@ -525,10 +568,13 @@ TaskProperty
     NSLog(@"action string : %@", actionString);
     NSDictionary *actionStringToSELString = @{
                                               @"TaskActionFinish":@"taskActionFinish",
+                                              @"TaskActionRedo":@"taskActionRedo",
                                               @"TaskActionTicking":@"taskActionTicking",
                                               @"TaskActionRecord":@"taskActionRecord",
                                               @"TaskActionEdit":@"taskActionEdit",
+                                              @"TaskActionUserRecord":@"taskActionUserRecord",
                                               @"TaskActionMore":@"taskActionMore",
+                                              @"TaskActionDelete":@"taskActionDelete",
                                               
                                               };
     
@@ -558,6 +604,14 @@ TaskProperty
     }
     
     return nil;
+}
+
+
+- (void)taskAction:(UIButton*)button
+{
+    [self dismissPopupView];
+    NSInteger idx = button.tag - 1000;
+    [self actionStringOnTaskContent:_actionsKeyword[idx*2]];
 }
 
 
@@ -642,6 +696,76 @@ TaskProperty
 }
 
 
+- (void)taskActionRedoOnDay:(NSString*)day at:(NSString*)dateTimeString
+{
+    [[TaskInfoManager taskInfoManager] addRedoAtOnTaskInfo:self.taskinfo on:day committedAt:dateTimeString];
+    [self actionUpdateDue:@"RedoOnDay"];
+}
+
+
+- (void)taskActionRedo
+{
+    LOG_POSTION
+    
+    if(self.finishedAts.count == 0) {
+        NSLog(@"#error : scheduleDateStrings count 0.");
+        [self showIndicationText:@"任务信息解析出错" inTime:1];
+        return ;
+    }
+    
+    if(self.finishedAts.count == 1) {
+        TaskFinishAt *finishAt = [self.finishedAts firstObject];
+        NSString *finishAtDateTime = finishAt.finishedAt;
+        if(finishAtDateTime.length == 0) {
+            NSLog(@"Task on %@ already set to not finished.", finishAt.dayString);
+            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)未完成. \n无需执行重作任务.\n", finishAt.dayString] inTime:3];
+        }
+        else {
+            NSString *dateTimeNow = [NSString dateTimeStringNow];
+            [self taskActionRedoOnDay:finishAt.dayString at:dateTimeNow];
+            finishAt.finishedAt = @"";
+            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", finishAt.dayString] inTime:2];
+        }
+    }
+    else {
+        NSLog(@"show days menu.");
+        NSMutableArray *menus = [[NSMutableArray alloc] init];
+        
+        if(self.mode == TASKINFO_MODE_ARRANGE) {
+            [menus addObject:@{
+                               @"text" : self.arrange.arrangeName,
+                               @"disableSelction" : @1
+                               }];
+        }
+        
+        for(TaskFinishAt *status in self.finishedAts) {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            dict[@"text"] = status.dayString;
+            if(status.finishedAt.length > 0) {
+                dict[@"detailText"] = [NSString stringWithFormat:@"%@", [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
+                dict[@"accessoryType"] = @(UITableViewCellAccessoryCheckmark);
+            }
+            else {
+                dict[@"disableSelction"] = @1;
+            }
+            
+            [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
+        }
+        
+        __weak typeof(self) _self = self;
+        [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
+            NSLog(@"select %@", menu);
+            [_self dismissMenus];
+            NSString *dateString = menu[@"text"];
+            [_self taskActionRedoOnDay:dateString at:[NSString dateTimeStringNow]];
+            [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", dateString] inTime:2];
+        }];
+    }
+}
+
+
+
+
 - (void)taskActionShowScheduleDaysFinishStatus
 {
     NSMutableArray *menus = [[NSMutableArray alloc] init];
@@ -696,20 +820,158 @@ TaskProperty
 }
 
 
+- (void)taskActionUserRecord
+{
+    UIToolbar *keyboardAccessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, VIEW_WIDTH, 36)];
+    keyboardAccessory.backgroundColor = [UIColor whiteColor];
+    [keyboardAccessory setItems:@[
+                                  [[UIBarButtonItem alloc] initWithTitle:@"撤销" style:UIBarButtonItemStylePlain target:self action:@selector(taskActionUserRecordWithdraw)],
+                                  [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                                  [[UIBarButtonItem alloc] initWithTitle:@"输入完成" style:UIBarButtonItemStylePlain target:self action:@selector(taskActionUserRecordCommit)]
+                                  ]
+                       animated:YES];
+    
+    //重用cell中的textview有刷新逻辑设计的问题. 用一个单独的textview用于编辑.
+    self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
+    
+    self.textViewEditing.editable = YES;
+    self.textViewEditing.inputAccessoryView = keyboardAccessory;
+    [self.contentView bringSubviewToFront:self.textViewEditing];
+    [self.textViewEditing becomeFirstResponder];
+    
+    self.textViewEditing.hidden = NO;
+    self.textViewEditingContainer.hidden = NO;
+    
+    [self.view setNeedsLayout];
+    
+}
+
+
+- (void)taskActionUserRecordCommit
+{
+    NSString *text = self.textViewEditing.text;
+    
+    [self.textViewEditing resignFirstResponder];
+    self.textViewEditing.hidden = YES;
+    self.textViewEditingContainer.hidden = YES;
+    
+    NSString *day = @"NAN";
+    if(self.mode == TASKINFO_MODE_ARRANGE) {
+        day = self.arrange.arrangeName;
+    }
+    else if(self.mode == TASKINFO_MODE_DAY) {
+        day = self.dayString;
+    }
+    else if(self.mode == TASKINFO_MODE_LIST) {
+        day = @"";
+    }
+    
+    [[TaskInfoManager taskInfoManager] addUserRecordOnTaskInfo:self.taskinfo text:text on:day committedAt:[NSString dateTimeStringNow]];
+}
+
+
+- (void)taskActionUserRecordWithdraw
+{
+    [self.textViewEditing resignFirstResponder];
+    self.textViewEditing.hidden = YES;
+    self.textViewEditingContainer.hidden = YES;
+}
+
+
 - (void)taskActionMore
 {
     LOG_POSTION
-    [self showMenus:@[
-                      @{@"text":@"完成"}, 
-                      
-                      
-                      ]
-       selectAction:^(NSInteger idx, NSDictionary *menu) {
-           [self dismissMenus];
-       }
-     ];
+//    [self showMenus:@[
+//                      @{@"text":@"完成"}, 
+//                      
+//                      
+//                      ]
+//       selectAction:^(NSInteger idx, NSDictionary *menu) {
+//           [self dismissMenus];
+//       }
+//     ];
+    
+
     
     
+    
+    
+    
+    
+    CGFloat xContainer = 10;
+    CGFloat yContainer = 10;
+    
+    CGFloat widthButton = (VIEW_WIDTH - xContainer * 2) / 4;
+    CGFloat heightContainer = 2 * widthButton + 2 * yContainer + 64;
+    
+    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - heightContainer, VIEW_WIDTH, heightContainer)];
+    container.backgroundColor = [UIColor colorWithName:@"CustomBackground"];
+    for(NSInteger idx = 0; idx < 8 ; idx ++) {
+        if(idx >= _actionsKeyword.count / 2) {
+            break;
+        }
+        NSString *title = _actionsKeyword[idx*2+1];
+        UIImage *image = [UIImage imageNamed:_actionsKeyword[idx*2]];
+        CGFloat widthImage = 20;
+        
+            CGSize itemSize = CGSizeMake(widthImage, widthImage);
+            UIGraphicsBeginImageContextWithOptions(itemSize, NO, UIScreen.mainScreen.scale);
+            CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
+            [image drawInRect:imageRect];
+            image = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        
+        CGFloat xButton = 10 + (idx % 4) * widthButton;
+        CGFloat yButton = 10 + (idx / 4) * widthButton;
+        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(xButton, yButton, widthButton, widthButton)];
+        button.tag = 1000 + idx;
+        [button setTitle:title forState:UIControlStateNormal];
+        [button setImage:image forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(taskAction:) forControlEvents:UIControlEventTouchDown];
+        button.titleLabel.font = FONT_SMALL;
+        CGFloat yImage = 30;
+        button.imageEdgeInsets = UIEdgeInsetsMake(yImage, (widthButton-widthImage)/2, widthButton-widthImage - yImage, (widthButton-widthImage)/2);
+        button.titleEdgeInsets = UIEdgeInsetsMake(40, -widthImage, 0, 0);
+        [button.titleLabel setContentMode:UIViewContentModeCenter];
+        
+        CALayer *layer = [CALayer layer];
+        layer.bounds = CGRectMake(0, 0, widthButton - 10, widthButton - 10);
+        layer.position = CGPointMake(widthButton/2, widthButton/2);
+        layer.borderWidth = 1;
+        layer.borderColor = [UIColor blackColor].CGColor;
+        layer.cornerRadius = 5;
+        [button.layer addSublayer:layer];
+        
+        [container addSubview:button];
+    }
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 2 * widthButton + 2 * yContainer, VIEW_WIDTH, 64)];
+    [button setTitle:@"取消" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(dismissPopupView) forControlEvents:UIControlEventTouchDown];
+    [container addSubview:button];
+    
+    [self showPopupView:container
+             commission:@{
+                          @"containerBackgroundColor":[UIColor clearColor],
+                          @"popAnimation":@1,
+                          }
+         clickToDismiss:YES
+                dismiss:nil];
+    
+    
+    
+    
+}
+
+
+- (void)taskActionDelete
+{
+    [self showIndicationText:@"任务已删除" inTime:1];
+    [[AppConfig sharedAppConfig] configTaskInfoRemoveBySn:@[self.taskinfo.sn]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
@@ -721,9 +983,38 @@ TaskProperty
 }
 
 
-- (void)actionRedo
+//UItextView for editing delegate.
+-(BOOL) textViewShouldBeginEditing:(UITextView*)textView
 {
     LOG_POSTION
+    return YES;
+}
+
+
+-(void)textViewDidChange:(UITextView*)textView
+{
+    LOG_POSTION
+}
+
+
+- (void)keyboardChangeFrame:(NSNotification*)notification {
+    NSDictionary *info = [notification userInfo];
+    CGRect softKeyboardFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    //判断软键盘是否隐藏.
+    if(!CGRectIntersectsRect(softKeyboardFrame, self.view.frame)) {
+        NSLog(@"soft keypad not shown.");
+        self.heightFitToKeyboard = 0.0;
+        
+    }
+    else {
+        NSLog(@"soft keypad shown.");
+        if(self.heightFitToKeyboard != self.contentView.frame.size.height - softKeyboardFrame.size.height) {
+            self.heightFitToKeyboard = self.contentView.frame.size.height - softKeyboardFrame.size.height;
+        }
+    }
+    
+    [self.view setNeedsLayout];
 }
 
 

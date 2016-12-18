@@ -773,7 +773,7 @@
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
         if(days.count == 1) {
-            BOOL result = [self.taskInfoManager addRedoAtOnSn:taskinfo.sn on:days[0] committedAt:[NSString dateTimeStringNow]];
+            BOOL result = [self.taskInfoManager addRedoAtOnTaskInfo:taskinfo on:days[0] committedAt:[NSString dateTimeStringNow]];
             if(result) {
                 [self actionReloadTasksViewOnIndexPath:indexPath];
             }
@@ -882,7 +882,7 @@
     CGSize size = self.tasksView.contentSize;
     NSLog(@"%f", size.height);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self test];
+//        [self test];
     });
     
     
@@ -892,6 +892,7 @@
 
 - (void)actionDetectTaskUpdate:(NSNotification*)notification
 {
+    LOG_POSTION
     NSDictionary *diffs = notification.object;
     NSLog(@"%@", diffs);
     

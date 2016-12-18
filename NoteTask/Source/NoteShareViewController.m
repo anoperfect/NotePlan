@@ -507,20 +507,20 @@
         }
         else {
             self.labelLAN.text = @"局域网获取(当前不可用)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
+            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看或者下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
         }
         
         if(self.uploadPdfStatus == 0) {
             self.labelWAN.text = @"互联网获取(等待上传中)";
-            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n.";
+            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,查看或者下载Pdf版本笔记内容.";
         }
         else if(self.uploadPdfStatus == 1) {
             self.labelWAN.text = @"互联网获取";
-            self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过局域网内电脑浏览器登入或下载软件下载上述http地址,\n查看/下载Pdf版本笔记内容.", self.WANServer, self.pdfName];
+            self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入上述http地址,查看或者下载Pdf版本笔记内容.", self.WANServer, self.htmName];
         }
         else {
             self.labelWAN.text = @"互联网获取(连接失败)";
-            self.labelWANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
+            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,查看或者下载Pdf版本笔记内容.";
         }
     }
 }

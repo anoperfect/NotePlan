@@ -94,6 +94,24 @@
 }
 
 
++ (TaskRecord*)taskRecordWithUserRecordOn:(NSString*)snTaskInfo text:(NSString*)text on:(NSString*)dayString committedAt:(NSString*)committedAt
+{
+    TaskRecord *taskRecord = [[TaskRecord alloc] init];
+    //    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    taskRecord.snTaskInfo = snTaskInfo;
+    taskRecord.dayString = dayString;
+    taskRecord.type = TaskRecordTypeUserRecord;
+    taskRecord.record = text;
+    taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
+    taskRecord.modifiedAt = taskRecord.committedAt;
+    taskRecord.deprecatedAt = @"";
+    
+    return taskRecord;
+}
+
+
+
 + (TaskRecord*)taskRecordWithFinishTaskInfo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt
 {
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
@@ -102,7 +120,7 @@
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
     taskRecord.type = TaskRecordTypeFinish;
-    taskRecord.record = [NSString stringWithFormat:@"%@", dayString];
+    taskRecord.record = @"";
     taskRecord.committedAt = committedAt;//[NSString dateTimeStringNow];
     taskRecord.modifiedAt = taskRecord.committedAt;
     taskRecord.deprecatedAt = @"";
@@ -125,6 +143,9 @@
     
     return taskRecord;
 }
+
+
+
 
 
 
@@ -236,6 +257,14 @@
 {
     [self taskRecordAdd:[TaskRecord taskRecordWithRedoTaskInfo:snTaskInfo on:dayString committedAt:committedAt]];
 }
+
+
+- (void)taskRecordAddUserRecord:(NSString*)snTaskInfo text:(NSString*)text on:(NSString*)dayString committedAt:(NSString*)committedAt
+{
+    [self taskRecordAdd:[TaskRecord taskRecordWithUserRecordOn:snTaskInfo text:text on:dayString committedAt:committedAt]];
+}
+
+
 
 
 - (void)taskRecordRemove:(TaskRecord*)taskRecord
