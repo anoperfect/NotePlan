@@ -29,23 +29,22 @@
 
 - (NSArray<NoteModel*> *)configNoteGets;
 - (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString;
-- (NoteModel*)configNoteGetByNoteIdentifier:(NSString*)noteIdentifier;
+- (NoteModel*)configNoteGetBySn:(NSString*)sn;
 
 
-//返回新增note的identifier.
+
 - (BOOL)configNoteAdd:(NoteModel*)note;
-- (void)configNoteRemoveById:(NSString*)noteIdentifier;
-- (void)configNoteRemoveByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
+- (void)configNoteRemoveBySn:(NSArray<NSString*>*)sns;
 
 //删除.可以到回收站清除或恢复.
-- (void)configNoteDeleteByIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
+- (void)configNoteDeleteBySns:(NSArray<NSString*>*)sns;
 
-- (NSDictionary*)configNoteUpdateDetect:(NoteModel*)note fromNoteIdentifier:(NSString*)identifier;
+- (NSDictionary*)configNoteUpdateDetect:(NoteModel*)note fromSn:(NSString*)sn;
 - (void)configNoteUpdate:(NoteModel*)note;
-- (void)configNoteUpdate:(NoteModel*)note fromNoteIdentifier:(NSString*)identifier;
+- (void)configNoteUpdate:(NoteModel*)note fromSn:(NSString*)sn;
 
-- (void)configNotesUpdateClassification:(NSString*)classification byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
-- (void)configNotesUpdateColor:(NSString*)color byNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers;
+- (void)configNotesUpdateClassification:(NSString*)classification bySns:(NSArray<NSString*>*)sns;
+- (void)configNotesUpdateColor:(NSString*)color bySns:(NSArray<NSString*>*)sns;
 
 - (void)configNoteAddPreset;
 

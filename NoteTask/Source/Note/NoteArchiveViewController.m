@@ -18,7 +18,7 @@
 @property (nonatomic, strong) UIButton *addButton;
 
 @property (nonatomic, strong) NSString *from;
-@property (nonatomic, strong) NSArray<NSString*> *noteIdentifiers;
+@property (nonatomic, strong) NSArray<NSString*> *sns;
 
 @property (nonatomic, strong) NSMutableArray *classifications;
 @property (nonatomic, strong) NSMutableArray *filterDataColors;
@@ -29,10 +29,10 @@
 @implementation NoteArchiveViewController
 
 
-- (void)setFrom:(NSString*)from andNoteIdentifiers:(NSArray<NSString*>*)noteIdentifiers
+- (void)setFrom:(NSString*)from andSns:(NSArray<NSString*>*)sns
 {
     self.from = from;
-    self.noteIdentifiers = noteIdentifiers;
+    self.sns = sns;
 }
 
 
@@ -234,6 +234,7 @@
     imageView1.image = UIGraphicsGetImageFromCurrentImageContext();
 #endif
     
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
@@ -243,11 +244,11 @@
     if([self.from isEqualToString:@"NotesArchiveChange"]) {
         
         if(indexPath.section == 0) {
-            [[AppConfig sharedAppConfig] configNotesUpdateClassification:self.classifications[indexPath.row] byNoteIdentifiers:self.noteIdentifiers];
+            [[AppConfig sharedAppConfig] configNotesUpdateClassification:self.classifications[indexPath.row] bySns:self.sns];
         }
         else if(indexPath.section == 1) {
             NSString *colorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[indexPath.row]];
-            [[AppConfig sharedAppConfig] configNotesUpdateColor:colorString byNoteIdentifiers:self.noteIdentifiers];
+            [[AppConfig sharedAppConfig] configNotesUpdateColor:colorString bySns:self.sns];
         }
         
         [self.navigationController popViewControllerAnimated:YES];

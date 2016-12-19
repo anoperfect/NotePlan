@@ -14,3 +14,11 @@
 
 
 @end
+
+
+
+@interface SettingKV : NSObject
+@property (nonatomic, strong) NSString *key;
+@property (nonatomic, strong) NSString *value;
+
+@end

@@ -62,6 +62,9 @@
     [self subviewBuild];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskCreate:) name:@"NotificationTaskCreate" object:nil];
+    
+    [self test];
 }
 
 
@@ -627,14 +630,6 @@
 }
 
 
-- (void)pushBackAction
-{
-    NSLog(@"--------------------------------");
-    [self dataTasksReload];
-    [self actionReloadTasksView];
-}
-
-
 - (void)showActionMenu
 {
     LOG_POSTION
@@ -870,23 +865,59 @@
 
 - (void)test
 {
-//    CGSize size = self.tasksView.contentSize;
-//    [self.tasksView setContentOffset:CGPointMake(0, size.height - self.tasksView.frame.size.height) animated:YES];
-    
-    
-    
-    
-    static CGFloat y = 0;
-    y += 10;
-    [self.tasksView setContentOffset:CGPointMake(0, y) animated:YES];
-    CGSize size = self.tasksView.contentSize;
-    NSLog(@"%f", size.height);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [self test];
-    });
-    
-    
-    
+//    TaskFinishAt *taskFinishAt = [[TaskFinishAt alloc] init];
+//    {
+//        NSLog(@"mj-");
+//    NSMutableDictionary *mjDict = [taskFinishAt mj_keyValues];
+//    NSLog(@"%@", mjDict);
+//    NSLog(@"%@", [TaskFinishAt mj_objectWithKeyValues:mjDict]);
+//        
+//        NSLog(@"yy-");
+//    NSMutableDictionary *yyDict = [taskFinishAt yy_modelToJSONObject];
+//    NSLog(@"%@", yyDict);
+//    NSLog(@"%@", [TaskFinishAt yy_modelWithJSON:yyDict]);
+//    }
+//    
+//    taskFinishAt.snTaskInfo = @"sn111";
+//    {
+//        NSLog(@"mj-");
+//    NSMutableDictionary *mjDict = [taskFinishAt mj_keyValues];
+//    NSLog(@"%@", mjDict);
+//    NSLog(@"%@", [TaskFinishAt mj_objectWithKeyValues:mjDict]);
+//        
+//        NSLog(@"yy-");
+//    NSMutableDictionary *yyDict = [taskFinishAt yy_modelToJSONObject];
+//    NSLog(@"%@", yyDict);
+//    NSLog(@"%@", [TaskFinishAt yy_modelWithJSON:yyDict]);
+//    }
+//    
+//    taskFinishAt.dayString = @"day000";
+//    {
+//        NSLog(@"mj-");
+//    NSMutableDictionary *mjDict = [taskFinishAt mj_keyValues];
+//    NSLog(@"%@", mjDict);
+//    NSLog(@"%@", [TaskFinishAt mj_objectWithKeyValues:mjDict]);
+//        
+//        NSLog(@"yy-");
+//    NSMutableDictionary *yyDict = [taskFinishAt yy_modelToJSONObject];
+//    NSLog(@"%@", yyDict);
+//    NSLog(@"%@", [TaskFinishAt yy_modelWithJSON:yyDict]);
+//    }
+//    
+//    taskFinishAt.finishedAt = @"at123";
+//    {
+//        NSLog(@"mj-");
+//        NSMutableDictionary *mjDict = [taskFinishAt mj_keyValues];
+//        NSLog(@"%@", mjDict);
+//        NSLog(@"%@", [TaskFinishAt mj_objectWithKeyValues:mjDict]);
+//        
+//        NSLog(@"yy-");
+//        NSMutableDictionary *yyDict = [taskFinishAt yy_modelToJSONObject];
+//        NSLog(@"%@", yyDict);
+//        NSLog(@"%@", [TaskFinishAt yy_modelWithJSON:yyDict]);
+//    }
+// 
+//    
 }
 
 
@@ -895,6 +926,17 @@
     LOG_POSTION
     NSDictionary *diffs = notification.object;
     NSLog(@"%@", diffs);
+    
+    [self dataTasksReload];
+    [self actionReloadTasksView];
+}
+
+
+- (void)actionDetectTaskCreate:(NSNotification*)notification
+{
+    LOG_POSTION
+    id obj = notification.object;
+    NSLog(@"%@", obj);
     
     [self dataTasksReload];
     [self actionReloadTasksView];

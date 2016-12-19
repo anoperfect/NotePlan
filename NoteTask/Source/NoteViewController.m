@@ -16,7 +16,7 @@
 #import "NoteArchiveViewController.h"
 @interface NoteViewController () <UITableViewDataSource, UITableViewDelegate,
                                         UITextFieldDelegate,
-                                    JSDropDownMenuDataSource,JSDropDownMenuDelegate>
+                                    JSDropDownMenuDataSource,JSDropDownMenuDelegate, UINavigationControllerDelegate>
 {
     
     NSMutableArray *_data1;
@@ -938,7 +938,7 @@
 #endif
         
         NoteArchiveViewController *vc = [[NoteArchiveViewController alloc] init];
-        [vc setFrom:@"NotesArchiveChange" andNoteIdentifiers:[self dataNotesIdentifierOnIndexPaths:indexPathsSelected]];
+        [vc setFrom:@"NotesArchiveChange" andSns:[self dataNotesSnOnIndexPaths:indexPathsSelected]];
         [self pushViewController:vc animated:YES];
         
         return;
@@ -1015,14 +1015,14 @@
 }
 
 
-- (NSArray<NSString*>*)dataNotesIdentifierOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
+- (NSArray<NSString*>*)dataNotesSnOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
 {
-    NSMutableArray<NSString*> *notesIdentifier = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString*> *notesSn = [[NSMutableArray alloc] init];
     for(NSIndexPath* indexPath in indexPaths) {
-        [notesIdentifier addObject:[self noteOnIndexPath:indexPath].identifier];
+        [notesSn addObject:[self noteOnIndexPath:indexPath].sn];
     }
     
-    return [NSArray arrayWithArray:notesIdentifier];
+    return [NSArray arrayWithArray:notesSn];
 }
 
 
@@ -1031,8 +1031,8 @@
     LOG_POSTION
     
     //数据库删除对应note数据.
-    NSArray<NSString*>* notesIdentifier = [self dataNotesIdentifierOnIndexPaths:indexPaths] ;
-    [[AppConfig sharedAppConfig] configNoteDeleteByIdentifiers:notesIdentifier];
+    NSArray<NSString*>* sns = [self dataNotesSnOnIndexPaths:indexPaths] ;
+    [[AppConfig sharedAppConfig] configNoteDeleteBySns:sns];
     
     //表数据源清除.
     NSMutableArray *notesDelete = [[NSMutableArray alloc] init];
@@ -1040,7 +1040,7 @@
     NoteModel *note;
     for(NSIndexPath *indexPath in indexPaths) {
         note = [self noteOnIndexPath:indexPath];
-        NSLog(@"[row%zd] %@ : %@", indexPath.row, note.identifier, note.title);
+        NSLog(@"[row%zd] %@ : %@", indexPath.row, note.sn, note.title);
         [notesDelete addObject:note];
     }
     [self.notes removeObjectsInArray:notesDelete];
@@ -1048,14 +1048,7 @@
 }
 
 
-#if 0
-- (void)actionMuiltSelectedNotesChangeClassificationTo:(NSString*)classification
-{
-    NSLog(@"actionMuiltSelectedNotesChangeClassificationTo");
-    NSArray<NSString*>* notesIdentifier = [self notesIdentifierOnMutilSelect] ;
-    [[AppConfig sharedAppConfig] configNoteUpdateBynoteIdentifiers:notesIdentifier classification:classification];
-}
-#endif
+
 
 
 

@@ -116,7 +116,6 @@ TaskProperty
     });
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self actionUpdateDue:@"FinishAtCount"];
@@ -693,6 +692,8 @@ TaskProperty
             }];
         }
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
 }
 
 
@@ -761,6 +762,7 @@ TaskProperty
             [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", dateString] inTime:2];
         }];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
 }
 
 
@@ -930,7 +932,7 @@ TaskProperty
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(taskAction:) forControlEvents:UIControlEventTouchDown];
         button.titleLabel.font = FONT_SMALL;
-        CGFloat yImage = 30;
+        CGFloat yImage = 24;
         button.imageEdgeInsets = UIEdgeInsetsMake(yImage, (widthButton-widthImage)/2, widthButton-widthImage - yImage, (widthButton-widthImage)/2);
         button.titleEdgeInsets = UIEdgeInsetsMake(40, -widthImage, 0, 0);
         [button.titleLabel setContentMode:UIViewContentModeCenter];

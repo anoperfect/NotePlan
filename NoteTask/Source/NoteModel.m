@@ -54,7 +54,7 @@ static NSInteger kno = 0;
 - (NSString*)description
 {
     NSMutableString *strm = [[NSMutableString alloc] init];
-    [strm appendFormat:@"======NoteModel description : %p, [%@],  title:%@, content:%@", self, self.identifier, self.title, self.content];
+    [strm appendFormat:@"======NoteModel description : %p, [%@],  title:%@, content:%@", self, self.sn, self.title, self.content];
     
     return strm;
 }
@@ -170,6 +170,36 @@ static NSInteger kno = 0;
 }
 
 
+- (NSDictionary*)toDictionary
+{
+    NSMutableDictionary *noteDict = [[NSMutableDictionary alloc] init];
+    noteDict[@"sn"]               = self.sn;
+    noteDict[@"title"]            = self.title;
+    noteDict[@"content"]          = self.content;
+    noteDict[@"summary"]          = self.summary;
+    noteDict[@"classification"]   = self.classification;
+    noteDict[@"color"]            = self.color;
+    noteDict[@"thumb"]            = self.thumb;
+    noteDict[@"audio"]            = self.audio;
+    noteDict[@"location"]         = self.location;
+    noteDict[@"createdAt"]        = self.createdAt;
+    noteDict[@"modifiedAt"]       = self.modifiedAt;
+    noteDict[@"browseredAt"]      = self.browseredAt;
+    noteDict[@"deletedAt"]        = self.deletedAt;
+    noteDict[@"source"]           = self.source;
+    noteDict[@"synchronize"]      = self.synchronize;
+    noteDict[@"countCollect"]     = @(self.countCollect);
+    noteDict[@"countLike"]        = @(self.countLike);
+    noteDict[@"countDislike"]     = @(self.countDislike);
+    noteDict[@"countBrowser"]     = @(self.countBrowser);
+    noteDict[@"countEdit"]        = @(self.countEdit);
+    NSDictionary *dict = [NSDictionary dictionaryWithDictionary:noteDict];
+    
+    dict = [NSDictionary dictionaryWithDictionary:[self mj_keyValues]];
+    return dict;
+}
+
+
 - (NSString*)previewTitle
 {
     NSString *title = @"";
@@ -179,7 +209,7 @@ static NSInteger kno = 0;
         title = @"无标题";
     }
     else {
-        title = [NSString stringWithFormat:@"%@"/*, self.identifier*/, titleNoteParagraph.content];
+        title = [NSString stringWithFormat:@"%@"/*, self.sn*/, titleNoteParagraph.content];
     }
 
     return title;
@@ -213,7 +243,7 @@ static NSInteger kno = 0;
     NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"NoteTemplate.htm"];
     NSData *data = [NSData dataWithContentsOfFile:resPath];
     NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    s = [s stringByReplacingOccurrencesOfString:@"@@note.identifier" withString:self.identifier?self.identifier:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.sn" withString:self.sn?self.sn:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title?self.title:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.content" withString:self.content?self.content:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
@@ -224,7 +254,7 @@ static NSInteger kno = 0;
 }
 
 
-+ (NSString*)randonIdentifierStringWithLength:(NSInteger)length
++ (NSString*)randomSnsStringWithLength:(NSInteger)length
 {
     char s[100];
     
@@ -353,3 +383,28 @@ noteParagraph.content = @"7、你不知道排版最难的地方就是一点一�
 
 [self.contentParagraphs addObjectsFromArray:self.contentParagraphs];
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@interface NoteClassification ()
+
+@end
+
+
+@implementation NoteClassification
+
+
+
+@end

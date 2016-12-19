@@ -266,4 +266,21 @@ static NSString *kStringAppDetail = @"关于NoteTask";
 }
 */
 
+
+@end
+
+
+
+
+
+@interface SettingKV ()
+
+@end
+
+
+@implementation SettingKV
+
+
+
+
 @end

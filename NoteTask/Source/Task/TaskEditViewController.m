@@ -195,7 +195,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 - (void)viewWillLayoutSubviews
 {
-    LOG_POSTION
     [super viewWillLayoutSubviews];
     
     UIScrollView *scrollView = (UIScrollView*)self.contentView;
@@ -323,6 +322,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     //新增的话, 直接使用所有内容.
     if(self.isCreate) {
         [[TaskInfoManager taskInfoManager] addTaskInfo:self.taskinfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskCreate" object:self.taskinfo userInfo:nil];
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {

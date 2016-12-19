@@ -98,8 +98,8 @@
         self.editMode = YES;
         
         NoteModel* noteModel = [[NoteModel alloc] init];
-        noteModel.identifier    = [NoteModel randonIdentifierStringWithLength:6];
-        NSLog(@"---%@", noteModel.identifier);
+        noteModel.sn    = [NoteModel randomSnsStringWithLength:6];
+        NSLog(@"---%@", noteModel.sn);
         noteModel.title         = @"";
         noteModel.content       = @"";
         noteModel.summary       = @"";
@@ -276,7 +276,7 @@
 
 - (void)parseNoteParagraphs
 {
-    NSLog(@"identifier : %zd", self.noteModel.identifier);
+    NSLog(@"sn : %zd", self.noteModel.sn);
     
     self.titleParagraph = [NoteParagraphModel noteParagraphFromString:self.noteModel.title];
     self.titleParagraph.isTitle = YES;
@@ -669,7 +669,7 @@
     self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
     self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
     
-    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromNoteIdentifier:self.noteModel.identifier];
+    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromSn:self.noteModel.sn];
     if(update.count > 0) {
         //更新到本地数据库.
         self.noteModel.modifiedAt = [NSString dateTimeStringNow];
@@ -687,21 +687,14 @@
 
 - (void)noteUpdate:(NoteModel*)note
 {
-    LOG_POSTION
-#if 0
-    LOG_POSTION
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
-#else
-    LOG_POSTION
-    if([self.noteModel.identifier hasPrefix:@"[preset"] && [self.noteModel.identifier hasSuffix:@"]"]) {
-        NSString *identifier = self.noteModel.identifier;
-        self.noteModel.identifier = [NSString stringWithFormat:@"%@-%@", identifier, [NSString randomStringWithLength:3 andType:36]];
-        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromNoteIdentifier:identifier];
+    if([self.noteModel.sn hasPrefix:@"[preset"] && [self.noteModel.sn hasSuffix:@"]"]) {
+        NSString *sn = self.noteModel.sn;
+        self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 andType:36]];
+        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromSn:sn];
     }
     else {
         [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
     }
-#endif
 }
 
 
@@ -797,7 +790,7 @@
 
 - (BOOL)addNoteToLocal
 {
-    NSLog(@"addNoteToLocal : %@", self.noteModel.identifier);
+    NSLog(@"addNoteToLocal : %@", self.noteModel.sn);
     //时间统一为NOW.
     self.noteModel.createdAt = [NSString dateTimeStringNow];
     self.noteModel.modifiedAt = self.noteModel.createdAt;
@@ -829,7 +822,7 @@
         return ;
     }
     
-    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromNoteIdentifier:self.noteModel.identifier];
+    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromSn:self.noteModel.sn];
     if(update.count > 0) {
         //更新到本地数据库.
         self.noteModel.modifiedAt = [NSString dateTimeStringNow];

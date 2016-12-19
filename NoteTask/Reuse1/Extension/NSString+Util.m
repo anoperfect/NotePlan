@@ -165,17 +165,8 @@
     NSString *dateTodayString = [self dateStringOfDate:dateToday];
     dateToday = [self dateFromString:dateTodayString];
     NSDate *dateCompare = [self dateFromString:dayString];
-    
-    NSLog(@"%@", dayString);
-    
     NSTimeInterval t = [dateCompare timeIntervalSinceDate:dateToday];
-    
-    NSLog(@"%@", dateCompare);
-    NSLog(@"%@", dateToday);
-    
-    NSLog(@"%f", t);
     NSInteger secs = t;
-    NSLog(@"%zd", secs);
     return secs / (3600 * 24);
 }
 

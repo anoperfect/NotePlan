@@ -18,9 +18,7 @@
 
 //本地存储时的时候的格式.
 @interface NoteModel : NSObject
-@property (nonatomic, assign) NSInteger sn;
-@property (nonatomic, strong) NSString* identifier;
-
+@property (nonatomic, strong) NSString* sn;
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *content;
@@ -57,6 +55,7 @@
 - (NSData*)toJsonData;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict;
+- (NSDictionary*)toDictionary;
 
 + (NSArray<NSString*>*)classificationPreset;
 
@@ -72,9 +71,18 @@
 
 - (NSString*)generateWWWPage;
 
-+ (NSString*)randonIdentifierStringWithLength:(NSInteger)length;
++ (NSString*)randomSnsStringWithLength:(NSInteger)length;
 
 @end
 
+
+
+@interface NoteClassification : NSObject
+
+@property (nonatomic, strong) NSString *classificationName;
+@property (nonatomic, strong) NSString *createdAt;
+
+
+@end
 
 

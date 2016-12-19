@@ -52,7 +52,7 @@
     self.titleFontSizeSlider.maximumTrackTintColor = [[UIColor grayColor] colorWithAlphaComponent:0.05f];
     [self.titleFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
     [self.titleFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
-    [self.titleFontSizeSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.titleFontSizeSlider addTarget:self action:@selector(titleSliderChanged:) forControlEvents:UIControlEventValueChanged];
     NSString *titleFontString = [[AppConfig sharedAppConfig] configSettingGet:@"TitleFontSizeDefault"];
     CGFloat titlePtSize = 18.0;
     if([titleFontString hasSuffix:@"px"] && (titlePtSize = [titleFontString floatValue]) >= 1.0 && titlePtSize < 100.0) {
@@ -62,7 +62,7 @@
     
     self.titleFontSizeNameLabel = [[UILabel alloc] init];
     [self addSubview:self.titleFontSizeNameLabel];
-    self.titleFontSizeNameLabel.text = @"字体-大小";
+    self.titleFontSizeNameLabel.text = @"默认字体大小";
     self.titleFontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
     self.titleFontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     
@@ -90,7 +90,7 @@
     self.paragraphFontSizeSlider.maximumTrackTintColor = [[UIColor grayColor] colorWithAlphaComponent:0.05f];
     [self.paragraphFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
     [self.paragraphFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
-    [self.paragraphFontSizeSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.paragraphFontSizeSlider addTarget:self action:@selector(paragraphSliderChanged:) forControlEvents:UIControlEventValueChanged];
     NSString *paragraphFontString = [[AppConfig sharedAppConfig] configSettingGet:@"ParagraphFontSizeDefault"];
     CGFloat paragraphFtSize = 16.0;
     if([paragraphFontString hasSuffix:@"px"] && (paragraphFtSize = [paragraphFontString floatValue]) >= 1.0 && paragraphFtSize < 100.0) {
@@ -100,7 +100,7 @@
     
     self.paragraphFontSizeNameLabel = [[UILabel alloc] init];
     [self addSubview:self.paragraphFontSizeNameLabel];
-    self.paragraphFontSizeNameLabel.text = @"字体-大小";
+    self.paragraphFontSizeNameLabel.text = @"默认字体大小";
     self.paragraphFontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
     self.paragraphFontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     
@@ -112,6 +112,7 @@
     self.paragraphFontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)paragraphFtSize];
     
     
+    [self navigationItemRightInit];
     
 }
 
@@ -127,15 +128,26 @@
 
                             [FrameLayoutView viewWithName:@"titleLabelPadding" value:20 edge:edge],
                             [FrameLayoutView viewWithName:@"_titleLabel" value:36 edge:edge],
-                            [FrameLayoutView viewWithName:@"titleFontSizeLine" value:36 edge:edge],
-                            [FrameLayoutView viewWithName:@"_titleFontSizeSlider" value:36 edge:edge],
+                            [FrameLayoutView viewWithName:@"titleFontSizeLine" value:20 edge:edge],
+                            [FrameLayoutView viewWithName:@"_titleFontSizeSlider" value:20 edge:edge],
+                            
+                            
+                            [FrameLayoutView viewWithName:@"paragraphLabelPadding" value:60 edge:edge],
+                            [FrameLayoutView viewWithName:@"_paragraphLabel" value:36 edge:edge],
+                            [FrameLayoutView viewWithName:@"paragraphFontSizeLine" value:20 edge:edge],
+                            [FrameLayoutView viewWithName:@"_paragraphFontSizeSlider" value:20 edge:edge],
 
                             ]
      ];
     
     [f      frameLayout:@"titleFontSizeLine"
              toVertical:@[@"_titleFontSizeNameLabel", @"titleFontSizePadding", @"_titleFontSizeValueLabel"]
-        withPercentages:@[@0.24, @0.64, @0.12]];
+        withPercentages:@[@0.36, @0.46, @0.16]];
+    
+    [f      frameLayout:@"paragraphFontSizeLine"
+             toVertical:@[@"_paragraphFontSizeNameLabel", @"paragraphFontSizePadding", @"_paragraphFontSizeValueLabel"]
+        withPercentages:@[@0.36, @0.46, @0.16]];
+    
     
     [self memberViewSetFrameWith:[f nameAndFrames]];
 }
@@ -145,26 +157,66 @@
 {
     [super viewWillAppear:animated];
     self.title = @"设置-笔记";
+//    [self navigationItemRightInit];
 }
 
 
-- (void)sliderChanged:(UISlider *)slider {
+- (void)navigationItemRightInit
+{
+    PushButtonData *buttonDataChecked = [[PushButtonData alloc] init];
+    buttonDataChecked.actionString = @"settingChecked";
+    buttonDataChecked.imageName = @"SettingChecked";
+    PushButton *buttonChecked = [[PushButton alloc] init];
+    buttonChecked.frame = CGRectMake(0, 0, 44, 44);
+    buttonChecked.actionData = buttonDataChecked;
+    buttonChecked.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
+    [buttonChecked setImage:[UIImage imageNamed:buttonDataChecked.imageName] forState:UIControlStateNormal];
+    [buttonChecked addTarget:self action:@selector(settingChecked) forControlEvents:UIControlEventTouchDown];
+    UIBarButtonItem *itemChecked = [[UIBarButtonItem alloc] initWithCustomView:buttonChecked];
+    
+    NSLog(@"%@", [UIImage imageNamed:buttonDataChecked.imageName]);
+
+    
+    self.navigationItem.rightBarButtonItems = @[
+                                                itemChecked,
+                                                ];
+    
+    
+    
+    
+}
+
+
+- (void)titleSliderChanged:(UISlider *)slider {
     
     // 更新UI
     CGFloat value        = slider.value;
     NSLog(@"value : %f", value);
     
     self.titleFontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)value];
-//    NSString *string     = [NSString stringWithFormat:@"%.2f", value];
-//    self.labelValue.text = string;
-//    
-//    // 当前的value值
-//    _currentValue        = value;
-//    
-//    if(self.handle) {
-//        NSLog(@"%.2f", value);
-//        self.handle(value);
-//    }
 }
+
+
+- (void)paragraphSliderChanged:(UISlider *)slider
+{
+    // 更新UI
+    CGFloat value        = slider.value;
+    NSLog(@"value : %f", value);
+    
+    self.paragraphFontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)value];
+}
+
+
+- (void)settingChecked
+{
+    NSLog(@"%@", self.titleFontSizeValueLabel.text);
+    NSLog(@"%@", self.paragraphFontSizeValueLabel.text);
+    
+    
+    
+    
+}
+
+
 
 @end

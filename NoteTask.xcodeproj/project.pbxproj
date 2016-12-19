@@ -401,12 +401,12 @@
 			isa = PBXGroup;
 			children = (
 				B56428C31DAB403300FBB1FE /* TaskViewController.h */,
+				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B56428C61DAB404800FBB1FE /* TaskDetailViewController.h */,
 				B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */,
 				B59D4FE41DE9EDC600CA3C5A /* TaskEditViewController.h */,
 				B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */,
 				B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */,
-				B56428C41DAB403300FBB1FE /* TaskViewController.m */,
 				B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */,
 				B56E369A1DBE656800165050 /* TaskEditTitleViewController.h */,
 				B56E369B1DBE656800165050 /* TaskEditTitleViewController.m */,

@@ -17,8 +17,7 @@
 @end
 
 
-@interface TaskCellActionMenu : UIView
-@end
+
 
 
 @interface TaskDetailContentCell : UITableViewCell
@@ -31,7 +30,6 @@
 @property (nonatomic, assign) CGFloat optumizeHeight;
 - (void)setTitle:(NSAttributedString*)titleAttributedString content:(NSAttributedString*)contentAttributedString;
 @end
-
 
 @interface TaskRecordCell : UITableViewCell
 @property (nonatomic, strong) TaskRecord *taskRecord;

@@ -26,6 +26,8 @@
 @property (nonatomic, assign) BOOL      hiddenByPush;
 
 
+@property (nonatomic, strong) NSMutableArray<NSNumber*> *viewControllersWillAppear;
+@property (nonatomic, strong) NSMutableArray<NSNumber*> *viewControllersWillDisAppear;
 
 @end
 
@@ -45,6 +47,7 @@
         self.contentView = [[UIView alloc] init];
     }
     [self.view addSubview:self.contentView];
+
 }
 
 
@@ -70,14 +73,37 @@
     backItem.title = @"";
     self.navigationItem.backBarButtonItem = backItem;
     
-    if(self.hiddenByPush) {
-        self.hiddenByPush = NO;
-        //属于push后返回到此ViewController的Action.
-        [self pushBackAction];
+    _viewControllersWillAppear = [[NSMutableArray alloc] init];
+    for(UIViewController *vc in self.navigationController.viewControllers) {
+        [_viewControllersWillAppear addObject:[NSNumber numberWithUnsignedLongLong:(unsigned long long)vc]];
     }
     
-    NSLog(@"\nAppear %@, vcs :%@", self, self.navigationController.viewControllers);
+    NSInteger countVcs = _viewControllersWillAppear.count;
     
+    BOOL detectAppearByPopBack = YES;
+    if(countVcs > 0 && [_viewControllersWillAppear[countVcs-1] unsignedLongLongValue] == (unsigned long long)self) {
+        if(_viewControllersWillDisAppear.count == countVcs + 1) {
+            for(NSInteger idx = 0; idx < countVcs; idx ++) {
+                if([_viewControllersWillAppear[idx] isEqual:_viewControllersWillDisAppear[idx]]) {
+                    
+                }
+                else {
+                    detectAppearByPopBack = NO;
+                    break;
+                }
+            }
+        }
+        else {
+            detectAppearByPopBack = NO;
+        }
+        
+        if(detectAppearByPopBack) {
+            [self customViewWillAppearByPopBack];
+        }
+        else {
+            [self customViewWillAppearByPushed];
+        }
+    }
 }
 
 
@@ -85,16 +111,26 @@
 {
     [super viewWillDisappear:animated];
     
-    NSLog(@"\nDisappear %@, vcs :%@", self, self.navigationController.viewControllers);
-}
-
-
-
-
-- (void)pushBackAction
-{
-    LOG_POSTION
-    
+    _viewControllersWillDisAppear = [[NSMutableArray alloc] init];
+    for(UIViewController *vc in self.navigationController.viewControllers) {
+        [_viewControllersWillDisAppear addObject:[NSNumber numberWithUnsignedLongLong:(unsigned long long)vc]];
+    }
+//    
+//    NSInteger countVcs = _viewControllersWillDisAppear.count;
+//    
+//    if(countVcs >= 2 && [_viewControllersWillDisAppear[countVcs-2] unsignedLongLongValue] == (unsigned long long)self) {
+//        NSLog(@"****** [%@]detectDisAppearByPushNew ", self.class);
+//    }
+//    
+//    NSNumber *selfAddrNumber = [NSNumber numberWithUnsignedLongLong:(unsigned long long)self];
+//    if(_viewControllersWillAppear.count > 0
+//       && [_viewControllersWillAppear indexOfObject:selfAddrNumber] == _viewControllersWillAppear.count - 1
+//       && NSNotFound == [_viewControllersWillDisAppear indexOfObject:selfAddrNumber]) {
+//        NSLog(@"****** [%@]detectDisAppearByPopped", self.class);
+//    }
+//    
+//    
+//    
 }
 
 
@@ -300,7 +336,17 @@
     }];
 }
 
+//override.
+- (void)customViewWillAppearByPushed
+{
+    NSLog(@"[%@] customViewWillAppearByPushed", self.class);
+}
 
+
+- (void)customViewWillAppearByPopBack
+{
+    NSLog(@"[%@] customViewWillAppearByPopBack", self.class);
+}
 
 
 

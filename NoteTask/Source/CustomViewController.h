@@ -39,7 +39,12 @@
 - (void)dismissMenus;
 
 //override.
-- (void)pushBackAction;
+- (void)customViewWillAppearByPushed;
+- (void)customViewWillAppearByPopBack;
+
+////disappear是主动行为, 可以确定是属于push new, pop, 或者其他. 因此不用定义这个.
+//- (void)customViewWillDisappearByPushNew;
+//- (void)customViewWillDisappearByPoped;
 
 
 

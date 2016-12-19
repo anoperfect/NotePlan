@@ -231,11 +231,11 @@
                               processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
                                   NSArray<NSString*> *paths = [request.path componentsSeparatedByString:@"/"];
                                   NSString* filename = [paths lastObject];
-                                  NSString* noteIdentifier = nil;
+                                  NSString* noteSn = nil;
                                   NSString *sNotFound = @"<html><body><p>未找到所需文件</p></body></html>";
                                   if([filename hasSuffix:@".htm"]) {
-                                      noteIdentifier = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
-                                      NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetByNoteIdentifier:noteIdentifier];
+                                      noteSn = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
+                                      NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetBySn:noteSn];
                                       if(note) {
                                           return [GCDWebServerDataResponse responseWithHTML:[note generateWWWPage]];
                                       }
@@ -244,7 +244,7 @@
                                       }
                                   }
                                   else if([filename hasSuffix:@".pdf"]) {
-                                      noteIdentifier = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
+                                      noteSn = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
                                       NSString *pdfPath = [NSString stringWithFormat:@"%@/%@", _self.noteFolder, filename];
                                       NSData *pdfData = [NSData dataWithContentsOfFile:pdfPath];
                                       if(pdfData.length > 0) {
@@ -267,9 +267,9 @@
     if(_webServer.serverURL) {
         self.serverStatus = 1;
         self.serverURL = [_webServer.serverURL copy];
-        NSString *htmURLString = [NSString stringWithFormat:@"%@Note-%@.htm", self.serverURL, self.noteModel.identifier];
+        NSString *htmURLString = [NSString stringWithFormat:@"%@Note-%@.htm", self.serverURL, self.noteModel.sn];
         self.labelLANDetail.text = [self.labelLANDetail.text stringByReplacingOccurrencesOfString:@"htm地址获取中..." withString:htmURLString];
-        NSString *pdfURLString = [NSString stringWithFormat:@"%@Note-%@.pdf", self.serverURL, self.noteModel.identifier];
+        NSString *pdfURLString = [NSString stringWithFormat:@"%@Note-%@.pdf", self.serverURL, self.noteModel.sn];
         self.labelLANDetail.text = [self.labelLANDetail.text stringByReplacingOccurrencesOfString:@"pdf地址获取中..." withString:pdfURLString];
     }
     else {
@@ -301,7 +301,7 @@
     self.noteFolder = [NSString stringWithFormat:@"%@/Note", documentsPath];
     [[NSFileManager defaultManager] createDirectoryAtPath:self.noteFolder withIntermediateDirectories:YES attributes:nil error:nil];
     
-    self.htmName = [NSString stringWithFormat:@"Note-%@.htm", self.noteModel.identifier];
+    self.htmName = [NSString stringWithFormat:@"Note-%@.htm", self.noteModel.sn];
     self.htmPath = [NSString stringWithFormat:@"%@/%@", self.noteFolder, self.htmName];
     
     NSData *htmData = [[self.noteModel generateWWWPage] dataUsingEncoding:NSUTF8StringEncoding];
@@ -324,7 +324,7 @@
     NSData *pdfData = [ppRenderer printToPDF];
     NSLog(@"data length : %zd", pdfData.length);
     
-    self.pdfName = [NSString stringWithFormat:@"Note-%@.pdf", self.noteModel.identifier];
+    self.pdfName = [NSString stringWithFormat:@"Note-%@.pdf", self.noteModel.sn];
     self.pdfPath = [NSString stringWithFormat:@"%@/%@", self.noteFolder, self.pdfName];
     NSLog(@"%@", self.pdfPath);
     
