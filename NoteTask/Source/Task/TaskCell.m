@@ -97,6 +97,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 }
 
 
+#if 0
 - (void)setTaskInfoArrange:(TaskInfoArrange*)taskInfoArrange
 {
     _data = taskInfoArrange;
@@ -104,7 +105,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     CGRect frameCell = self.frame;
     UIEdgeInsets edgeContainer = UIEdgeInsetsMake(10, 10, 0, 10);
-    UIEdgeInsets edgeSummary = UIEdgeInsetsMake(10, 64, 10, 10);
+    UIEdgeInsets edgeSummary = UIEdgeInsetsMake(10, 10, 10, 10);
 
     CGRect frameContainer = self.bounds;
     frameContainer = UIEdgeInsetsInsetRect(frameContainer, edgeContainer);
@@ -224,7 +225,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
-
+#endif
 
 - (void)buttonClick:(id)sender
 {
@@ -254,8 +255,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     }
     
     CGRect frameCell = self.frame;
-    UIEdgeInsets edgeContainer  = UIEdgeInsetsMake(10, 10, 0, 10);
-    UIEdgeInsets edgeSummary    = UIEdgeInsetsMake(10, 64, 10, 10);
+    UIEdgeInsets edgeContainer  = UIEdgeInsetsMake(10, 36, 0, 10);
+    UIEdgeInsets edgeSummary    = UIEdgeInsetsMake(10, 10, 10, 10);
     
     CGRect frameContainer   = UIEdgeInsetsInsetRect(self.bounds, edgeContainer);
     CGRect frameSummary     = UIEdgeInsetsInsetRect(CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height), edgeSummary);

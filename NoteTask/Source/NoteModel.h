@@ -73,6 +73,18 @@
 
 + (NSString*)randomSnsStringWithLength:(NSInteger)length;
 
+
++ (NSData*)imageDataCacheGetWithName:(NSString*)httpAddrString;
++ (void)imageDataCacheSet:(NSData*)data withName:(NSString*)httpAddrString;
+
++ (NSString*)imageLocalFileNameOfImageName:(NSString*)imageName;
++ (NSData*)imageDataLocalWithName:(NSString*)imageName;
++ (void)imageDataLocalSet:(NSData*)data withName:(NSString*)imageName;
+
+
+
++ (NSString*)imageNameNewOnSn:(NSString*)sn format:(NSString*)format;
+
 @end
 
 

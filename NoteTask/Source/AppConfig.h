@@ -61,6 +61,7 @@
 
 - (NSString*)configSettingGet:(NSString*)key;
 - (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value;
+- (void)configSettingSetKeyIfNotExist:(NSString*)key toValue:(NSString*)value;
 
 
 

@@ -80,6 +80,7 @@
 		B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D4923C1DB5C8DC00794A97 /* TaskCell.m */; };
 		B5DC698C1E038A5300FFAC68 /* LineBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */; };
 		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
+		B5DFD8CB1E0B733100C6C720 /* LoadingPicture.png in Resources */ = {isa = PBXBuildFile; fileRef = B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */; };
 		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
 		B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B11D33F28000395CF0 /* UIpConfig.m */; };
 		B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */; };
@@ -237,6 +238,7 @@
 		B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineBackgroundView.m; sourceTree = "<group>"; };
 		B5DC864D1D4A57F600DCE8C8 /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
 		B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextButtonLine.m; sourceTree = "<group>"; };
+		B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingPicture.png; path = Image/Download/LoadingPicture.png; sourceTree = "<group>"; };
 		B5E9D0A31D32815500395CF0 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = Source/NoteCell.h; sourceTree = "<group>"; };
 		B5E9D0A41D32815500395CF0 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = Source/NoteCell.m; sourceTree = "<group>"; };
 		B5E9D0B01D33F28000395CF0 /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
@@ -454,6 +456,7 @@
 				B564D0E81C912FFA00E903B6 /* json */,
 				B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */,
 				B539592F1D29524700FB5408 /* NoteBackground1.png */,
+				B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -800,6 +803,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5DFD8CB1E0B733100C6C720 /* LoadingPicture.png in Resources */,
 				B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */,
 				B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,

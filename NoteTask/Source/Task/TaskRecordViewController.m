@@ -179,7 +179,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 60.0;
+    CGFloat height = 200.0;
     NSNumber *heightNumber = [self.optumizeHeights objectForKey:indexPath];
     if([heightNumber isKindOfClass:[NSNumber class]]) {
         height = [heightNumber floatValue];

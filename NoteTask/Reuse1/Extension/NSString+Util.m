@@ -106,10 +106,16 @@
     NSTimeInterval t = [date timeIntervalSince1970];
     long long lt = t;
     double dot = t - lt;
-    dateString = [dateString stringByAppendingFormat:@" %.6lf",dot];
+    dateString = [dateString stringByAppendingFormat:@".%06zd", (NSInteger)(dot*1000000)];
     
     return dateString;
 }
+
+
+
+
+
+
 
 
 + (NSString*)dateTimeStringOfDate:(NSDate*)date

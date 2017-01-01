@@ -20,6 +20,8 @@
 @interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
                                         UITextFieldDelegate,
                                         UITextViewDelegate,
+                                        UINavigationControllerDelegate,
+                                        UIImagePickerControllerDelegate,
                                         YYTextViewDelegate,
                                         JSDropDownMenuDataSource,JSDropDownMenuDelegate>
 
@@ -58,7 +60,7 @@
 
 @property (nonatomic, assign) CGFloat           heightFitToKeyboard;
 
-
+@property (nonatomic, strong) NSMutableArray    *urlStringsDownloadFailed;
 
 //@property (nonatomic, strong) UIWebView *webView;
 
@@ -146,6 +148,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.topNotesView = 0;
 
+    self.urlStringsDownloadFailed = [[NSMutableArray alloc] init];
     
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.text = self.noteModel.title;
@@ -185,7 +188,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
-    NSLog(@"%@", self.noteModel);
+    NS0Log(@"%@", self.noteModel);
 }
 
 
@@ -228,8 +231,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.noteModel.browseredAt = [NSString dateTimeStringNow];
-    [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+
 }
 
 
@@ -303,16 +305,12 @@
         height = 45;
     }
     
-    if([indexPath isEqual:self.indexPathOnEditing]) {
-        
-    }
-    else {
-        NSNumber *heightNumber = self.optumizeHeights[indexPath];
-        if([heightNumber isKindOfClass:[NSNumber class]]) {
-            height = [heightNumber floatValue];
-        }
+    NSNumber *heightNumber = self.optumizeHeights[indexPath];
+    if([heightNumber isKindOfClass:[NSNumber class]]) {
+        height = [heightNumber floatValue];
     }
     
+    NSLog(@"row %zd height %f", indexPath.row, height);
     return height;
 }
 
@@ -343,16 +341,111 @@
                                       color:self.noteModel.color
                                       frame:CGRectMake(0, 0, tableView.frame.size.width, 45)];
         [cell addSubview:self.notePropertyView];
+        
+        return cell;
+    }
+    
+    NoteDetailCell *noteDetailCell = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+    NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
+    
+    UIImage *imageSet = nil;
+    CGSize imageSize;
+    
+    NSLog(@"image : %@", noteParagraph.image);
+    if(noteParagraph.image.length == 0) {
+        
+    }
+    else if([noteParagraph.image hasPrefix:@"http"]) {
+        //是否有缓存.
+        NSData *data = [NoteModel imageDataCacheGetWithName:noteParagraph.image];
+        if(data.length > 0) {
+            UIImage *image = [UIImage imageWithData:data];
+            if(image.size.width > 0) {
+                imageSet = image;
+                imageSize.width = tableView.frame.size.width - (NOTEDETAILCELL_EDGE_CONTAINER.left + NOTEDETAILCELL_EDGE_CONTAINER.right) - (NOTEDETAILCELL_EDGE_LABEL.left + NOTEDETAILCELL_EDGE_LABEL.right);
+                imageSize.height = image.size.height / image.size.width * imageSize.width;
+                NSLog(@"123456 use cache.");
+            }
+            else {
+                //显示缓存损坏.
+                imageSize.width = 60;
+                imageSize.height = 60;
+                imageSet = [UIImage imageNamed:@"PictureCacheError"];
+                NSLog(@"123456 cache error.");
+            }
+        }
+        else {
+            //查看是否在下载失败列表中.
+            if(NSNotFound != [self.urlStringsDownloadFailed indexOfObject:noteParagraph.image]) {
+                NSLog(@"123456 in download error list.");
+                //显示下载失败.
+                imageSize.width = 60;
+                imageSize.height = 60;
+                imageSet = [UIImage imageNamed:@"PictureDownloadError"];
+            }
+            else {
+                //显示预制图片.
+                imageSize.width = 60;
+                imageSize.height = 60;
+                imageSet = [UIImage imageNamed:@"LoadingPicture"];
+                NSLog(@"123456 use default first.");
+                
+                //启动网络下载.
+                NSString *urlString = noteParagraph.image;
+                NSLog(@"%@", urlString);
+                [HTTPMANAGE GET:urlString parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                    NSData *data = responseObject;
+                    UIImage *image = nil;
+                    if([data isKindOfClass:[NSData class]] && nil != (image = [UIImage imageWithData:data])) {
+                        [NoteModel imageDataCacheSet:data withName:urlString];
+                        NSLog(@"123456 set to cache.");
+                    }
+                    else {
+                        NSLog(@"#error - download image failed.(%@)", urlString);
+                        [self.urlStringsDownloadFailed addObject:urlString];
+                    }
+                    
+                    [self actionTryReloadSn:sn];
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    NSLog(@"#error - download image failed.(%@)", urlString);
+                    [self.urlStringsDownloadFailed addObject:urlString];
+                    [self actionTryReloadSn:sn];
+                }];
+            }
+        }
     }
     else {
-        NoteDetailCell *noteDetailCell = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
-        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
-        [noteDetailCell setNoteParagraph:noteParagraph sn:sn onEditMode:self.editMode];
-        NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
-        self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
-        cell = noteDetailCell;
+        NSData *data = [NoteModel imageDataLocalWithName:noteParagraph.image];
+        if(data.length > 0) {
+            UIImage *image = [UIImage imageWithData:data];
+            if(image.size.width > 0) {
+                imageSet = image;
+                imageSize.width = tableView.frame.size.width - (NOTEDETAILCELL_EDGE_CONTAINER.left + NOTEDETAILCELL_EDGE_CONTAINER.right) - (NOTEDETAILCELL_EDGE_LABEL.left + NOTEDETAILCELL_EDGE_LABEL.right);
+                imageSize.height = image.size.height / image.size.width * imageSize.width;
+                NSLog(@"123456 use local.");
+            }
+            else {
+                //显示缓存损坏.
+                imageSize.width = 60;
+                imageSize.height = 60;
+                imageSet = [UIImage imageNamed:@"PictureCacheError"];
+                NSLog(@"123456 local error.");
+            }
+        }
+        else {
+            //显示缓存损坏.
+            imageSize.width = 60;
+            imageSize.height = 60;
+            imageSet = [UIImage imageNamed:@"PictureCacheError"];
+            NSLog(@"123456 local error.");
+        }
     }
+    
+    [noteDetailCell setNoteParagraph:noteParagraph sn:sn onEditMode:self.editMode image:imageSet imageSize:imageSize];
+    NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
+    self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
+    cell = noteDetailCell;
     
     return cell;
 }
@@ -366,42 +459,54 @@
     
     //属性框显示的时候. 点击任意栏会执行关闭属性框.
     if([self filterViewIsShow]) {
+        NSLog(@"filterViewIsShow, set to hidden.");
         [self filterViewHide];
         return ;
     }
     
     if(indexPath.row == 1) {
+        NSLog(@"filterViewShow");
         [self filterViewShow];
         return ;
     }
+    
+    
+    NoteParagraphModel *noteParagraphModel = [self indexPathNoteParagraph:indexPath];
+    if(!noteParagraphModel) {
+        NSLog(@"#error - noteParagraphModel nil");
+        return ;
+    }
+    
+    self.indexPathOnEditing = indexPath;
     
     CGFloat width = 45;
     TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width - 10, 64 + 10, width, VIEW_HEIGHT - 10 * 2)];
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
-    NSArray<NSString*> *actionStrings = nil;
-    NoteParagraphModel *noteParagraphModel;
+    NSMutableArray<NSString*> *actionStrings = [[NSMutableArray alloc] init];
     
-    if([self indexPathIsTitle:indexPath]) {
-        actionStrings = @[@"复制", @"编辑", @"样式"];
-        if([self.titleParagraph.content isEqualToString:@""]) {
-            [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
-            return ;
-        }
-    }
-    else if(nil != (noteParagraphModel = [self indexPathContentNoteParagraph:indexPath])) {
-        actionStrings = @[@"复制", @"编辑", @"插入", @"增加", @"样式"];
+    if(noteParagraphModel.isTitle) {
+        [actionStrings addObjectsFromArray:@[@"复制", @"编辑", @"样式"]];
+        //内容为空直接开始编辑.
         if([noteParagraphModel.content isEqualToString:@""]) {
             [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
             return ;
         }
     }
     else {
-        NSLog(@"#error - ");
-        return ;
+        if(noteParagraphModel.image.length > 0) {
+            [actionStrings addObjectsFromArray:@[@"复制", @"移除图片", @"插入", @"增加", @"编辑", @"样式"]];
+        }
+        else {
+            [actionStrings addObjectsFromArray:@[@"复制", @"增加图片", @"插入", @"增加", @"编辑", @"样式"]];
+        }
+        
+        if([noteParagraphModel.content isEqualToString:@""]) {
+            [actionStrings removeObject:@"复制"];
+        }
     }
     
-    [v setTexts:actionStrings];
+    [v setTexts:[NSArray arrayWithArray:actionStrings]];
     __weak typeof(self) weakSelf = self;
     [v setButtonActionByText:^(NSString* actionText) {
         [weakSelf dismissPopupView];
@@ -515,12 +620,9 @@
     self.textViewEditing.hidden = YES;
     self.textViewEditingContainer.hidden = YES;
     
-    if([self indexPathIsTitle:indexPath]) {
-        [self updateNoteTitleWithContent:content];
-    }
-    else {
-        [self updateNoteParagraphOnIndex:[self indexPathContentNoteParagraphIndex:indexPath] withContent:content];
-    }
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+    noteParagraph.content = content;
+    [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];
     
     //刷新显示.
     [self.tableNoteParagraphs reloadData];
@@ -547,43 +649,70 @@
 }
 
 
+- (void)actionTryReloadSn:(NSInteger)sn
+{
+    BOOL reloaded = NO;
+    for(NoteDetailCell *cell in self.tableNoteParagraphs.visibleCells) {
+        if([cell isKindOfClass:[NoteDetailCell class]]) {
+            if(cell.sn == sn) {
+                [self reloadNoteParagraphAtIndexPath:[NSIndexPath indexPathForRow:sn==0?0:(sn+1) inSection:0] due:@"imageLoad"];
+                reloaded = YES;
+                break;
+            }
+        }
+    }
+    
+    if(reloaded) {
+        NSLog(@"image set.");
+    }
+    else {
+        NSLog(@"image not set");
+    }
+}
+
+
+
+
 - (void)action:(NSString*)string OnIndexPath:(NSIndexPath*)indexPath
 {
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+    if(!noteParagraph) {
+        NSLog(@"#error - noteParagraph nil on %zd:%zd", indexPath.section, indexPath.row);
+        return;
+    }
+    
     if([string isEqualToString:@"复制"]) {
-        
-        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        if(!noteParagraph) {
-            NSLog(@"#error - ");
-            return;
-        }
-        
         if(noteParagraph.content.length > 0) {
             UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
             pasteboard.string = noteParagraph.content;
             [self showIndicationText:@"已复制到粘贴板" inTime:1.0];
         }
-        
         return ;
+    }
+    
+    if([string isEqualToString:@"增加图片"]) {
+        [self actionInputImage];
+        return ;
+    }
+    
+    if([string isEqualToString:@"移除图片"]) {
+        noteParagraph.image = nil;
+        [self reloadNoteParagraphAtIndexPath:indexPath due:@"RemoveImage"];
+        [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];
+        
+        return;
     }
     
     if([string isEqualToString:@"编辑"]) {
-        
-        if(self.indexPathOnEditing) {
-            [self action:@"编辑完成" OnIndexPath:self.indexPathOnEditing];
-            self.indexPathOnEditing = nil;
-        }
-        
         [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
-
         return ;
     }
 
-    
     if([string isEqualToString:@"插入"]) {
         NSInteger idxInsert = [self indexPathContentNoteParagraphIndex:indexPath];
-        NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-        noteParagraph.content = @"";
-        [self.contentParagraphs insertObject:noteParagraph atIndex:idxInsert];
+        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
+        noteParagraphNew.content = @"";
+        [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxInsert];
         
         [self.tableNoteParagraphs beginUpdates];
         [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
@@ -600,16 +729,18 @@
     }
     
     if([string isEqualToString:@"增加"]) {
+        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
+        noteParagraphNew.content = @"";
     
         NSInteger idxAppend = [self indexPathContentNoteParagraphIndex:indexPath];
         if(idxAppend == NSNotFound) {
             NSLog(@"#error - ");
         }
         else if(idxAppend == self.contentParagraphs.count - 1) {
-            [self.contentParagraphs addObject:[self newNoteParagraph]];
+            [self.contentParagraphs addObject:noteParagraphNew];
         }
         else {
-            [self.contentParagraphs insertObject:[self newNoteParagraph] atIndex:idxAppend + 1];
+            [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxAppend + 1];
         }
         
         NSIndexPath *indexPathAppend = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
@@ -629,11 +760,7 @@
     }
     
     if([string isEqualToString:@"样式"]) {
-        
         self.indexPathOnCustmizing = indexPath;
-        NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-        
-//        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithStyleDictionary:noteParagraph.styleDictionay];
         NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph];
         //通过block的方式将定制的内容传回此ViewController.
         __weak typeof(self) _self = self;
@@ -664,37 +791,8 @@
     noteParagraphOnCustmizing.styleDictionay = [NSMutableDictionary dictionaryWithDictionary:stypleDictionary];
     NSLog(@"after  custmize : %@", noteParagraphOnCustmizing);
     
-    
-    //更改过样式后, 重新生成title和content.
-    self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
-    self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
-    
-    NSDictionary *update = [[AppConfig sharedAppConfig] configNoteUpdateDetect:self.noteModel fromSn:self.noteModel.sn];
-    if(update.count > 0) {
-        //更新到本地数据库.
-        self.noteModel.modifiedAt = [NSString dateTimeStringNow];
-        [self noteUpdate:self.noteModel];
-
-        NSLog(@"%@", self.noteModel);
-    }
-    else {
-        NSLog(@"nothing update.");
-    }
-    
     [self reloadNoteParagraphAtIndexPath:self.indexPathOnCustmizing due:@"after custmize"];
-}
-
-
-- (void)noteUpdate:(NoteModel*)note
-{
-    if([self.noteModel.sn hasPrefix:@"[preset"] && [self.noteModel.sn hasSuffix:@"]"]) {
-        NSString *sn = self.noteModel.sn;
-        self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 andType:36]];
-        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromSn:sn];
-    }
-    else {
-        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
-    }
+    [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraphOnCustmizing];
 }
 
 
@@ -749,42 +847,16 @@
 //返回title或者Content的NoteParagraph.
 - (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
 {
+    if(!indexPath) {
+        NSLog(@"#error - indexPath nil.");
+        return nil;
+    }
+    
     if([self indexPathIsTitle:indexPath]) {
         return self.titleParagraph;
     }
     
     return [self indexPathContentNoteParagraph:indexPath];
-}
-
-
-- (NoteParagraphModel*)newNoteParagraph
-{
-    NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-    noteParagraph.content = @"";
-    
-    return noteParagraph;
-}
-
-
-- (void)updateNoteTitleWithContent:(NSString*)content
-{
-    self.titleParagraph.content = content;
-    NSString *titleContent = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
-    self.noteModel.title = titleContent;
-    
-    [self updateNoteToLocal];
-}
-
-
-- (void)updateNoteParagraphOnIndex:(NSInteger)noteParagraphIndex withContent:(NSString*)content
-{
-    NoteParagraphModel *noteParagraph = self.contentParagraphs[noteParagraphIndex];
-    noteParagraph.content = content;
-    
-    NSString *noteContent = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
-    self.noteModel.content = noteContent;
-    
-    [self updateNoteToLocal];
 }
 
 
@@ -803,9 +875,23 @@
 }
 
 
+- (void)noteUpdate:(NoteModel*)note
+{
+    if([self.noteModel.sn hasPrefix:@"[preset"] && [self.noteModel.sn hasSuffix:@"]"]) {
+        NSString *sn = self.noteModel.sn;
+        self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 andType:36]];
+        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromSn:sn];
+    }
+    else {
+        [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel];
+    }
+    
+}
+
+
 - (void)updateNoteToLocal
 {
-    NSLog(@"updateNoteToLocal");
+    NSLog(@"---------------------- updateNoteToLocal");
     
     //新建模式下, 保存之前先写入存储.
     if(self.createMode && !self.isStoredToLocal) {
@@ -836,7 +922,207 @@
 }
 
 
+- (void)actionInputImage
+{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [self presentViewController:picker animated:YES completion:nil];
+}
 
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSLog(@"info : \n%@", info);
+    NSLog(@"%@", info[UIImagePickerControllerReferenceURL]);
+    
+    if(!image) {
+        NSLog(@"#error - image from info nil");
+        [self showIndicationText:@"获取图片错误" inTime:1];
+        return;
+    }
+    
+    UIImage *imageResize = nil;
+    CGSize sizeResize;
+    sizeResize.width = image.size.width>600?600:image.size.width;
+    sizeResize.height = image.size.height / image.size.width * sizeResize.width;
+    LOG_POSTION
+    for(NSInteger idx = 0; idx < 1; idx ++) {
+        imageResize = [self scaleToSize:image size:sizeResize];
+//        imageResize = [self fixOrientation:image andResizeTo:sizeResize];
+    }
+    LOG_POSTION
+    
+    if(!imageResize) {
+        NSLog(@"#error - image resize error.");
+        [self showIndicationText:@"获取图片错误" inTime:1];
+        return;
+    }
+    
+    NSData *data = nil;
+    NSString *format = nil;
+    
+    if([info[UIImagePickerControllerReferenceURL] isKindOfClass:[NSString class]]
+       && [info[UIImagePickerControllerReferenceURL] hasSuffix:@"PNG"]) {
+        NSLog(@"Use UIImagePNGRepresentation");
+        data = UIImagePNGRepresentation(imageResize);
+        format = @"png";
+    }
+    else {
+        data = UIImageJPEGRepresentation(imageResize, 0.6);
+        format = @"jpg";
+    }
+    
+    if(data.length == 0) {
+        NSLog(@"#error - UIImage to data error.");
+        [self showIndicationText:@"图片解析出错" inTime:1];
+        return;
+    }
+    
+    NSLog(@"data.length : %zd", data.length);
+    //图片存到本地. 获取id.
+    NSString *imageName = [NoteModel imageNameNewOnSn:self.noteModel.sn format:format];
+    [NoteModel imageDataLocalSet:data withName:imageName];
+    
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:self.indexPathOnEditing];
+    if(noteParagraph) {
+        noteParagraph.image = imageName;
+        [self reloadNoteParagraphAtIndexPath:self.indexPathOnEditing due:@"InputImage"];
+        [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];
+    }
+    else {
+        NSLog(@"#error - indexPathOnEditing %@[%zd:%zd] noteParagraph nil.", self.indexPathOnEditing?@"":@"nil", self.indexPathOnEditing.section, self.indexPathOnEditing.row);
+    }
+}
+
+
+//将UIImage缩放到指定大小尺寸：
+- (UIImage *)scaleToSize:(UIImage *)img size:(CGSize)size{
+    // 创建一个bitmap的context
+    // 并把它设置成为当前正在使用的context
+    UIGraphicsBeginImageContext(size);
+    // 绘制改变大小的图片
+    [img drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    // 从当前context中创建一个改变大小后的图片
+    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 使当前的context出堆栈
+    UIGraphicsEndImageContext();
+    // 返回新的改变大小后的图片
+    return scaledImage;
+}
+
+
+- (UIImage *)fixOrientation:(UIImage *)aImage {
+    
+    // No-op if the orientation is already correct
+    if (aImage.imageOrientation == UIImageOrientationUp)
+        return aImage;
+    
+    // We need to calculate the proper transformation to make the image upright.
+    // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    
+    switch (aImage.imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, aImage.size.width, aImage.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+            
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, aImage.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+            
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, aImage.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        default:
+            break;
+    }
+    
+    switch (aImage.imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, aImage.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+            
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, aImage.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        default:
+            break;
+    }
+    
+    // Now we draw the underlying CGImage into a new context, applying the transform
+    // calculated above.
+    CGContextRef ctx = CGBitmapContextCreate(NULL, aImage.size.width, aImage.size.height,
+                                             CGImageGetBitsPerComponent(aImage.CGImage), 0,
+                                             CGImageGetColorSpace(aImage.CGImage),
+                                             CGImageGetBitmapInfo(aImage.CGImage));
+    CGContextConcatCTM(ctx, transform);
+    switch (aImage.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            // Grr...
+            CGContextDrawImage(ctx, CGRectMake(0,0,aImage.size.height,aImage.size.width), aImage.CGImage);
+            break;
+            
+        default:
+            CGContextDrawImage(ctx, CGRectMake(0,0,aImage.size.width,aImage.size.height), aImage.CGImage);
+            break;
+    }
+    
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
+}
+
+
+- (UIImage *)fixOrientation:(UIImage *)aImage andResizeTo:(CGSize)size
+{
+    // Now we draw the underlying CGImage into a new context, applying the transform
+    // calculated above.
+    CGContextRef ctx = CGBitmapContextCreate(NULL, size.width, size.height,
+                                             CGImageGetBitsPerComponent(aImage.CGImage), 0,
+                                             CGImageGetColorSpace(aImage.CGImage),
+                                             CGImageGetBitmapInfo(aImage.CGImage));
+    CGContextDrawImage(ctx, CGRectMake(0,0,size.width,size.height), aImage.CGImage);
+    
+    // And now we just create a new UIImage from the drawing context
+    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
+    UIImage *img = [UIImage imageWithCGImage:cgimg];
+    CGContextRelease(ctx);
+    CGImageRelease(cgimg);
+    return img;
+}
+
+
+
+- (void)actionUpdateToLocalAfterModifyNoteParagraph:(NoteParagraphModel *)noteParagraph
+{
+    if(noteParagraph.isTitle) {
+        self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
+    }
+    else {
+        self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
+    }
+    
+    [self updateNoteToLocal];
+}
 
 
 - (void)removeUpdate:(id)sender
@@ -942,7 +1228,6 @@
 
 - (void)filterViewShow
 {
-    LOG_POSTION
     [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 36;
         [self viewWillLayoutSubviews];
@@ -952,7 +1237,6 @@
 
 - (void)filterViewHide
 {
-    LOG_POSTION
     [UIView animateWithDuration:0.5 animations:^{
         self.topNotesView = 0;
         [self viewWillLayoutSubviews];
@@ -964,7 +1248,6 @@
 {
     static CGFloat EPSILON = 0.000001;
     BOOL isShow = (fabs(self.topNotesView) > EPSILON);
-    NSLog(@"%f %zd", self.topNotesView, isShow);
     return isShow;
 }
 

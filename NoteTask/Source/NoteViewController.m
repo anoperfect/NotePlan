@@ -515,11 +515,15 @@
     
     NoteModel *note = self.notes[indexPath.row];
     
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        note.browseredAt = [NSString dateTimeStringNow];
+        [[AppConfig sharedAppConfig] configNoteUpdate:note];
+    });
     NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithNoteModel:note];
     [self.navigationController pushViewController:vc animated:YES];
     
     NSLog(@"NoteModel did select.");
-    NSLog(@"%@", note);
+    NS0Log(@"%@", note);
 }
 
 
@@ -544,8 +548,6 @@
 -(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
     return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
 }
-
-
 
 
 #pragma mark - filter

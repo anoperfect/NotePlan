@@ -249,7 +249,7 @@ static NSInteger kno = 0;
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?self.createdAt:@""];
     
-    NSLog(@"-=-=-=\n\n\n%@\n\n\n", s);
+    //NSLog(@"-=-=-=\n\n\n%@\n\n\n", s);
     return s;
 }
 
@@ -294,6 +294,123 @@ static NSInteger kno = 0;
             return ascend?[note1.browseredAt compare:note2.browseredAt]:[note2.browseredAt compare:note1.browseredAt];
         }];
     }
+}
+
+
++ (NSString*)imageCacheFileNameOfHttpAddrString:(NSString*)httpAddrString
+{
+//    NSRange range;
+//    NSInteger location = 0;
+//    
+//    NSLog(@"%@", httpAddrString);
+//    NSLog(@"%@", [NSCharacterSet symbolCharacterSet]);
+//    
+//    NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"/"];
+//    
+//    while(1) {
+//        range = [httpAddrString rangeOfCharacterFromSet:characterSet options:0 range:NSMakeRange(location, httpAddrString.length - location)];
+//        
+//        if(range.length > 0) {
+//            location = range.location + range.length;
+//            NSLog(@"%@", [httpAddrString substringWithRange:range]);
+//            httpAddrString = [httpAddrString stringbyre]
+//        }
+//        else {
+//            break;
+//        }
+//    }
+    
+    httpAddrString = [httpAddrString stringByReplacingOccurrencesOfString:@"/" withString:@"#"];
+    
+    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *imageCacheFolder = [NSString stringWithFormat:@"%@/NoteImageCache", cachePath];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:imageCacheFolder]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:imageCacheFolder withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    NSString *fileName = [NSString stringWithFormat:@"%@/%@", imageCacheFolder, httpAddrString];
+    return fileName;
+}
+
+
++ (NSData*)imageDataCacheGetWithName:(NSString*)httpAddrString
+{
+    NSData *data = nil;
+    
+    NSString *fileName = [self imageCacheFileNameOfHttpAddrString:httpAddrString];
+    if([[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+        data = [NSData dataWithContentsOfFile:fileName];
+    }
+    
+    return data;
+}
+
+
++ (void)imageDataCacheSet:(NSData*)data withName:(NSString*)httpAddrString
+{
+    NSString *fileName = [self imageCacheFileNameOfHttpAddrString:httpAddrString];
+    BOOL result = [data writeToFile:fileName atomically:YES];
+    if(!result) {
+        NSLog(@"#error - data write error.");
+    }
+}
+
+
++ (NSString*)imageLocalFileNameOfImageName:(NSString*)imageName
+{
+    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *imageLocalFolder = [NSString stringWithFormat:@"%@/NoteImageLocal", cachePath];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:imageLocalFolder]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:imageLocalFolder withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    NSString *fileName = [NSString stringWithFormat:@"%@/%@", imageLocalFolder, imageName];
+//    fileName = [fileName stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    fileName = [fileName stringByReplacingOccurrencesOfString:@":" withString:@""];
+//    fileName = [fileName stringByReplacingOccurrencesOfString:@"0." withString:@"_"];
+    return fileName;
+}
+
+
++ (NSData*)imageDataLocalWithName:(NSString*)imageName
+{
+    NSData *data = nil;
+    
+    NSString *fileName = [self imageLocalFileNameOfImageName:imageName];
+    if([[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+        data = [NSData dataWithContentsOfFile:fileName];
+    }
+    
+    return data;
+}
+
+
+
++ (void)imageDataLocalSet:(NSData*)data withName:(NSString*)imageName
+{
+    NSString *fileName = [self imageLocalFileNameOfImageName:imageName];
+    NSLog(@"fileName : %@", fileName);
+    BOOL result = [data writeToFile:fileName atomically:YES];
+    if(!result) {
+        NSLog(@"#error - data write error.");
+    }
+}
+
+
++ (NSString*)imageNameNewOnSn:(NSString*)sn format:(NSString*)format
+{
+    NSString *imageName = [NSString stringWithFormat:@"NoteImage%@_%@", [NSString dateTimeStringNow], sn];
+    
+    imageName = [imageName stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+    imageName = [imageName stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    imageName = [imageName stringByReplacingOccurrencesOfString:@":" withString:@""];
+    imageName = [imageName stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    imageName = [imageName stringByAppendingFormat:@".%@", format];
+    
+    return imageName;
 }
 
 

@@ -8,6 +8,16 @@
 
 #import "NoteParagraph.h"
 
+
+
+
+
+
+
+
+
+
+
 @implementation NoteParagraphModel
 
 
@@ -17,24 +27,78 @@
 {
     NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
     
-    //没有css标记的时候必须填style="".
-    NSRange range0 = [string rangeOfString:@"<p style=\""];
-    NSRange range1 = [string rangeOfString:@"\">"];
-    NSRange range2 = [string rangeOfString:@"</p>"];
-    if(range0.length > 0 && range1.length > 0 && range2.length > 0
-       && range0.location == 0 && range2.location == string.length - @"</p>".length
-       && range1.location > range0.location && range2.location > range1.location) {
-        
-        NSString *styleString = [string substringWithRange:NSMakeRange(range0.location + range0.length, range1.location - (range0.location + range0.length))];
-        
-        noteParagraph.content = [string substringWithRange:NSMakeRange(range1.location + range1.length, range2.location - (range1.location + range1.length))];
-        noteParagraph.content = [NSString htmDecode:noteParagraph.content];
-        
-        noteParagraph.styleDictionay = [self styleParseFromString:styleString];
+    NSString *contentString = @"";
+    NSString *propertyString = @"";
+    NSString *styleString = @"";
+    
+    NSRange rangeP;
+    NSRange rangePWithProperty;
+    //skip to <p> / <p .
+    rangeP = [string rangeOfString:@"<p>"];
+    if(rangeP.length > 0) {
+        if(rangeP.location != 0) {
+            NSLog(@"#error - skip string (%@) on parsing (%@)", [string substringWithRange:NSMakeRange(0, rangeP.location)], string)
+            string = [string substringFromIndex:rangeP.location];
+        }
     }
     else {
-        NSLog(@"#error - ParagraphString format checked failed. [%@]", string);
-        noteParagraph.content = @"";
+        rangePWithProperty = [string rangeOfString:@"<p "];
+        if(rangePWithProperty.length > 0) {
+            if(rangePWithProperty.location != 0) {
+                NSLog(@"#error - skip string (%@) on parsing (%@)", [string substringWithRange:NSMakeRange(0, rangePWithProperty.location)], string)
+                string = [string substringFromIndex:rangePWithProperty.location];
+            }
+        }
+        else {
+            NSLog(@"#error - ParagraphString format checked failed. [%@]", string);
+            return nil;
+        }
+    }
+    
+    if(rangeP.length > 0) {
+        contentString = [string substringWithRange:NSMakeRange(3, string.length - 7)];
+    }
+    else {
+        NSRange range0 = [string rangeOfString:@">"];
+        if(range0.length != 1 || range0.location == string.length - 1) {
+            NSLog(@"#error - ParagraphString format checked failed. [%@]", string);
+            return nil;
+        }
+        
+        propertyString = [string substringWithRange:NSMakeRange(3, range0.location - 3)];
+        contentString = [string substringWithRange:NSMakeRange(range0.location+1, string.length - 4 - (range0.location+1))];
+        styleString = propertyString;
+    }
+    
+    NSString *imageTab0 = @"<img src=\"";
+    NSString *imageTab1 = @"\"/>";
+    
+    NSRange rangeImage0 = [contentString rangeOfString:imageTab0];
+    NSRange rangeImage1 = [contentString rangeOfString:imageTab1];
+    if(rangeImage1.length == 0) {
+        imageTab1 = @"\">";
+        rangeImage1 = [contentString rangeOfString:imageTab1];
+    }
+    NS0Log(@"contentString : (%zd)[%@]", contentString.length, contentString);
+    NS0Log(@"rangeImage0 : %zd , %zd", rangeImage0.location, rangeImage0.length);
+    NS0Log(@"rangeImage1 : %zd , %zd", rangeImage1.location, rangeImage1.length);
+    if(rangeImage0.length > 0 && rangeImage1.length > 0 && rangeImage0.location < rangeImage1.location) {
+        noteParagraph.image = [contentString substringWithRange:NSMakeRange(rangeImage0.location + rangeImage0.length, rangeImage1.location - (rangeImage0.location + rangeImage0.length))];
+        NSLog(@"image : %@", noteParagraph.image);
+        
+        if(rangeImage1.location + rangeImage1.length != contentString.length) {
+            contentString = [contentString substringWithRange:NSMakeRange(rangeImage1.location + rangeImage1.length, contentString.length - (rangeImage1.location + rangeImage1.length))];
+            noteParagraph.content = [NSString htmDecode:contentString];
+            NSLog(@"xxx : %@", contentString);
+            NSLog(@"xxx : %@", noteParagraph.content);
+        }
+        else {
+            noteParagraph.content = @"";
+        }
+    }
+    else {
+        noteParagraph.content = [NSString htmDecode:contentString];
+        noteParagraph.styleDictionay = [self styleParseFromString:styleString];
     }
     
     return noteParagraph;
@@ -43,10 +107,19 @@
 
 + (NSString*)noteParagraphToString:(NoteParagraphModel*)noteParagraph
 {
-    return [NSString stringWithFormat:
-            @"<p style=\"%@\">%@</p>"
-            , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
-            , [NSString htmEncode:noteParagraph.content]];
+    if(noteParagraph.image.length == 0) {
+        return [NSString stringWithFormat:
+                @"<p style=\"%@\">%@</p>"
+                , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
+                , [NSString htmEncode:noteParagraph.content]];
+    }
+    else {
+        return [NSString stringWithFormat:
+                @"<p style=\"%@\"><img src=\"%@\"/>%@</p>"
+                , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
+                , noteParagraph.image
+                , [NSString htmEncode:noteParagraph.content]];
+    }
 }
 
 
@@ -142,6 +215,7 @@
     NSArray<NSString *> *paragraphStrings = [string componentsSeparatedByString:@"</p>"];
     for(NSString *paragraphString0 in paragraphStrings) {
         if(paragraphString0.length < 3) {
+            LOG_POSTION
             continue;
         }
         
@@ -149,8 +223,9 @@
         paragraphString = [paragraphString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         
         NoteParagraphModel *noteParagraph = [NoteParagraphModel noteParagraphFromString:paragraphString];
-        
-        [noteParagraphs addObject:noteParagraph];
+        if(noteParagraph) {
+            [noteParagraphs addObject:noteParagraph];
+        }
     }
     
     return [NSArray arrayWithArray:noteParagraphs];
@@ -239,7 +314,9 @@
         content = self.content;
     }
     
-    NSLog(@"sn: %zd, editMode: %zd, self.content: %@, content: %@", sn, editMode, self.content, content);
+    if(self.content.length == 0) {
+        NSLog(@"sn: %zd, editMode: %zd, self.content: %@, content: %@", sn, editMode, self.content, content);
+    }
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:content];
     NSRange rangeAll = NSMakeRange(0, attributedString.length);

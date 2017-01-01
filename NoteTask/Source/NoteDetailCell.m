@@ -14,10 +14,17 @@
 
 
 @interface NoteDetailCell () <UITextViewDelegate>
+@property (nonatomic, strong) NoteParagraphModel* noteParagraph;
+@property (nonatomic, assign) NSInteger sn;
+@property (nonatomic, assign) BOOL editMode;
+
+
 @property (nonatomic, strong) UIView *container;
 @property (nonatomic, strong) YYLabel *noteParagraphYYLabel;
 @property (nonatomic, strong) UILabel *noteParagraphLabel;
 @property (nonatomic, strong) UITextView *noteParagraphTextView;
+
+@property (nonatomic, strong) UIImageView *noteImageView;
 
 @property (nonatomic, strong) UIView  *dottedLine;
 
@@ -95,6 +102,10 @@
     self.noteParagraphTextView.scrollEnabled = NO;
     self.noteParagraphTextView.userInteractionEnabled = NO;
     
+    self.noteImageView = [[UIImageView alloc] init];
+    [self.container addSubview:self.noteImageView];
+    self.noteImageView.hidden = YES;
+    
 //    self.dottedLine = [[UIView alloc] init];
     [self addSubview:self.dottedLine];
     self.dottedLine.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"DottedLine"]];
@@ -107,8 +118,21 @@
 }
 
 
-- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode
+- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode image:(UIImage*)image imageSize:(CGSize)imageSize
 {
+    self.noteParagraph = noteParagraph;
+    self.sn = sn;
+    self.editMode = editMode;
+    
+    if(image) {
+        NSLog(@"setNoteParagraph %zd, image(%@) : %f x %f, resize to %f x %f .", sn, image, image.size.width, image.size.height, imageSize.width, imageSize.height);
+    }
+    else {
+        NSLog(@"setNoteParagraph %zd, image nil.", sn);
+    }
+    
+    self.noteImageView.hidden = YES;
+    
     CGFloat heightOptumize = 100.0;
     
     self.noteParagraphYYLabel.hidden    = YES;
@@ -152,9 +176,28 @@
     }
     else if(self.noteParagraphLabel && !self.noteParagraphLabel.hidden) {
         edgeLabel = NOTEDETAILCELL_EDGE_LABEL;
+        
+        if(noteParagraph.image.length > 0 && image) {
+            self.noteImageView.hidden = NO;
+            self.noteImageView.frame = CGRectMake((frameContainer.size.width - imageSize.width) / 2, 0, imageSize.width, imageSize.height);
+            self.noteImageView.image = image;
+            edgeLabel.top += imageSize.height;
+            
+            NSLog(@"---%@", image);
+            LOG_RECT(self.container.frame, @"container");
+            LOG_RECT(self.noteImageView.frame, @"noteImageView");
+        }
+        else {
+
+        }
+        
         frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
         
         self.noteParagraphLabel.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:editMode];
+        NSLog(@"sn : %zd, content : %@, text : %@. \n(%@)", sn
+              , noteParagraph.content
+              , self.noteParagraphLabel.attributedText.string
+              , self.noteParagraphLabel.attributedText);
         
         sizeOptumizeLabel = [self.noteParagraphLabel sizeThatFits:frameLabel.size];
         if(sizeOptumizeLabel.height > 10) {
@@ -165,6 +208,7 @@
         }
         self.noteParagraphLabel.frame = frameLabel;
     }
+    
     
 
     
@@ -192,6 +236,7 @@
     }
     
     heightOptumize = frame.size.height;
+    NSLog(@"heightOptumize : %f", heightOptumize);
     self.optumizeHeight = heightOptumize;
 }
 

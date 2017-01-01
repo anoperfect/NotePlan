@@ -35,21 +35,24 @@
 @property (nonatomic, strong) UIImageView   *labelAirDropIcon;
 @property (nonatomic, strong) UILabel   *labelAirDrop;
 @property (nonatomic, strong) UILabel   *labelAirDropDetail;
-@property (nonatomic, strong) UIButton  *buttonAirDropHtm;
-@property (nonatomic, strong) UIButton  *buttonAirDropPdf;
 @property (nonatomic, strong) UIButton  *buttonAirDrop;
 
 @property (nonatomic, strong) UIView    *viewLANContainer;
 @property (nonatomic, strong) UIImageView   *labelLANIcon;
 @property (nonatomic, strong) UILabel   *labelLAN;
+@property (nonatomic, strong) UILabel   *labelLANAddress;
 @property (nonatomic, strong) UILabel   *labelLANDetail;
+@property (nonatomic, strong) UIButton  *buttonLANAddressShare;
 
 
 @property (nonatomic, strong) UIView    *viewWANContainer;
 @property (nonatomic, strong) UIImageView   *labelWANIcon;
 @property (nonatomic, strong) UILabel   *labelWAN;
+@property (nonatomic, strong) UILabel   *labelWANAddress;
 @property (nonatomic, strong) UILabel   *labelWANDetail;
 @property (nonatomic, strong) UIButton  *buttonWANUpload;
+@property (nonatomic, strong) UIButton  *buttonWANAddressShare;
+
 
 @property (nonatomic, strong) GCDWebServer* webServer;
 @property (nonatomic, strong) NSString *serverURL;
@@ -59,15 +62,20 @@
 @property (nonatomic, assign) NSInteger uploadPdfStatus; //0.正上传.1.上传成功.2.上传失败.
 @property (nonatomic, strong) NSString *WANServer;
 
+@property (nonatomic, strong) NSArray<NoteParagraphModel *> *contentNoteParagraphs;
+@property (nonatomic, strong) NSMutableArray *uploadTasks;
 @end
 
 @implementation NoteShareViewController
 
 - (void)viewDidLoad {
+    self.contentViewScrolled = YES;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"共享";
     self.view.backgroundColor = [UIColor whiteColor];
+    self.contentNoteParagraphs = [NoteParagraphModel noteParagraphsFromString:self.noteModel.content];
+    self.uploadTasks = [[NSMutableArray alloc] init];
     
     self.WANServer = @"http://notetask.appben.com";
     
@@ -80,19 +88,21 @@
     NEW_AND_ADD_SUBVIEW(self.labelAirDropIcon, UIImageView);
     NEW_AND_ADD_SUBVIEW(self.labelAirDrop, UILabel);
     NEW_AND_ADD_SUBVIEW(self.labelAirDropDetail, UILabel);
-//    NEW_AND_ADD_SUBVIEW(self.buttonAirDropHtm, UIButton);
-//    NEW_AND_ADD_SUBVIEW(self.buttonAirDropPdf, UIButton);
     NEW_AND_ADD_SUBVIEW(self.buttonAirDrop, UIButton);
     
     NEW_AND_ADD_SUBVIEW(self.viewLANContainer, UIView);
     NEW_AND_ADD_SUBVIEW(self.labelLANIcon, UIImageView);
     NEW_AND_ADD_SUBVIEW(self.labelLAN, UILabel);
+    NEW_AND_ADD_SUBVIEW(self.labelLANAddress, UILabel);
     NEW_AND_ADD_SUBVIEW(self.labelLANDetail, UILabel);
+    NEW_AND_ADD_SUBVIEW(self.buttonLANAddressShare, UIButton);
     
     NEW_AND_ADD_SUBVIEW(self.viewWANContainer, UIView);
     NEW_AND_ADD_SUBVIEW(self.labelWANIcon, UIImageView);
     NEW_AND_ADD_SUBVIEW(self.labelWAN, UILabel);
+    NEW_AND_ADD_SUBVIEW(self.labelWANAddress, UILabel);
     NEW_AND_ADD_SUBVIEW(self.labelWANDetail, UILabel);
+    NEW_AND_ADD_SUBVIEW(self.buttonWANAddressShare, UIButton);
     //NEW_AND_ADD_SUBVIEW(self.buttonWANUpload, UIButton);
     
     [self.fileTypeSelect insertSegmentWithTitle:@"网页文件htm" atIndex:0 animated:YES];
@@ -104,36 +114,36 @@
     self.labelAirDrop.text = @"AirDrop";
     self.labelAirDropDetail.text = @"使用共享方式,使用AirDrop或者其他应用将文件共享或者传输到其他设备.";
     self.labelAirDropDetail.numberOfLines = 0;
-    self.labelAirDropDetail.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
-    
-    [self.buttonAirDropHtm setTitle:@"HTM" forState:UIControlStateNormal];
-    [self.buttonAirDropHtm setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.buttonAirDropHtm addTarget:self action:@selector(actionShareHtm) forControlEvents:UIControlEventTouchDown];
-    self.buttonAirDropHtm.layer.borderColor = [UIColor blackColor].CGColor;
-    self.buttonAirDropHtm.layer.borderWidth = 1.;
-    self.buttonAirDropHtm.layer.cornerRadius = 2;
-    
-    [self.buttonAirDropPdf setTitle:@"PDF" forState:UIControlStateNormal];
-    [self.buttonAirDropPdf setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.buttonAirDropPdf addTarget:self action:@selector(actionSharePdf) forControlEvents:UIControlEventTouchDown];
-    self.buttonAirDropPdf.layer.borderColor = [UIColor blackColor].CGColor;
-    self.buttonAirDropPdf.layer.borderWidth = 1.;
-    self.buttonAirDropPdf.layer.cornerRadius = 2;
+    self.labelAirDropDetail.font = FONT_SMALL;
     
     [self.buttonAirDrop setTitle:@"点击分享" forState:UIControlStateNormal];
     [self.buttonAirDrop setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.buttonAirDrop addTarget:self action:@selector(actionShare) forControlEvents:UIControlEventTouchDown];
+    [self.buttonAirDrop addTarget:self action:@selector(actionShareAirDrop) forControlEvents:UIControlEventTouchDown];
     self.buttonAirDrop.layer.borderColor = [UIColor blackColor].CGColor;
     self.buttonAirDrop.layer.borderWidth = 1.;
     self.buttonAirDrop.layer.cornerRadius = 2;
+    self.buttonAirDrop.titleLabel.font = FONT_SMALL;
+    self.buttonAirDrop.titleLabel.numberOfLines = 0;
+    self.buttonAirDrop.contentEdgeInsets = UIEdgeInsetsMake(0, 6, 0, 6);
     
     self.labelLANIcon.image = [UIImage imageNamed:@"ShareLAN"];
+    self.labelLANAddress.font = FONT_SMALL;
     self.labelLANDetail.numberOfLines = 0;
-    self.labelLANDetail.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.labelLANDetail.font = FONT_SMALL;
+    [self.buttonLANAddressShare setTitle:@"分享地址" forState:UIControlStateNormal];
+    [self.buttonLANAddressShare setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.buttonLANAddressShare addTarget:self action:@selector(actionShareLANAddress) forControlEvents:UIControlEventTouchDown];
+    self.buttonLANAddressShare.layer.borderColor = [UIColor blackColor].CGColor;
+    self.buttonLANAddressShare.layer.borderWidth = 1.;
+    self.buttonLANAddressShare.layer.cornerRadius = 2;
+    self.buttonLANAddressShare.titleLabel.font = FONT_SMALL;
+    self.buttonLANAddressShare.titleLabel.numberOfLines = 0;
+    self.buttonLANAddressShare.contentEdgeInsets = UIEdgeInsetsMake(0, 6, 0, 6);
     
     self.labelWANIcon.image = [UIImage imageNamed:@"ShareWAN"];
+    self.labelWANAddress.font = FONT_SMALL;
     self.labelWANDetail.numberOfLines = 0;
-    self.labelWANDetail.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.labelWANDetail.font = FONT_SMALL;
     
     [self.buttonWANUpload setTitle:@"上传" forState:UIControlStateNormal];
     [self.buttonWANUpload setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -141,19 +151,32 @@
     self.buttonWANUpload.layer.borderWidth = 1.;
     self.buttonWANUpload.layer.cornerRadius = 2;
     self.buttonWANUpload.hidden = YES;
+    [self.buttonWANAddressShare setTitle:@"分享地址" forState:UIControlStateNormal];
+    [self.buttonWANAddressShare setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.buttonWANAddressShare addTarget:self action:@selector(actionShareWANAddress) forControlEvents:UIControlEventTouchDown];
+    self.buttonWANAddressShare.layer.borderColor = [UIColor blackColor].CGColor;
+    self.buttonWANAddressShare.layer.borderWidth = 1.;
+    self.buttonWANAddressShare.layer.cornerRadius = 2;
+    self.buttonWANAddressShare.titleLabel.font = FONT_SMALL;
+    self.buttonWANAddressShare.titleLabel.numberOfLines = 0;
+    self.buttonWANAddressShare.contentEdgeInsets = UIEdgeInsetsMake(0, 6, 0, 6);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self createLocalServer];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self generateHtm];
         [self actionUploadHtm];
         
         self.webView = [[UIWebView alloc] init];
         [self addSubview:self.webView];
         NSString *s = [self.noteModel generateWWWPage];
-        [self.webView loadHTMLString:s baseURL:nil];
+        NSURL *url = _webServer.serverURL;
+        url = [url URLByAppendingPathComponent:@"note" isDirectory:YES];
+        [self.webView loadHTMLString:s baseURL:url];
         self.webView.delegate = self;
         self.webView.hidden = YES;
-        
-        [self createLocalServer];
     });
 }
 
@@ -163,54 +186,61 @@
     [super viewWillLayoutSubviews];
     self.webView.frame = VIEW_BOUNDS;
     
-    FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
-    [f frameLayout:FRAMELAYOUT_NAME_MAIN to:@[@"FileTypeMain", @"AirDropMain", @"LANMain", @"WANMain"] withPercentages:@[@0.08,@0.20,@0.36,@0.36]];
-    
-    [f frameLayoutSet:@"FileTypeSelect" in:@"FileTypeMain" withEdgeInserts:UIEdgeInsetsMake(2, 10, 2, 10)];
-    
-    [f frameLayoutSet:@"AirDropContainer" in:@"AirDropMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameLayout:@"AirDropContainer" toVertical:@[@"AirDropDescription", @"AirDropAction"] withPercentages:@[@0.64,@0.36]];
-    [f frameLayout:@"AirDropDescription" to:@[@"AirDropTitle", @"AirDropDetail"] withHeights:@[@36,@-1.]];
-    [f frameLayoutSquare:@"AirDropTitle" toVertical:@[@"AirDropIcon", @"AirDropLabel"]];
-    [f frameLayout:@"AirDropAction" to:@[@"AirDropClick", @""] withHeights:@[@36,@-1.]];
-    
-    [f frameLayoutSet:@"LANContainer" in:@"LANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameLayout:@"LANContainer" to:@[@"LANTitle", @"LANDetail"] withHeights:@[@36, @-1.]];
-    [f frameLayoutSquare:@"LANTitle" toVertical:@[@"LANIcon", @"LANLabel"]];
-    
-    [f frameLayoutSet:@"WANContainer" in:@"WANMain" withEdgeInserts:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [f frameLayout:@"WANContainer" to:@[@"WANTitle", @"WANDetail"] withHeights:@[@36, @-1.]];
-    [f frameLayoutSquare:@"WANTitle" toVertical:@[@"WANIcon", @"WANLabelAndButton"]];
-    [f frameLayout:@"WANLabelAndButton" toVertical:@[@"WANLabel", @"WANButton"] withWidths:@[@180,@-1.]];
-    
-    FrameAssign(self.fileTypeSelect, @"FileTypeSelect", f)
-    
-    FrameAssign(self.viewAirDropContainer, @"AirDropContainer", f)
-    FrameAssign(self.labelAirDropIcon, @"AirDropIcon", f)
-    FrameAssign(self.labelAirDrop, @"AirDropLabel", f)
-    FrameAssign(self.labelAirDropDetail, @"AirDropDetail", f)
-    FrameAssign(self.buttonAirDropHtm, @"AirDropButtonHtm", f)
-    FrameAssign(self.buttonAirDropPdf, @"AirDropButtonPDF", f)
-    FrameAssign(self.buttonAirDrop, @"AirDropClick", f)
-    
-    FrameAssign(self.viewLANContainer, @"LANContainer", f)
-    FrameAssign(self.labelLANIcon, @"LANIcon", f)
-    FrameAssign(self.labelLAN, @"LANLabel", f)
-    FrameAssign(self.labelLANDetail, @"LANDetail", f)
-    
-    FrameAssign(self.viewWANContainer, @"WANContainer", f)
-    FrameAssign(self.labelWANIcon, @"WANIcon", f)
-    FrameAssign(self.labelWAN, @"WANLabel", f)
-    FrameAssign(self.labelWANDetail, @"WANDetail", f)
-    FrameAssign(self.buttonWANUpload, @"WANButton", f)
-    
-    NSLog(@"%@", f);
-    
-    
-    NSLog(@"---------%zd. %@", self.contentView.subviews, self.contentView);
-    for(UIView *view in self.contentView.subviews) {
-        NSLog(@"%@", view);
+    UIScrollView *scrollView = (UIScrollView*)self.contentView;
+    if([scrollView isKindOfClass:[UIScrollView class]]) {
+        scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 1000);
     }
+    
+    FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
+    [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
+                  toViews:@[
+                            [FrameLayoutView viewWithName:@"_fileTypeSelect" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"AirDropLine" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelAirDropDetail" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"PaddingLANLine" value:20 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"LANLine" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelLANAddress" value:36 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelLANDetail" value:100 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"PaddingWANLine" value:20 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"WANLine" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelWANAddress" value:36 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelWANDetail" value:100 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            ]
+     ];
+    
+    [f frameLayoutVertical:@"AirDropLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_labelAirDropIcon" value:41 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_labelAirDrop" percentage:1 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_buttonAirDrop" value:41 edge:UIEdgeInsetsZero],
+                             ]
+     ];
+    
+    [f frameLayoutVertical:@"LANLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_labelLANIcon" value:41 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_labelLAN" percentage:1 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_buttonLANAddressShare" value:41 edge:UIEdgeInsetsZero],
+                             ]
+     ];
+    
+    [f frameLayoutVertical:@"WANLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_labelWANIcon" value:41 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_labelWAN" percentage:1 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_buttonWANAddressShare" value:41 edge:UIEdgeInsetsZero],
+                             ]
+     ];
+    
+    [self memberViewSetFrameWith:[f nameAndFrames]];
+    NSLog(@"%@", [f nameAndFrames]);
+    
+    self.buttonAirDrop.layer.cornerRadius = self.buttonAirDrop.frame.size.width / 2;
+    self.buttonLANAddressShare.layer.cornerRadius = self.buttonLANAddressShare.frame.size.width / 2;
+    self.buttonWANAddressShare.layer.cornerRadius = self.buttonWANAddressShare.frame.size.width / 2;
+    
+    
+    
     
     
     
@@ -229,31 +259,65 @@
     [_webServer addDefaultHandlerForMethod:@"GET"
                               requestClass:[GCDWebServerRequest class]
                               processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+                                  NSLog(@"------ request [%@]", request.path);
                                   NSArray<NSString*> *paths = [request.path componentsSeparatedByString:@"/"];
                                   NSString* filename = [paths lastObject];
                                   NSString* noteSn = nil;
                                   NSString *sNotFound = @"<html><body><p>未找到所需文件</p></body></html>";
-                                  if([filename hasSuffix:@".htm"]) {
-                                      noteSn = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
-                                      NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetBySn:noteSn];
-                                      if(note) {
-                                          return [GCDWebServerDataResponse responseWithHTML:[note generateWWWPage]];
+                                  if([request.path hasPrefix:@"/note"]) {
+                                      noteSn = [filename substringWithRange:NSMakeRange(0, 6)];
+                                      NSLog(@"sn [%@]", noteSn);
+                                      if([filename hasSuffix:@".htm"]) {
+                                          NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetBySn:noteSn];
+                                          if(note) {
+                                              return [GCDWebServerDataResponse responseWithHTML:[note generateWWWPage]];
+                                          }
+                                          else {
+                                              NSLog(@"#error - note sn %@ not found.", noteSn);
+                                              return [GCDWebServerDataResponse responseWithHTML:sNotFound];
+                                          }
+                                      }
+                                      else if([filename hasSuffix:@".pdf"]) {
+                                          noteSn = [filename substringWithRange:NSMakeRange(0, 6)];
+                                          NSString *pdfPath = [NSString stringWithFormat:@"%@/%@", _self.noteFolder, filename];
+                                          NSData *pdfData = [NSData dataWithContentsOfFile:pdfPath];
+                                          if(pdfData.length > 0) {
+                                              return [GCDWebServerDataResponse responseWithData:pdfData contentType:@"application/pdf"];
+                                          }
+                                          else {
+                                              NSLog(@"#error - note sn %@ pdf note found [%@].", noteSn, pdfPath);
+                                              return [GCDWebServerDataResponse responseWithHTML:sNotFound];
+                                          }
+                                      }
+                                      else if([filename hasSuffix:@".jpg"] || [filename hasSuffix:@".png"]) {
+                                          NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+                                          NSString *imageLocalFolder = [NSString stringWithFormat:@"%@/NoteImageLocal", cachePath];
+                                          NSString *imageFileName = [NSString stringWithFormat:@"%@/%@", imageLocalFolder, filename];
+                                          NSLog(@"imageFileName : %@", imageFileName);
+                                          if([[NSFileManager defaultManager] fileExistsAtPath:imageFileName isDirectory:nil]) {
+                                              LOG_POSTION
+                                              NSData *data = [NSData dataWithContentsOfFile:imageFileName];
+                                              if(data.length > 0) {
+                                                  LOG_POSTION
+                                                  return [GCDWebServerDataResponse responseWithData:data contentType:@"application/image"];
+                                              }
+                                              else {
+                                                  LOG_POSTION
+                                                  return [GCDWebServerDataResponse responseWithHTML:sNotFound];
+                                              }
+                                          }
+                                          else {
+                                              LOG_POSTION
+                                              return [GCDWebServerDataResponse responseWithHTML:sNotFound];
+                                          }
                                       }
                                       else {
+                                          NSLog(@"#error - request [%@] not treated.", request.path);
                                           return [GCDWebServerDataResponse responseWithHTML:sNotFound];
                                       }
+                                      
                                   }
-                                  else if([filename hasSuffix:@".pdf"]) {
-                                      noteSn = [filename substringWithRange:NSMakeRange(5, filename.length - 5 - 4)];
-                                      NSString *pdfPath = [NSString stringWithFormat:@"%@/%@", _self.noteFolder, filename];
-                                      NSData *pdfData = [NSData dataWithContentsOfFile:pdfPath];
-                                      if(pdfData.length > 0) {
-                                          return [GCDWebServerDataResponse responseWithData:pdfData contentType:@"application/pdf"];
-                                      }
-                                      else {
-                                          return [GCDWebServerDataResponse responseWithHTML:sNotFound];
-                                      }
-                                  }
+
                                   else {
                                       return [GCDWebServerDataResponse responseWithHTML:sNotFound];
                                   }
@@ -267,9 +331,9 @@
     if(_webServer.serverURL) {
         self.serverStatus = 1;
         self.serverURL = [_webServer.serverURL copy];
-        NSString *htmURLString = [NSString stringWithFormat:@"%@Note-%@.htm", self.serverURL, self.noteModel.sn];
+        NSString *htmURLString = [NSString stringWithFormat:@"%@note/%@.htm", self.serverURL, self.noteModel.sn];
         self.labelLANDetail.text = [self.labelLANDetail.text stringByReplacingOccurrencesOfString:@"htm地址获取中..." withString:htmURLString];
-        NSString *pdfURLString = [NSString stringWithFormat:@"%@Note-%@.pdf", self.serverURL, self.noteModel.sn];
+        NSString *pdfURLString = [NSString stringWithFormat:@"%@note/%@.pdf", self.serverURL, self.noteModel.sn];
         self.labelLANDetail.text = [self.labelLANDetail.text stringByReplacingOccurrencesOfString:@"pdf地址获取中..." withString:pdfURLString];
     }
     else {
@@ -285,12 +349,16 @@
 }
 
 
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     NSLog(@"stop webserver.");
     [self.webServer stop];
+    for(NSURLSessionDataTask *task in self.uploadTasks) {
+        if(task.state == NSURLSessionTaskStateRunning) {
+            [task cancel];
+        }
+    }
 }
 
 
@@ -301,7 +369,7 @@
     self.noteFolder = [NSString stringWithFormat:@"%@/Note", documentsPath];
     [[NSFileManager defaultManager] createDirectoryAtPath:self.noteFolder withIntermediateDirectories:YES attributes:nil error:nil];
     
-    self.htmName = [NSString stringWithFormat:@"Note-%@.htm", self.noteModel.sn];
+    self.htmName = [NSString stringWithFormat:@"%@.htm", self.noteModel.sn];
     self.htmPath = [NSString stringWithFormat:@"%@/%@", self.noteFolder, self.htmName];
     
     NSData *htmData = [[self.noteModel generateWWWPage] dataUsingEncoding:NSUTF8StringEncoding];
@@ -324,7 +392,7 @@
     NSData *pdfData = [ppRenderer printToPDF];
     NSLog(@"data length : %zd", pdfData.length);
     
-    self.pdfName = [NSString stringWithFormat:@"Note-%@.pdf", self.noteModel.sn];
+    self.pdfName = [NSString stringWithFormat:@"%@.pdf", self.noteModel.sn];
     self.pdfPath = [NSString stringWithFormat:@"%@/%@", self.noteFolder, self.pdfName];
     NSLog(@"%@", self.pdfPath);
     
@@ -340,11 +408,14 @@
         self.pdfGenerateStatus = -1;
     }
     
+    [self.webView removeFromSuperview];
+    self.webView = nil;
+    
     [self actionUpdateDisplayText];
 }
 
 
-- (void)actionShare
+- (void)actionShareAirDrop
 {
     if(self.selectedIndex == 0) {
         [self actionShareHtm];
@@ -377,6 +448,20 @@
 }
 
 
+- (void)actionShareLANAddress
+{
+    UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:@[self.labelLANAddress.text] applicationActivities:nil];
+    [self presentViewController:controller animated:YES completion:nil];
+}
+
+
+- (void)actionShareWANAddress
+{
+    UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:@[self.labelWANAddress.text] applicationActivities:nil];
+    [self presentViewController:controller animated:YES completion:nil];
+}
+
+
 - (void)actionUploadHtm
 {
     AFHTTPSessionManager *manager = HTTPMANAGE;
@@ -390,6 +475,18 @@
     [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         // 上传文件
         [formData appendPartWithFileData:[NSData dataWithContentsOfFile:self.htmPath] name:@"uploadfile" fileName:self.htmName mimeType:@"text/html"];
+        for(NoteParagraphModel *paragraph in self.contentNoteParagraphs) {
+            if(paragraph.image.length > 0) {
+                NSString *imageFileName = [NoteModel imageLocalFileNameOfImageName:paragraph.image];
+                NSData *data = [NSData dataWithContentsOfFile:imageFileName];
+                if(data.length > 0) {
+                    [formData appendPartWithFileData:data name:@"uploadfile" fileName:paragraph.image mimeType:@"image/jpeg"];
+                }
+                else {
+                    NSLog(@"#error - image name file not found (%@).", paragraph.image);
+                }
+            }
+        }
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         NSLog(@"---%@", uploadProgress);
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -408,6 +505,7 @@
 
 - (void)actionUploadPdf
 {
+    __weak typeof(self) _self = self;
     AFHTTPSessionManager *manager = HTTPMANAGE;
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/plain", nil];
     // 参数
@@ -416,7 +514,7 @@
     parameter[@"token"] = @"param....";
     // 访问路径
     NSString *stringURL = [NSString stringWithFormat:@"%@/upload", self.WANServer];
-    [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    NSURLSessionDataTask *task = [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         // 上传文件
         [formData appendPartWithFileData:[NSData dataWithContentsOfFile:self.pdfPath] name:@"uploadfile" fileName:self.pdfName mimeType:@"application/pdf"];
     } progress:^(NSProgress * _Nonnull uploadProgress) {
@@ -425,13 +523,15 @@
         NSLog(@"---upload pdf success.");
         NSString * s = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSLog(@"%@", s);
-        self.uploadPdfStatus = 1;
-        [self actionUpdateDisplayText];
+        _self.uploadPdfStatus = 1;
+        [_self actionUpdateDisplayText];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"---upload pdf failure.(%@)", error);
-        self.uploadPdfStatus = -1;
-        [self actionUpdateDisplayText];
+        _self.uploadPdfStatus = -1;
+        [_self actionUpdateDisplayText];
     }];
+
+    [self.uploadTasks addObject:task];
 }
 
 
@@ -447,35 +547,47 @@
     NSLog(@"-=-=-=%zd | serverStatus:%zd, pdfGenerateStatus:%zd, uploadHtmStatus:%zd, uploadPdfStatus:%zd", self.selectedIndex, self.serverStatus, self.pdfGenerateStatus, self.uploadHtmStatus, self.uploadPdfStatus);
     
     if(self.selectedIndex == 0) {
+        self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";
+        self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.";
+        
         for(UIView *view in self.contentView.subviews) {
             view.hidden = NO;
         }
+        
         self.labelLAN.text = @"局域网获取";
+        self.buttonLANAddressShare.hidden = YES;
         if(self.serverStatus == 0) {
             self.labelLAN.text = @"局域网获取(创建服务中)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";
+            self.labelLANAddress.text = @"1";
         }
         else if(self.serverStatus == 1) {
             self.labelLAN.text = @"局域网获取";
-            self.labelLANDetail.text = [NSString stringWithFormat:@"%@%@\n\nWIFI连接状态下,可通过局域网内电脑浏览器登入上述http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)", self.serverURL, self.htmName];
-            self.buttonAirDropHtm.hidden = NO;
+            NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.serverURL, self.htmName];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"###" withString:@"://"];
+            self.labelLANAddress.text = urlString;
+            self.buttonLANAddressShare.hidden = NO;
         }
         else {
             self.labelLAN.text = @"局域网获取(当前不可用)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";
         }
         
+        self.buttonWANAddressShare.hidden = YES;
         if(self.uploadHtmStatus == 0) {
             self.labelWAN.text = @"互联网获取(等待上传中)";
-            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.";
         }
         else if(self.uploadHtmStatus == 1) {
             self.labelWAN.text = @"互联网获取";
-            self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入上述http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.", self.WANServer, self.htmName];
+            NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.WANServer, self.htmName];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"###" withString:@"://"];
+            self.labelWANAddress.text = urlString;
+            self.buttonWANAddressShare.hidden = NO;
         }
         else {
             self.labelWAN.text = @"互联网获取(连接失败)";
-            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,\n查看网页版本笔记内容,以及使用浏览器功能保存网页内容或导出pdf文件.";
         }
     }
     else if(self.selectedIndex == 1) {
@@ -490,39 +602,56 @@
             return ;
         }
         
+        self.labelLANDetail.text = @"WIFI连接状态下, 可通过局域网内电脑浏览器登入或下载软件下载指定http地址, 查看或者下载Pdf版本笔记内容. \n(局域网访问地址可能因为局域网内具体环境出现访问出错情况, 请联系本局域网网络管理员, 或者使用互联网访问方式. )";
+        self.labelWANDetail.text = @"能正常连接互联网时, 上传笔记信息到互联网服务器成功后. \n可通过电脑浏览器登入指定http地址, 查看或者下载Pdf版本笔记内容. ";
+        
         for(UIView *view in self.contentView.subviews) {
             view.hidden = NO;
         }
         
         self.labelAirDrop.text = @"AirDrop";
+        self.buttonLANAddressShare.hidden = YES;
         
         self.labelLAN.text = @"局域网获取";
         if(self.serverStatus == 0) {
             self.labelLAN.text = @"局域网获取(创建服务中)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
+            self.labelLANAddress.text = @"0";
         }
         else if(self.serverStatus == 1) {
             self.labelLAN.text = @"局域网获取";
-            self.labelLANDetail.text = [NSString stringWithFormat:@"%@%@\n\nWIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载上述http地址,\n查看/下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)", self.serverURL, self.pdfName];
+            NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.serverURL, self.pdfName];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"###" withString:@"://"];
+            self.labelLANAddress.text = urlString;
+            self.buttonLANAddressShare.hidden = NO;
         }
         else {
             self.labelLAN.text = @"局域网获取(当前不可用)";
-            self.labelLANDetail.text = @"WIFI连接状态下,可通过局域网内电脑浏览器登入或下载软件下载指定http地址,\n查看或者下载Pdf版本笔记内容.\n(局域网访问地址可能因为局域网内具体环境出现访问出错情况,请联系本局域网网络管理员,或者使用互联网访问方式.)";;
         }
         
+        self.buttonWANAddressShare.hidden = YES;
         if(self.uploadPdfStatus == 0) {
             self.labelWAN.text = @"互联网获取(等待上传中)";
-            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,查看或者下载Pdf版本笔记内容.";
+            self.labelWANAddress.text = @"0";
         }
         else if(self.uploadPdfStatus == 1) {
             self.labelWAN.text = @"互联网获取";
-            self.labelWANDetail.text = [NSString stringWithFormat:@"%@/%@\n\n能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入上述http地址,查看或者下载Pdf版本笔记内容.", self.WANServer, self.htmName];
+            NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.WANServer, self.pdfName];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"###" withString:@"://"];
+            self.labelWANAddress.text = urlString;
+            self.buttonWANAddressShare.hidden = NO;
         }
         else {
             self.labelWAN.text = @"互联网获取(连接失败)";
-            self.labelWANDetail.text = @"能正常连接互联网时,上传笔记信息到互联网服务器成功后.\n可通过电脑浏览器登入指定http地址,查看或者下载Pdf版本笔记内容.";
+            self.labelWANAddress.text = @"-1";
         }
     }
+    
+    NSLog(@"%@", self.buttonLANAddressShare);
+    NSLog(@"%@", self.buttonWANAddressShare);
 }
 
 

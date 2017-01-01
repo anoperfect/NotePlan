@@ -39,6 +39,10 @@
 @property (nonatomic, strong) UISlider          *fontSizeSlider;
 @property (nonatomic, strong) UILabel           *fontSizeNameLabel;
 @property (nonatomic, strong) UILabel           *fontSizeValueLabel;
+@property (nonatomic, strong) UILabel           *fontSizeUseDefaultLabel;
+@property (nonatomic, strong) UISwitch          *fontSizeUseDefaultSwitch;
+@property (nonatomic, strong) NSString          *fontSizeEdit;
+
 @property (nonatomic, strong) NSMutableArray    *fontNumbers;
 
 
@@ -138,6 +142,7 @@
     self.sampleText = [[UILabel alloc] init];
     [self.contentView addSubview:self.sampleText];
     self.sampleText.numberOfLines = 0;
+    self.sampleText.backgroundColor = [UIColor whiteColor];
     
     self.fontsizeView = [RangeValueView rangeValueViewWithFrame:CGRectMake(10, 100, Width-20, 0)
                                                            name:@"字体大小 - font-size"
@@ -164,21 +169,36 @@
     self.fontSizeNameLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.fontSizeNameLabel];
     self.fontSizeNameLabel.text = @"字体-大小";
-    self.fontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.fontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.fontSizeNameLabel.textAlignment = NSTextAlignmentLeft;
+    self.fontSizeNameLabel.font = FONT_SMALL;
     
     self.fontSizeValueLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.fontSizeValueLabel];
     self.fontSizeValueLabel.text = @"8px";
-    self.fontSizeValueLabel.textAlignment = NSTextAlignmentCenter;
-    self.fontSizeValueLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.fontSizeValueLabel.textAlignment = NSTextAlignmentRight;
+    self.fontSizeValueLabel.font = FONT_SMALL;
     NSInteger ptSizeInt = ptSize;
     self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", ptSizeInt];
+    
+    self.fontSizeUseDefaultLabel = [[UILabel alloc] init];
+    [self addSubview:self.fontSizeUseDefaultLabel];
+    self.fontSizeUseDefaultLabel.text = @"使用默认";
+    self.fontSizeUseDefaultLabel.textAlignment = NSTextAlignmentRight;
+    self.fontSizeUseDefaultLabel.font = FONT_SMALL;
+    self.fontSizeUseDefaultSwitch = [[UISwitch alloc] init];
+    [self.contentView addSubview:self.fontSizeUseDefaultSwitch];
+    [self.fontSizeUseDefaultSwitch addTarget:self action:@selector(switchValueChangeFontSizeUseDefault) forControlEvents:UIControlEventValueChanged];
+    if(nil == self.sampleNoteParagraph.styleDictionay[@"font-size"]) {
+        self.fontSizeUseDefaultSwitch.on = YES;
+    }
+    else {
+        self.fontSizeEdit = self.sampleNoteParagraph.styleDictionay[@"font-size"];
+    }
     
     self.italicLable = [[UILabel alloc] init];
     [self.contentView addSubview:self.italicLable];
     self.italicLable.text = @"斜体";
-    self.italicLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.italicLable.font = FONT_SMALL;
     self.italicLable.textAlignment = NSTextAlignmentCenter;
     self.italicSwitch = [[UISwitch alloc] init];
     [self.contentView addSubview:self.italicSwitch];
@@ -190,7 +210,7 @@
     self.underlineLable = [[UILabel alloc] init];
     [self.contentView addSubview:self.underlineLable];
     self.underlineLable.text = @"下划线";
-    self.underlineLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.underlineLable.font = FONT_SMALL;
     self.underlineLable.textAlignment = NSTextAlignmentCenter;
     self.underlineSwitch = [[UISwitch alloc] init];
     [self.contentView addSubview:self.underlineSwitch];
@@ -202,7 +222,7 @@
     self.borderLable = [[UILabel alloc] init];
     [self.contentView addSubview:self.borderLable];
     self.borderLable.text = @"边框";
-    self.borderLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.borderLable.font = FONT_SMALL;
     self.borderLable.textAlignment = NSTextAlignmentCenter;
     self.borderSwitch = [[UISwitch alloc] init];
     [self.contentView addSubview:self.borderSwitch];
@@ -214,7 +234,7 @@
     self.boldLable = [[UILabel alloc] init];
     [self.contentView addSubview:self.boldLable];
     self.boldLable.text = @"粗体";
-    self.boldLable.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.boldLable.font = FONT_SMALL;
     self.boldLable.textAlignment = NSTextAlignmentCenter;
     self.boldSwitch = [[UISwitch alloc] init];
     [self.contentView addSubview:self.boldSwitch];
@@ -236,12 +256,12 @@
     self.textColorLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.textColorLabel];
     self.textColorLabel.text = @"文本颜色:";
-    self.textColorLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.textColorLabel.font = FONT_SMALL;
     self.textColorLabel.textAlignment = NSTextAlignmentCenter;
     
     self.textColorInput = [[UITextField alloc] init];
     [self.contentView addSubview:self.textColorInput];
-    self.textColorInput.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.textColorInput.font = FONT_SMALL;
     self.textColorInput.layer.borderWidth = 1.0;
     self.textColorInput.layer.borderColor = [UIColor blackColor].CGColor;
     self.textColorInput.delegate = self;
@@ -253,18 +273,18 @@
     [self.contentView addSubview:self.textColorButton];
     [self.textColorButton setTitle:@"颜色选择器" forState:UIControlStateNormal];
     [self.textColorButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    self.textColorButton.titleLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.textColorButton.titleLabel.font = FONT_SMALL;
     [self.textColorButton addTarget:self action:@selector(openTextColorSelector) forControlEvents:UIControlEventTouchDown];
     
     self.textBackgroundColorLabel = [[UILabel alloc] init];
     //[self.contentView addSubview:self.textBackgroundColorLabel];
     self.textBackgroundColorLabel.text = @"背景颜色:";
-    self.textBackgroundColorLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.textBackgroundColorLabel.font = FONT_SMALL;
     self.textBackgroundColorLabel.textAlignment = NSTextAlignmentCenter;
     
     self.textBackgroundColorInput = [[UITextField alloc] init];
     //[self.contentView addSubview:self.textBackgroundColorInput];
-    self.textBackgroundColorInput.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.textBackgroundColorInput.font = FONT_SMALL;
     self.textBackgroundColorInput.layer.borderWidth = 1.0;
     self.textBackgroundColorInput.layer.borderColor = [UIColor blackColor].CGColor;
     
@@ -281,10 +301,9 @@
     FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
     [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
                   toViews:@[
-                            [FrameLayoutView viewWithName:@"_sampleText" percentage:0.6 edge:UIEdgeInsetsMake(10, 27, 10, 27)],
+                            [FrameLayoutView viewWithName:@"_sampleText" percentage:0.36 edge:UIEdgeInsetsMake(10, 27, 10, 27)],
                             [FrameLayoutView viewWithName:@"fontSizeLinePadding" value:20 edge:UIEdgeInsetsZero],
-                            [FrameLayoutView viewWithName:@"fontSizeLine" value:36 edge:UIEdgeInsetsZero],
-                            [FrameLayoutView viewWithName:@"_fontSizeSlider" value:36 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"fontSize" value:40 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"paddingTextColorLine" value:36 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"textColorLine" value:28 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"switchLine1Padding" value:20 edge:UIEdgeInsetsZero],
@@ -295,9 +314,28 @@
                             ]
      ];
     
-    [f      frameLayout:@"fontSizeLine"
+    [f frameLayoutVertical:@"fontSize"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"fontSizeValue" percentage:0.6 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"fontSizeUseDefault" percentage:0.4 edge:UIEdgeInsetsZero],
+                            ]];
+    
+    [f frameLayoutHerizon:@"fontSizeValue"
+                  toViews:@[
+                             [FrameLayoutView viewWithName:@"fontSizeLabel" value:20 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_fontSizeSlider" value:20 edge:UIEdgeInsetsZero],
+                            ]];
+    
+    [f frameLayoutVertical:@"fontSizeUseDefault"
+                  toViews:@[
+                            [FrameLayoutView viewWithName:@"_fontSizeUseDefaultLabel" value:80 edge:UIEdgeInsetsZero],
+                            [FrameLayoutView viewWithName:@"_fontSizeUseDefaultSwitch" value:1 edge:UIEdgeInsetsZero],
+                            ]];
+    
+    
+    [f      frameLayout:@"fontSizeLabel"
              toVertical:@[@"_fontSizeNameLabel", @"fontSizePadding", @"_fontSizeValueLabel"]
-        withPercentages:@[@0.18, @0.7, @0.12]];
+        withPercentages:@[@0.5, @0.0, @0.5]];
     
     [f      frameLayout:@"textColorLine"
              toVertical:@[@"_textColorLabel", @"_textColorInput", @"_textColorButton"]
@@ -356,6 +394,36 @@
         
     });
 #endif
+}
+
+
+- (void)switchValueChangeFontSizeUseDefault
+{
+    NSLog(@"font size use default : %zd", self.fontSizeUseDefaultSwitch.on);
+    CGFloat pxSize = 0;
+    if(self.fontSizeUseDefaultSwitch.on) {
+        self.fontSizeEdit = self.sampleNoteParagraph.styleDictionay[@"font-size"];
+        self.sampleNoteParagraph.styleDictionay[@"font-size"] = nil;
+        pxSize = self.sampleNoteParagraph.isTitle? 18 : 16;
+        self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)pxSize];
+        self.fontSizeSlider.value = pxSize;
+    }
+    else {
+        NSLog(@"- %@", self.fontSizeEdit);
+        if(self.fontSizeEdit
+            && [self.fontSizeEdit hasSuffix:@"px"]
+            && (pxSize = [self.fontSizeEdit floatValue]) >= self.fontSizeSlider.minimumValue
+            && pxSize <= self.fontSizeSlider.maximumValue) {
+
+        }
+        else {
+            pxSize = self.sampleNoteParagraph.isTitle? 18 : 16;
+        }
+        self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)pxSize];
+        self.fontSizeSlider.value = pxSize;
+        self.sampleNoteParagraph.styleDictionay[@"font-size"] = [NSString stringWithFormat:@"%zdpx", (NSInteger)pxSize];
+    }
+    [self updateSampleText];
 }
 
 

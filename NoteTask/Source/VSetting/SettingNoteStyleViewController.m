@@ -64,13 +64,13 @@
     [self addSubview:self.titleFontSizeNameLabel];
     self.titleFontSizeNameLabel.text = @"默认字体大小";
     self.titleFontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.titleFontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.titleFontSizeNameLabel.font = FONT_SMALL;
     
     self.titleFontSizeValueLabel = [[UILabel alloc] init];
     [self addSubview:self.titleFontSizeValueLabel];
     self.titleFontSizeValueLabel.text = @"8px";
     self.titleFontSizeValueLabel.textAlignment = NSTextAlignmentCenter;
-    self.titleFontSizeValueLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.titleFontSizeValueLabel.font = FONT_SMALL;
     NSInteger titlePtSizeInt = titlePtSize;
     self.titleFontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", titlePtSizeInt];
     
@@ -102,13 +102,13 @@
     [self addSubview:self.paragraphFontSizeNameLabel];
     self.paragraphFontSizeNameLabel.text = @"默认字体大小";
     self.paragraphFontSizeNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.paragraphFontSizeNameLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.paragraphFontSizeNameLabel.font = FONT_SMALL;
     
     self.paragraphFontSizeValueLabel = [[UILabel alloc] init];
     [self addSubview:self.paragraphFontSizeValueLabel];
     self.paragraphFontSizeValueLabel.text = @"8px";
     self.paragraphFontSizeValueLabel.textAlignment = NSTextAlignmentCenter;
-    self.paragraphFontSizeValueLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+    self.paragraphFontSizeValueLabel.font = FONT_SMALL;
     self.paragraphFontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)paragraphFtSize];
     
     

@@ -13,13 +13,23 @@
 
 
 
+@class NoteDetailCell;
+@protocol NoteDetailCellDelegate <NSObject>
+
+
+@end
+
+
+
 @interface NoteDetailCell : UITableViewCell
 
 
+@property (nonatomic, assign, readonly) NSInteger sn;
 @property (nonatomic, assign, readonly) CGFloat optumizeHeight;
+@property (nonatomic, assign) id<NoteDetailCellDelegate> delegate;
 
 //sn : 0 title. sn > 0 content paragraph.
-- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode;
+- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode image:(UIImage*)image imageSize:(CGSize)imageSize;
 
 @end
 //同时给NoteDetailViewController使用, 以便使编辑控件的布局尽量跟NoteDetailCell匹配.

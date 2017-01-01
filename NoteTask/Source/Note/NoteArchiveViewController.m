@@ -60,6 +60,7 @@
 {
     [super viewWillAppear:animated];
     self.title = @"分类";
+    [self navigationItemRightInit];
 }
 
 
@@ -67,6 +68,73 @@
 {
     [super viewWillDisappear:animated];
     
+}
+
+
+- (void)navigationItemRightInit
+{
+    PushButtonData *dataMore = [[PushButtonData alloc] init];
+    dataMore.imageName = @"more";
+    dataMore.actionString = @"more";
+    PushButton *buttonMore = [[PushButton alloc] init];
+    buttonMore.frame = CGRectMake(0, 0, 44, 44);
+    buttonMore.actionData = dataMore;
+    buttonMore.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+    [buttonMore setImage:[UIImage imageNamed:buttonMore.actionData.imageName] forState:UIControlStateNormal];
+    [buttonMore addTarget:self action:@selector(actionMore) forControlEvents:UIControlEventTouchDown];
+    UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
+    
+    self.navigationItem.rightBarButtonItems = @[
+                                                itemMore,
+                                                ];
+}
+
+
+- (void)actionMore
+{
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = @[/*@"新增类别",*/ @"删除类别"];
+    if(self.tableView.editing) {
+        actionStrings = @[@"取消删除"];
+    }
+    [v setTexts:actionStrings];
+    
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [weakSelf dismissPopupView];
+        [weakSelf actionMenuString:actionText];
+        return ;
+    }];
+    
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
+}
+
+
+- (void)actionMenuString:(NSString*)actionText
+{
+    if([actionText isEqualToString:@"新增类别"]) {
+        
+        
+    }
+    
+    if([actionText isEqualToString:@"删除类别"]) {
+        if(self.classifications.count <= 2) {
+            [self showIndicationText:@"没有新增的类别以删除" inTime:1];
+            return ;
+        }
+        
+        [self.tableView setEditing:YES animated:YES];
+        return ;
+    }
+    
+    if([actionText isEqualToString:@"取消删除"]) {
+        [self.tableView setEditing:NO animated:YES];
+        return;
+    }
 }
 
 
@@ -91,8 +159,6 @@
 
 - (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-
-    
     UIColor *colorText              = [UIColor colorWithName:@"NoteCustomSectionHeader"];
     UIColor *colorSectionBackground = [UIColor colorWithName:@"NoteCustomSectionBackground"];
     UIFont *fontText                = [UIFont fontWithName:@"NoteCustomSectionHeader"];
@@ -123,8 +189,6 @@
                              ]
      ];
     
-    
-    NSLog(@"%@", f);
     
     titleLabel.frame    = [f frameLayoutGet:@"_titleLabel"];
     
@@ -253,6 +317,32 @@
         
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.section == 0) {
+        NSString *text = self.classifications[indexPath.row];
+        if(NSNotFound == [[NoteModel classificationPreset] indexOfObject:text]) {
+            return UITableViewCellEditingStyleDelete;
+        }
+    }
+    
+    return UITableViewCellEditingStyleNone;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *text = self.classifications[indexPath.row];
+    NSLog(@"%@", text);
+    
+    [[AppConfig sharedAppConfig] configClassificationRemove:text];
+    
+    [self.tableView setEditing:NO animated:YES];
+    [self dateReloadAll];
+    [self.tableView reloadData];
 }
 
 

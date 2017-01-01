@@ -1,20 +1,67 @@
 <html>
-<head>
-<title>@@note.sn</title>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, user-scalable=1" />
-<title>@@note.title</title>
-<style>
-</style>
-</head>
-<body style="max-width:800px;margin:0 auto;">
-<div id="note_title" style="color:blue;text-align:center">@@note.title</div>
-<div id="note_info">
-    <span class="note_classification" style="margin-left:10px">分类 : @@note.classification</span>
-    <span class="note_createdat1" style="float:right">创建于 : @@note.createdAt</span>
-</div>
-<div id="note_body">
-@@note.content
-</div>
-</body>
+    <head>
+        <title>@@note.sn</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+        <title>@@note.title</p></title>
+        <style type="text/css">
+            html, body {
+                padding: 0;
+                margin: 0 auto;
+                font-size: 20px;
+                /*取消点击事件高亮*/
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+                background: #fff;
+                color: #1D1D1D;
+                width: 100%;
+                font-family: Helvetica;
+                -webkit-overflow-scrolling: touch;
+                max-width: 640px;
+            }
+        
+        header {
+            position: relative;
+            z-index: 800;
+        }
+        
+        .note-info {
+            padding: 0 1rem 0 1rem;
+            background: #ffffff;
+            font-size: 0.85rem;
+            line-height: 1.3rem;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        
+        .note-content {
+            padding: 0 1rem 0 1rem;
+            background: #ffffff;
+            font-size: 0.85rem;
+            line-height: 1.3rem;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        
+        .note-content img {
+            max-width: 100%;
+            height: auto !important;
+        }
+        
+        .note-content p {
+            padding: 0 1rem 0 1rem;
+            margin: 0px;
+            word-wrap: break-word;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="note-title" style="text-align:center">@@note.title</div>
+        <div class="note-info">
+            <span class="note_classification" style="margin-left:10px">分类 : @@note.classification</span>
+            <span class="note_createdate" style="float:right">创建于 : @@note.createdAt</span>
+        </div>
+        <div class="note-content">
+            @@note.content
+        </div>
+    </body>
 </html>
