@@ -55,12 +55,14 @@
         </style>
     </head>
     <body>
-        <div class="note-title" style="text-align:center">@@note.title</div>
-        <div class="note-info">
+        <div class="note-content">
+            @@note.title
+            <p><br><p>
+            <p>
             <span class="note_classification" style="margin-left:10px">分类 : @@note.classification</span>
             <span class="note_createdate" style="float:right">创建于 : @@note.createdAt</span>
-        </div>
-        <div class="note-content">
+            </p>
+            <p><br><p>
             @@note.content
         </div>
     </body>

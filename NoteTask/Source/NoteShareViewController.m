@@ -25,7 +25,16 @@
 @property (nonatomic, strong) NSString *htmPath;
 @property (nonatomic, strong) NSString *pdfName;
 @property (nonatomic, strong) NSString *pdfPath;
-@property (nonatomic, strong) NSData *pdfData;
+//@property (nonatomic, strong) NSData *pdfData;
+
+
+@property (nonatomic, strong) NSMutableArray<NSData*> *pdfDatas;
+@property (nonatomic, assign) NSInteger pdfDatasSections;
+@property (nonatomic, assign) NSInteger pdfDatasSectionsUploaded;
+
+@property (nonatomic, assign) uint64_t totalUnitCount;
+@property (nonatomic, assign) uint64_t completedUnitCount;
+@property (nonatomic, assign) uint64_t sectionUnitCount; //一次上传几M的文件,容易出错, 分片为100K一次.
 
 
 @property (nonatomic, assign) NSInteger    selectedIndex;
@@ -400,7 +409,23 @@
         [self showIndicationText:@"已生成网页文件和PDF文件." inTime:1.];
         [pdfData writeToFile:self.pdfPath atomically:YES];
         self.pdfGenerateStatus = 1;
-        self.pdfData = pdfData;
+        //一次上传文件太大可能容易导致程序出错. 分割成1M的组.
+        
+        NSLog(@"pdfData length : %zd", pdfData.length);
+        self.totalUnitCount = pdfData.length;
+        self.sectionUnitCount = 100 * 1024;
+        
+        self.pdfDatas = [[NSMutableArray alloc] init];
+        self.pdfDatasSections = (pdfData.length + (NSInteger)(self.sectionUnitCount - 1)) / (NSInteger)self.sectionUnitCount;
+        self.pdfDatasSectionsUploaded = 0;
+        const void *bytes = pdfData.bytes;
+        NSInteger offset = 0;
+        for(NSInteger idx = 0; idx < self.pdfDatasSections; idx ++) {
+            NSInteger length = idx < self.pdfDatasSections - 1 ? (NSInteger)self.sectionUnitCount : pdfData.length % self.sectionUnitCount;
+            [self.pdfDatas addObject:[NSData dataWithBytes:bytes+offset length:length]];
+            offset += length;
+        }
+        
         [self actionUploadPdf];
     }
     else {
@@ -516,17 +541,43 @@
     NSString *stringURL = [NSString stringWithFormat:@"%@/upload", self.WANServer];
     NSURLSessionDataTask *task = [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         // 上传文件
-        [formData appendPartWithFileData:[NSData dataWithContentsOfFile:self.pdfPath] name:@"uploadfile" fileName:self.pdfName mimeType:@"application/pdf"];
+        NSData *data = _self.pdfDatas[_self.pdfDatasSectionsUploaded];
+        NSString *fileName = [NSString stringWithFormat:@"%@_%03zd_%03zd", _self.pdfName, _self.pdfDatasSectionsUploaded+1, _self.pdfDatasSections];
+        NSLog(@"---[%zd:%zd] length : %zd", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections, data.length);
+        [formData appendPartWithFileData:data
+                                    name:@"uploadfile"
+                                fileName:fileName
+                                mimeType:@"application/pdf"];
     } progress:^(NSProgress * _Nonnull uploadProgress) {
-        NSLog(@"---%@", uploadProgress);
+        NSLog(@"---[%zd:%zd]%@", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections, uploadProgress);
+        
+        NSLog(@"%lld", uploadProgress.totalUnitCount);
+        NSLog(@"%lld", uploadProgress.completedUnitCount);
+        
+        _self.completedUnitCount = uploadProgress.completedUnitCount + _self.pdfDatasSectionsUploaded * _self.sectionUnitCount;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_self actionUpdateDisplayText];
+        });
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSLog(@"---upload pdf success.");
-        NSString * s = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-        NSLog(@"%@", s);
-        _self.uploadPdfStatus = 1;
-        [_self actionUpdateDisplayText];
+        NSLog(@"---[%zd:%zd]upload pdf success.", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections);
+//        NSString * s = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//        NSLog(@"%@", s);
+        _self.pdfDatasSectionsUploaded ++;
+        if(_self.pdfDatasSectionsUploaded < _self.pdfDatasSections) {
+            NSLog(@"---[%zd:%zd]continue to", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections);
+            _self.completedUnitCount = _self.pdfDatasSectionsUploaded * _self.sectionUnitCount;
+            [_self actionUpdateDisplayText];
+            
+            //继续下一片的上传.
+            [_self actionUploadPdf];
+        }
+        else {
+            NSLog(@"---[%zd:%zd]finish", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections);
+            _self.uploadPdfStatus = 1;
+            [_self actionUpdateDisplayText];
+        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"---upload pdf failure.(%@)", error);
+        NSLog(@"---[%zd:%zd]upload pdf failure.(%@)", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections, error);
         _self.uploadPdfStatus = -1;
         [_self actionUpdateDisplayText];
     }];
@@ -633,7 +684,12 @@
         self.buttonWANAddressShare.hidden = YES;
         if(self.uploadPdfStatus == 0) {
             self.labelWAN.text = @"互联网获取(等待上传中)";
-            self.labelWANAddress.text = @"0";
+            LOG_POSTION
+            if(self.pdfDatasSections > 0) {
+                double percentage = (double)(self.completedUnitCount * 100) / (double)self.totalUnitCount ;
+                self.labelWANAddress.text = [NSString stringWithFormat:@"等待获取地址(上传进度%.1f%%)", percentage];
+                NSLog(@"percentage : %lf, [%lld/%lld]", percentage, self.completedUnitCount, self.totalUnitCount);
+            }
         }
         else if(self.uploadPdfStatus == 1) {
             self.labelWAN.text = @"互联网获取";

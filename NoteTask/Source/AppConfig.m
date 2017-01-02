@@ -831,7 +831,7 @@
 
 - (NSString*)configSettingGet:(NSString*)key
 {
-    NSString *value = @"";
+    NSString *value = nil;
     
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING columnNames:@[@"value"] withQuery:@{@"key":key} withLimit:nil];
     if([queryResult[@"value"] isKindOfClass:[NSArray class]] && ((NSArray*)(queryResult[@"value"])).count == 1 ) {
@@ -845,7 +845,7 @@
 }
 
 
-- (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value
+- (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value replace:(BOOL)replace
 {
     NSDictionary *infoInsert = @{
                                  DBDATA_STRING_COLUMNS:
@@ -862,8 +862,11 @@
                                          ]
                                  };
 
-    [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withInfo:infoInsert orReplace:YES];
+    [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withInfo:infoInsert orReplace:replace];
 }
+
+
+
 
 
 

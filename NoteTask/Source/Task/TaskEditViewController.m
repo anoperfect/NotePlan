@@ -199,7 +199,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     
     UIScrollView *scrollView = (UIScrollView*)self.contentView;
     if([scrollView isKindOfClass:[UIScrollView class]]) {
-        scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 1000);
+        scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 700);
     }
     
     [self contentLabelUpdate];
@@ -249,6 +249,8 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
                             [FrameLayoutView viewWithName:@"_daysInMutilMode" value:_heightDaysInMutilMode edge:UIEdgeInsetsZero],
                             ]
     ];
+    
+    //Add reminder.
      
     [self memberViewSetFrameWith:[f nameAndFrames]];
     
