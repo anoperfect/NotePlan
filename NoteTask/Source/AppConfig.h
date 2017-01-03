@@ -60,7 +60,9 @@
 
 
 - (NSString*)configSettingGet:(NSString*)key;
+//replace为NO时表示只能为新增.
 - (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value replace:(BOOL)replace;
+
 
 
 

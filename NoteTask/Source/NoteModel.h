@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSString *content;
 
 @property (nonatomic, strong) NSString *summary;
+@property (nonatomic, strong) NSString *summaryGenerated;
 @property (nonatomic, strong) NSString *classification;
 @property (nonatomic, strong) NSString *color;
 @property (nonatomic, strong) NSString *thumb;
@@ -50,6 +51,7 @@
 
 - (NSString*)previewTitle;
 - (NSString*)previewSummary;
+- (NSString*)summaryGenerateFromNoteParagraphs:(NSArray<NoteParagraphModel*>*)contentNoteParagraphs;
 
 - (instancetype)initWithJsonData:(NSData*)jsonData;
 - (NSData*)toJsonData;

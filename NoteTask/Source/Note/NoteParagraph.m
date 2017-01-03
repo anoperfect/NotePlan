@@ -212,6 +212,7 @@
 {
     NSMutableArray *noteParagraphs = [[NSMutableArray alloc] init];
     
+    string = [string stringByReplacingOccurrencesOfString:@"<p><br></p>" withString:@""];
     NSArray<NSString *> *paragraphStrings = [string componentsSeparatedByString:@"</p>"];
     for(NSString *paragraphString0 in paragraphStrings) {
         if(paragraphString0.length < 3) {
@@ -238,6 +239,7 @@
     
     for(NoteParagraphModel *noteParagraph in noteParagraphs) {
         [string appendString:[NoteParagraphModel noteParagraphToString:noteParagraph]];
+        [string appendString:@"<p><br></p>"];
     }
     
     return [NSString stringWithString:string];

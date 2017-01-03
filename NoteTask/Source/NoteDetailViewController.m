@@ -1116,6 +1116,7 @@
     }
     else {
         self.noteModel.content = [NoteParagraphModel noteParagraphsToString:self.contentParagraphs];
+        self.noteModel.summaryGenerated = [self.noteModel summaryGenerateFromNoteParagraphs:self.contentParagraphs];
     }
     
     [self updateNoteToLocal];

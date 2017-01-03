@@ -847,6 +847,14 @@
 
 - (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value replace:(BOOL)replace
 {
+    if(!replace) {
+        NSString *valuePrevious = [self configSettingGet:key];
+        if(valuePrevious) {
+            NSLog(@"configSettingSetKey not performed. key[%@] , previous[%@], set[%@]", key, valuePrevious, value);
+            return ;
+        }
+    }
+    
     NSDictionary *infoInsert = @{
                                  DBDATA_STRING_COLUMNS:
                                      @[
@@ -1278,7 +1286,7 @@
 
 - (void)testBeforeBuild
 {
-    //[self.dbData removeDBName:@"config"];
+    [self.dbData removeDBName:@"config"];
 }
 
 

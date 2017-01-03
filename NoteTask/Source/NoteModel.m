@@ -209,7 +209,7 @@ static NSInteger kno = 0;
         title = @"无标题";
     }
     else {
-        title = [NSString stringWithFormat:@"%@"/*, self.sn*/, titleNoteParagraph.content];
+        title = [NSString stringWithFormat:@"%@", titleNoteParagraph.content];
     }
 
     return title;
@@ -222,16 +222,27 @@ static NSInteger kno = 0;
         return self.summary;
     }
     
-    NSMutableString *summary = [[NSMutableString alloc] init];
+    if(self.summaryGenerated.length > 0) {
+        return self.summaryGenerated;
+    }
     
     NSArray<NoteParagraphModel *> *contentNoteParagraphs = [NoteParagraphModel noteParagraphsFromString:self.content];
+    
+    self.summaryGenerated = [self summaryGenerateFromNoteParagraphs:contentNoteParagraphs];
+    return self.summaryGenerated;
+}
+
+
+- (NSString*)summaryGenerateFromNoteParagraphs:(NSArray<NoteParagraphModel *> *)contentNoteParagraphs
+{
+    NSMutableString *summary = [[NSMutableString alloc] init];
     for(NoteParagraphModel *noteParagraph in contentNoteParagraphs) {
         [summary appendFormat:@"%@ ", [noteParagraph.content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
     }
     
     summary = [NSMutableString stringWithString:[summary stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
     if(summary.length == 0) {
-        return @"无内容";
+        summary = [NSMutableString stringWithString:@"无内容"];
     }
     
     return [NSString stringWithString:summary];
