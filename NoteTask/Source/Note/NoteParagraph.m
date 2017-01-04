@@ -107,24 +107,40 @@
 
 + (NSString*)noteParagraphToString:(NoteParagraphModel*)noteParagraph
 {
+    NSString *s = @"";
     if(noteParagraph.image.length == 0) {
-        return [NSString stringWithFormat:
+        s = [NSString stringWithFormat:
                 @"<p style=\"%@\">%@</p>"
                 , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
                 , [NSString htmEncode:noteParagraph.content]];
     }
     else {
-        return [NSString stringWithFormat:
+        s = [NSString stringWithFormat:
                 @"<p style=\"%@\"><img src=\"%@\"/>%@</p>"
                 , [NoteParagraphModel styleDictionaryToString:noteParagraph.styleDictionay]
                 , noteParagraph.image
                 , [NSString htmEncode:noteParagraph.content]];
     }
+    
+    NSLog(@"---[%@]", s);
+    return s;
 }
 
 
 + (NSMutableDictionary*)styleParseFromString:(NSString*)styleString
 {
+    NSString *sFrom = @"style=\"";
+    NSString *sTo = @"\"";
+    
+    NSRange rangeFrom = [styleString rangeOfString:sFrom];
+    if(rangeFrom.length > 0) {
+        NSInteger indexFrom = rangeFrom.location + rangeFrom.length;
+        NSRange rangeTo = [styleString rangeOfString:sTo options:0 range:NSMakeRange(indexFrom, styleString.length - indexFrom)];
+        if(rangeTo.length > 0) {
+            styleString = [styleString substringWithRange:NSMakeRange(indexFrom, rangeTo.location - indexFrom)];
+        }
+    }
+    
     NSMutableDictionary *styleDictionary = [[NSMutableDictionary alloc] init];
     NSArray<NSString*> *styles = [styleString componentsSeparatedByString:@";"];
     for(NSString *style1String in styles) {

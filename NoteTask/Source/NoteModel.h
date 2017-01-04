@@ -53,8 +53,6 @@
 - (NSString*)previewSummary;
 - (NSString*)summaryGenerateFromNoteParagraphs:(NSArray<NoteParagraphModel*>*)contentNoteParagraphs;
 
-- (instancetype)initWithJsonData:(NSData*)jsonData;
-- (NSData*)toJsonData;
 
 + (NoteModel*)noteFromDictionary:(NSDictionary*)dict;
 - (NSDictionary*)toDictionary;

@@ -17,40 +17,6 @@
 
 @implementation NoteModel
 
-static NSInteger kno = 0;
-
-- (instancetype)initWithJsonData:(NSData*)jsonData
-{
-    kno ++;
-    
-    self.title = [NSString stringWithFormat:@"title%zd中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁", kno];
-    self.content = [NSString stringWithFormat:@"内容%zd中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁", kno];
-    
-    //NSString *jsonString = @"";
-    
-    
-    
-    
-    
-    
-    
-    return self;
-}
-
-
-- (NSData*)toJsonData
-{
-    return nil;
-}
-
-
-- (NSString*)contents
-{
-    return [NSString stringWithFormat:@"content%zd中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁中文换行布丁", kno];
-    
-}
-
-
 - (NSString*)description
 {
     NSMutableString *strm = [[NSMutableString alloc] init];
@@ -68,7 +34,7 @@ static NSInteger kno = 0;
             && [self.summary    isEqualToString:note.summary]
             && [self.source     isEqualToString:note.source]
             && [self.createdAt  isEqualToString:note.createdAt]
-    
+            && [self.modifiedAt isEqualToString:note.modifiedAt]
     ;
 }
 
@@ -170,23 +136,41 @@ static NSInteger kno = 0;
 }
 
 
+- (NSString*)stringMemberCheck:(id)member
+{
+    if([member isKindOfClass:[NSString class]]) {
+        return member;
+    }
+    
+    if([member isKindOfClass:[NSNumber class]]) {
+        NSLog(@"#error - member should be NSString.");
+        return [NSString stringWithFormat:@"%@", member];
+    }
+    
+    NSLog(@"#error - member should be NSString.");
+    return @"";
+}
+
+
 - (NSDictionary*)toDictionary
 {
     NSMutableDictionary *noteDict = [[NSMutableDictionary alloc] init];
-    noteDict[@"sn"]               = self.sn;
-    noteDict[@"title"]            = self.title;
-    noteDict[@"content"]          = self.content;
-    noteDict[@"summary"]          = self.summary;
-    noteDict[@"classification"]   = self.classification;
-    noteDict[@"color"]            = self.color;
-    noteDict[@"thumb"]            = self.thumb;
-    noteDict[@"audio"]            = self.audio;
-    noteDict[@"location"]         = self.location;
-    noteDict[@"createdAt"]        = self.createdAt;
-    noteDict[@"modifiedAt"]       = self.modifiedAt;
-    noteDict[@"browseredAt"]      = self.browseredAt;
-    noteDict[@"deletedAt"]        = self.deletedAt;
-    noteDict[@"source"]           = self.source;
+    
+    noteDict[@"sn"]               = [self stringMemberCheck:self.sn];
+    noteDict[@"title"]            = [self stringMemberCheck:self.title];
+    noteDict[@"content"]          = [self stringMemberCheck:self.content];
+    noteDict[@"summary"]          = [self stringMemberCheck:self.summary];
+    noteDict[@"summaryGenerated"] = [self stringMemberCheck:self.summaryGenerated];
+    noteDict[@"classification"]   = [self stringMemberCheck:self.classification];
+    noteDict[@"color"]            = [self stringMemberCheck:self.color];
+    noteDict[@"thumb"]            = [self stringMemberCheck:self.thumb];
+    noteDict[@"audio"]            = [self stringMemberCheck:self.audio];
+    noteDict[@"location"]         = [self stringMemberCheck:self.location];
+    noteDict[@"createdAt"]        = [self stringMemberCheck:self.createdAt];
+    noteDict[@"modifiedAt"]       = [self stringMemberCheck:self.modifiedAt];
+    noteDict[@"browseredAt"]      = [self stringMemberCheck:self.browseredAt];
+    noteDict[@"deletedAt"]        = [self stringMemberCheck:self.deletedAt];
+    noteDict[@"source"]           = [self stringMemberCheck:self.source];
     noteDict[@"synchronize"]      = self.synchronize;
     noteDict[@"countCollect"]     = @(self.countCollect);
     noteDict[@"countLike"]        = @(self.countLike);

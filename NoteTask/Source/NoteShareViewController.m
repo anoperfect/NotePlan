@@ -501,7 +501,7 @@
         // 上传文件
         [formData appendPartWithFileData:[NSData dataWithContentsOfFile:self.htmPath] name:@"uploadfile" fileName:self.htmName mimeType:@"text/html"];
         for(NoteParagraphModel *paragraph in self.contentNoteParagraphs) {
-            if(paragraph.image.length > 0) {
+            if(paragraph.image.length > 0 && ![paragraph.image hasPrefix:@"http://"] && ![paragraph.image hasPrefix:@"https://"]) {
                 NSString *imageFileName = [NoteModel imageLocalFileNameOfImageName:paragraph.image];
                 NSData *data = [NSData dataWithContentsOfFile:imageFileName];
                 if(data.length > 0) {
@@ -705,9 +705,6 @@
             self.labelWANAddress.text = @"-1";
         }
     }
-    
-    NSLog(@"%@", self.buttonLANAddressShare);
-    NSLog(@"%@", self.buttonWANAddressShare);
 }
 
 
