@@ -23,21 +23,20 @@
 }
 
 
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
     [super setHighlighted:highlighted animated:animated];
     
     NS0Log(@"setHighlighted");
     
     if (self.highlighted) {
-        
         POPBasicAnimation *scaleAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewScaleXY];
         scaleAnimation.duration           = 0.1f;
         scaleAnimation.toValue            = [NSValue valueWithCGPoint:CGPointMake(0.95, 0.95)];
         [self.titleLabel pop_addAnimation:scaleAnimation forKey:@"scaleAnimation"];
         
-    } else {
-        
+    }
+    else {
         POPSpringAnimation *scaleAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
         scaleAnimation.toValue             = [NSValue valueWithCGPoint:CGPointMake(1, 1)];
         scaleAnimation.velocity            = [NSValue valueWithCGPoint:CGPointMake(2, 2)];

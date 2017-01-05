@@ -496,6 +496,7 @@
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
     if(self.onSelectedMode) {
+        NSLog(@"onSelectedMode");
         [self.indexPathsSelected addObject:indexPath];
         
         NoteModel *note = [self noteOnIndexPath:indexPath];

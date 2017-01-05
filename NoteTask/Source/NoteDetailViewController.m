@@ -307,7 +307,7 @@
         height = [heightNumber floatValue];
     }
     
-    NSLog(@"row %zd height %f", indexPath.row, height);
+    NS0Log(@"row %zd height %f", indexPath.row, height);
     return height;
 }
 

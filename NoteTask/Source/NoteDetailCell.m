@@ -194,7 +194,7 @@
         frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
         
         self.noteParagraphLabel.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:editMode];
-        NSLog(@"sn : %zd, content : %@, text : %@. \n(%@)", sn
+        NS0Log(@"sn : %zd, content : %@, text : %@. \n(%@)", sn
               , noteParagraph.content
               , self.noteParagraphLabel.attributedText.string
               , self.noteParagraphLabel.attributedText);
@@ -208,9 +208,6 @@
         }
         self.noteParagraphLabel.frame = frameLabel;
     }
-    
-    
-
     
     frameContainer.size.height = frameLabel.size.height + edgeLabel.top + edgeLabel.bottom;
     frame.size.height = frameContainer.size.height + NOTEDETAILCELL_EDGE_CONTAINER.top + NOTEDETAILCELL_EDGE_CONTAINER.bottom;

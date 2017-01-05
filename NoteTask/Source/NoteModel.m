@@ -213,6 +213,7 @@
     NSArray<NoteParagraphModel *> *contentNoteParagraphs = [NoteParagraphModel noteParagraphsFromString:self.content];
     
     self.summaryGenerated = [self summaryGenerateFromNoteParagraphs:contentNoteParagraphs];
+    [[AppConfig sharedAppConfig] configNoteUpdate:self];
     return self.summaryGenerated;
 }
 
