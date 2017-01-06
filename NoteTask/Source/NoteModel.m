@@ -395,6 +395,18 @@
 }
 
 
++ (void)imageDataLocalRemoveWithName:(NSString *)imageName
+{
+    NSString *fileName = [self imageLocalFileNameOfImageName:imageName];
+    if([[NSFileManager defaultManager] fileExistsAtPath:fileName isDirectory:nil]) {
+        [[NSFileManager defaultManager] removeItemAtPath:fileName error:nil];
+    }
+    else {
+        NSLog(@"#error - remove failed at [%@]", fileName);
+    }
+}
+
+
 + (NSString*)imageNameNewOnSn:(NSString*)sn format:(NSString*)format
 {
     NSString *imageName = [NSString stringWithFormat:@"NoteImage%@_%@", [NSString dateTimeStringNow], sn];

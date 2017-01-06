@@ -122,7 +122,7 @@
                 , [NSString htmEncode:noteParagraph.content]];
     }
     
-    NSLog(@"---[%@]", s);
+    NS0Log(@"---[%@]", s);
     return s;
 }
 

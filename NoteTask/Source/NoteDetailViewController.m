@@ -362,20 +362,20 @@
                 imageSet = image;
                 imageSize.width = tableView.frame.size.width - (NOTEDETAILCELL_EDGE_CONTAINER.left + NOTEDETAILCELL_EDGE_CONTAINER.right) - (NOTEDETAILCELL_EDGE_LABEL.left + NOTEDETAILCELL_EDGE_LABEL.right);
                 imageSize.height = image.size.height / image.size.width * imageSize.width;
-                NSLog(@"123456 use cache.");
+                NSLog(@">NoteImage use cache.");
             }
             else {
                 //显示缓存损坏.
                 imageSize.width = 60;
                 imageSize.height = 60;
                 imageSet = [UIImage imageNamed:@"PictureCacheError"];
-                NSLog(@"123456 cache error.");
+                NSLog(@">NoteImage cache error.");
             }
         }
         else {
             //查看是否在下载失败列表中.
             if(NSNotFound != [self.urlStringsDownloadFailed indexOfObject:noteParagraph.image]) {
-                NSLog(@"123456 in download error list.");
+                NSLog(@">NoteImage in download error list.");
                 //显示下载失败.
                 imageSize.width = 60;
                 imageSize.height = 60;
@@ -386,7 +386,7 @@
                 imageSize.width = 60;
                 imageSize.height = 60;
                 imageSet = [UIImage imageNamed:@"LoadingPicture"];
-                NSLog(@"123456 use default first.");
+                NSLog(@">NoteImage use default first.");
                 
                 //启动网络下载.
                 NSString *urlString = noteParagraph.image;
@@ -396,7 +396,7 @@
                     UIImage *image = nil;
                     if([data isKindOfClass:[NSData class]] && nil != (image = [UIImage imageWithData:data])) {
                         [NoteModel imageDataCacheSet:data withName:urlString];
-                        NSLog(@"123456 set to cache.");
+                        NSLog(@">NoteImage set to cache.");
                     }
                     else {
                         NSLog(@"#error - download image failed.(%@)", urlString);
@@ -420,14 +420,14 @@
                 imageSet = image;
                 imageSize.width = tableView.frame.size.width - (NOTEDETAILCELL_EDGE_CONTAINER.left + NOTEDETAILCELL_EDGE_CONTAINER.right) - (NOTEDETAILCELL_EDGE_LABEL.left + NOTEDETAILCELL_EDGE_LABEL.right);
                 imageSize.height = image.size.height / image.size.width * imageSize.width;
-                NSLog(@"123456 use local.");
+                NSLog(@">NoteImage use local.");
             }
             else {
                 //显示缓存损坏.
                 imageSize.width = 60;
                 imageSize.height = 60;
                 imageSet = [UIImage imageNamed:@"PictureCacheError"];
-                NSLog(@"123456 local error.");
+                NSLog(@">NoteImage local error.");
             }
         }
         else {
@@ -435,7 +435,7 @@
             imageSize.width = 60;
             imageSize.height = 60;
             imageSet = [UIImage imageNamed:@"PictureCacheError"];
-            NSLog(@"123456 local error.");
+            NSLog(@">NoteImage local error.");
         }
     }
     
@@ -693,6 +693,7 @@
     }
     
     if([string isEqualToString:@"移除图片"]) {
+        [NoteModel imageDataLocalRemoveWithName:noteParagraph.image];
         noteParagraph.image = nil;
         [self reloadNoteParagraphAtIndexPath:indexPath due:@"RemoveImage"];
         [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];

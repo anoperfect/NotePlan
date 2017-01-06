@@ -80,6 +80,7 @@
 + (NSString*)imageLocalFileNameOfImageName:(NSString*)imageName;
 + (NSData*)imageDataLocalWithName:(NSString*)imageName;
 + (void)imageDataLocalSet:(NSData*)data withName:(NSString*)imageName;
++ (void)imageDataLocalRemoveWithName:(NSString *)imageName;
 
 
 

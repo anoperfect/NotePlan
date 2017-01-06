@@ -27,9 +27,8 @@
 {
     [super setHighlighted:highlighted animated:animated];
     
-    NS0Log(@"setHighlighted");
-    
     if (self.highlighted) {
+        NS0Log(@"setHighlighted : 1");
         POPBasicAnimation *scaleAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewScaleXY];
         scaleAnimation.duration           = 0.1f;
         scaleAnimation.toValue            = [NSValue valueWithCGPoint:CGPointMake(0.95, 0.95)];
@@ -37,6 +36,7 @@
         
     }
     else {
+        NS0Log(@"setHighlighted : 0");
         POPSpringAnimation *scaleAnimation = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
         scaleAnimation.toValue             = [NSValue valueWithCGPoint:CGPointMake(1, 1)];
         scaleAnimation.velocity            = [NSValue valueWithCGPoint:CGPointMake(2, 2)];

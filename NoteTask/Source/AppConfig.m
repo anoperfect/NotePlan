@@ -1204,11 +1204,11 @@
     NSArray *notePresets = [NSArray yy_modelArrayWithClass:[NoteModel class] json:data];
     
     for(NoteModel *note in notePresets) {
+        //使用modifiedAt标记是否存在修改. 有修改才重新增加预制.
         NSArray<NoteModel*> *notesQuery = [self configNoteGetsWithQuery:@{
                                                                           @"title":note.title,
                                                                           @"modifiedAt":note.modifiedAt,
-                                                                          }
-                                           ];
+                                                                          }];
         if(notesQuery.count > 0) {
             NSLog(@"Note preset already added.");
         }
