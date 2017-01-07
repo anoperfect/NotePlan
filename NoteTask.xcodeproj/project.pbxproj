@@ -62,6 +62,8 @@
 		B5AD77CD1DD420D8000CC52D /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77CC1DD420D8000CC52D /* FrameLayout.m */; };
 		B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */; };
 		B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392B01D407968001D30BF /* NotePropertyView.m */; };
+		B5B797C61E213D0400AC7303 /* PictureCacheError.png in Resources */ = {isa = PBXBuildFile; fileRef = B5B797C51E213D0400AC7303 /* PictureCacheError.png */; };
+		B5B797C81E213D0D00AC7303 /* PictureDownloadError.png in Resources */ = {isa = PBXBuildFile; fileRef = B5B797C71E213D0D00AC7303 /* PictureDownloadError.png */; };
 		B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */; };
 		B5B905411D4FC3E900DF1E24 /* db.json in Resources */ = {isa = PBXBuildFile; fileRef = B5B905401D4FC3E900DF1E24 /* db.json */; };
 		B5BF33E21DFBF3FD00624154 /* NoteArchiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BF33E11DFBF3FD00624154 /* NoteArchiveViewController.m */; };
@@ -203,6 +205,8 @@
 		B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePCustmiseViewController.m; path = Source/NotePCustmiseViewController.m; sourceTree = "<group>"; };
 		B5B392AF1D407968001D30BF /* NotePropertyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePropertyView.h; path = Source/NotePropertyView.h; sourceTree = "<group>"; };
 		B5B392B01D407968001D30BF /* NotePropertyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePropertyView.m; path = Source/NotePropertyView.m; sourceTree = "<group>"; };
+		B5B797C51E213D0400AC7303 /* PictureCacheError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PictureCacheError.png; path = Image/Download/PictureCacheError.png; sourceTree = "<group>"; };
+		B5B797C71E213D0D00AC7303 /* PictureDownloadError.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PictureDownloadError.png; path = Image/Download/PictureDownloadError.png; sourceTree = "<group>"; };
 		B5B9053D1D4FB0AC00DF1E24 /* AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = Source/AppConfig.h; sourceTree = "<group>"; };
 		B5B9053E1D4FB0AC00DF1E24 /* AppConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppConfig.m; path = Source/AppConfig.m; sourceTree = "<group>"; };
 		B5B905401D4FC3E900DF1E24 /* db.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = db.json; path = Source/db.json; sourceTree = "<group>"; };
@@ -457,6 +461,8 @@
 				B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */,
 				B539592F1D29524700FB5408 /* NoteBackground1.png */,
 				B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */,
+				B5B797C51E213D0400AC7303 /* PictureCacheError.png */,
+				B5B797C71E213D0D00AC7303 /* PictureDownloadError.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -808,7 +814,9 @@
 				B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */,
 				B53959301D29524700FB5408 /* NoteBackground1.png in Resources */,
 				B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */,
+				B5B797C81E213D0D00AC7303 /* PictureDownloadError.png in Resources */,
 				B58D5D711DF9030800133C60 /* NotePreset.json in Resources */,
+				B5B797C61E213D0400AC7303 /* PictureCacheError.png in Resources */,
 				B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */,
 				B5B905411D4FC3E900DF1E24 /* db.json in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,

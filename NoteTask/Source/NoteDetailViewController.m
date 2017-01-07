@@ -238,7 +238,6 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-//    self.title = @"";
 }
 
 
