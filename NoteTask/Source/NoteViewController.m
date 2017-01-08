@@ -495,6 +495,7 @@
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
+    NSLog(@"NoteModel did select.");
     if(self.onSelectedMode) {
         NSLog(@"onSelectedMode");
         [self.indexPathsSelected addObject:indexPath];
@@ -522,9 +523,6 @@
     });
     NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithNoteModel:note];
     [self.navigationController pushViewController:vc animated:YES];
-    
-    NSLog(@"NoteModel did select.");
-    NS0Log(@"%@", note);
 }
 
 
@@ -541,8 +539,6 @@
         
         return;
     }
-    
-    
 }
 
 
@@ -750,9 +746,6 @@
         self.topNotesView = 36;
         [self viewWillLayoutSubviews];
     }];
-    
-    
-    
 }
 
 
@@ -1032,7 +1025,6 @@
 - (void)dataNotesDeleteOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
 {
     LOG_POSTION
-    
     //数据库删除对应note数据.
     NSArray<NSString*>* sns = [self dataNotesSnOnIndexPaths:indexPaths] ;
     [[AppConfig sharedAppConfig] configNoteDeleteBySns:sns];

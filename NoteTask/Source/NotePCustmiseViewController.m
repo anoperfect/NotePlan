@@ -289,8 +289,6 @@
     self.textBackgroundColorInput.layer.borderColor = [UIColor blackColor].CGColor;
     
     [self updateSampleText];
-    
-    
 }
 
 
@@ -430,7 +428,6 @@
 - (void)switchValueChangeItalic
 {
     NSLog(@"Italic : %d", self.italicSwitch.on);
-    
     if(self.italicSwitch.on) {
         self.sampleNoteParagraph.styleDictionay[@"font-style"] = @"italic";
     }

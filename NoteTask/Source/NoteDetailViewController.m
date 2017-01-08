@@ -450,7 +450,6 @@
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
     NSLog(@"row : %zd", indexPath.row);
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     //属性框显示的时候. 点击任意栏会执行关闭属性框.
