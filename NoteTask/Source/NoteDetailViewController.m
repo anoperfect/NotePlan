@@ -514,6 +514,8 @@
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    return YES;
+#if 0
     if(self.indexPathOnEditing) {
         if([indexPath isEqual:self.indexPathOnEditing]) {
             return YES;
@@ -525,6 +527,7 @@
     else {
         return YES;
     }
+#endif
 }
 
 

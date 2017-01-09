@@ -245,7 +245,6 @@
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?self.createdAt:@""];
     
-    //NSLog(@"-=-=-=\n\n\n%@\n\n\n", s);
     return s;
 }
 
@@ -424,90 +423,7 @@
 
 @end
 
-#if 0
-NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"设计师心情最平静的时候是熬夜做完案子准备睡觉时，看见天色有些发白，听见一两声鸟。为了更加形象地描述（嘲讽）这个脑细胞平均每天死一万次的职业，《Lean Branding》的作者Laura Busche画了10张图，长这样：";
 
-[self.contentParagraphs addObject:noteParagraph];
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"1、设计师听到最幸福的情话就是：挺好的，用这稿！如果改到山穷水尽疑无路，设计师真的会想说“kill me，kill me now”。fs fsdfsdkfjs dfsdklfdskjf sdkfjds fsldkflsdfk sdfk sd;lkf s;ldfkdslkfsdl";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"2.直播优化层面";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"其实最难的难点是提高首播时间、服务质量即Qos（Quality of Service，服务质量），如何在丢包率20%的情况下还能保障稳定、流畅的直播体验，需要考虑以下方案：";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"1）为加快首播时间，收流服务器主动推送 GOP :（Group of Pictures:策略影响编码质量)所谓GOP，意思是画面组，一个GOP就是一组连续的画面至边缘节点，边缘节点缓存 GOP，播放端则可以快速加载，减少回源延迟";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"2）GOP丢帧，为解决延时，为什么会有延时，网络抖动、网络拥塞导致的数据发送不出去，丢完之后所有的时间戳都要修改，切记，要不客户端就会卡一个 GOP的时间，是由于 PTS（Presentation Time Stamp，PTS主要用于度量解码后的视频帧什么时候被显示出来） 和 DTS 的原因，或者播放器修正 DTS 和 PTS 也行（推流端丢GOD更复杂，丢 p 帧之前的 i 帧会花屏）";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"3）纯音频丢帧，要解决音视频不同步的问题，要让视频的 delta增量到你丢掉音频的delta之后，再发音频，要不就会音视频不同步";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"4）源站主备切换和断线重连";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"5）根据TCP拥塞窗口做智能调度，当拥塞窗口过大说明节点服务质量不佳，需要切换节点和故障排查";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"6）增加上行、下行带宽探测接口，当带宽不满足时降低视频质量，即降低码率";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"7）定时获取最优的推流、拉流链路IP，尽可能保证提供最好的服务";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"8)监控必须要，监控各个节点的Qos状态，来做整个平台的资源配置优化和调度";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"9）如果产品从推流端、CDN、播放器都是自家的，保障 Qos 优势非常大";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"10）当直播量非常大时，要加入集群管理和调度，保障 Qos";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"11）播放端通过增加延时来减少网络抖动，通过快播来减少延时。（出自知乎宋少东）。";
-[self.contentParagraphs addObject:noteParagraph];
-
-
-
-
-noteParagraph = [[NoteParagraphModel alloc] init];
-noteParagraph.content = @"7、你不知道排版最难的地方就是一点一点的间距和文字，真的会瞎掉我的狗眼，别说5分钟给我排个版，你以为是ppt？";
-[self.contentParagraphs addObject:noteParagraph];
-
-[self.contentParagraphs addObjectsFromArray:self.contentParagraphs];
-#endif
 
 
 

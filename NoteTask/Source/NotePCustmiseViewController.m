@@ -484,8 +484,6 @@
 }
 
 
-
-
 - (void)finish
 {
     NSLog(@"done. styple : %@", self.sampleNoteParagraph.styleDictionay);

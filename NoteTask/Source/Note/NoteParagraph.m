@@ -321,7 +321,7 @@
         }
         else {
             if(sn == 0) {
-                content = @"无标题";
+                content = @"";
             }
             else {
                 content = @"";

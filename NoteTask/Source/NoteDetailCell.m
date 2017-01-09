@@ -233,7 +233,7 @@
     }
     
     heightOptumize = frame.size.height;
-    NSLog(@"heightOptumize : %f", heightOptumize);
+    NS0Log(@"heightOptumize : %f", heightOptumize);
     self.optumizeHeight = heightOptumize;
 }
 

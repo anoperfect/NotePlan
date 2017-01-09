@@ -749,28 +749,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 - (NSString*)configSettingGet:(NSString*)key
 {
     NSString *value = nil;
@@ -889,7 +867,6 @@
 }
 
 
-
 - (BOOL)configTaskInfoAdd:(TaskInfo*)taskinfo
 {
     BOOL result = YES;
@@ -960,7 +937,6 @@
     
     return [NSArray arrayWithArray:arrayReturnM];
 }
-
 
 
 - (BOOL)configTaskRecordAdd:(TaskRecord*)taskRecord
@@ -1111,8 +1087,6 @@
         [self.session setResponseSerializer:[AFHTTPResponseSerializer serializer]];
     }
     
-    
-    
     return self.session;
 }
 
@@ -1177,6 +1151,76 @@
     note.classification = @"新增";
 //    [self configNoteAdd:note];
     
+    NSMutableArray *contentParagraphs = [[NSMutableArray alloc] init];
+    NoteParagraphModel *noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"设计师心情最平静的时候是熬夜做完案子准备睡觉时，看见天色有些发白，听见一两声鸟。为了更加形象地描述（嘲讽）这个脑细胞平均每天死一万次的职业，《Lean Branding》的作者Laura Busche画了10张图，长这样：";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"1、设计师听到最幸福的情话就是：挺好的，用这稿！如果改到山穷水尽疑无路，设计师真的会想说“kill me，kill me now”。fs fsdfsdkfjs dfsdklfdskjf sdkfjds fsldkflsdfk sdfk sd;lkf s;ldfkdslkfsdl";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"2.直播优化层面";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"其实最难的难点是提高首播时间、服务质量即Qos（Quality of Service，服务质量），如何在丢包率20%的情况下还能保障稳定、流畅的直播体验，需要考虑以下方案：";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"1）为加快首播时间，收流服务器主动推送 GOP :（Group of Pictures:策略影响编码质量)所谓GOP，意思是画面组，一个GOP就是一组连续的画面至边缘节点，边缘节点缓存 GOP，播放端则可以快速加载，减少回源延迟";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"2）GOP丢帧，为解决延时，为什么会有延时，网络抖动、网络拥塞导致的数据发送不出去，丢完之后所有的时间戳都要修改，切记，要不客户端就会卡一个 GOP的时间，是由于 PTS（Presentation Time Stamp，PTS主要用于度量解码后的视频帧什么时候被显示出来） 和 DTS 的原因，或者播放器修正 DTS 和 PTS 也行（推流端丢GOD更复杂，丢 p 帧之前的 i 帧会花屏）";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"3）纯音频丢帧，要解决音视频不同步的问题，要让视频的 delta增量到你丢掉音频的delta之后，再发音频，要不就会音视频不同步";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"4）源站主备切换和断线重连";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"5）根据TCP拥塞窗口做智能调度，当拥塞窗口过大说明节点服务质量不佳，需要切换节点和故障排查";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"6）增加上行、下行带宽探测接口，当带宽不满足时降低视频质量，即降低码率";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"7）定时获取最优的推流、拉流链路IP，尽可能保证提供最好的服务";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"8)监控必须要，监控各个节点的Qos状态，来做整个平台的资源配置优化和调度";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"9）如果产品从推流端、CDN、播放器都是自家的，保障 Qos 优势非常大";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"10）当直播量非常大时，要加入集群管理和调度，保障 Qos";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"11）播放端通过增加延时来减少网络抖动，通过快播来减少延时。（出自知乎宋少东）。";
+    [contentParagraphs addObject:noteParagraph];
+    
+    noteParagraph = [[NoteParagraphModel alloc] init];
+    noteParagraph.content = @"7、你不知道排版最难的地方就是一点一点的间距和文字，真的会瞎掉我的狗眼，别说5分钟给我排个版，你以为是ppt？";
+    [contentParagraphs addObject:noteParagraph];
+    
+    note.sn = @"design";
+    note.title = @"<p style=\"color:blue; text-align:center\">平面设计师.</p>";
+    note.content = [NoteParagraphModel noteParagraphsToString:contentParagraphs];
+    [self configNoteAdd:note];
+    
     note.sn = @"123456";
     note.title = @"<p style=\"color:blue; text-align:center\">上周扎克伯格在位于帕洛奥图的家中接受记者采访。他要给记者展示一个现实版贾维斯的Demo，这是该项目首次接受采访。</p>";
     note.content = @"<p>据Fast Company报道，当新工程师加入Facebook时——无论是初出茅庐的毕业生还是从其他公司转投而来的副总级别的人物——他们都会在名为“Bootcamp”的新人训练营接受为期六个星期的密集培训。此计划旨在帮助他们了解公司庞大的代码库，以及一套不断发展的编程工具。</p><p>作为Facebook的创立者和首任工程师，马克·扎克伯格（Mark Zuckerberg）在早期给代码库贡献了比其他人都多的代码。</p><p>2004年扎克伯格在哈佛宿舍里创办了Facebook，两年后推出Bootcamp计划，然而这位现年32岁的CEO从来没参加过Bootcamp。</p><p>今年一月，扎克伯格宣布了他2016年的年度目标：他要打造一个人工智能系统，使用Facebook软件工具来管理他的家。AI是对Facebook未来至关重要的技术领域，新的开发目标也迫使他更新自己对编程和工作流程的经验。同时这又将他与工程师的日常经验和企业文化重新联系在一起。</p><p>然而Facebook CEO的职位并不允许他拿出六个星期的时间参加“新人再教育”。</p><p>“我没有经历正式的Bootcamp培训。”上周扎克伯格在位于帕洛奥图的家中接受记者采访。他要给记者展示一个现实版贾维斯的Demo，这是该项目首次接受采访。“但是当我问人们问题时，你可以想象他们回复得很快。”</p><p><img src=\"https://imgs.bipush.com/article/cover/201612/20/104033024478.png\"/></p><p><img src=\"https://imgs.bipush.com/article/cover/201612/20/104037011695.png\"/>（扎克伯格指挥他的贾维斯AI助理开灯）</p><p>扎克伯格一直以来喜欢开发所带来的“确定性”，这是打造任何梦想之物所需的基本元素。与此相比，作为企业领导人，指挥着一万五千人的团队服务数十亿用户虽然堪称野心勃勃，但他错过了愉快的确定性。</p><p>也正是这个原因让他在闲暇时间继续从事小型项目的开发。他在2012年给自己立下的年度挑战是每天写代码。多年来他一直参加多个公司的黑客马拉松，并且作为闲暇练手，他曾经写了一个系统，通过配对Facebook组织图和内部社交图查看公司里哪个团体最具社交关系。</p><p>扎克伯格告诉记者，亲自力行参与编码让他重拾初学汉语时的感觉——2010年他将学汉语作为年度目标——大脑感觉到被激活的兴奋。</p><p>Facebook的企业文化要求如果你开发的程序出现毛病，你就得停止手头正在做的事去解决问题。这个要求对于日理万机的大公司CEO来说当然不太实际。“我要么被迫退出会议，要么就得请其他人修改我的代码，后者当然要不得。”他说。以至于很多时候他都是在工作时间修改他私人项目的代码。</p><p>在过去一年，扎克伯格在他的家庭项目上总共投入了大概100～150个小时。</p><p>虽然它被效仿钢铁侠命名为“贾维斯”，但它更像是Alexa那样的高度个人化的东西：他和妻子普莉希拉使用定制的iPhone程序或Facebook Messenger聊天机器人控制电灯开关、根据个人口味播放音乐、为访客开门、烤吐司片、还有提醒他们一岁的女儿Max不要忘了上汉语课。</p><p>扎克伯格的房子坐落在帕洛奥图17000平方英尺的安静地段。当你造访时，贾维斯识别来客，并提醒主人你的到达。当你穿过木门，穿过花园走廊，扎克伯格会亲自出来迎接你。</p><p>不管线上线下，扎克伯格的外表看起来都是同一副打扮：短棕色的头发配上灰色T恤和牛仔裤。你在网络照片和视频中见到太多次这个形象，以至于可能会需要一点时间来确定此时在门口欢迎你的是真人本人。</p><p>最近几个星期扎克伯格工作上的事儿比较忙，他在同时努力解决三个难题：关于Facebook在总统大选前是否是假新闻的主要传播驱动力，与股东交涉在卖出股票的情况下保留对企业的控制权，同时广告客户也在关注Facebook在广告点击观看率上的计算方法。</p><p>相比之下谈论贾维斯是比较轻松的任务。扎克伯格坐在客厅里的一个深绿色沙发上，他的匈牙利牧羊犬卧在一边。扎克伯格轻松自在地向记者讲述过去一年里打造贾维斯系统的经历，它如何让事情变得更简单，当然偶尔也会带来麻烦。</p><ul class=\" list-paddingleft-2\"></ul><p>在他一月份对外宣布贾维斯项目的文章中，扎克伯格写道：他将开始建立一个系统，允许他使用声音控制房子里的一切，包括音乐、灯光和温度。他还想让贾维斯通过人像识别实现访客接待，并且在客人到达时嘱咐对方在小女儿房间里的注意事项。他希望该系统能“用VR可视化数据帮助我打造更好的服务，更有效率地领导我的组织”。</p><p>一年之后的今天，他已经实现了诺言中的绝大部分——VR部分有所保留——而且它整体上运转良好。在他对记者展示这个系统时，还是出现了一些小瑕疵。</p><p>Messenger聊天机器人被作为整个系统的前端。扎克伯格首先打开Messenger，演示开关灯。效果令人满意。</p><p>同时他还建立了响应语音指令的系统。他为此单独开发了一个iOS应用程序。展示结果并不太理想，他不得不反复讲了四次才让系统弄明白他的指令。</p><p>“喔，这应该是它最失败的表现了。”扎克伯格略显尴尬地说。</p><p>让系统播放音乐很成功。“给我们放段音乐吧。”他下达命令。几秒钟后，David Guetta的 &quot;Would I Lie to You&quot; 开始响起来。“把音量调高。”他说了两次，系统都做到了。最后他同样用了两次才让智能管家把音乐停了下来。</p><p>贾维斯最让扎克伯格骄傲的地方在于它能习得主人夫妻俩不同的音乐口味。当妻子要放音乐时，它就会推荐妻子喜欢的而不是男主人的喜好。它还被设计能按音乐风格播放曲子，比如“轻松的”、“适合家庭氛围的”或者“与这位歌手风格相似的歌”。</p><p>“来段红辣椒乐队那种的。”扎克伯格说。几秒钟后，客厅里响起了Nirvana的 &quot;Smells Like Teen Spirit&quot;。</p><p>扎克伯格也希望贾维斯能够在一定程度上理解语言差异。然而理解非常相似的短语对贾维斯比较有难度。比如“Play‘Someone Like You’”和“Play someone like Adele”以及“Play some Adele”虽然表面上相似，但实际含义则大不同。扎克伯格希望系统通过反馈来习得不同用语之间的差别，并称过程相当有趣。</p><p><img src=\"https://imgs.bipush.com/article/cover/201612/20/105528362178.jpeg\"/></p><p label=\"大标题\" class=\"text-big-title\">偶尔惹得老婆发怒</p><p>除了选择正确的音乐进行播放外，还需要确保贾维斯不会惹恼普莉希拉。即使要求系统开灯、关灯、播放音乐等，可能也会产生许多令人感到惊讶的歧义，让贾维斯感到不知所措。</p><p>举例来说，扎克伯格与妻子有时候会使用不同的短语形容相同的东西，扎克伯格称为客厅的房间被普莉希拉称为家庭活动室，因此贾维斯需要学会理解同义词。但扎克伯格不希望贾维斯仅仅记住不同的短语，他还教贾维斯学习理解它们，以及它们在不同情境中的不同含义，显然这都是非常有趣的问题。</p><p><br label=\"大标题\" class=\"text-big-title\"/></p><p><img src=\"https://imgs.bipush.com/article/cover/201612/20/105045908929.jpeg\"/></p><p>（图：贾维斯可以让扎克伯格使用Messenger聊天机器人，来欢迎朋友到访。）</p><p>扎克伯格说：“你会碰到这样的情况：我只会说‘打开房间的灯’，可是房间中的灯光有些刺眼，因此普莉希拉会说‘调暗灯光’。但她不会说调暗哪个房间的灯光，因此贾维斯需要知道我们的位置，否则它就可能执行错误命令。有时候，我会说‘播放音乐’，贾维斯会打开Max所在房间的音乐，因为我们此前就是那样给它下令的。”如果Max碰巧在午睡会如何？扎克伯格说：“这是个巨大的失败，这是惹怒你老婆的绝佳方式！”</p><p>确认位置非常重要的另一个例证：作为创造最佳收视体验方案的组成部分，贾维斯会关掉灯。扎克伯格说：“其中与电视所在房间相邻的另一个房间就是普莉希拉的办公室，为此这就出现一个有趣的问题：当我要去看电视时，贾维斯会关掉楼下所有的灯。而这时普莉希拉正要去工作，这会让她觉得疯狂！”</p><p label=\"大标题\" class=\"text-big-title\">比预期要容易得多</p><p>尽管扎克伯格只会选择一个年度个人挑战，但在2016年时，他选择了两个，第二个就是全年跑步587公里。这意味着，他在继续开发贾维斯的过程中，不能坐得太久。就像他为自己设定的2015年挑战，每两周读一本书。事实上，扎克伯格用于开发贾维斯的时间比跑步时间更少，在很大程度上，这要感谢Facebook的收集工具，他可以经常利用图片和语音识别功能对贾维斯进行测试。</p><p>但扎克伯格没有想到的是，这个项目最难的地方在于如何将贾维斯与家中各种不同的系统相连，包括控制灯、门以及温度的Crestron智能家居系统、安全系统、Sonos流媒体盒以及Spotify音乐等，他想要通过贾维斯控制这些系统。</p><p>严格来说，扎克伯格的家庭网络是Facebook企业基础设施的重要组成部分，拥有严格的保护措施。任何东西要想与这套网络相连，必须获得Facebook的安全证书。从本质上说，这种证书就是数字认证密匙，以确保指定的设备安全。<br/></p><p>而这种安全措施却大大限制了扎克伯格的控制能力。以联网冰箱为例，它没有Facebook的安全证书。对于大多数人来说，这都不是问题。但是这里的大多数人不包括扎克伯格，确保他在家时的安全非常重要。扎克伯格已经找到通过互联网连接交换机安全控制某些电器的方式，这至少可让他能够遥控开关电源。扎克伯格希望贾维斯能够利用他此前留在面包机中面包片制作早餐吐司，但现在还没有任何面包机电源关闭的情况下烤面包。为此，扎克伯格购买了20世纪50年代的低技术产品，以方便他对其进行控制。</p><p>最终，要想实现所有家居物品都能够相连，这需要许多时间对它们采用的产品和服务软件进行逆向工程操作。在开始开发AI之前，扎克伯格就需要做完这些事情。</p><p><img src=\"https://imgs.bipush.com/article/cover/201612/20/105614231761.jpeg\"/></p><p>（图：扎克伯格收到Messenger通知，贾维斯已经打开大门，尽管后者同时也在控制他的Sonos音乐系统。）</p><p label=\"大标题\" class=\"text-big-title\">还未准备好面世</p><p>尽管贾维斯在记者面前的表现不够完美，但这款伯格依然为其目前取得的成就感到骄傲。他表示愿意将贾维斯与当前你能在市场上买到的同类产品进行对比，比如亚马逊Echo（Alexa支持）和Google Home（Google Assistant支持）。</p><p>扎克伯格强调：“贾维斯还未准备好上市供更多人使用。但如果我无法开发出至少可媲美Echo或Google Home的东西，我可能对自己感到相当失望。”</p><p>扎克伯格补充说，与为单栋住宅设计AI系统相比，开发类似亚马逊和谷歌的智能系统，让数以百万计的人们控制多款设备更难。</p><p>为此，他没有将贾维斯当成Facebook产品推出的计划。但扎克伯格表示：“如果我无法围绕音乐推荐或以不同方式使用面部识别、理解屋内情境环境等对AI进行改进，那么我不认为自己真的推动AI大步向前。”</p><p>扎克伯格称，事实上他打算发布自己所从事工作的摘要，如果他的某些结论最终能被整合到可用的公开系统中，他会感到非常高兴。这也反映出Facebook开源其大部分工作的哲学，特别是在AI方面。这样的教训包括我们利用文本和语音进行互动。与贾维斯的对话让播放语音的指令变得有意义。但扎克伯格发现，在很多情况下，文本依然很重要，特别是在有其他人在场的情况下。他说：“如果我允许某人进门，这与我周围的人无关，为此我宁可发短信。”</p><p>即使扎克伯格经常发布语音指令，但他更喜欢贾维斯以文本方式回应他或显示某些信息，而无需大声说出来。扎克伯格说：“当贾维斯讲话时，意味着其会发布许多指令，而这是相当恼人的事情。”但这并非是说语音指令不重要，在特定时候，还是需要语音指令。</p><p>扎克伯格从未幻想过自己只用150小时就能赶上Facebook的AI专家每年投入数千小时以上开发出的AI，而Facebook有许多业内最顶级的AI人才。</p><p>不过，在好奇心驱使下，扎克伯格已经让贾维斯达到非常先进的水平，他已经准备好向世界展示它。扎克伯格说，他每天都在摆弄贾维斯，因为他每天都会使用它，总是要修正小问题或添加新功能。但他很高兴自己和家人可以对贾维斯进行随意调整。</p><p>扎克伯格说：“这种感觉超棒，早上醒来时，你只要对贾维斯说‘早上好’或‘醒来’，整栋房子似乎也随之醒来。与之类似，当你晚上准备上床睡觉时，无需关掉每个房间的灯，只需要说‘晚安’，贾维斯就会帮你关灯，并确保锁好门。”<br/></p><p>当然，扎克伯格不仅是需要更好照顾家人的丈夫和父亲，他还是大科技公司的领导者。这家公司的命运已经注定，需要通过有效的方式促使技术人才创造更伟大的产品。对于扎克伯格来说，参与贾维斯项目最好的地方就是，他重新获得Facebook的工程体验。</p><p>他说：“因为我花了很多时间利用Facebook的工具编码，作为公司首席执行官，我通常不会那样做。我觉得自己好像成为Facebook的新工程师，正帮助Facebook加速扩张。我非常喜欢这些内部工具，它们已经成为企业文化的重要组成部分。”</p>";
@@ -1234,6 +1278,8 @@
     //[self configTaskAddTest];
 }
 @end
+
+
 
 
 
