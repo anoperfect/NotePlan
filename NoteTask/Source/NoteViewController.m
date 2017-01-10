@@ -370,35 +370,7 @@
     NSLog(@"reloadNotesVia : %@", via);
     [self dataNotesReload];
     [self.notesView reloadData];
-    
-#if 0
-    if([via isEqualToString:@"load"]) {
-        [self.notesView reloadData];
-        
-        return ;
-    }
-    
-    if([via isEqualToString:@"filter"]) {
-        
-        
-        
-        return ;
-    }
-    
-    if([via isEqualToString:@"back"]) {
-        
-        
-        
-        return;
-    }
-#endif
-    
 }
-
-
-
-
-
 
 
 - (NoteModel*)noteOnIndexPath:(NSIndexPath*)indexPath
@@ -675,25 +647,6 @@
     [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
 }
         
-
-- (void)performSelectorByString:(NSString*)selString
-{
-    if(!selString) {
-        return ;
-    }
-    
-    SEL sel = NSSelectorFromString(selString);
-    if(sel && [self respondsToSelector:sel]) {
-        _Pragma("clang diagnostic push")
-        _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"")
-        [self performSelector:sel];
-        _Pragma("clang diagnostic pop")
-    }
-    else {
-        NSLog(@"#error - Not perform SEL String (%@).", selString);
-    }
-}
-
 
 - (void)actionMenuString:(NSString*)menuString
 {
@@ -1065,6 +1018,25 @@
 */
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

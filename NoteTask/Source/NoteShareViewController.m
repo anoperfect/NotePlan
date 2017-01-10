@@ -271,10 +271,9 @@
                                   NSLog(@"------ request [%@]", request.path);
                                   NSArray<NSString*> *paths = [request.path componentsSeparatedByString:@"/"];
                                   NSString* filename = [paths lastObject];
-                                  NSString* noteSn = nil;
                                   NSString *sNotFound = @"<html><body><p>未找到所需文件</p></body></html>";
                                   if([request.path hasPrefix:@"/note"]) {
-                                      noteSn = [filename substringWithRange:NSMakeRange(0, 6)];
+                                      NSString *noteSn = [[filename componentsSeparatedByString:@"."] firstObject];
                                       NSLog(@"sn [%@]", noteSn);
                                       if([filename hasSuffix:@".htm"]) {
                                           NoteModel *note = [[AppConfig sharedAppConfig] configNoteGetBySn:noteSn];
@@ -287,7 +286,6 @@
                                           }
                                       }
                                       else if([filename hasSuffix:@".pdf"]) {
-                                          noteSn = [filename substringWithRange:NSMakeRange(0, 6)];
                                           NSString *pdfPath = [NSString stringWithFormat:@"%@/%@", _self.noteFolder, filename];
                                           NSData *pdfData = [NSData dataWithContentsOfFile:pdfPath];
                                           if(pdfData.length > 0) {

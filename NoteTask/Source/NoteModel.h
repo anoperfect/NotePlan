@@ -90,6 +90,8 @@
 
 
 
+
+
 @interface NoteClassification : NSObject
 
 @property (nonatomic, strong) NSString *classificationName;
@@ -97,5 +99,3 @@
 
 
 @end
-
-

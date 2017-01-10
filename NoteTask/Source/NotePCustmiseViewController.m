@@ -126,7 +126,7 @@
 //    self.navigationItem.backBarButtonItem = backItem;
     
     self.navigationItem.rightBarButtonItem
-            = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finish)];
+            = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(actionFinishCustomise)];
     
     //点击空白的地方时关闭软键盘.
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
@@ -484,9 +484,9 @@
 }
 
 
-- (void)finish
+- (void)actionFinishCustomise
 {
-    NSLog(@"done. styple : %@", self.sampleNoteParagraph.styleDictionay);
+    NSLog(@"finishCustomise. styple : %@", self.sampleNoteParagraph.styleDictionay);
     if(self.finishHandle) {
         self.finishHandle([NSDictionary dictionaryWithDictionary:self.sampleNoteParagraph.styleDictionay]);
     }

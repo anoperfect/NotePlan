@@ -248,68 +248,26 @@
 {
     NSLog(@"configNoteGetsByClassification : [%@], color : [%@]", classification, colorString);
     
-    NSMutableArray<NoteModel*> *arrayReturnM = [[NSMutableArray alloc] init];
+    NSMutableDictionary *query = [[NSMutableDictionary alloc] init];
     
-    NSMutableString *sqlString = [NSMutableString stringWithFormat:@"SELECT rowid,* FROM %@ ", TABLENAME_NOTE];
-    NSMutableString *queryString = [[NSMutableString alloc] init];
-    NSString *queryClassification = nil;
-    NSString *queryColor = nil;
-    NSMutableArray *arguments = [[NSMutableArray alloc] init];
     if(classification.length > 0 && ![classification isEqualToString:@"*"]) {
-        queryClassification = @"WHERE classification = ? ";
-        [arguments addObject:classification];
+        query[@"classification"] = classification;
     }
     
     if([colorString isEqualToString:@"*"]) {
         
     }
     else if([colorString isEqualToString:@"-"]) {
-        queryColor = @"LENGTH(color) > 0";
+        query[@"color"] = [NoteModel colorStrings];
     }
     else if([colorString isEqualToString:@""]) {
-        queryColor = @"color = ''";
+        query[@"color"] = @"";
     }
     else if([[NoteModel colorStrings] indexOfObject:colorString] != NSNotFound) {
-        queryColor = @"color = ?";
-        [arguments addObject:colorString];
+        query[@"color"] = colorString;
     }
     
-    if(queryClassification.length > 0) {
-        [queryString appendString:queryClassification];
-        if(queryColor.length > 0) {
-            [queryString appendString:@" AND "];
-            [queryString appendString:queryColor];
-        }
-    }
-    else {
-        if(queryColor.length > 0) {
-            [queryString appendString:@" WHERE "];
-            [queryString appendString:queryColor];
-        }
-    }
-    
-    if(queryString.length > 0) {
-        [sqlString appendString:queryString];
-    }
-    
-    [sqlString appendString:@" ORDER BY modifiedAt DESC"];
-    
-    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                 withSqlString:sqlString
-                                           andArgumentsInArray:arguments];
-    
-    NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
-    if(dicts.count > 0) {
-        for(NSDictionary *dict in dicts) {
-            NoteModel *note = [NoteModel noteFromDictionary:dict];;
-            if(note && note.deletedAt.length == 0) {
-                [arrayReturnM addObject:note];
-            }
-        }
-    }
-    NSLog(@"query result array count : %zd", dicts.count);
-    
-    return [NSArray arrayWithArray:arrayReturnM];
+    return [self configNoteGetsWithQuery:[NSDictionary dictionaryWithDictionary:query]];
 }
 
 
@@ -1217,6 +1175,8 @@
     [contentParagraphs addObject:noteParagraph];
     
     note.sn = @"design";
+    note.classification = @"个人笔记";
+    note.color = @"blue";
     note.title = @"<p style=\"color:blue; text-align:center\">平面设计师.</p>";
     note.content = [NoteParagraphModel noteParagraphsToString:contentParagraphs];
     [self configNoteAdd:note];

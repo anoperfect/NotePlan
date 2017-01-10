@@ -39,9 +39,6 @@
 @property (nonatomic, strong) NSIndexPath *indexPathOnEditing;
 @property (nonatomic, strong) NSString *dueEditing;
 
-@property (nonatomic, strong) NSIndexPath *indexPathOnCustmizing;
-
-@property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UITableView *tableNoteParagraphs;
 @property (nonatomic, strong) UITextView *textViewEditing;
 @property (nonatomic, strong) UIView *textViewEditingContainer;
@@ -86,10 +83,6 @@
 }
 
 
-#define CREATE_PLACEHOLD_TITLE                  @"点击输入标题"
-#define CREATE_PLACEHOLD_CONTENTPARAGRAPH       @"点击编辑内容"
-
-
 
 //新建跟编辑的流程类似.
 - (instancetype)initWithCreateNoteModel
@@ -124,11 +117,11 @@
         self.noteModel = noteModel;
         
         self.titleParagraph = [[NoteParagraphModel alloc] init];
-        self.titleParagraph.content = @""; //CREATE_PLACEHOLD_TITLE;
+        self.titleParagraph.content = @"";
         self.titleParagraph.isTitle = YES;
         
         NoteParagraphModel *contentParagraph = [[NoteParagraphModel alloc] init];
-        contentParagraph.content = @""; CREATE_PLACEHOLD_CONTENTPARAGRAPH;
+        contentParagraph.content = @"";
         self.contentParagraphs = [[NSMutableArray alloc] initWithObjects:contentParagraph, nil];
         
         self.noteModel.title = [NoteParagraphModel noteParagraphToString:self.titleParagraph];
@@ -150,21 +143,11 @@
 
     self.urlStringsDownloadFailed = [[NSMutableArray alloc] init];
     
-    self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.text = self.noteModel.title;
-    self.titleLabel.numberOfLines = 0;
-    //[self.view addSubview:self.titleLabel];
-    
-    //UITextView导致加载卡顿,因此延迟加载.
-    
-    LOG_POSTION
-        
     self.tableNoteParagraphs = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     [self addSubview:self.tableNoteParagraphs];
     self.tableNoteParagraphs.dataSource = self;
     self.tableNoteParagraphs.delegate = self;
     self.tableNoteParagraphs.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     self.tableNoteParagraphs.backgroundColor = [UIColor colorWithName:@"NoteParagraphs"];
     [self.tableNoteParagraphs registerClass:[NoteDetailCell class] forCellReuseIdentifier:@"NoteDetail"];
     
@@ -274,7 +257,7 @@
 
 - (void)parseNoteParagraphs
 {
-    NSLog(@"sn : %zd", self.noteModel.sn);
+    NSLog(@"sn : %@", self.noteModel.sn);
     
     self.titleParagraph = [NoteParagraphModel noteParagraphFromString:self.noteModel.title];
     self.titleParagraph.isTitle = YES;
@@ -348,7 +331,6 @@
     UIImage *imageSet = nil;
     CGSize imageSize;
     
-    NSLog(@"image : %@", noteParagraph.image);
     if(noteParagraph.image.length == 0) {
         
     }
@@ -439,7 +421,7 @@
     }
     
     [noteDetailCell setNoteParagraph:noteParagraph sn:sn onEditMode:self.editMode image:imageSet imageSize:imageSize];
-    NS0Log(@"noteparag %zd height : %f", indexPath.row - 1, cell.optumizeHeight);
+    NS0Log(@"noteparag %zd height : %f", sn, cell.optumizeHeight);
     self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
     cell = noteDetailCell;
     
@@ -598,7 +580,6 @@
         //删除新增加的NoteParagraph.
         NSInteger idxNoteParagraph = [self indexPathContentNoteParagraphIndex:indexPath];
         [self.contentParagraphs removeObjectAtIndex:idxNoteParagraph];
-//        NoteParagraphModel *noteParagraph =
         
         [self.tableNoteParagraphs reloadData];
     }
@@ -606,6 +587,11 @@
         NSLog(@"#error - dueEditing nil.");
         [self.tableNoteParagraphs reloadData];
     }
+    
+    //标记indexPathOnEditing.
+    self.indexPathOnEditing = nil;
+    
+    self.title = !self.createMode? @"笔记详情":@"新笔记";
 }
 
 
@@ -759,7 +745,6 @@
     }
     
     if([string isEqualToString:@"样式"]) {
-        self.indexPathOnCustmizing = indexPath;
         NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph];
         //通过block的方式将定制的内容传回此ViewController.
         __weak typeof(self) _self = self;
@@ -778,19 +763,17 @@
 - (void)finishStyleCustmize:(NSDictionary*)stypleDictionary
 {
     NSLog(@"finishStyleCustmize : %@. ", stypleDictionary);
-    NSLog(@"indexPathOnCustmizing : %@%zd:%zd",
-          self.indexPathOnCustmizing?@"":@"nil --------",  self.indexPathOnCustmizing.section, self.indexPathOnCustmizing.row);
-    if(!self.indexPathOnCustmizing) {
+    if(!self.indexPathOnEditing) {
         NSLog(@"#error - indexPathOnCustmizing nil.");
         return ;
     }
     
-    NoteParagraphModel *noteParagraphOnCustmizing = [self indexPathNoteParagraph:self.indexPathOnCustmizing];
+    NoteParagraphModel *noteParagraphOnCustmizing = [self indexPathNoteParagraph:self.indexPathOnEditing];
     NSLog(@"before custmize : %@", noteParagraphOnCustmizing);
     noteParagraphOnCustmizing.styleDictionay = [NSMutableDictionary dictionaryWithDictionary:stypleDictionary];
     NSLog(@"after  custmize : %@", noteParagraphOnCustmizing);
     
-    [self reloadNoteParagraphAtIndexPath:self.indexPathOnCustmizing due:@"after custmize"];
+    [self reloadNoteParagraphAtIndexPath:self.indexPathOnEditing due:@"after custmize"];
     [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraphOnCustmizing];
 }
 
@@ -1538,6 +1521,32 @@
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

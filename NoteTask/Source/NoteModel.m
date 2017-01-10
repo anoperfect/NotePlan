@@ -294,27 +294,6 @@
 
 + (NSString*)imageCacheFileNameOfHttpAddrString:(NSString*)httpAddrString
 {
-//    NSRange range;
-//    NSInteger location = 0;
-//    
-//    NSLog(@"%@", httpAddrString);
-//    NSLog(@"%@", [NSCharacterSet symbolCharacterSet]);
-//    
-//    NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"/"];
-//    
-//    while(1) {
-//        range = [httpAddrString rangeOfCharacterFromSet:characterSet options:0 range:NSMakeRange(location, httpAddrString.length - location)];
-//        
-//        if(range.length > 0) {
-//            location = range.location + range.length;
-//            NSLog(@"%@", [httpAddrString substringWithRange:range]);
-//            httpAddrString = [httpAddrString stringbyre]
-//        }
-//        else {
-//            break;
-//        }
-//    }
-    
     httpAddrString = [httpAddrString stringByReplacingOccurrencesOfString:@"/" withString:@"#"];
     
     NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];

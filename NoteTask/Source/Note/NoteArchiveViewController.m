@@ -171,7 +171,6 @@
     
     [sectionView addSubview:lineBackgroundView];
     
-    
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, kheightSection)];
     [sectionView addSubview:titleLabel];
     titleLabel.attributedText = [NSString attributedStringWith:@[@"类别", @"标记"][section]
@@ -189,7 +188,7 @@
      ];
     
     
-    titleLabel.frame    = [f frameLayoutGet:@"_titleLabel"];
+    titleLabel.frame = [f frameLayoutGet:@"_titleLabel"];
     
     if(section == 0) {
         _inputView = [[UITextField alloc] init];
