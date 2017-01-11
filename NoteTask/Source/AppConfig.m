@@ -410,8 +410,6 @@
         NSLog(@"#error - ");
         result = NO;
     }
-    
-    //return result;
 }
 
 

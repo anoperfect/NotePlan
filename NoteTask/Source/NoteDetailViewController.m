@@ -1513,7 +1513,7 @@
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     if (error) {
-        NSLog(@"保存失败，请检查是否拥有相关的权限");
+        NSLog(@"保存失败，请检查是否拥有相关的权限(%@)", error);
     }
     else {
         NSLog(@"保存成功！");

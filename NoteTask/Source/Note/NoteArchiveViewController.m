@@ -59,6 +59,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     self.title = @"分类";
     [self navigationItemRightInit];
 }

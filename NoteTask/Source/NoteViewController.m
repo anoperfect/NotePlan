@@ -992,7 +992,7 @@
         [notesDelete addObject:note];
     }
     [self.notes removeObjectsInArray:notesDelete];
-    NSLog(@"%zd", self.notes.count);
+    NSLog(@"after delete : %zd", self.notes.count);
 }
 
 

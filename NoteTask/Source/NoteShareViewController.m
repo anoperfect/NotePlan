@@ -80,6 +80,7 @@
 - (void)viewDidLoad {
     self.contentViewScrolled = YES;
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view.
     self.title = @"共享";
     self.view.backgroundColor = [UIColor whiteColor];

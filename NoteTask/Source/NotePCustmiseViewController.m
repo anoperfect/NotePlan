@@ -35,7 +35,6 @@
  
  */
 
-@property (nonatomic, strong) RangeValueView    *fontsizeView;
 @property (nonatomic, strong) UISlider          *fontSizeSlider;
 @property (nonatomic, strong) UILabel           *fontSizeNameLabel;
 @property (nonatomic, strong) UILabel           *fontSizeValueLabel;
@@ -143,12 +142,6 @@
     [self.contentView addSubview:self.sampleText];
     self.sampleText.numberOfLines = 0;
     self.sampleText.backgroundColor = [UIColor whiteColor];
-    
-    self.fontsizeView = [RangeValueView rangeValueViewWithFrame:CGRectMake(10, 100, Width-20, 0)
-                                                           name:@"字体大小 - font-size"
-                                                       minValue:8.0
-                                                       maxValue:36.0 defaultValue:16];
-//    [self.contentView addSubview:self.fontsizeView];
     
     self.fontSizeSlider = [[UISlider alloc] init];
     [self.contentView addSubview:self.fontSizeSlider];
