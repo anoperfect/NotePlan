@@ -38,10 +38,7 @@
 		B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428C71DAB404800FBB1FE /* TaskDetailViewController.m */; };
 		B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B56428CA1DAB405C00FBB1FE /* TaskModel.m */; };
 		B564D0EA1C912FFA00E903B6 /* note.json in Resources */ = {isa = PBXBuildFile; fileRef = B564D0E91C912FFA00E903B6 /* note.json */; };
-		B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B564D0F01C91686700E903B6 /* NSObject+Util.m */; };
 		B56632D91DAF3179006EE40A /* note.htm in Resources */ = {isa = PBXBuildFile; fileRef = B56632D81DAF3179006EE40A /* note.htm */; };
-		B56632DC1DB08652006EE40A /* ButtonData.m in Sources */ = {isa = PBXBuildFile; fileRef = B56632DB1DB08652006EE40A /* ButtonData.m */; };
-		B56632DF1DB0865E006EE40A /* PushButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B56632DE1DB0865E006EE40A /* PushButton.m */; };
 		B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B62681D2124A4005A2242 /* RootViewController.m */; };
 		B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = B56B626A1D2124A4005A2242 /* SummaryInRoot.m */; };
 		B56B626E1D212521005A2242 /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B56B626D1D212521005A2242 /* LaunchScreen.Storyboard */; };
@@ -50,16 +47,12 @@
 		B56E36A21DBE659800165050 /* TaskEditSubTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B56E36A11DBE659800165050 /* TaskEditSubTaskViewController.m */; };
 		B58D5D711DF9030800133C60 /* NotePreset.json in Resources */ = {isa = PBXBuildFile; fileRef = B58D5D701DF9030800133C60 /* NotePreset.json */; };
 		B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B58DE9791D6AB302002B7697 /* ColorSelector.m */; };
-		B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B59AB7211D34A5B40067C4B2 /* DBData.m */; };
-		B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */; };
 		B59D4FE61DE9EDC600CA3C5A /* TaskEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */; };
 		B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A26BD21D22140E00B1F629 /* MenuButton.m */; };
 		B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5A26BD41D22153F00B1F629 /* Images.xcassets */; };
 		B5A6E86A1DD0AB0B0062FF80 /* TaskCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A6E8691DD0AB0B0062FF80 /* TaskCalendar.m */; };
 		B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */; };
 		B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */; };
-		B5AD77C91DD41C91000CC52D /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77C71DD41C91000CC52D /* NSThread+Util.m */; };
-		B5AD77CD1DD420D8000CC52D /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B5AD77CC1DD420D8000CC52D /* FrameLayout.m */; };
 		B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */; };
 		B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5B392B01D407968001D30BF /* NotePropertyView.m */; };
 		B5B797C61E213D0400AC7303 /* PictureCacheError.png in Resources */ = {isa = PBXBuildFile; fileRef = B5B797C51E213D0400AC7303 /* PictureCacheError.png */; };
@@ -71,7 +64,6 @@
 		B5BF33E81DFC328C00624154 /* SettingNoteStyleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BF33E71DFC328C00624154 /* SettingNoteStyleViewController.m */; };
 		B5BF33EB1DFC329F00624154 /* SettingTaskModeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BF33EA1DFC329F00624154 /* SettingTaskModeViewController.m */; };
 		B5BF33EE1DFC32B300624154 /* SettingAppDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BF33ED1DFC32B300624154 /* SettingAppDetailViewController.m */; };
-		B5BF33F11DFC33F000624154 /* NSString+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BF33F01DFC33F000624154 /* NSString+Util.m */; };
 		B5CAC3071DE2B59D0051039B /* TaskTickingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */; };
 		B5CAC3121DE2EE980051039B /* GCDGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC30B1DE2EE980051039B /* GCDGroup.m */; };
 		B5CAC3131DE2EE980051039B /* GCDQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC30D1DE2EE980051039B /* GCDQueue.m */; };
@@ -79,13 +71,21 @@
 		B5CAC3151DE2EE980051039B /* GCDTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3111DE2EE980051039B /* GCDTimer.m */; };
 		B5CAC3181DE333FE0051039B /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CAC3171DE333FE0051039B /* SettingViewController.m */; };
 		B5CC2B451D366B410013D236 /* color.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CC2B441D366B410013D236 /* color.json */; };
+		B5CD60541E44F43B006789B0 /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD60241E44F43B006789B0 /* DBData.m */; };
+		B5CD60561E44F43B006789B0 /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD60291E44F43B006789B0 /* NSObject+Util.m */; };
+		B5CD60571E44F43B006789B0 /* NSString+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD602B1E44F43B006789B0 /* NSString+Util.m */; };
+		B5CD60581E44F43B006789B0 /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD602D1E44F43B006789B0 /* NSThread+Util.m */; };
+		B5CD60591E44F43B006789B0 /* FrameLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD60301E44F43B006789B0 /* FrameLayout.m */; };
+		B5CD605A1E44F43B006789B0 /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD60331E44F43B006789B0 /* NSLogn.m */; };
+		B5CD605B1E44F43B006789B0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD60361E44F43B006789B0 /* UIpConfig.m */; };
+		B5CD605C1E44F43B006789B0 /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B5CD60371E44F43B006789B0 /* UIpConfigDB.json */; };
+		B5CD605D1E44F43B006789B0 /* ButtonData.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD603A1E44F43B006789B0 /* ButtonData.m */; };
+		B5CD605E1E44F43B006789B0 /* PushButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD603C1E44F43B006789B0 /* PushButton.m */; };
+		B5CD605F1E44F43B006789B0 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CD603E1E44F43B006789B0 /* TextButtonLine.m */; };
 		B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D4923C1DB5C8DC00794A97 /* TaskCell.m */; };
 		B5DC698C1E038A5300FFAC68 /* LineBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */; };
-		B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */; };
 		B5DFD8CB1E0B733100C6C720 /* LoadingPicture.png in Resources */ = {isa = PBXBuildFile; fileRef = B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */; };
 		B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0A41D32815500395CF0 /* NoteCell.m */; };
-		B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B11D33F28000395CF0 /* UIpConfig.m */; };
-		B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */; };
 		B5F24BC81C4A94370027DAB2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BC71C4A94370027DAB2 /* main.m */; };
 		B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BCA1C4A94370027DAB2 /* AppDelegate.m */; };
 		B5F24BE81C4A94370027DAB2 /* NoteTask.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F24BE71C4A94370027DAB2 /* NoteTask.m */; };
@@ -161,13 +161,7 @@
 		B56428C91DAB405C00FBB1FE /* TaskModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskModel.h; sourceTree = "<group>"; };
 		B56428CA1DAB405C00FBB1FE /* TaskModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskModel.m; sourceTree = "<group>"; };
 		B564D0E91C912FFA00E903B6 /* note.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.json; sourceTree = "<group>"; };
-		B564D0EF1C91686700E903B6 /* NSObject+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Util.h"; sourceTree = "<group>"; };
-		B564D0F01C91686700E903B6 /* NSObject+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Util.m"; sourceTree = "<group>"; };
 		B56632D81DAF3179006EE40A /* note.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = note.htm; path = Source/note.htm; sourceTree = "<group>"; };
-		B56632DA1DB08652006EE40A /* ButtonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonData.h; sourceTree = "<group>"; };
-		B56632DB1DB08652006EE40A /* ButtonData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonData.m; sourceTree = "<group>"; };
-		B56632DD1DB0865E006EE40A /* PushButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushButton.h; sourceTree = "<group>"; };
-		B56632DE1DB0865E006EE40A /* PushButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushButton.m; sourceTree = "<group>"; };
 		B56B62671D2124A4005A2242 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RootViewController.h; path = Source/RootViewController.h; sourceTree = "<group>"; };
 		B56B62681D2124A4005A2242 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RootViewController.m; path = Source/RootViewController.m; sourceTree = "<group>"; };
 		B56B62691D2124A4005A2242 /* SummaryInRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SummaryInRoot.h; path = Source/SummaryInRoot.h; sourceTree = "<group>"; };
@@ -182,10 +176,7 @@
 		B58D5D701DF9030800133C60 /* NotePreset.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = NotePreset.json; path = Source/Note/NotePreset.json; sourceTree = "<group>"; };
 		B58DE9781D6AB302002B7697 /* ColorSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorSelector.h; path = Source/ColorSelector.h; sourceTree = "<group>"; };
 		B58DE9791D6AB302002B7697 /* ColorSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorSelector.m; path = Source/ColorSelector.m; sourceTree = "<group>"; };
-		B59AB7201D34A5B40067C4B2 /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
-		B59AB7211D34A5B40067C4B2 /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
 		B59AB7231D35450A0067C4B2 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIpConfigDB.json; sourceTree = "<group>"; };
 		B59D4FE41DE9EDC600CA3C5A /* TaskEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskEditViewController.h; sourceTree = "<group>"; };
 		B59D4FE51DE9EDC600CA3C5A /* TaskEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskEditViewController.m; sourceTree = "<group>"; };
 		B5A26BD11D22140E00B1F629 /* MenuButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuButton.h; path = Source/MenuButton.h; sourceTree = "<group>"; };
@@ -197,10 +188,6 @@
 		B5AB6DDC1D658E3100938B7C /* CLDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLDropDownMenu.m; sourceTree = "<group>"; };
 		B5AB6DDD1D658E3100938B7C /* JSDropDownMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDropDownMenu.h; sourceTree = "<group>"; };
 		B5AB6DDE1D658E3100938B7C /* JSDropDownMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDropDownMenu.m; sourceTree = "<group>"; };
-		B5AD77C61DD41C91000CC52D /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
-		B5AD77C71DD41C91000CC52D /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
-		B5AD77CB1DD420D8000CC52D /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLayout.h; sourceTree = "<group>"; };
-		B5AD77CC1DD420D8000CC52D /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLayout.m; sourceTree = "<group>"; };
 		B5B392AC1D407678001D30BF /* NotePCustmiseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePCustmiseViewController.h; path = Source/NotePCustmiseViewController.h; sourceTree = "<group>"; };
 		B5B392AD1D407678001D30BF /* NotePCustmiseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NotePCustmiseViewController.m; path = Source/NotePCustmiseViewController.m; sourceTree = "<group>"; };
 		B5B392AF1D407968001D30BF /* NotePropertyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePropertyView.h; path = Source/NotePropertyView.h; sourceTree = "<group>"; };
@@ -220,8 +207,6 @@
 		B5BF33EA1DFC329F00624154 /* SettingTaskModeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingTaskModeViewController.m; sourceTree = "<group>"; };
 		B5BF33EC1DFC32B300624154 /* SettingAppDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingAppDetailViewController.h; sourceTree = "<group>"; };
 		B5BF33ED1DFC32B300624154 /* SettingAppDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingAppDetailViewController.m; sourceTree = "<group>"; };
-		B5BF33EF1DFC33F000624154 /* NSString+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Util.h"; sourceTree = "<group>"; };
-		B5BF33F01DFC33F000624154 /* NSString+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Util.m"; sourceTree = "<group>"; };
 		B5CAC3051DE2B59D0051039B /* TaskTickingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskTickingViewController.h; sourceTree = "<group>"; };
 		B5CAC3061DE2B59D0051039B /* TaskTickingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskTickingViewController.m; sourceTree = "<group>"; };
 		B5CAC3091DE2EE980051039B /* GCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCD.h; sourceTree = "<group>"; };
@@ -236,19 +221,34 @@
 		B5CAC3161DE333FE0051039B /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		B5CAC3171DE333FE0051039B /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		B5CC2B441D366B410013D236 /* color.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = color.json; sourceTree = "<group>"; };
+		B5CD60231E44F43B006789B0 /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
+		B5CD60241E44F43B006789B0 /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
+		B5CD60281E44F43B006789B0 /* NSObject+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Util.h"; sourceTree = "<group>"; };
+		B5CD60291E44F43B006789B0 /* NSObject+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Util.m"; sourceTree = "<group>"; };
+		B5CD602A1E44F43B006789B0 /* NSString+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Util.h"; sourceTree = "<group>"; };
+		B5CD602B1E44F43B006789B0 /* NSString+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Util.m"; sourceTree = "<group>"; };
+		B5CD602C1E44F43B006789B0 /* NSThread+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Util.h"; sourceTree = "<group>"; };
+		B5CD602D1E44F43B006789B0 /* NSThread+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Util.m"; sourceTree = "<group>"; };
+		B5CD602F1E44F43B006789B0 /* FrameLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLayout.h; sourceTree = "<group>"; };
+		B5CD60301E44F43B006789B0 /* FrameLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLayout.m; sourceTree = "<group>"; };
+		B5CD60321E44F43B006789B0 /* NSLogn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSLogn.h; sourceTree = "<group>"; };
+		B5CD60331E44F43B006789B0 /* NSLogn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSLogn.m; sourceTree = "<group>"; };
+		B5CD60351E44F43B006789B0 /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
+		B5CD60361E44F43B006789B0 /* UIpConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIpConfig.m; sourceTree = "<group>"; };
+		B5CD60371E44F43B006789B0 /* UIpConfigDB.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIpConfigDB.json; sourceTree = "<group>"; };
+		B5CD60391E44F43B006789B0 /* ButtonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonData.h; sourceTree = "<group>"; };
+		B5CD603A1E44F43B006789B0 /* ButtonData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonData.m; sourceTree = "<group>"; };
+		B5CD603B1E44F43B006789B0 /* PushButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushButton.h; sourceTree = "<group>"; };
+		B5CD603C1E44F43B006789B0 /* PushButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushButton.m; sourceTree = "<group>"; };
+		B5CD603D1E44F43B006789B0 /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
+		B5CD603E1E44F43B006789B0 /* TextButtonLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextButtonLine.m; sourceTree = "<group>"; };
 		B5D4923B1DB5C8DC00794A97 /* TaskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskCell.h; sourceTree = "<group>"; };
 		B5D4923C1DB5C8DC00794A97 /* TaskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCell.m; sourceTree = "<group>"; };
 		B5DC698A1E038A5300FFAC68 /* LineBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBackgroundView.h; sourceTree = "<group>"; };
 		B5DC698B1E038A5300FFAC68 /* LineBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineBackgroundView.m; sourceTree = "<group>"; };
-		B5DC864D1D4A57F600DCE8C8 /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
-		B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextButtonLine.m; sourceTree = "<group>"; };
 		B5DFD8CA1E0B733100C6C720 /* LoadingPicture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingPicture.png; path = Image/Download/LoadingPicture.png; sourceTree = "<group>"; };
 		B5E9D0A31D32815500395CF0 /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoteCell.h; path = Source/NoteCell.h; sourceTree = "<group>"; };
 		B5E9D0A41D32815500395CF0 /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoteCell.m; path = Source/NoteCell.m; sourceTree = "<group>"; };
-		B5E9D0B01D33F28000395CF0 /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
-		B5E9D0B11D33F28000395CF0 /* UIpConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIpConfig.m; sourceTree = "<group>"; };
-		B5E9D0B41D33F2FF00395CF0 /* NSLogn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSLogn.h; sourceTree = "<group>"; };
-		B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSLogn.m; sourceTree = "<group>"; };
 		B5F24BC21C4A94370027DAB2 /* NoteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5F24BC61C4A94370027DAB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5F24BC71C4A94370027DAB2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -437,23 +437,6 @@
 			path = Source/Task;
 			sourceTree = "<group>";
 		};
-		B564D0931C9110FD00E903B6 /* Reuse0 */ = {
-			isa = PBXGroup;
-			children = (
-				B564D0941C9110FD00E903B6 /* Copy */,
-				B564D0EB1C91681700E903B6 /* Extension */,
-			);
-			name = Reuse0;
-			path = Reuse1;
-			sourceTree = "<group>";
-		};
-		B564D0941C9110FD00E903B6 /* Copy */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Copy;
-			sourceTree = "<group>";
-		};
 		B564D0E71C912FFA00E903B6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,33 +459,11 @@
 			path = json;
 			sourceTree = "<group>";
 		};
-		B564D0EB1C91681700E903B6 /* Extension */ = {
-			isa = PBXGroup;
-			children = (
-				B5AD77C61DD41C91000CC52D /* NSThread+Util.h */,
-				B5AD77C71DD41C91000CC52D /* NSThread+Util.m */,
-				B564D0EF1C91686700E903B6 /* NSObject+Util.h */,
-				B564D0F01C91686700E903B6 /* NSObject+Util.m */,
-				B5BF33EF1DFC33F000624154 /* NSString+Util.h */,
-				B5BF33F01DFC33F000624154 /* NSString+Util.m */,
-			);
-			path = Extension;
-			sourceTree = "<group>";
-		};
 		B595C25F1C7829EB0087744D /* ViewPublic */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = ViewPublic;
-			sourceTree = "<group>";
-		};
-		B59AB71F1D34A5A60067C4B2 /* DBData */ = {
-			isa = PBXGroup;
-			children = (
-				B59AB7201D34A5B40067C4B2 /* DBData.h */,
-				B59AB7211D34A5B40067C4B2 /* DBData.m */,
-			);
-			path = DBData;
 			sourceTree = "<group>";
 		};
 		B5A6E86B1DD0DBB40062FF80 /* VSetting */ = {
@@ -531,15 +492,6 @@
 			);
 			name = DropDownMenu;
 			path = Vandor/DropDownMenu;
-			sourceTree = "<group>";
-		};
-		B5AD77CA1DD420D8000CC52D /* FrameLayout */ = {
-			isa = PBXGroup;
-			children = (
-				B5AD77CB1DD420D8000CC52D /* FrameLayout.h */,
-				B5AD77CC1DD420D8000CC52D /* FrameLayout.m */,
-			);
-			path = FrameLayout;
 			sourceTree = "<group>";
 		};
 		B5B9053C1D4FB05800DF1E24 /* AppConfig */ = {
@@ -580,15 +532,87 @@
 			path = GCD;
 			sourceTree = "<group>";
 		};
-		B5DC864C1D4A57C800DCE8C8 /* View */ = {
+		B5CD5FF21E44F43A006789B0 /* Reuse1 */ = {
 			isa = PBXGroup;
 			children = (
-				B5DC864D1D4A57F600DCE8C8 /* TextButtonLine.h */,
-				B5DC864E1D4A57F600DCE8C8 /* TextButtonLine.m */,
-				B56632DA1DB08652006EE40A /* ButtonData.h */,
-				B56632DB1DB08652006EE40A /* ButtonData.m */,
-				B56632DD1DB0865E006EE40A /* PushButton.h */,
-				B56632DE1DB0865E006EE40A /* PushButton.m */,
+				B5CD5FF31E44F43A006789B0 /* Copy */,
+				B5CD60221E44F43B006789B0 /* DBData */,
+				B5CD60251E44F43B006789B0 /* Extension */,
+				B5CD602E1E44F43B006789B0 /* FrameLayout */,
+				B5CD60311E44F43B006789B0 /* NSLogn */,
+				B5CD60341E44F43B006789B0 /* UIpConfig */,
+				B5CD60381E44F43B006789B0 /* View */,
+			);
+			name = Reuse1;
+			path = NoteTask/Reuse1;
+			sourceTree = "<group>";
+		};
+		B5CD5FF31E44F43A006789B0 /* Copy */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Copy;
+			sourceTree = "<group>";
+		};
+		B5CD60221E44F43B006789B0 /* DBData */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD60231E44F43B006789B0 /* DBData.h */,
+				B5CD60241E44F43B006789B0 /* DBData.m */,
+			);
+			path = DBData;
+			sourceTree = "<group>";
+		};
+		B5CD60251E44F43B006789B0 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD60281E44F43B006789B0 /* NSObject+Util.h */,
+				B5CD60291E44F43B006789B0 /* NSObject+Util.m */,
+				B5CD602A1E44F43B006789B0 /* NSString+Util.h */,
+				B5CD602B1E44F43B006789B0 /* NSString+Util.m */,
+				B5CD602C1E44F43B006789B0 /* NSThread+Util.h */,
+				B5CD602D1E44F43B006789B0 /* NSThread+Util.m */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		B5CD602E1E44F43B006789B0 /* FrameLayout */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD602F1E44F43B006789B0 /* FrameLayout.h */,
+				B5CD60301E44F43B006789B0 /* FrameLayout.m */,
+			);
+			path = FrameLayout;
+			sourceTree = "<group>";
+		};
+		B5CD60311E44F43B006789B0 /* NSLogn */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD60321E44F43B006789B0 /* NSLogn.h */,
+				B5CD60331E44F43B006789B0 /* NSLogn.m */,
+			);
+			path = NSLogn;
+			sourceTree = "<group>";
+		};
+		B5CD60341E44F43B006789B0 /* UIpConfig */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD60351E44F43B006789B0 /* UIpConfig.h */,
+				B5CD60361E44F43B006789B0 /* UIpConfig.m */,
+				B5CD60371E44F43B006789B0 /* UIpConfigDB.json */,
+			);
+			path = UIpConfig;
+			sourceTree = "<group>";
+		};
+		B5CD60381E44F43B006789B0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B5CD60391E44F43B006789B0 /* ButtonData.h */,
+				B5CD603A1E44F43B006789B0 /* ButtonData.m */,
+				B5CD603B1E44F43B006789B0 /* PushButton.h */,
+				B5CD603C1E44F43B006789B0 /* PushButton.m */,
+				B5CD603D1E44F43B006789B0 /* TextButtonLine.h */,
+				B5CD603E1E44F43B006789B0 /* TextButtonLine.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -610,43 +634,11 @@
 			name = Root;
 			sourceTree = "<group>";
 		};
-		B5E9D0AA1D33F09100395CF0 /* Reuse1 */ = {
-			isa = PBXGroup;
-			children = (
-				B59AB71F1D34A5A60067C4B2 /* DBData */,
-				B5E9D0B31D33F2F400395CF0 /* NSLogn */,
-				B5AD77CA1DD420D8000CC52D /* FrameLayout */,
-				B5E9D0AE1D33F09100395CF0 /* UIpConfig */,
-				B5DC864C1D4A57C800DCE8C8 /* View */,
-			);
-			name = Reuse1;
-			path = ../Reuse1;
-			sourceTree = "<group>";
-		};
-		B5E9D0AE1D33F09100395CF0 /* UIpConfig */ = {
-			isa = PBXGroup;
-			children = (
-				B5E9D0B01D33F28000395CF0 /* UIpConfig.h */,
-				B5E9D0B11D33F28000395CF0 /* UIpConfig.m */,
-				B59AB7241D3547E50067C4B2 /* UIpConfigDB.json */,
-			);
-			path = UIpConfig;
-			sourceTree = "<group>";
-		};
-		B5E9D0B31D33F2F400395CF0 /* NSLogn */ = {
-			isa = PBXGroup;
-			children = (
-				B5E9D0B41D33F2FF00395CF0 /* NSLogn.h */,
-				B5E9D0B51D33F2FF00395CF0 /* NSLogn.m */,
-			);
-			path = NSLogn;
-			sourceTree = "<group>";
-		};
 		B5F24BB91C4A94370027DAB2 = {
 			isa = PBXGroup;
 			children = (
+				B5CD5FF21E44F43A006789B0 /* Reuse1 */,
 				B5F24BC41C4A94370027DAB2 /* NoteTask */,
-				B5E9D0AA1D33F09100395CF0 /* Reuse1 */,
 				B5F24BE41C4A94370027DAB2 /* NoteTaskTests */,
 				B5F24BC31C4A94370027DAB2 /* Products */,
 				5444ED3D369C9C9D3267467D /* Pods */,
@@ -666,7 +658,6 @@
 		B5F24BC41C4A94370027DAB2 /* NoteTask */ = {
 			isa = PBXGroup;
 			children = (
-				B564D0931C9110FD00E903B6 /* Reuse0 */,
 				B595C25F1C7829EB0087744D /* ViewPublic */,
 				B5C20A3E1D20D20300CE52E4 /* Attent */,
 				B5F24BF41C4A9D940027DAB2 /* ViewController */,
@@ -809,6 +800,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5CD605C1E44F43B006789B0 /* UIpConfigDB.json in Resources */,
 				B5DFD8CB1E0B733100C6C720 /* LoadingPicture.png in Resources */,
 				B5A26BD51D22153F00B1F629 /* Images.xcassets in Resources */,
 				B5056A971DC85A9000979758 /* NoteTemplate.htm in Resources */,
@@ -817,7 +809,6 @@
 				B5B797C81E213D0D00AC7303 /* PictureDownloadError.png in Resources */,
 				B58D5D711DF9030800133C60 /* NotePreset.json in Resources */,
 				B5B797C61E213D0400AC7303 /* PictureCacheError.png in Resources */,
-				B59AB7251D3547E50067C4B2 /* UIpConfigDB.json in Resources */,
 				B5B905411D4FC3E900DF1E24 /* db.json in Resources */,
 				B564D0EA1C912FFA00E903B6 /* note.json in Resources */,
 				B5CC2B451D366B410013D236 /* color.json in Resources */,
@@ -891,67 +882,67 @@
 				B5AB6DDF1D658E3100938B7C /* CLDropDownMenu.m in Sources */,
 				B5DC698C1E038A5300FFAC68 /* LineBackgroundView.m in Sources */,
 				B5448F0A1D658F3100F186BE /* UIView+Shake.m in Sources */,
+				B5CD605A1E44F43B006789B0 /* NSLogn.m in Sources */,
 				B56230631DDAA8B2000BBB46 /* YYWeakProxy.m in Sources */,
+				B5CD60541E44F43B006789B0 /* DBData.m in Sources */,
 				B5BF33E21DFBF3FD00624154 /* NoteArchiveViewController.m in Sources */,
 				B5B392B11D407968001D30BF /* NotePropertyView.m in Sources */,
 				B5BF33E81DFC328C00624154 /* SettingNoteStyleViewController.m in Sources */,
+				B5CD605B1E44F43B006789B0 /* UIpConfig.m in Sources */,
 				B5448F081D658F3100F186BE /* UIView+RotateAnimationProtocol.m in Sources */,
 				B5056A8F1DC82AA500979758 /* TaskInfoManager.m in Sources */,
-				B5AD77CD1DD420D8000CC52D /* FrameLayout.m in Sources */,
 				B5448F051D658F3100F186BE /* UIView+ConvenientMethod.m in Sources */,
 				B5B392AE1D407678001D30BF /* NotePCustmiseViewController.m in Sources */,
-				B5BF33F11DFC33F000624154 /* NSString+Util.m in Sources */,
 				B5056A951DC8523700979758 /* NoteShareViewController.m in Sources */,
 				B52093201DC19E0E000349A5 /* NoteDetailCell.m in Sources */,
 				B5448F091D658F3100F186BE /* UIView+SetRect.m in Sources */,
 				B5CAC3181DE333FE0051039B /* SettingViewController.m in Sources */,
 				B56428C51DAB403300FBB1FE /* TaskViewController.m in Sources */,
+				B5CD605E1E44F43B006789B0 /* PushButton.m in Sources */,
+				B5CD60591E44F43B006789B0 /* FrameLayout.m in Sources */,
 				B5B9053F1D4FB0AC00DF1E24 /* AppConfig.m in Sources */,
 				B5448F001D658F3100F186BE /* UIFont+Fonts.m in Sources */,
 				B5A6E86A1DD0AB0B0062FF80 /* TaskCalendar.m in Sources */,
-				B59AB7221D34A5B40067C4B2 /* DBData.m in Sources */,
 				B5CAC3131DE2EE980051039B /* GCDQueue.m in Sources */,
 				B539592C1D28112F00FB5408 /* NoteModel.m in Sources */,
 				B5AB6DE01D658E3100938B7C /* JSDropDownMenu.m in Sources */,
 				B55DA66E1D67798900A2EC8B /* CustomViewController.m in Sources */,
 				B56E369F1DBE658700165050 /* TaskEditDurationViewController.m in Sources */,
 				B5CAC3121DE2EE980051039B /* GCDGroup.m in Sources */,
-				B5E9D0B21D33F28000395CF0 /* UIpConfig.m in Sources */,
 				B5CAC3141DE2EE980051039B /* GCDSemaphore.m in Sources */,
 				B53959261D27F55200FB5408 /* NoteViewController.m in Sources */,
 				B5CAC3071DE2B59D0051039B /* TaskTickingViewController.m in Sources */,
+				B5CD60561E44F43B006789B0 /* NSObject+Util.m in Sources */,
+				B5CD605F1E44F43B006789B0 /* TextButtonLine.m in Sources */,
 				B56428C81DAB404800FBB1FE /* TaskDetailViewController.m in Sources */,
+				B5CD605D1E44F43B006789B0 /* ButtonData.m in Sources */,
 				B56E36A21DBE659800165050 /* TaskEditSubTaskViewController.m in Sources */,
 				B5BF33E51DFBF52B00624154 /* NoteParagraph.m in Sources */,
 				B56B626C1D2124A4005A2242 /* SummaryInRoot.m in Sources */,
-				B56632DC1DB08652006EE40A /* ButtonData.m in Sources */,
 				B56230601DDAA747000BBB46 /* YYFPSLabel.m in Sources */,
 				B5448F031D658F3100F186BE /* UIView+AnimationProperty.m in Sources */,
 				B5056A921DC82ABC00979758 /* TaskRecordViewController.m in Sources */,
 				B55A83451D3DC80E00814DE3 /* NoteDetailViewController.m in Sources */,
 				B5A26BD31D22140E00B1F629 /* MenuButton.m in Sources */,
 				B5F24BCB1C4A94370027DAB2 /* AppDelegate.m in Sources */,
-				B56632DF1DB0865E006EE40A /* PushButton.m in Sources */,
 				B56428CB1DAB405C00FBB1FE /* TaskModel.m in Sources */,
 				B5448F061D658F3100F186BE /* UIView+GlowView.m in Sources */,
 				B5D4923D1DB5C8DC00794A97 /* TaskCell.m in Sources */,
 				B56E369C1DBE656800165050 /* TaskEditTitleViewController.m in Sources */,
 				B5F24BC81C4A94370027DAB2 /* main.m in Sources */,
+				B5CD60571E44F43B006789B0 /* NSString+Util.m in Sources */,
 				B5448F0C1D658F3100F186BE /* RangeValueView.m in Sources */,
+				B5CD60581E44F43B006789B0 /* NSThread+Util.m in Sources */,
 				B5BF33EE1DFC32B300624154 /* SettingAppDetailViewController.m in Sources */,
 				B5448F041D658F3100F186BE /* UIView+AnimationsListViewController.m in Sources */,
-				B5DC864F1D4A57F600DCE8C8 /* TextButtonLine.m in Sources */,
 				B5BF33EB1DFC329F00624154 /* SettingTaskModeViewController.m in Sources */,
 				B59D4FE61DE9EDC600CA3C5A /* TaskEditViewController.m in Sources */,
-				B5E9D0B61D33F2FF00395CF0 /* NSLogn.m in Sources */,
 				B5CAC3151DE2EE980051039B /* GCDTimer.m in Sources */,
 				B5448F011D658F3100F186BE /* UIView+AccessViewTag.m in Sources */,
-				B564D0F11C91686700E903B6 /* NSObject+Util.m in Sources */,
 				B5448F021D658F3100F186BE /* UIView+AnimationPracticalMethod.m in Sources */,
 				B5E9D0A51D32815500395CF0 /* NoteCell.m in Sources */,
 				B5448F071D658F3100F186BE /* UIView+MotionEffect.m in Sources */,
 				B56B626B1D2124A4005A2242 /* RootViewController.m in Sources */,
-				B5AD77C91DD41C91000CC52D /* NSThread+Util.m in Sources */,
 				B5448F0B1D658F3100F186BE /* UIView+UserInteraction.m in Sources */,
 				B58DE97A1D6AB302002B7697 /* ColorSelector.m in Sources */,
 			);

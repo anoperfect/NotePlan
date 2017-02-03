@@ -1,0 +1,36 @@
+{
+    "version":111,
+    "tables": [
+            {
+                "tableName":"color",
+                "databaseNames":["UIpConfig"],
+                "columnAttributes": [
+                    {"columnName":"name"            , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false },
+                    {"columnName":"title"           , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false },
+                    {"columnName":"enableCustmize"  , "dataType":"integer", "isNeedForInsert":false, "isAutoIncrement":false, "defaultValue":0 },
+                    {"columnName":"colorstring"     , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false, "defaultValue":""},
+                    {"columnName":"colorstringDefault"     , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false },
+                    {"columnName":"colornightstring", "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false, "defaultValue":""},
+                    {"columnName":"colornightstringDefault", "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false }
+                ],
+                "primaryKeys":["name"],
+                "preset": [],
+                "comment":"颜色"
+            },
+
+            {
+                "tableName":"font",
+                "databaseNames":["UIpConfig"],
+                "columnAttributes": [
+                    {"columnName":"name"          , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false },
+                    {"columnName":"title"         , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false },
+                    {"columnName":"enableCustmize", "dataType":"integer", "isNeedForInsert":false, "isAutoIncrement":false, "defaultValue":0 },
+                    {"columnName":"fontstring"    , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false, "defaultValue":""},
+                    {"columnName":"fontstringDefault"    , "dataType":"string" , "isNeedForInsert":true , "isAutoIncrement":false }
+                ],
+                "primaryKeys":["name"],
+                "preset": [],
+                "comment":"字体"
+            }
+        ]
+}
