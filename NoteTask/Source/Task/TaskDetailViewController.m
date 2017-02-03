@@ -121,7 +121,6 @@ TaskProperty
         [self actionUpdateDue:@"FinishAtCount"];
     });
     
-    
     _actionsKeyword = @[
                         @"TaskActionTicking", @"嘀嗒",
                         @"TaskActionFinish", @"完成",

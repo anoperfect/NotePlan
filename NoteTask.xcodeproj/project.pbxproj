@@ -757,7 +757,7 @@
 				TargetAttributes = {
 					B5F24BC11C4A94370027DAB2 = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = 4ELM59EN5N;
+						DevelopmentTeam = 8R4QSLT73X;
 					};
 					B5F24BE01C4A94370027DAB2 = {
 						CreatedOnToolsVersion = 6.4;
@@ -1060,7 +1060,7 @@
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ben.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = NoteTask;
 				PROVISIONING_PROFILE = "";
 			};
@@ -1078,7 +1078,7 @@
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ben.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = NoteTask;
 				PROVISIONING_PROFILE = "";
 			};

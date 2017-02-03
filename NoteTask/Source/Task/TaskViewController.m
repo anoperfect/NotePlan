@@ -239,7 +239,7 @@
     
 //    UIFont *font = [UIFont fontWithName:@"TaskSectionHeader"];
     UIFont *font = FONT_MTSIZE(20);
-    CGFloat indent = 36.0;
+    CGFloat indent = 18.0;
     UIColor *textColor = [UIColor colorWithName:@"TaskSectionHeaderText"];
     
     UIFont *fontNumber = [UIFont fontWithName:@"small"];

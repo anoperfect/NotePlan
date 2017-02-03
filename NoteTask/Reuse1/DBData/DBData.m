@@ -16,7 +16,7 @@
 #define DISPATCH_ONCE_START     do {static dispatch_once_t once; dispatch_once(&once, ^{
 #define DISPATCH_ONCE_FINISH    }); }while(0);
 
-#define ENABLE_LOG_SQLITE   1
+#define ENABLE_LOG_SQLITE   0
 #if ENABLE_LOG_SQLITE
 #define NSLogSqlite NSLog
 #else
