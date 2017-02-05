@@ -482,3 +482,33 @@
 
 
 @end
+
+
+@implementation NSString (Truncate)
+
+
++ (NSString*)truncate:(NSString*)s length:(NSInteger)length suffix:(BOOL)suffix
+{
+    if(s.length <= length) {
+        return s;
+    }
+    
+    if(!suffix) {
+        return [s substringToIndex:length];
+    }
+    
+    if(length <= 3) {
+        return [s substringToIndex:length];
+    }
+    
+    NSString *suffixString = [NSString stringWithFormat:@"[%zd]...", s.length];
+    if(suffixString.length >= length) {
+        return [[s substringToIndex:length - 3] stringByAppendingString:@"..."];
+    }
+    else {
+        return [[s substringToIndex:length - suffixString.length] stringByAppendingString:suffixString];
+    }
+}
+
+
+@end

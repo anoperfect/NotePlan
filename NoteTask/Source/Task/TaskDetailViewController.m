@@ -116,6 +116,7 @@ TaskProperty
     });
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionDetectTaskUpdate:) name:@"NotificationTaskUpdate" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self actionUpdateDue:@"FinishAtCount"];
@@ -359,7 +360,7 @@ TaskProperty
     }
     
     if(needToPop) {
-        [self showIndicationText:@"任务执行信息修改.\n返回到上一页." inTime:1];
+        [self showIndicationText:@"任务执行信息修改.\n返回到上一页."];
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {
@@ -627,13 +628,13 @@ TaskProperty
     if(self.taskinfo.finishedAt.length > 0) {
         NSLog(@"Task already set to finished at : %@", self.taskinfo.finishedAt);
         NSString *finishAt = [TaskInfo dateTimeStringForDisplay:self.taskinfo.finishedAt] ;
-        [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt] inTime:1];
+        [self showIndicationText:[NSString stringWithFormat:@"任务已经设定为完成:\n%@", finishAt]];
         return ;
     }
     
     if(self.finishedAts.count == 0) {
         NSLog(@"#error : scheduleDateStrings count 0.");
-        [self showIndicationText:@"任务信息解析出错" inTime:1];
+        [self showIndicationText:@"任务信息解析出错"];
         return ;
     }
     
@@ -642,21 +643,21 @@ TaskProperty
         NSString *finishAtDateTime = finishAt.finishedAt;
         if(finishAtDateTime.length > 0) {
             NSLog(@"Task on %@ already set to finished at : %@", finishAt.dayString, finishAtDateTime);
-            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)已经设定为完成:\n%@", finishAt.dayString, [TaskInfo dateTimeStringForDisplay:finishAtDateTime]] inTime:1];
+            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)\n已经设定为完成:\n%@", finishAt.dayString, [TaskInfo dateTimeStringForDisplay:finishAtDateTime]]];
         }
         else {
             NSString *dateTimeNow = [NSString dateTimeStringNow];
             [self taskActionFinishOnDay:finishAt.dayString at:dateTimeNow];
             finishAt.finishedAt = dateTimeNow;
-            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", finishAt.dayString] inTime:2];
+            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", finishAt.dayString]];
         }
     }
     else {
-//        [self showIndicationText:@"NotImplemented" inTime:1];
+//        [self showIndicationText:@"NotImplemented"];
         
         NSString *totalFinishAt = [TaskFinishAt checkAllFinishAts:self.finishedAts];
         if(totalFinishAt.length > 0) {
-            [self showIndicationText:[NSString stringWithFormat:@"任务(%@)已经完成", self.mode==TASKINFO_MODE_ARRANGE? self.arrange.arrangeName:@"全部"] inTime:3];
+            [self showIndicationText:[NSString stringWithFormat:@"任务(%@)已经完成", self.mode==TASKINFO_MODE_ARRANGE? self.arrange.arrangeName:@"全部"]];
         }
         else {
             NSLog(@"show days menu.");
@@ -687,7 +688,7 @@ TaskProperty
                 [_self dismissMenus];
                 NSString *dateString = menu[@"text"];
                 [_self taskActionFinishOnDay:dateString at:[NSString dateTimeStringNow]];
-                [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", dateString] inTime:2];
+                [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", dateString]];
             }];
         }
     }
@@ -709,7 +710,7 @@ TaskProperty
     
     if(self.finishedAts.count == 0) {
         NSLog(@"#error : scheduleDateStrings count 0.");
-        [self showIndicationText:@"任务信息解析出错" inTime:1];
+        [self showIndicationText:@"任务信息解析出错"];
         return ;
     }
     
@@ -718,13 +719,13 @@ TaskProperty
         NSString *finishAtDateTime = finishAt.finishedAt;
         if(finishAtDateTime.length == 0) {
             NSLog(@"Task on %@ already set to not finished.", finishAt.dayString);
-            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)未完成. \n无需执行重作任务.\n", finishAt.dayString] inTime:3];
+            [self showIndicationText:[NSString stringWithFormat:@"任务日期(%@)未完成. \n无需执行重作任务.\n", finishAt.dayString]];
         }
         else {
             NSString *dateTimeNow = [NSString dateTimeStringNow];
             [self taskActionRedoOnDay:finishAt.dayString at:dateTimeNow];
             finishAt.finishedAt = @"";
-            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", finishAt.dayString] inTime:2];
+            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", finishAt.dayString]];
         }
     }
     else {
@@ -758,7 +759,7 @@ TaskProperty
             [_self dismissMenus];
             NSString *dateString = menu[@"text"];
             [_self taskActionRedoOnDay:dateString at:[NSString dateTimeStringNow]];
-            [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", dateString] inTime:2];
+            [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", dateString]];
         }];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
@@ -790,7 +791,7 @@ TaskProperty
 
 - (void)taskActionSignIn
 {
-    [self showIndicationText:@"Not implemented" inTime:1];
+    [self showIndicationText:@"Not implemented"];
 }
 
 
@@ -969,7 +970,7 @@ TaskProperty
 
 - (void)taskActionDelete
 {
-    [self showIndicationText:@"任务已删除" inTime:1];
+    [self showIndicationText:@"任务已删除"];
     [[AppConfig sharedAppConfig] configTaskInfoRemoveBySn:@[self.taskinfo.sn]];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
     [self.navigationController popViewControllerAnimated:YES];
@@ -1029,3 +1030,6 @@ TaskProperty
 
 
 @end
+
+
+

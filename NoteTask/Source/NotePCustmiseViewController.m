@@ -358,6 +358,9 @@
         self.fontSizeValueLabel.text = fontSizeString;
         self.sampleNoteParagraph.styleDictionay[@"font-size"] = fontSizeString;
         self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGeneratedOnSn:0 andEditMode:NO];
+        if(self.fontSizeUseDefaultSwitch.on) {
+            self.fontSizeUseDefaultSwitch.on = NO;
+        }
     }
     
     return ;
@@ -396,6 +399,23 @@
         self.fontSizeEdit = self.sampleNoteParagraph.styleDictionay[@"font-size"];
         self.sampleNoteParagraph.styleDictionay[@"font-size"] = nil;
         pxSize = self.sampleNoteParagraph.isTitle? 18 : 16;
+        NSString *fontValue;
+        NSInteger fontSize = 16;
+        if(self.sampleNoteParagraph.isTitle
+           && nil != (fontValue = [[AppConfig sharedAppConfig] configSettingGet:@"NoteTitleFontSizeDefault"])
+           && (fontSize = [fontValue integerValue]) >= 6
+           && fontSize <= 100
+           ) {
+            pxSize = fontSize;
+        }
+        else if(!self.sampleNoteParagraph.isTitle
+           && nil != (fontValue = [[AppConfig sharedAppConfig] configSettingGet:@"NoteParagraphFontSizeDefault"])
+           && (fontSize = [fontValue integerValue]) >= 6
+           && fontSize <= 100
+           ) {
+            pxSize = fontSize;
+        }
+        
         self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)pxSize];
         self.fontSizeSlider.value = pxSize;
     }
@@ -409,6 +429,22 @@
         }
         else {
             pxSize = self.sampleNoteParagraph.isTitle? 18 : 16;
+            NSString *fontValue;
+            NSInteger fontSize = 16;
+            if(self.sampleNoteParagraph.isTitle
+               && nil != (fontValue = [[AppConfig sharedAppConfig] configSettingGet:@"NoteTitleFontSizeDefault"])
+               && (fontSize = [fontValue integerValue]) >= 6
+               && fontSize <= 100
+               ) {
+                pxSize = fontSize;
+            }
+            else if(!self.sampleNoteParagraph.isTitle
+                    && nil != (fontValue = [[AppConfig sharedAppConfig] configSettingGet:@"NoteParagraphFontSizeDefault"])
+                    && (fontSize = [fontValue integerValue]) >= 6
+                    && fontSize <= 100
+                    ) {
+                pxSize = fontSize;
+            }
         }
         self.fontSizeValueLabel.text = [NSString stringWithFormat:@"%zdpx", (NSInteger)pxSize];
         self.fontSizeSlider.value = pxSize;

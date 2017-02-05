@@ -751,12 +751,12 @@
             }
             else {
                 NSLog(@"#error - addFinishedAtOnSn(%@) error.", taskinfo.sn);
-                [self showIndicationText:@"设置任务为完成状态不成功." inTime:1];
+                [self showIndicationText:@"设置任务为完成状态不成功."];
             }
         }
         else {
             NSLog(@"#error - argument error.");
-            [self showIndicationText:@"设置任务为完成状态不成功." inTime:1];
+            [self showIndicationText:@"设置任务为完成状态不成功."];
         }
     }
 
@@ -774,12 +774,12 @@
             }
             else {
                 NSLog(@"#error - addRedoAtOnSn(%@) error.", taskinfo.sn);
-                [self showIndicationText:@"设置任务为重新完成状态不成功." inTime:1];
+                [self showIndicationText:@"设置任务为重新完成状态不成功."];
             }
         }
         else {
             NSLog(@"#error - argument error.");
-            [self showIndicationText:@"设置任务为重新完成状态不成功." inTime:1];
+            [self showIndicationText:@"设置任务为重新完成状态不成功."];
         }
     }
     

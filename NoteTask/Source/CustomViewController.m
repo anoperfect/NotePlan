@@ -22,6 +22,7 @@
 @property (nonatomic, strong) MBProgressHUD *progressHUD;
 @property (nonatomic, strong) MBProgressHUD *popupHUD;
 
+@property (nonatomic, assign) NSTimeInterval messageIndicationTime;
 @property (nonatomic, strong) void(^popupViewDismissBlock)(void);
 @property (nonatomic, assign) BOOL      hiddenByPush;
 
@@ -47,7 +48,8 @@
         self.contentView = [[UIView alloc] init];
     }
     [self.view addSubview:self.contentView];
-
+    
+    self.messageIndicationTime = 1.9;
 }
 
 
@@ -155,7 +157,13 @@
 }
 
 
-- (void)showIndicationText:(NSString*)text inTime:(NSTimeInterval)secs;
+- (void)showIndicationTextTime:(NSTimeInterval)secs
+{
+    self.messageIndicationTime = secs;
+}
+
+
+- (void)showIndicationText:(NSString*)text
 {
     NSLog(@"---xxx0 : >>>>>>IndicationText : %@", text);
     
@@ -172,6 +180,7 @@
     self.messageIndicationHUD.detailsLabelText = text;
     [self.messageIndicationHUD show:YES];
     
+    NSTimeInterval secs = self.messageIndicationTime;
     if(secs > 0.0) {
         [self.messageIndicationHUD hide:YES afterDelay:secs];
     }
@@ -421,7 +430,7 @@
 {
     [super layoutSubviews];
     
-    CGFloat widthPercentage = 0.64;
+    CGFloat widthPercentage = 0.80;
     CGRect frame = self.frame;
     CGRect frameTableView = CGRectMake((1-widthPercentage) * frame.size.width, 0, widthPercentage * frame.size.width, frame.size.height);
     
@@ -485,6 +494,8 @@
      image : 
      detailText :
      accessoryType :
+     
+     
      */
     
     if(menu[@"text"]) {
@@ -501,7 +512,6 @@
     }
     
     if(menu[@"accessoryType"]) {
-//        cell.accessoryType = UITableViewCellAccessoryCheckmark;
         cell.accessoryType = [menu[@"accessoryType"] integerValue];
     }
     

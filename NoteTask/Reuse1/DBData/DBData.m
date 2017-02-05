@@ -16,7 +16,7 @@
 #define DISPATCH_ONCE_START     do {static dispatch_once_t once; dispatch_once(&once, ^{
 #define DISPATCH_ONCE_FINISH    }); }while(0);
 
-#define ENABLE_LOG_SQLITE   0
+#define ENABLE_LOG_SQLITE   1
 #if ENABLE_LOG_SQLITE
 #define NSLogSqlite NSLog
 #else
@@ -270,8 +270,32 @@
 
 
 
-
-
+- (void)DBDataExecuteLog:(NSString*)queryString withArgumentsInArray:(NSArray*)arguments
+{
+    NSMutableString *s = [NSMutableString stringWithFormat:@"execute[%@] with arguments [%zd][", queryString, arguments.count];
+    NSInteger idx = 0;
+    for(id obj in arguments) {
+        if([obj isKindOfClass:[NSString class]]) {
+            [s appendFormat:@"%zd:%@", idx, [NSString truncate:obj length:30 suffix:YES]];
+        }
+        else if([obj isKindOfClass:[NSData class]]) {
+            NSData *data = obj;
+            [s appendFormat:@"%zd:data length%zd", idx, data.length];
+        }
+        else {
+            [s appendFormat:@"%zd:%@", idx, obj];
+        }
+        
+        if(idx != arguments.count) {
+            [s appendFormat:@", "];
+        }
+        
+        idx ++;
+    }
+    [s appendFormat:@"]."];
+    
+    NSLogSqlite(@"%@", s);
+}
 
 
 //增
@@ -405,8 +429,8 @@
         addJoiner = YES;
     }
     
+    [self DBDataExecuteLog:insert withArgumentsInArray:infoInsertValuesM];
     BOOL executeResult = [db executeUpdate:insert withArgumentsInArray:infoInsertValuesM];
-    NSLogSqlite(@"INSERT executeUpdate [%@] with arguments [%@].", insert, [NSString arrayDescriptionConbine:infoInsertValuesM seprator:@","]);
     if(executeResult) {
         NS0Log(@"insert table %@ [%zd] OK.", tableAttribute.tableName, values.count);
     }
@@ -521,7 +545,7 @@
     NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
     NSString *deleteString = [NSString stringWithFormat:@"DELETE FROM %@ %@", tableAttribute.tableName, queryString];
     
-    NSLogSqlite(@"DELETE executeUpdate [%@] with arguments [%@].", deleteString, [NSString arrayDescriptionConbine:arguments seprator:@","]);
+    [self DBDataExecuteLog:deleteString withArgumentsInArray:arguments];
     executeResult = [db executeUpdate:deleteString withArgumentsInArray:arguments];
     
     if(executeResult) {
@@ -610,14 +634,14 @@
 - (NSDictionary*)DBDataQuery:(FMDatabase*)db
                      toTable:(DBTableAttribute*)tableAttribute
                  columnNames:(NSArray*)columnNames
-                   withQuery:(NSDictionary*)infoQuery1
-                   withLimit:(NSDictionary*)infoLimit1
+                   withQuery:(NSDictionary*)infoQuery
+                   withLimit:(NSDictionary*)infoLimit
 {
     NSLogSqlite(@"DBDataQuery : table:%@, columnNames:%@, infoQuery:%@, infoLimit:%@",
                 tableAttribute.tableName,
                 [NSString arrayDescriptionConbine:columnNames seprator:@","],
-                infoQuery1,
-                infoLimit1
+                infoQuery,
+                infoLimit
                 );
     
     
@@ -643,19 +667,18 @@
     }
     
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery1 andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
     
     querym = [NSMutableString stringWithFormat:@"SELECT %@ FROM %@ %@",
               [NSString arrayDescriptionConbine:columnNames seprator:@","],
               tableAttribute.tableName,
               queryString];
     
-    if([infoLimit1 objectForKey:DBDATA_STRING_ORDER]) {
-        [querym appendFormat:@" %@", [infoLimit1 objectForKey:DBDATA_STRING_ORDER]];
+    if([infoLimit objectForKey:DBDATA_STRING_ORDER]) {
+        [querym appendFormat:@" %@", [infoLimit objectForKey:DBDATA_STRING_ORDER]];
     }
     
-    NSLogSqlite(@"query string : [%@]", querym);
-    NSLogSqlite(@"query parameterm : [%@]", [NSString arrayDescriptionConbine:arguments seprator:@","]);
+    [self DBDataExecuteLog:querym withArgumentsInArray:arguments];
     FMResultSet *rs = [db executeQuery:[NSString stringWithString:querym] withArgumentsInArray:arguments];
     
     for(NSString *columnName in queryColumnsNamesM) {
@@ -839,10 +862,7 @@
     NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
     [updatem appendString:queryString];
     
-    NSLogSqlite(@"UPDATE executeUpdate [%@] with arguments [%@].", updatem, [NSString arrayDescriptionConbine:arguments seprator:@","]);
-    NSLog(@"%@", updatem);
-    NSLog(@"%@", infoQuery);
-    NSLog(@"%@", [NSString arrayDescriptionConbine:arguments seprator:@", "]);
+    [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
     retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
     if(retFMDB) {
         
@@ -912,7 +932,7 @@
         NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
         [updatem appendString:queryString];
         
-        NSLogSqlite(@"UPDATE executeUpdate [%@] with arguments [%@].", updatem, [NSString arrayDescriptionConbine:arguments seprator:@","]);
+        [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
         retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
         if(retFMDB) {
             
@@ -962,8 +982,7 @@
     NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
     [updatem appendString:queryString];
     
-    NSLogSqlite(@"query string : [%@]", updatem);
-    NSLogSqlite(@"query parameterm : [%@]", [NSString arrayDescriptionConbine:arguments seprator:@","]);
+    [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
     retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
     if(retFMDB) {
         

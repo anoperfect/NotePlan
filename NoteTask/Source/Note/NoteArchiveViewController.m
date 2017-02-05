@@ -123,7 +123,7 @@
     
     if([actionText isEqualToString:@"删除类别"]) {
         if(self.classifications.count <= 2) {
-            [self showIndicationText:@"没有新增的类别以删除" inTime:1];
+            [self showIndicationText:@"没有新增的类别以删除"];
             return ;
         }
         
@@ -373,7 +373,7 @@
     
     if (toBeString.length > 10) {
         textField.text = [toBeString substringToIndex:10];
-        [self showIndicationText:@"限定类别长度10" inTime:1.0];
+        [self showIndicationText:@"限定类别长度10"];
         return NO;
     }
     
@@ -400,7 +400,7 @@
 - (void)addClassification:(NSString*)text
 {
     if(text.length == 0) {
-        [self showIndicationText:@"类别为空, 无法添加" inTime:1.0];
+        [self showIndicationText:@"类别为空, 无法添加"];
         return ;
     }
     

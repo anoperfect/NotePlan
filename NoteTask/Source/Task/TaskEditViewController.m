@@ -317,7 +317,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 {
     NSString *errorMessage = [self dataUpdateToTaskInfo];
     if(errorMessage.length > 0) {
-        [self showIndicationText:errorMessage inTime:1];
+        [self showIndicationText:errorMessage];
         return ;
     }
     
@@ -328,7 +328,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {
-        NSDictionary *diffs = [self.taskinfo differentFrom:self.taskinfoEdit];
+        NSDictionary *diffs = [self.taskinfoEdit differentFrom:self.taskinfo];
         if(diffs.count > 0) {
             [self.taskinfo updateFrom:self.taskinfoEdit];
             NSString *updateDetail = diffs[@"detail"];
@@ -337,7 +337,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
             [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:diffs userInfo:nil];
         }
         else {
-            [self showIndicationText:@"任务信息未修改" inTime:1];
+            [self showIndicationText:@"任务信息未修改"];
         }
     }
 }
@@ -516,10 +516,29 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
             for(NSString *dayString in self.dayStrings) {
                 [s appendFormat:@"%@  ", dayString];
             }
+            
+            if(self.dayStrings.count % 3 == 0) {
+                [s appendString:@"           "];
+                [s appendString:@"           "];
+                [s appendString:@"           >"];
+            }
+            else if(self.dayStrings.count % 3 == 1) {
+                [s appendString:@"           "];
+                [s appendString:@"          >"];
+            }
+            else if(self.dayStrings.count % 3 == 2) {
+                [s appendString:@"         >"];
+            }
         }
         
         NSMutableAttributedString *attributedString = [NSString attributedStringWith:s font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"] backgroundColor:nil underlineColor:nil throughColor:nil textAlignment:NSTextAlignmentCenter];
-        self.daysInMutilMode.attributedText = attributedString;
+        self.daysInMutilMode.attributedText = attributedString; //x
+        
+//        self.daysInMutilMode.attributedText = nil; //x
+//        self.daysInMutilMode.text = s; //x
+//        self.daysInMutilMode.textAlignment = NSTextAlignmentCenter; //x
+//        self.daysInMutilMode.font = self.fontScheduleDay;
+        
     }
     else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
         NSMutableAttributedString *attributedString = [NSString attributedStringWith:@"任务开始日期 : " font:self.fontScheduleDay indent:36 textColor:[UIColor colorWithName:@"TaskDetailText"]];

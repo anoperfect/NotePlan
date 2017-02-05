@@ -19,8 +19,8 @@
 - (void)addSubview:(UIView*)view;
 - (void)addSubviews:(NSArray<UIView*>*)views;
 
-
-- (void)showIndicationText:(NSString*)text inTime:(NSTimeInterval)secs;
+- (void)showIndicationTextTime:(NSTimeInterval)secs;
+- (void)showIndicationText:(NSString*)text ;
 - (void)dismissIndicationText;
 
 - (void)showProgressText:(NSString*)text inTime:(NSTimeInterval)secs;

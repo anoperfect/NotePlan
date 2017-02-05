@@ -669,7 +669,7 @@
         if(noteParagraph.content.length > 0) {
             UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
             pasteboard.string = noteParagraph.content;
-            [self showIndicationText:@"已复制到粘贴板" inTime:1.0];
+            [self showIndicationText:@"已复制到粘贴板"];
         }
         return ;
     }
@@ -922,7 +922,7 @@
     
     if(!image) {
         NSLog(@"#error - image from info nil");
-        [self showIndicationText:@"获取图片错误" inTime:1];
+        [self showIndicationText:@"获取图片错误"];
         return;
     }
     
@@ -939,7 +939,7 @@
     
     if(!imageResize) {
         NSLog(@"#error - image resize error.");
-        [self showIndicationText:@"获取图片错误" inTime:1];
+        [self showIndicationText:@"获取图片错误"];
         return;
     }
     
@@ -959,7 +959,7 @@
     
     if(data.length == 0) {
         NSLog(@"#error - UIImage to data error.");
-        [self showIndicationText:@"图片解析出错" inTime:1];
+        [self showIndicationText:@"图片解析出错"];
         return;
     }
     

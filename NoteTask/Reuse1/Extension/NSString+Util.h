@@ -79,3 +79,11 @@
 + (NSString*)arrayDescriptionConbine:(NSArray*)array seprator:(NSString*)seprator;
 
 @end
+
+
+@interface NSString (Truncate)
+
++ (NSString*)truncate:(NSString*)s length:(NSInteger)length suffix:(BOOL)suffix;
+
+@end
+

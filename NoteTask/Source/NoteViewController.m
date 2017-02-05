@@ -71,10 +71,49 @@
 //    self.navigationItem.backBarButtonItem = backItem;
     
     [self navigationItemRightInit];
-
+    
+    [self dataFilterRefresh];
+    
     //从AppConfig中读取上次保存的类别选项.
     self.currentClassification = @"*";
     self.currentColorString = @"*";
+    NSString *noteClassification = [[AppConfig sharedAppConfig] configSettingGet:@"NoteFilterClassification"];
+    if(noteClassification) {
+        self.currentClassification = noteClassification;
+        NSInteger idx = 0;
+        if([self.currentClassification isEqualToString:@"*"]) {
+            self.idxClassifications = 0;
+        }
+        else if((idx = [self.filterDataClassifications indexOfObject:self.currentClassification]) != NSNotFound) {
+            self.idxClassifications = idx;
+        }
+        else {
+            NSLog(@"#error - ");
+        }
+        
+        NSLog(@"%zd", self.idxClassifications);
+    }
+    else {
+        NSLog(@"%zd", self.idxClassifications);
+    }
+    
+    NSString *noteColor = [[AppConfig sharedAppConfig] configSettingGet:@"NoteFilterColor"];
+    if(noteColor) {
+        self.currentColorString = noteColor;
+        NSInteger idx = 0;
+        NSString *currentColorDisplayString = [NoteModel colorStringToColorDisplayString:self.currentColorString];
+        if((idx = [self.filterDataColors indexOfObject:currentColorDisplayString]) != NSNotFound) {
+            self.idxColor = idx;
+        }
+        else {
+            NSLog(@"#error - ");
+        }
+        
+        NSLog(@"%zd", self.idxColor);
+    }
+    else {
+        NSLog(@"%zd", self.idxColor);
+    }
     
     //内容筛选栏创建.
     [self filterViewBuild];
@@ -245,6 +284,20 @@
 }
 
 
+- (void)dataFilterRefresh
+{
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
+    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
+    if(addedClassifications.count > 0) {
+        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
+    }
+    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
+}
+
+
 - (void)filterViewBuild
 {
     if(self.noteFilter) {
@@ -259,15 +312,7 @@
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
-    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
-    if(addedClassifications.count > 0) {
-        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
-    }
-    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
-    
-    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
-    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
+
     JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
     menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
     menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
@@ -514,7 +559,8 @@
 }
 
 
--(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+-(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
 }
 
@@ -574,19 +620,27 @@
 }
 
 - (NSString *)menu:(JSDropDownMenu *)menu titleForColumn:(NSInteger)column{
-    
     switch (column) {
-        case 0: return self.filterDataClassifications[0];
+        case 0:
+            if(self.idxClassifications < self.filterDataClassifications.count) {
+                return self.filterDataClassifications[self.idxClassifications];
+            }
             break;
-        case 1: return self.filterDataColors[0];
+        case 1:
+            if(self.idxColor < self.filterDataColors.count) {
+                return self.filterDataColors[self.idxColor];
+            }
             break;
         default:
             return nil;
             break;
     }
+    
+    return nil;
 }
 
 - (NSString *)menu:(JSDropDownMenu *)menu titleForRowAtIndexPath:(JSIndexPath *)indexPath {
+    LOG_POSTION
     
     if (indexPath.column==0) {
         
@@ -606,11 +660,12 @@
         if([self.currentClassification isEqualToString:@"全部类别"]) {
             self.currentClassification = @"*";
         }
-        //#保存classification. 下次自动选择此.
-        
+        //保存classification. 下次自动选择此.
+        [[AppConfig sharedAppConfig] configSettingSetKey:@"NoteFilterClassification" toValue:self.currentClassification replace:YES];
     } else{
         self.idxColor = indexPath.row;
         self.currentColorString = [NoteModel colorDisplayStringToColorString:self.filterDataColors[self.idxColor]];
+        [[AppConfig sharedAppConfig] configSettingSetKey:@"NoteFilterColor" toValue:self.currentColorString replace:YES];
     }
     
     NSLog(@"Classification : %@, color : %@", self.filterDataClassifications[self.idxClassifications], self.filterDataColors[self.idxColor]);
@@ -629,10 +684,10 @@
     
     NSArray<NSString*> *actionStrings = nil;
     if(self.topNotesView == 0) {
-        actionStrings = @[/*@"创建", */@"筛选ON", @"多选", @"类别", @"恢复预制"];
+        actionStrings = @[/*@"创建", */@"显示筛选", @"多选", @"类别", @"恢复预制"];
     }
     else {
-        actionStrings = @[/*@"创建", */@"筛选OFF", @"多选", @"类别", @"恢复预制"];
+        actionStrings = @[/*@"创建", */@"隐藏筛选", @"多选", @"类别", @"恢复预制"];
     }
     [v setTexts:actionStrings];
     
@@ -654,8 +709,8 @@
     NSDictionary *menuStringAndSELStrings = @{
                                               @"创建":@"actionCreateNote",
                                               @"多选":@"actionMuiltSelect",
-                                              @"筛选ON":@"actionOpenFilter",
-                                              @"筛选OFF":@"actionCloseFilter",
+                                              @"显示筛选":@"actionOpenFilter",
+                                              @"隐藏筛选":@"actionCloseFilter",
                                               @"恢复预制":@"actionResumePreset",
                                               @"类别":@"actionEnterArchive",
                                               @"":@"",
@@ -799,7 +854,7 @@
     NSLog(@"actionMuiltSelectOnKeyword : %@", keyword);
     
     if(self.indexPathsSelected.count == 0) {
-        [self showIndicationText:@"未选中任何笔记" inTime:1.0];
+        [self showIndicationText:@"未选中任何笔记"];
         return ;
     }
     
@@ -1014,49 +1069,4 @@
 */
 
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

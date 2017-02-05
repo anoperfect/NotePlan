@@ -210,7 +210,7 @@
                             [FrameLayoutView viewWithName:@"PaddingLANLine" value:20 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
                             [FrameLayoutView viewWithName:@"LANLine" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
                             [FrameLayoutView viewWithName:@"_labelLANAddress" value:36 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
-                            [FrameLayoutView viewWithName:@"_labelLANDetail" value:100 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
+                            [FrameLayoutView viewWithName:@"_labelLANDetail" value:127 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
                             [FrameLayoutView viewWithName:@"PaddingWANLine" value:20 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
                             [FrameLayoutView viewWithName:@"WANLine" value:45 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
                             [FrameLayoutView viewWithName:@"_labelWANAddress" value:36 edge:UIEdgeInsetsMake(2, 10, 2, 10)],
@@ -405,7 +405,7 @@
     NSLog(@"%@", self.pdfPath);
     
     if(pdfData.length > 0) {
-        [self showIndicationText:@"已生成网页文件和PDF文件." inTime:1.];
+        [self showIndicationText:@"已生成网页文件和PDF文件."];
         [pdfData writeToFile:self.pdfPath atomically:YES];
         self.pdfGenerateStatus = 1;
         //一次上传文件太大可能容易导致程序出错. 分割成1M的组.
@@ -428,7 +428,7 @@
         [self actionUploadPdf];
     }
     else {
-        [self showIndicationText:@"生成PDF文件出错" inTime:1.];
+        [self showIndicationText:@"生成PDF文件出错"];
         self.pdfGenerateStatus = -1;
     }
     
@@ -448,7 +448,7 @@
         [self actionSharePdf];
     }
     else {
-        [self showIndicationText:@"Error" inTime:1.0];
+        [self showIndicationText:@"Error"];
     }
 }
 
@@ -701,7 +701,7 @@
         }
         else {
             self.labelWAN.text = @"互联网获取(连接失败)";
-            self.labelWANAddress.text = @"-1";
+            self.labelWANAddress.text = @"";
         }
     }
 }
