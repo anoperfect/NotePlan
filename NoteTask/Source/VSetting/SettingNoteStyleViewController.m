@@ -53,7 +53,7 @@
     [self.titleFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
     [self.titleFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
     [self.titleFontSizeSlider addTarget:self action:@selector(titleSliderChanged:) forControlEvents:UIControlEventValueChanged];
-    NSString *titleFontString = [[AppConfig sharedAppConfig] configSettingGet:@"TitleFontSizeDefault"];
+    NSString *titleFontString = [[AppConfig sharedAppConfig] configSettingGet:@"NoteTitleFontSizeDefault"];
     CGFloat titlePtSize = 18.0;
     if([titleFontString hasSuffix:@"px"] && (titlePtSize = [titleFontString floatValue]) >= 1.0 && titlePtSize < 100.0) {
         
@@ -91,7 +91,7 @@
     [self.paragraphFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
     [self.paragraphFontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
     [self.paragraphFontSizeSlider addTarget:self action:@selector(paragraphSliderChanged:) forControlEvents:UIControlEventValueChanged];
-    NSString *paragraphFontString = [[AppConfig sharedAppConfig] configSettingGet:@"ParagraphFontSizeDefault"];
+    NSString *paragraphFontString = [[AppConfig sharedAppConfig] configSettingGet:@"NoteParagraphFontSizeDefault"];
     CGFloat paragraphFtSize = 16.0;
     if([paragraphFontString hasSuffix:@"px"] && (paragraphFtSize = [paragraphFontString floatValue]) >= 1.0 && paragraphFtSize < 100.0) {
         
@@ -212,9 +212,10 @@
     NSLog(@"%@", self.titleFontSizeValueLabel.text);
     NSLog(@"%@", self.paragraphFontSizeValueLabel.text);
     
+    [[AppConfig sharedAppConfig] configSettingSetKey:@"NoteTitleFontSizeDefault" toValue:self.titleFontSizeValueLabel.text replace:YES];
+    [[AppConfig sharedAppConfig] configSettingSetKey:@"NoteParagraphFontSizeDefault" toValue:self.paragraphFontSizeValueLabel.text replace:YES];
     
-    
-    
+    [self showIndicationText:@"设置已保存."];
 }
 
 

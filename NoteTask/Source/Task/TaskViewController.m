@@ -52,6 +52,20 @@
     [super viewDidLoad];
 
     self.mode = TASKINFO_MODE_ARRANGE;
+    NSString *value = [[AppConfig sharedAppConfig] configSettingGet:@"TaskModeDefault"];
+    if(value.length > 0) {
+        NSLog(@"Task mode use setting : %@.", value);
+        NSDictionary *modeIndexAndNames = [TaskInfo modeIndexAndNames];
+        for(NSNumber* number in modeIndexAndNames.allKeys) {
+            if([modeIndexAndNames[number] isKindOfClass:[NSString class]] && [modeIndexAndNames[number] isEqualToString:value]) {
+                self.mode = [number integerValue];
+                break;
+            }
+        }
+    }
+    else {
+        NSLog(@"Task mode use preset : arrange.");
+    }
 
     [self dataSectionOpenInit];
 

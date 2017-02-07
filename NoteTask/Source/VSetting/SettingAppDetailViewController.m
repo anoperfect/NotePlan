@@ -53,26 +53,43 @@
 }
 
 
+- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 200)];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"AppDetailIcon"]];
+    icon.frame = CGRectMake((tableView.frame.size.width - 100) / 2, 50, 100, 100);
+    [view addSubview:icon];
+    
+    return view;
+}
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return 2;
 }
 
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     
-    cell.textLabel.text = @"版本";
+    if(indexPath.row == 0) {
+        cell.textLabel.text = @"版本";
+        cell.detailTextLabel.text = @"1.0";
+    }
+    else if(indexPath.row == 1) {
+        cell.textLabel.text = @"意见";
+        cell.detailTextLabel.text = @"Ben.ZhaoBin@qq.com";
+    }
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 
-
-
-
-
-
 @end
+
+
 
 
 

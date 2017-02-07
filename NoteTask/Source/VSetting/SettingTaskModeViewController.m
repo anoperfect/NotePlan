@@ -34,11 +34,7 @@
     [self memberObjectCreate];
     
     self.titleDefaultMode.text = @"默认显示模式";
-    self.modeIndexAndNames = @{
-                               @(TASKINFO_MODE_ARRANGE):@"安排",
-                               @(TASKINFO_MODE_DAY):@"日期",
-                               @(TASKINFO_MODE_LIST):@"列表"
-                               };
+    self.modeIndexAndNames = [TaskInfo modeIndexAndNames];
     self.modeNames = self.modeIndexAndNames.allValues;
     
     for(NSInteger idx = 0; idx < self.modeNames.count; idx ++) {
@@ -47,9 +43,18 @@
     [self.selectorMode addTarget:self action:@selector(actionModeTypeSelector:) forControlEvents:UIControlEventValueChanged];
     
     NSString *modeString = [[AppConfig sharedAppConfig] configSettingGet:@"TaskModeDefault"];
-    NSInteger idx = [modeString integerValue];
-    if(modeString.length > 0 && NSNotFound != [self.modeIndexAndNames.allKeys indexOfObject:@(idx)]) {
-        self.selectorMode.selectedSegmentIndex = idx ;
+    NSInteger idx = NSNotFound;
+    if(modeString.length > 0) {
+        NSLog(@"TaskModeDefault : [%@]", modeString);
+        if(NSNotFound != (idx = [self.modeNames indexOfObject:modeString])) {
+            self.selectorMode.selectedSegmentIndex = idx ;
+        }
+        else {
+            NSLog(@"#error - TaskModeDefault : [%@]", modeString);
+        }
+    }
+    else {
+        NSLog(@"TaskModeDefault not set.");
     }
     
     [self addSubview:self.titleDefaultMode];
@@ -92,9 +97,7 @@
     NSInteger idx = segmentedControl.selectedSegmentIndex;
     NSLog(@"idx : %zd, name : %@", idx, self.modeNames[idx]);
     
-    
-    
-    
+    [[AppConfig sharedAppConfig] configSettingSetKey:@"TaskModeDefault" toValue:self.modeNames[idx] replace:YES];
 }
 
 

@@ -152,12 +152,25 @@
     [self.fontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateNormal];
     [self.fontSizeSlider setThumbImage:[UIImage imageNamed:@"slider"] forState:UIControlStateHighlighted];
     [self.fontSizeSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+    CGFloat sliderValue = 16.0;
     NSString *fontString = self.sampleNoteParagraph.styleDictionay[@"font-size"];
     CGFloat ptSize = 16.0;
     if([fontString hasSuffix:@"px"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
-        
+        sliderValue = ptSize;
     }
-    self.fontSizeSlider.value = ptSize;
+    else {
+        NSString *value = nil;
+        if(self.sampleNoteParagraph.isTitle) {
+            value = [[AppConfig sharedAppConfig] configSettingGet:@"NoteTitleFontSizeDefault"];
+        }
+        else {
+            value = [[AppConfig sharedAppConfig] configSettingGet:@"NoteParagraphFontSizeDefault"];
+        }
+        if([value hasSuffix:@"px"] && (ptSize = [value floatValue]) >= 1.0 && ptSize < 100.0) {
+            sliderValue = ptSize;
+        }
+    }
+    self.fontSizeSlider.value = sliderValue;
     
     self.fontSizeNameLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.fontSizeNameLabel];

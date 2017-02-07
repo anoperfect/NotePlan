@@ -527,12 +527,17 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
              };
 }
 
+
++ (NSDictionary*)modeIndexAndNames
+{
+    return @{
+      @(TASKINFO_MODE_ARRANGE):@"安排",
+      @(TASKINFO_MODE_DAY):@"日期",
+      @(TASKINFO_MODE_LIST):@"列表"
+      };
+}
+
 @end
-
-
-
-
-
 
 
 

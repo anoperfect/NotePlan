@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 + (NSString*)scheduleStringWithType:(NSInteger)type;
 + (NSInteger)scheduleTypeFromString:(NSString*)s;
 
-
++ (NSDictionary*)modeIndexAndNames;
 @end
 
 

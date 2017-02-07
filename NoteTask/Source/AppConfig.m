@@ -542,6 +542,7 @@ TaskModeDefault
         NSLog(@"#error - ");
     }
     
+    NSLog(@"configSettingGet [%@] : [%@]", key, value);
     return value;
 }
 
@@ -1282,6 +1283,11 @@ TaskModeDefault
     [self configNoteAddTest];
     //[self configTaskAddTest];
     
+    
+    [self configSettingSetKey:@"NoteTitleFontSizeDefault" toValue:@"18px" replace:NO];
+    [self configSettingSetKey:@"NoteParagraphFontSizeDefault" toValue:@"16px" replace:NO];
+//    [self configSettingSetKey:@"TaskModeDefault" toValue:@"1" replace:NO];
+    
     [self test1];
 }
 
@@ -1289,9 +1295,9 @@ TaskModeDefault
 - (void)test1
 {
 
-    
-     
 }
+
+
 
 
 @end

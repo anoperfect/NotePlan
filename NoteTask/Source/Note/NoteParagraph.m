@@ -264,12 +264,26 @@
 
 - (UIFont*)textFont
 {
-    CGFloat fontSize = self.isTitle?18:16;
+    CGFloat fontSize = 16.2;
+    
     NSString *fontString = self.styleDictionay[@"font-size"];
     CGFloat ptSize;
     if([fontString hasSuffix:@"px"] && (ptSize = [fontString floatValue]) >= 1.0 && ptSize < 100.0) {
         fontSize = ptSize;
     }
+    else {
+        NSString *value = nil;
+        if(self.isTitle) {
+            value = [[AppConfig sharedAppConfig] configSettingGet:@"NoteTitleFontSizeDefault"];
+        }
+        else {
+            value = [[AppConfig sharedAppConfig] configSettingGet:@"NoteParagraphFontSizeDefault"];
+        }
+        if([value hasSuffix:@"px"] && (ptSize = [value floatValue]) >= 1.0 && ptSize < 100.0) {
+            fontSize = ptSize;
+        }
+    }
+    
     UIFont *font = [UIFont systemFontOfSize:fontSize];
     
     if([self.styleDictionay[@"font-weight"] isEqualToString:@"bold"]) {
@@ -405,6 +419,7 @@
     noteParagraphCopy.content = self.content;
     noteParagraphCopy.image = self.image;
     noteParagraphCopy.styleDictionay = [[NSMutableDictionary alloc] initWithDictionary:self.styleDictionay];
+    noteParagraphCopy.isTitle = self.isTitle;
     
     return noteParagraphCopy;
 }
