@@ -127,6 +127,9 @@
     self.navigationItem.rightBarButtonItem
             = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(actionFinishCustomise)];
     
+    self.navigationItem.rightBarButtonItem
+            = [[UIBarButtonItem alloc] initWithTitle:@"提交" style:UIBarButtonItemStylePlain target:self action:@selector(actionFinishCustomise)];
+    
     //点击空白的地方时关闭软键盘.
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
     //设置成NO表示当前控件响应后会传播到其他控件上，默认为YES。
