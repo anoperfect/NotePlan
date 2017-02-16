@@ -211,13 +211,19 @@ typedef NS_ENUM(NSInteger, DBDataColumnType) {
             andArgumentsInArray:(NSArray*)arguments;
 
 
+
+
+//查询条数.
+- (NSInteger)DBDataQueryCountDBName:(NSString*)databaseName
+                            toTable:(NSString*)tableName
+                          withQuery:(NSDictionary*)infoQuery;
+
+
 //清除数据库. 需仅适用于开发者环境.
 - (void)removeAll;
 - (void)removeDBName:(NSString*)dbname;
 
 
 @end
-
-
 
 

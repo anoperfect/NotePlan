@@ -619,11 +619,22 @@
 
 #pragma mark - 键盘显示事件
 - (void) keyboardWillShow:(NSNotification *)notification {
+    LOG_POSTION
     //获取键盘高度，在不同设备上，以及中英文下是不同的
     CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     
     CGRect frameContentView = self.contentView.frame;
-    frameContentView.origin.y -= kbHeight;
+//    frameContentView.origin.y -= kbHeight;
+    
+    CGRect frameTextColorInput = self.textColorInput.frame;
+    CGFloat bottomSpace = VIEW_HEIGHT - frameTextColorInput.origin.y - frameTextColorInput.size.height;
+    bottomSpace -= 10;
+    if(bottomSpace < kbHeight) {
+        frameContentView.origin.y -= (kbHeight - bottomSpace);
+    }
+    else {
+        frameContentView.origin.y -= 0;
+    }
     
     // 取得键盘的动画时间，这样可以在视图上移的时候更连贯
     double duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
@@ -632,23 +643,25 @@
     [UIView animateWithDuration:duration animations:^{
         self.contentView.frame = frameContentView;
     }];
+    LOG_POSTION
 }
 
 
 ///键盘消失事件
 - (void) keyboardWillHide:(NSNotification *)notification {
     //获取键盘高度，在不同设备上，以及中英文下是不同的
-    CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+//    CGFloat kbHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     
     // 键盘动画时间
     double duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
     CGRect frameContentView = self.contentView.frame;
-    frameContentView.origin.y += kbHeight;
+//    frameContentView.origin.y += kbHeight;
+    frameContentView.origin.y = 0;
     
     //视图下沉恢复原状
     [UIView animateWithDuration:duration animations:^{
-            self.contentView.frame = frameContentView;
+         self.contentView.frame = frameContentView;
     }];
 }
 

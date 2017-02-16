@@ -184,32 +184,6 @@
 
 
 #pragma mark - Note
-- (NSArray<NoteModel*> *)configNoteGets
-{
-    NSMutableArray<NoteModel*> *arrayReturnM = [[NSMutableArray alloc] init];
-    
-    //默认降序.
-    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_NOTE
-                                                   columnNames:nil
-                                                     withQuery:nil
-                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
-    NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
-    if(dicts.count > 0) {
-        for(NSDictionary *dict in dicts) {
-            NoteModel *note = [NoteModel noteFromDictionary:dict];
-            NSLog(@"---%@ : %@", note.sn, note.deletedAt);
-            if(note && note.deletedAt.length == 0) {
-                [arrayReturnM addObject:note];
-            }
-        }
-    }
-    NSLog(@"All note number : %zd", dicts.count);
-    
-    return [NSArray arrayWithArray:arrayReturnM];
-}
-
-
 - (NSArray<NoteModel*> *)configNoteGetsWithQuery:(NSDictionary*)query
 {
     NSMutableArray<NoteModel*> *arrayReturnM = [[NSMutableArray alloc] init];
@@ -244,6 +218,7 @@
  - 有任意标记
  * 所有
  ""无标记
+ 查找所有则classification填*, colorString填*.
  */
 - (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString
 {
@@ -267,8 +242,38 @@
     else if([[NoteModel colorStrings] indexOfObject:colorString] != NSNotFound) {
         query[@"color"] = colorString;
     }
+    query[@"deletedAt"] = @"";
     
     return [self configNoteGetsWithQuery:[NSDictionary dictionaryWithDictionary:query]];
+}
+
+
+- (NSInteger)configNoteCountByClassification:(NSString*)classification andColorString:(NSString*)colorString
+{
+    NSLog(@"configNoteCountByClassification : [%@], color : [%@]", classification, colorString);
+    
+    NSMutableDictionary *query = [[NSMutableDictionary alloc] init];
+    
+    if(classification.length > 0 && ![classification isEqualToString:@"*"]) {
+        query[@"classification"] = classification;
+    }
+    
+    if([colorString isEqualToString:@"*"]) {
+        
+    }
+    else if([colorString isEqualToString:@"-"]) {
+        query[@"color"] = [NoteModel colorStrings];
+    }
+    else if([colorString isEqualToString:@""]) {
+        query[@"color"] = @"";
+    }
+    else if([[NoteModel colorStrings] indexOfObject:colorString] != NSNotFound) {
+        query[@"color"] = colorString;
+    }
+    
+    query[@"deletedAt"] = @"";
+    
+    return [self.dbData DBDataQueryCountDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withQuery:query];
 }
 
 

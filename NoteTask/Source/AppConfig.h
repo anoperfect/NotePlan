@@ -27,8 +27,8 @@
 - (void)configClassificationRemove:(NSString*)classification;
 
 
-- (NSArray<NoteModel*> *)configNoteGets;
 - (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString;
+- (NSInteger)configNoteCountByClassification:(NSString*)classification andColorString:(NSString*)colorString;
 - (NoteModel*)configNoteGetBySn:(NSString*)sn;
 
 
@@ -79,7 +79,6 @@
 - (NSArray<TaskFinishAt*>*)configTaskFinishAtGets;
 - (BOOL)configTaskFinishAtAdd:(TaskFinishAt*)taskFinishAt;
 - (void)configTaskFinishAtRemove:(TaskFinishAt*)taskFinishAt;
-
 
 
 

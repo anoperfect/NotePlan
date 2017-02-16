@@ -1369,6 +1369,13 @@
 
 
 - (void)keyboardChangeFrame:(NSNotification*)notification {
+    LOG_POSTION
+    BOOL onUsing = [self isEqual:self.navigationController.viewControllers.lastObject];
+    if(!onUsing) {
+        NSLog(@"not on using, ignore.");
+        return;
+    }
+    
     NSDictionary *info = [notification userInfo];
     CGRect softKeyboardFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     

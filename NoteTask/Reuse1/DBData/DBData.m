@@ -687,10 +687,11 @@
     
     NSInteger rsRows = 0;
     BOOL parseOK = YES;
+    NS0Log(@"%@", rs.columnNameToIndexMap);
     while ([rs next]) {
-        BOOL parseOK = YES;
+        BOOL parse1OK = YES;
         for(NSString *columnName in queryColumnsNamesM) {
-            if(!parseOK) {
+            if(!parse1OK) {
                 break;
             }
             
@@ -760,13 +761,14 @@
                         
                     default:
                         NSLog(@"#error - not expected default value(%zd)", columnAttribute.dataType);
-                        parseOK = NO;
+                        parse1OK = NO;
                         break;
                 }
             }
         }
         
-        if(!parseOK) {
+        if(!parse1OK) {
+            parseOK = NO;
             break;
         }
         
@@ -1666,6 +1668,70 @@
     }
     
     return [self DBDataUpdate:db withSqlString:sqlString andArgumentsInArray:arguments];
+}
+
+
+- (NSInteger)DBDataQueryCount:(FMDatabase*)db
+                      toTable:(DBTableAttribute*)tableAttribute
+                    withQuery:(NSDictionary*)infoQuery
+{
+    NSLogSqlite(@"DBDataQueryCount : table:%@, infoQuery:%@", tableAttribute.tableName, infoQuery);
+    NSInteger count = 0;
+    
+    NSMutableString *querym ;
+    NSMutableDictionary *queryResultm = [[NSMutableDictionary alloc] init];
+    NSMutableArray *queryColumnsNamesM = [[NSMutableArray alloc] init];
+    
+    NSMutableArray *arguments = [[NSMutableArray alloc] init];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    querym = [NSMutableString stringWithFormat:@"SELECT COUNT(*) FROM %@ %@", tableAttribute.tableName, queryString];
+    
+    [self DBDataExecuteLog:querym withArgumentsInArray:arguments];
+    FMResultSet *rs = [db executeQuery:[NSString stringWithString:querym] withArgumentsInArray:arguments];
+    
+    for(NSString *columnName in queryColumnsNamesM) {
+        [queryResultm setObject:[[NSMutableArray alloc] init] forKey:columnName];
+    }
+    
+    NSArray *queryColumnNames = rs.columnNameToIndexMap.allKeys;
+    if(queryColumnNames.count == 1 && [queryColumnNames[0] isKindOfClass:[NSString class]] && [queryColumnNames[0] isEqualToString:@"count(*)"]) {
+        while ([rs next]) {
+            NSNumber *countNumber = [rs objectForColumnIndex:0];
+            if([countNumber isKindOfClass:[NSNumber class]]) {
+                count = [countNumber integerValue];
+                break;
+            }
+        }
+    }
+    else {
+        NSLog(@"#error - columnNameToIndexMap not expected.[%@]", rs.columnNameToIndexMap);
+    }
+    
+    [rs close];
+    
+    return count;
+}
+
+
+- (NSInteger)DBDataQueryCountDBName:(NSString*)databaseName
+                            toTable:(NSString*)tableName
+                          withQuery:(NSDictionary*)infoQuery
+{
+    if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
+    
+    FMDatabase *db = [self getDataBaseByName:databaseName];
+    if(!db) {
+        NSLog(@"#error - not find database <%@ : %@>", databaseName, tableName);
+        return 0;
+    }
+    
+    DBTableAttribute *tableAttribute = [self getDBTableAttribute:databaseName withTableName:tableName];
+    if(!tableAttribute) {
+        NSLog(@"#error - not find table <%@ : %@>", databaseName, tableName);
+        return 0;
+    }
+    
+    return [self DBDataQueryCount:db toTable:tableAttribute withQuery:infoQuery];
 }
 
 

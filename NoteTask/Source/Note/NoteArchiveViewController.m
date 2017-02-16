@@ -23,6 +23,10 @@
 @property (nonatomic, strong) NSMutableArray *classifications;
 @property (nonatomic, strong) NSMutableArray *filterDataColors;
 
+
+@property (nonatomic, strong) NSMutableDictionary *classificationsCountMap;
+@property (nonatomic, strong) NSMutableDictionary *filterDataColorsCountMap;
+
 @end
 
 
@@ -118,7 +122,8 @@
 - (void)actionMenuString:(NSString*)actionText
 {
     if([actionText isEqualToString:@"新增类别"]) {
-        
+     
+        return ;
     }
     
     if([actionText isEqualToString:@"删除类别"]) {
@@ -249,13 +254,19 @@
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     if(indexPath.section == 0) {
-        cell.textLabel.text = self.classifications[indexPath.row];
+        NSString *classificationString = self.classifications[indexPath.row];
+        cell.textLabel.text = classificationString;
+        NSNumber *countNumber = self.classificationsCountMap[classificationString];
+        if([countNumber isKindOfClass:[NSNumber class]]) {
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", countNumber];
+        }
     }
     else if(indexPath.section == 1) {
-        cell.textLabel.text = self.filterDataColors[indexPath.row];
+        NSString *colorString = self.filterDataColors[indexPath.row];
+        cell.textLabel.text = colorString;
         NSRange range = NSMakeRange(NSNotFound, 0);
         range = [cell.textLabel.text rangeOfString:@"红色"];
         if(range.location != NSNotFound && range.length > 0) {
@@ -268,6 +279,11 @@
         range = [cell.textLabel.text rangeOfString:@"蓝色"];
         if(range.location != NSNotFound && range.length > 0) {
             cell.textLabel.textColor = [UIColor blueColor];
+        }
+        
+        NSNumber *countNumber = self.filterDataColorsCountMap[colorString];
+        if([countNumber isKindOfClass:[NSNumber class]]) {
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", countNumber];
         }
     }
     
@@ -397,6 +413,29 @@
 }
 
 
+- (void)actionAddClassification
+{
+    _inputView.hidden = NO;
+    [_inputView becomeFirstResponder];
+    
+}
+
+
+- (void)actionAddClassificationFinish
+{
+    _inputView.hidden = YES;
+    [_inputView resignFirstResponder];
+    [self addClassification:_inputView.text];
+}
+
+
+- (void)actionAddClassificationDrop
+{
+    _inputView.hidden = YES;
+    [_inputView resignFirstResponder];
+}
+
+
 - (void)addClassification:(NSString*)text
 {
     if(text.length == 0) {
@@ -418,8 +457,29 @@
     
     self.filterDataColors = [[NSMutableArray alloc] init];
     [self.filterDataColors addObjectsFromArray:[NoteModel colorAssignDisplayStrings]];
+    
+    self.classificationsCountMap = [[NSMutableDictionary alloc] init];
+    self.filterDataColorsCountMap = [[NSMutableDictionary alloc] init];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:@"*"];
+        NSLog(@"count : %zd", count);
+        
+        for(NSString *classification in self.classifications) {
+            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:classification andColorString:@"*"];
+            self.classificationsCountMap[classification] = @(count);
+        }
+        
+        for(NSString *color in self.filterDataColors) {
+            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:[NoteModel colorDisplayStringToColorString:color]];
+            self.filterDataColorsCountMap[color] = @(count);
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    });
 }
-
 
 
 - (void)didReceiveMemoryWarning {
@@ -438,6 +498,7 @@
 */
 
 @end
+
 
 
 
