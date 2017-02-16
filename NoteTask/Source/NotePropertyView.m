@@ -198,3 +198,34 @@
 */
 
 @end
+
+//限制输入框的字数限制.
+#if 0
+//方法一
+
+- (BOOL)textField1:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    if (range.location>= 10) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
+
+//方法二
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    if (toBeString.length > 10) {
+        textField.text = [toBeString substringToIndex:10];
+        return NO;
+    }
+    
+    return YES;
+}
+
+
+#endif

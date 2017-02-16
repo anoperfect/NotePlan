@@ -52,8 +52,12 @@
 
 @end
 
+
 @implementation NoteViewController
 
+
+
+#pragma mark - view override
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -146,6 +150,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     [self navigationTitleRefresh];
     [self loadNotesView];
 }
@@ -153,11 +158,11 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    LOG_POSTION
     [super viewWillDisappear:animated];
 }
 
 
+#pragma mark - navigation item
 - (void)navigationTitleRefresh
 {
     self.navigationItem.titleView = nil;
@@ -284,20 +289,6 @@
 }
 
 
-- (void)dataFilterRefresh
-{
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
-    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
-    if(addedClassifications.count > 0) {
-        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
-    }
-    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
-    
-    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
-    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
-}
-
-
 - (void)filterViewBuild
 {
     if(self.noteFilter) {
@@ -312,7 +303,7 @@
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-
+    
     JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
     menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
     menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
@@ -324,6 +315,80 @@
     
     [self.contentView addSubview:menu];
 }
+
+
+
+#pragma mark - data
+- (void)dataFilterRefresh
+{
+    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
+    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
+    if(addedClassifications.count > 0) {
+        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
+    }
+    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
+    
+    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
+    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
+}
+
+
+- (NoteModel*)dataNoteOnIndexPath:(NSIndexPath*)indexPath
+{
+    NoteModel *note = _notes[indexPath.row];
+    return note;
+}
+
+
+- (NSArray<NSString*>*)dataNotesSnOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
+{
+    NSMutableArray<NSString*> *notesSn = [[NSMutableArray alloc] init];
+    for(NSIndexPath* indexPath in indexPaths) {
+        [notesSn addObject:[self dataNoteOnIndexPath:indexPath].sn];
+    }
+    
+    return [NSArray arrayWithArray:notesSn];
+}
+
+
+- (void)dataNotesDeleteOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
+{
+    //数据库删除对应note数据.
+    NSArray<NSString*>* sns = [self dataNotesSnOnIndexPaths:indexPaths] ;
+    [[AppConfig sharedAppConfig] configNoteDeleteBySns:sns];
+    
+    //表数据源清除.
+    NSMutableArray *notesDelete = [[NSMutableArray alloc] init];
+    
+    NoteModel *note;
+    for(NSIndexPath *indexPath in indexPaths) {
+        note = [self dataNoteOnIndexPath:indexPath];
+        NSLog(@"[row%zd] %@ : %@", indexPath.row, note.sn, note.title);
+        [notesDelete addObject:note];
+    }
+    [self.notes removeObjectsInArray:notesDelete];
+    NSLog(@"after delete : %zd", self.notes.count);
+}
+
+
+- (void)dataNotesReload
+{
+    _notes = [[NSMutableArray alloc] init];
+    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGetsByClassification:self.currentClassification andColorString:self.currentColorString]];
+    
+    NSLog(@"notesLoad finish.");
+    return ;
+}
+
+
+- (void)dataDebug
+{
+    NSLog(@"%p", self.notes);
+}
+
+
+
+
 
 
 -(void)tableViewPan:(UIPanGestureRecognizer *)gesture{
@@ -344,7 +409,6 @@
 - (void)swipeToRight:(UISwipeGestureRecognizer*)gesture
 {
     NSLog(@"swipeToRight");
-     
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -352,23 +416,6 @@
 - (void)swipeToLeft:(UISwipeGestureRecognizer*)gesture
 {
     NSLog(@"swipeToLeft");
-    
-}
-
-
-- (void)dataNotesReload
-{
-    _notes = [[NSMutableArray alloc] init];
-    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGetsByClassification:self.currentClassification andColorString:self.currentColorString]];
-    
-    NSLog(@"notesLoad finish.");
-    return ;
-}
-
-
-- (void)dataDebug
-{
-    NSLog(@"%p", self.notes);
 }
 
 
@@ -406,8 +453,6 @@
 }
 
 
-
-
 - (void)reloadNotesVia:(NSString*)via
 {
     NSLog(@"reloadNotesVia : %@", via);
@@ -416,13 +461,10 @@
 }
 
 
-- (NoteModel*)noteOnIndexPath:(NSIndexPath*)indexPath
-{
-    NoteModel *note = _notes[indexPath.row];
-    return note;
-}
 
 
+
+#pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = 118.0;
@@ -463,7 +505,7 @@
 //    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.imageView.layer.cornerRadius = 6;
     
-    NoteModel *note = [self noteOnIndexPath:indexPath];
+    NoteModel *note = [self dataNoteOnIndexPath:indexPath];
     
 #if 0 //显示图片时, 可以使用此方法将图片显示为合适大小.
     UIImage *image = [UIImage imageNamed:@"apic321.jpg"];
@@ -515,7 +557,7 @@
         NSLog(@"onSelectedMode");
         [self.indexPathsSelected addObject:indexPath];
         
-        NoteModel *note = [self noteOnIndexPath:indexPath];
+        NoteModel *note = [self dataNoteOnIndexPath:indexPath];
         note = nil;
         
         if(self.indexPathsSelected.count > 0) {
@@ -530,7 +572,7 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    NoteModel *note = self.notes[indexPath.row];
+    NoteModel *note = [self dataNoteOnIndexPath:indexPath];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         note.browseredAt = [NSString dateTimeStringNow];
@@ -638,8 +680,6 @@
 }
 
 - (NSString *)menu:(JSDropDownMenu *)menu titleForRowAtIndexPath:(JSIndexPath *)indexPath {
-    LOG_POSTION
-    
     if (indexPath.column==0) {
         
         return self.filterDataClassifications[indexPath.row];
@@ -651,7 +691,6 @@
 }
 
 - (void)menu:(JSDropDownMenu *)menu didSelectRowAtIndexPath:(JSIndexPath *)indexPath {
-   LOG_POSTION
     if(indexPath.column == 0){
         self.idxClassifications = indexPath.row;
         self.currentClassification = self.filterDataClassifications[self.idxClassifications];
@@ -1017,36 +1056,7 @@
 }
 
 
-- (NSArray<NSString*>*)dataNotesSnOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
-{
-    NSMutableArray<NSString*> *notesSn = [[NSMutableArray alloc] init];
-    for(NSIndexPath* indexPath in indexPaths) {
-        [notesSn addObject:[self noteOnIndexPath:indexPath].sn];
-    }
-    
-    return [NSArray arrayWithArray:notesSn];
-}
 
-
-- (void)dataNotesDeleteOnIndexPaths:(NSArray<NSIndexPath*>*)indexPaths
-{
-    LOG_POSTION
-    //数据库删除对应note数据.
-    NSArray<NSString*>* sns = [self dataNotesSnOnIndexPaths:indexPaths] ;
-    [[AppConfig sharedAppConfig] configNoteDeleteBySns:sns];
-    
-    //表数据源清除.
-    NSMutableArray *notesDelete = [[NSMutableArray alloc] init];
-    
-    NoteModel *note;
-    for(NSIndexPath *indexPath in indexPaths) {
-        note = [self noteOnIndexPath:indexPath];
-        NSLog(@"[row%zd] %@ : %@", indexPath.row, note.sn, note.title);
-        [notesDelete addObject:note];
-    }
-    [self.notes removeObjectsInArray:notesDelete];
-    NSLog(@"after delete : %zd", self.notes.count);
-}
 
 
 #pragma mark - w

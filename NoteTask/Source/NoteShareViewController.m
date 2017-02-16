@@ -171,6 +171,11 @@
     self.buttonWANAddressShare.titleLabel.numberOfLines = 0;
     self.buttonWANAddressShare.contentEdgeInsets = UIEdgeInsetsMake(0, 6, 0, 6);
     
+    self.labelLAN.text = @"局域网获取";
+    self.labelLANAddress.textColor = [UIColor blueColor];
+    self.labelWAN.text = @"互联网获取";
+    self.labelWANAddress.textColor = [UIColor blueColor];
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self createLocalServer];
     });
@@ -346,7 +351,7 @@
     }
     else {
         self.serverStatus = -1;
-        self.labelLAN.text = @"局域网获取(当前不可用)";
+        self.labelLANAddress.text = @"...当前不可用";
         NSString *htmURLString = @"未能获取到htm地址.";
         self.labelLANDetail.text = [self.labelLANDetail.text stringByReplacingOccurrencesOfString:@"htm地址获取中..." withString:htmURLString];
         NSString *pdfURLString = @"未能获取到pdf地址.";
@@ -604,14 +609,12 @@
             view.hidden = NO;
         }
         
-        self.labelLAN.text = @"局域网获取";
+        
         self.buttonLANAddressShare.hidden = YES;
         if(self.serverStatus == 0) {
-            self.labelLAN.text = @"局域网获取(创建服务中)";
-            self.labelLANAddress.text = @"1";
+            self.labelLANAddress.text = @"...创建服务中";
         }
         else if(self.serverStatus == 1) {
-            self.labelLAN.text = @"局域网获取";
             NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.serverURL, self.htmName];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
@@ -620,15 +623,14 @@
             self.buttonLANAddressShare.hidden = NO;
         }
         else {
-            self.labelLAN.text = @"局域网获取(当前不可用)";
+            self.labelLANAddress.text = @"...当前不可用";
         }
         
         self.buttonWANAddressShare.hidden = YES;
         if(self.uploadHtmStatus == 0) {
-            self.labelWAN.text = @"互联网获取(等待上传中)";
+            self.labelWANAddress.text = @"...等待上传中";
         }
         else if(self.uploadHtmStatus == 1) {
-            self.labelWAN.text = @"互联网获取";
             NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.WANServer, self.htmName];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
@@ -637,7 +639,7 @@
             self.buttonWANAddressShare.hidden = NO;
         }
         else {
-            self.labelWAN.text = @"互联网获取(连接失败)";
+            self.labelWANAddress.text = @"...连接失败";
         }
     }
     else if(self.selectedIndex == 1) {
@@ -648,12 +650,12 @@
             
             self.fileTypeSelect.hidden = NO;
             self.labelAirDrop.hidden = NO;
-            self.labelAirDrop.text = self.pdfGenerateStatus==0?@"正渲染Pdf文件...":@"渲染Pdf文件出错";
+            self.labelAirDrop.text = self.pdfGenerateStatus==0?@"正渲染pdf文件...":@"渲染pdf文件出错";
             return ;
         }
         
-        self.labelLANDetail.text = @"WIFI连接状态下, 可通过局域网内电脑浏览器登入或下载软件下载指定http地址, 查看或者下载Pdf版本笔记内容. \n(局域网访问地址可能因为局域网内具体环境出现访问出错情况, 请联系本局域网网络管理员, 或者使用互联网访问方式. )";
-        self.labelWANDetail.text = @"能正常连接互联网时, 上传笔记信息到互联网服务器成功后. \n可通过电脑浏览器登入指定http地址, 查看或者下载Pdf版本笔记内容. ";
+        self.labelLANDetail.text = @"WIFI连接状态下, 可通过局域网内电脑浏览器登入或下载软件下载指定http地址, 查看或者下载pdf版本笔记内容. \n(局域网访问地址可能因为局域网内具体环境出现访问出错情况, 请联系本局域网网络管理员, 或者使用互联网访问方式. )";
+        self.labelWANDetail.text = @"能正常连接互联网时, 上传笔记信息到互联网服务器成功后. \n可通过电脑浏览器登入指定http地址, 查看或者下载pdf版本笔记内容. ";
         
         for(UIView *view in self.contentView.subviews) {
             view.hidden = NO;
@@ -662,13 +664,10 @@
         self.labelAirDrop.text = @"AirDrop";
         self.buttonLANAddressShare.hidden = YES;
         
-        self.labelLAN.text = @"局域网获取";
         if(self.serverStatus == 0) {
-            self.labelLAN.text = @"局域网获取(创建服务中)";
-            self.labelLANAddress.text = @"0";
+            self.labelLANAddress.text = @"...创建服务中";
         }
         else if(self.serverStatus == 1) {
-            self.labelLAN.text = @"局域网获取";
             NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.serverURL, self.pdfName];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
@@ -677,21 +676,20 @@
             self.buttonLANAddressShare.hidden = NO;
         }
         else {
-            self.labelLAN.text = @"局域网获取(当前不可用)";
+            self.labelLANAddress.text = @"...当前不可用";
         }
         
         self.buttonWANAddressShare.hidden = YES;
         if(self.uploadPdfStatus == 0) {
-            self.labelWAN.text = @"互联网获取(等待上传中)";
+            self.labelLANAddress.text = @"...等待上传中";
             LOG_POSTION
             if(self.pdfDatasSections > 0) {
                 double percentage = (double)(self.completedUnitCount * 100) / (double)self.totalUnitCount ;
-                self.labelWANAddress.text = [NSString stringWithFormat:@"等待获取地址(上传进度%.1f%%)", percentage];
+                self.labelWANAddress.text = [NSString stringWithFormat:@"...等待获取地址(上传进度%.1f%%)", percentage];
                 NSLog(@"percentage : %lf, [%lld/%lld]", percentage, self.completedUnitCount, self.totalUnitCount);
             }
         }
         else if(self.uploadPdfStatus == 1) {
-            self.labelWAN.text = @"互联网获取";
             NSString *urlString = [NSString stringWithFormat:@"%@/note/%@", self.WANServer, self.pdfName];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"://" withString:@"###"];
             urlString = [urlString stringByReplacingOccurrencesOfString:@"//" withString:@"/"];
@@ -700,8 +698,7 @@
             self.buttonWANAddressShare.hidden = NO;
         }
         else {
-            self.labelWAN.text = @"互联网获取(连接失败)";
-            self.labelWANAddress.text = @"";
+            self.labelWANAddress.text = @"...连接失败";
         }
     }
 }

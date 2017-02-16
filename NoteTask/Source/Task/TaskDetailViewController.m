@@ -48,6 +48,7 @@ TaskProperty
 
 
 
+#pragma mark - init
 - (instancetype)initWithArrangeMode:(TaskInfo*)taskinfo arrange:(TaskInfoArrange*)arrange
 {
     self = [super init];
@@ -85,6 +86,7 @@ TaskProperty
 }
 
 
+#pragma mark - Custom override view.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -184,30 +186,7 @@ TaskProperty
 }
 
 
-- (void)actionUpdateDue:(NSString*)due
-{
-    self.scheduleDateStrings = [NSArray arrayWithArray:[self dataTaskInfoOnDays]];
-    self.finishedAts = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:self.scheduleDateStrings];
-    self.finishedAtsAll = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:nil];
-    self.finishedAts = [self.finishedAts sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        TaskFinishAt *taskFinishAt1 = obj1;
-        TaskFinishAt *taskFinishAt2 = obj1;
-        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
-    }];
-    
-    self.finishedAtsAll = [self.finishedAtsAll sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-        TaskFinishAt *taskFinishAt1 = obj1;
-        TaskFinishAt *taskFinishAt2 = obj1;
-        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
-    }];
-    
-    NSLog(@"%@", self.finishedAts);
-    NSLog(@"%@", self.finishedAtsAll);
-    
-    [self.contentTableView reloadData];
-}
-
-
+#pragma mark - attributedString
 - (NSMutableAttributedString*)attributedStringForPropertyContentOfTitle:(NSString*)title
 {
     NSString *s ;
@@ -318,6 +297,31 @@ TaskProperty
 }
 
 
+#pragma mark - action
+- (void)actionUpdateDue:(NSString*)due
+{
+    self.scheduleDateStrings = [NSArray arrayWithArray:[self dataTaskInfoOnDays]];
+    self.finishedAts = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:self.scheduleDateStrings];
+    self.finishedAtsAll = [[TaskInfoManager taskInfoManager] queryFinishedAtsOnTaskInfo:self.taskinfo onDays:nil];
+    self.finishedAts = [self.finishedAts sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        TaskFinishAt *taskFinishAt1 = obj1;
+        TaskFinishAt *taskFinishAt2 = obj1;
+        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
+    }];
+    
+    self.finishedAtsAll = [self.finishedAtsAll sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        TaskFinishAt *taskFinishAt1 = obj1;
+        TaskFinishAt *taskFinishAt2 = obj1;
+        return [taskFinishAt1.dayString compare:taskFinishAt2.dayString];
+    }];
+    
+    NSLog(@"%@", self.finishedAts);
+    NSLog(@"%@", self.finishedAtsAll);
+    
+    [self.contentTableView reloadData];
+}
+
+
 - (void)actionDetectTaskUpdate:(NSNotification*)notification
 {
     NSDictionary *diffs = notification.object;
@@ -396,172 +400,6 @@ TaskProperty
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    if(section == 0) {
-        return 0;
-    }
-    return 72.0;
-}
-
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    CGFloat height = 0.0;
-    NSNumber *heightNumber = [self.optumizeHeights objectForKey:indexPath];
-    if([heightNumber isKindOfClass:[NSNumber class]]) {
-        height = [heightNumber floatValue];
-    }
-    else {
-        NSInteger idx;
-        if(NSNotFound != (idx = [self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
-            height = 72;
-        }
-    }
-    
-    return height;
-}
-
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    NSInteger sections ;
-    sections = 1;
-    return sections;
-}
-
-
-- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if(section == 0) {
-        return @"";
-    }
-    else if(section == 1) {
-        return @"任务记录";
-    }
-    
-    return @"NAN";
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    NSInteger rows = 0;
-    if(section == 0) {
-        rows = 1 + [self taskPropertyTitles].count;
-        rows = 10;
-    }
-    else if(section == 1) {
-        
-    }
-    return rows;
-}
-
-
-- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = nil;
-    if([self tableViewCellIsTaskContentForRowAtIndexPath:indexPath]) {
-        TaskDetailContentCell *contentCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailContentCell" forIndexPath:indexPath];
-        contentCell.taskinfo = self.taskinfo;
-        typeof(self) _self = self;
-        contentCell.actionOn = ^(NSString *actionString){
-            [_self actionStringOnTaskContent:actionString];
-        };
-        
-        self.optumizeHeights[indexPath] = @(contentCell.frame.size.height);
-        UIEdgeInsets edge = contentCell.separatorInset;
-        NSLog(@"%f, %f, %f, %f", edge.top, edge.left, edge.bottom, edge.right);
-        cell = contentCell;
-    }
-    
-    NSInteger idx = 0;
-    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
-        TaskDetailPropertyCell *propertyCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailPropertyCell" forIndexPath:indexPath];
-        NSString *title = [self taskPropertyTitles][idx];
-        propertyCell.optumizeHeight = 72;
-        [propertyCell setTitle:[self attributedStringForPropertyTitle:title]
-                       content:[self attributedStringForPropertyContentOfTitle:title]
-         ];
-        self.optumizeHeights[indexPath] = @(propertyCell.frame.size.height);
-        self.optumizeHeights[indexPath] = @(propertyCell.optumizeHeight);
-        cell = propertyCell;
-        if([title isEqualToString:@"完成情况"]) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
-        }
-    }
-    
-    if(!cell) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailDefaultCell" forIndexPath:indexPath];
-        cell.textLabel.text = [NSString stringWithFormat:@"%zd:%zd", indexPath.section, indexPath.row];
-    }
-    
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    return cell;
-}
-
-
-- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
-    NSInteger idx = 0;
-    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
-        NSString *title = [self taskPropertyTitles][idx];
-        if([title isEqualToString:@"完成情况"]) {
-            [self taskActionShowScheduleDaysFinishStatus];
-        }
-    }
-}
-
-
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
-    
-}
-
-
--(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
-}
-
-
-- (BOOL)tableViewCellIsTaskContentForRowAtIndexPath:(NSIndexPath*)indexPath
-{
-    return indexPath.section == 0 && indexPath.row == 0;
-}
-
-
-- (NSInteger)tableViewCellIndexOfTaskPropertyAtIndexPath:(NSIndexPath*)indexPath
-{
-    NSInteger offsetIndexOfProperty = 1;
-    NSInteger countOfProperty = [self taskPropertyTitles].count;
-    
-    if(indexPath.section == 0 && (indexPath.row >= offsetIndexOfProperty && indexPath.row < (offsetIndexOfProperty + countOfProperty))) {
-        return indexPath.row - 1;
-    }
-    else {
-        return NSNotFound;
-    }
-}
-
-
-- (BOOL)tableViewCellIsTaskRecordSummaryForRowAtIndexPath:(NSIndexPath*)indexPath
-{
-    return indexPath.section == 0 && indexPath.row == 2;
-}
-
-
-- (NSInteger)tableViewCellIndexOfTaskRecordAtIndexPath:(NSIndexPath*)indexPath
-{
-    if(indexPath.section == 1) {
-        return indexPath.row;
-    }
-    
-    return NSNotFound;
-}
-
-
 - (void)actionStringOnTaskContent:(NSString*)actionString
 {
     NSLog(@"action string : %@", actionString);
@@ -606,6 +444,13 @@ TaskProperty
 }
 
 
+
+
+
+
+
+
+#pragma mark - taskAction
 - (void)taskAction:(UIButton*)button
 {
     [self dismissPopupView];
@@ -653,8 +498,6 @@ TaskProperty
         }
     }
     else {
-//        [self showIndicationText:@"NotImplemented"];
-        
         NSString *totalFinishAt = [TaskFinishAt checkAllFinishAts:self.finishedAts];
         if(totalFinishAt.length > 0) {
             [self showIndicationText:[NSString stringWithFormat:@"任务(%@)已经完成", self.mode==TASKINFO_MODE_ARRANGE? self.arrange.arrangeName:@"全部"]];
@@ -777,6 +620,9 @@ TaskProperty
         if(status.finishedAt.length > 0) {
             dict[@"detailText"] = [NSString stringWithFormat:@"%@", [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
             dict[@"accessoryType"] = @(UITableViewCellAccessoryCheckmark);
+            dict[@"disableSelction"] = @1;
+        }
+        else {
             dict[@"disableSelction"] = @1;
         }
         
@@ -985,7 +831,174 @@ TaskProperty
 }
 
 
-//UItextView for editing delegate.
+#pragma mark - tableView
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if(section == 0) {
+        return 0;
+    }
+    return 72.0;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat height = 0.0;
+    NSNumber *heightNumber = [self.optumizeHeights objectForKey:indexPath];
+    if([heightNumber isKindOfClass:[NSNumber class]]) {
+        height = [heightNumber floatValue];
+    }
+    else {
+        NSInteger idx;
+        if(NSNotFound != (idx = [self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
+            height = 72;
+        }
+    }
+    
+    return height;
+}
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    NSInteger sections ;
+    sections = 1;
+    return sections;
+}
+
+
+- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if(section == 0) {
+        return @"";
+    }
+    else if(section == 1) {
+        return @"任务记录";
+    }
+    
+    return @"NAN";
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSInteger rows = 0;
+    if(section == 0) {
+        rows = 1 + [self taskPropertyTitles].count;
+        rows = 10;
+    }
+    else if(section == 1) {
+        
+    }
+    return rows;
+}
+
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = nil;
+    if([self tableViewCellIsTaskContentForRowAtIndexPath:indexPath]) {
+        TaskDetailContentCell *contentCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailContentCell" forIndexPath:indexPath];
+        contentCell.taskinfo = self.taskinfo;
+        typeof(self) _self = self;
+        contentCell.actionOn = ^(NSString *actionString){
+            [_self actionStringOnTaskContent:actionString];
+        };
+        
+        self.optumizeHeights[indexPath] = @(contentCell.frame.size.height);
+        UIEdgeInsets edge = contentCell.separatorInset;
+        NSLog(@"%f, %f, %f, %f", edge.top, edge.left, edge.bottom, edge.right);
+        cell = contentCell;
+    }
+    
+    NSInteger idx = 0;
+    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
+        TaskDetailPropertyCell *propertyCell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailPropertyCell" forIndexPath:indexPath];
+        NSString *title = [self taskPropertyTitles][idx];
+        propertyCell.optumizeHeight = 72;
+        [propertyCell setTitle:[self attributedStringForPropertyTitle:title]
+                       content:[self attributedStringForPropertyContentOfTitle:title]
+         ];
+        self.optumizeHeights[indexPath] = @(propertyCell.frame.size.height);
+        self.optumizeHeights[indexPath] = @(propertyCell.optumizeHeight);
+        cell = propertyCell;
+        if([title isEqualToString:@"完成情况"]) {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+        }
+    }
+    
+    if(!cell) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"TaskDetailDefaultCell" forIndexPath:indexPath];
+        cell.textLabel.text = [NSString stringWithFormat:@"%zd:%zd", indexPath.section, indexPath.row];
+    }
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+
+
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    NSInteger idx = 0;
+    if(NSNotFound != (idx=[self tableViewCellIndexOfTaskPropertyAtIndexPath:indexPath])) {
+        NSString *title = [self taskPropertyTitles][idx];
+        if([title isEqualToString:@"完成情况"]) {
+            [self taskActionShowScheduleDaysFinishStatus];
+        }
+    }
+}
+
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    
+}
+
+
+-(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
+}
+
+
+- (BOOL)tableViewCellIsTaskContentForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return indexPath.section == 0 && indexPath.row == 0;
+}
+
+
+- (NSInteger)tableViewCellIndexOfTaskPropertyAtIndexPath:(NSIndexPath*)indexPath
+{
+    NSInteger offsetIndexOfProperty = 1;
+    NSInteger countOfProperty = [self taskPropertyTitles].count;
+    
+    if(indexPath.section == 0 && (indexPath.row >= offsetIndexOfProperty && indexPath.row < (offsetIndexOfProperty + countOfProperty))) {
+        return indexPath.row - 1;
+    }
+    else {
+        return NSNotFound;
+    }
+}
+
+
+- (BOOL)tableViewCellIsTaskRecordSummaryForRowAtIndexPath:(NSIndexPath*)indexPath
+{
+    return indexPath.section == 0 && indexPath.row == 2;
+}
+
+
+- (NSInteger)tableViewCellIndexOfTaskRecordAtIndexPath:(NSIndexPath*)indexPath
+{
+    if(indexPath.section == 1) {
+        return indexPath.row;
+    }
+    
+    return NSNotFound;
+}
+
+
+#pragma mark - UItextView for editing delegate.
 -(BOOL) textViewShouldBeginEditing:(UITextView*)textView
 {
     LOG_POSTION

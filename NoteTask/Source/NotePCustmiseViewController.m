@@ -125,9 +125,6 @@
 //    self.navigationItem.backBarButtonItem = backItem;
     
     self.navigationItem.rightBarButtonItem
-            = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(actionFinishCustomise)];
-    
-    self.navigationItem.rightBarButtonItem
             = [[UIBarButtonItem alloc] initWithTitle:@"提交" style:UIBarButtonItemStylePlain target:self action:@selector(actionFinishCustomise)];
     
     //点击空白的地方时关闭软键盘.
@@ -251,9 +248,6 @@
     if([self.sampleNoteParagraph.styleDictionay[@"font-weight"] isEqualToString:@"bold"]) {
         self.boldSwitch.on = YES;
     }
-    
-    
-    
     
 #if 0
     //可以设置颜色和大小. 大小通过变换.

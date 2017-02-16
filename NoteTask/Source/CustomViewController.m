@@ -501,9 +501,22 @@
     if(menu[@"text"]) {
         cell.textLabel.text = menu[@"text"];
     }
+    else {
+        cell.textLabel.text = nil;
+    }
     
     if(menu[@"detailText"]) {
         cell.detailTextLabel.text = menu[@"detailText"];
+    }
+    else {
+        cell.detailTextLabel.text = nil;
+    }
+    
+    if([menu[@"disableSelction"] boolValue]) {
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    else {
+        cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     }
     
     UIImage *image = menu[@"image"];
@@ -522,7 +535,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *menu = self.menus[indexPath.row];
-    if([menu[@"disableSelction"] boolValue]) {
+    NSLog(@"menu : %@", menu);
+    if([menu[@"deselectRow"] boolValue]) {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
     else {

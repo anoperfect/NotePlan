@@ -33,7 +33,7 @@
 
 
 
-static NSString *kStringNoteDefaultStyle = @"默认显示格式";
+static NSString *kStringNoteDefaultStyle = @"默认文本格式";
 static NSString *kStringNoteDefaultTilteSize = @"笔记默认标题字体大小";
 static NSString *kStringNoteDefaultContentSize = @"笔记默认文章字体大小";
 static NSString *kStringTaskDefaultMode = @"默认显示模式";

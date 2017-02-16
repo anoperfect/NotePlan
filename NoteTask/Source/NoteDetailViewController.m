@@ -472,10 +472,10 @@
     }
     else {
         if(noteParagraphModel.image.length > 0) {
-            [actionStrings addObjectsFromArray:@[@"复制", @"移除图片", @"插入", @"增加", @"编辑", @"样式"]];
+            [actionStrings addObjectsFromArray:@[@"复制", @"移除图片", @"插入", @"增加", @"删除", @"编辑", @"样式"]];
         }
         else {
-            [actionStrings addObjectsFromArray:@[@"复制", @"增加图片", @"插入", @"增加", @"编辑", @"样式"]];
+            [actionStrings addObjectsFromArray:@[@"复制", @"增加图片", @"插入", @"增加", @"删除", @"编辑", @"样式"]];
         }
         
         if([noteParagraphModel.content isEqualToString:@""]) {
@@ -744,6 +744,22 @@
         
     }
     
+    if([string isEqualToString:@"删除"]) {
+        NSInteger idxDelete = [self indexPathContentNoteParagraphIndex:indexPath];
+        [self.contentParagraphs removeObjectAtIndex:idxDelete];
+        
+        [self actionUpdateToLocalAfterModifyNoteParagraph:nil];
+        
+        [self.tableNoteParagraphs beginUpdates];
+        [self.tableNoteParagraphs deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableNoteParagraphs endUpdates];
+        
+        [self.tableNoteParagraphs reloadData];
+        
+        
+        return ;
+    }
+    
     if([string isEqualToString:@"样式"]) {
         NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph];
         //通过block的方式将定制的内容传回此ViewController.
@@ -859,7 +875,7 @@
 
 - (void)noteUpdate:(NoteModel*)note
 {
-    if([self.noteModel.sn hasPrefix:@"[preset"] && [self.noteModel.sn hasSuffix:@"]"]) {
+    if([self.noteModel.sn hasPrefix:@"preset-"] && self.noteModel.sn.length == 9) {
         NSString *sn = self.noteModel.sn;
         self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 andType:36]];
         [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromSn:sn];
@@ -1411,7 +1427,7 @@
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
     NSArray<NSString*> *actionStrings = nil;
-    actionStrings = @[@"Pdf分享", @"电脑查看"];
+    actionStrings = @[@"pdf分享", @"电脑查看"];
     [v setTexts:actionStrings];
     
     __weak typeof(self) weakSelf = self;
@@ -1419,7 +1435,7 @@
         NSLog(@"action : %@", actionText);
         [weakSelf dismissPopupView];
         
-        if([actionText isEqualToString:@"Pdf分享"]) {
+        if([actionText isEqualToString:@"pdf分享"]) {
             return ;
         }
         

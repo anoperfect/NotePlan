@@ -286,7 +286,7 @@
             [s appendFormat:@"%zd:%@", idx, obj];
         }
         
-        if(idx != arguments.count) {
+        if(idx != arguments.count - 1) {
             [s appendFormat:@", "];
         }
         

@@ -121,13 +121,6 @@
 
 
 #pragma mark - View build and customize.
-- (void)subviewBuild
-{
-    [self navigationItemRightInit];
-    [self tasksViewBuild];
-}
-
-
 - (void)navigationItemRightInit
 {
     PushButtonData *buttonDataCreate = [[PushButtonData alloc] init];
@@ -161,6 +154,13 @@
     
     
     
+}
+
+
+- (void)subviewBuild
+{
+    [self navigationItemRightInit];
+    [self tasksViewBuild];
 }
 
 
@@ -872,7 +872,9 @@
     if(self.mode == TASKINFO_MODE_DAY) {
         [self test];
         
-
+        if(self.taskInfoManager.tasksDayMode.count == 0) {
+            [self showIndicationText:@"当前任务记录为空\n可点击新建任务按钮创建新任务"];
+        }
     }
 }
 

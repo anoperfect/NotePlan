@@ -69,6 +69,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 @implementation TaskEditViewController
 
 
+#pragma mark - init
 - (instancetype)init
 {
     self = [super init];
@@ -96,6 +97,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 }
 
 
+#pragma mark - Custom override view.
 - (void)viewDidLoad {
     self.contentViewScrolled = YES;
     [super viewDidLoad];
@@ -315,7 +317,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 - (void)actionCreate
 {
-    NSString *errorMessage = [self dataUpdateToTaskInfo];
+    NSString *errorMessage = [self updateDataToTaskInfo];
     if(errorMessage.length > 0) {
         [self showIndicationText:errorMessage];
         return ;
@@ -406,7 +408,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 
 //更新taskinfo. 如果有内容填写不充足的则返回错误信息.
-- (NSString*)dataUpdateToTaskInfo
+- (NSString*)updateDataToTaskInfo
 {
     NSMutableString *errorMessage = [[NSMutableString alloc] init];
     if(self.taskinfoEdit.content.length == 0) {
@@ -586,13 +588,13 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 - (void)actionClickDayButtonA:(id)sender
 {
-    [self openCalendarMutilMode:NO withName:@"ButtonA"];
+    [self actionDoOpenCalendarMutilMode:NO withName:@"ButtonA"];
 }
 
 
 - (void)actionClickDayButtonB:(id)sender
 {
-    [self openCalendarMutilMode:NO withName:@"ButtonB"];
+    [self actionDoOpenCalendarMutilMode:NO withName:@"ButtonB"];
 }
 
 
@@ -610,11 +612,11 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 
 - (void)actionOpenCalendarMuiltMode
 {
-    [self openCalendarMutilMode:YES withName:@"MutilMode"];
+    [self actionDoOpenCalendarMutilMode:YES withName:@"MutilMode"];
 }
 
 
-- (void)openCalendarMutilMode:(BOOL)mutilMode withName:(NSString*)name
+- (void)actionDoOpenCalendarMutilMode:(BOOL)mutilMode withName:(NSString*)name
 {
     LOG_POSTION
     

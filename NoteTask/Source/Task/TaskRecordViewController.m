@@ -28,6 +28,7 @@
 
 @implementation TaskRecordViewController
 
+#pragma mark - Custom override view.
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -160,8 +161,7 @@
 }
 
 
-
-
+#pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 0;
@@ -200,7 +200,6 @@
 {
     NSInteger rows = 0;
     rows = self.taskRecords.count;
-    NSLog(@"rows : %zd", rows);
     return rows;
 }
 
@@ -208,6 +207,7 @@
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     TaskRecordCell *recordCell = [tableView dequeueReusableCellWithIdentifier:@"TaskRecordCell" forIndexPath:indexPath];
+    recordCell.selectionStyle = UITableViewCellSelectionStyleNone;
     TaskRecord *taskRecord = [self taskRecordOnIndexPath:indexPath];
     recordCell.taskRecord = taskRecord;
     self.optumizeHeights[indexPath] = @(recordCell.frame.size.height);
@@ -251,7 +251,7 @@
 
 
 
-
+#pragma mark - w
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
