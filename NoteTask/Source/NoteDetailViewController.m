@@ -68,7 +68,7 @@
 
 
 
-
+#pragma mark - init
 - (instancetype)initWithNoteModel:(NoteModel*)noteModel
 {
     self = [super init];
@@ -78,6 +78,7 @@
         
         self.optumizeHeights = [[NSMutableDictionary alloc] init];
         
+        self.editMode = NO;
     }
     return self;
 }
@@ -90,7 +91,7 @@
     self = [super init];
     if (self) {
         self.createMode = YES;
-        self.editMode = YES;
+        self.editMode = NO;
         
         NoteModel* noteModel = [[NoteModel alloc] init];
         noteModel.sn    = [NoteModel randomSnsStringWithLength:6];
@@ -133,7 +134,7 @@
     return self;
 }
 
-
+#pragma mark - Custom override view.
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -163,6 +164,7 @@
         [self addSubview:self.textViewEditing];
         self.textViewEditing.hidden = YES;
         self.textViewEditing.delegate = self;
+        self.textViewEditing.font = [UIFont systemFontOfSize:18];
     });
     
     self.notePropertyView = [[NotePropertyView alloc] init];
@@ -269,7 +271,7 @@
     return ;
 }
 
-
+#pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 0.0;
@@ -420,7 +422,15 @@
         }
     }
     
-    [noteDetailCell setNoteParagraph:noteParagraph sn:sn onEditMode:self.editMode image:imageSet imageSize:imageSize];
+    NSInteger mode = NOTEPARAGRAPH_MODE_DISPLAY;
+    if(self.createMode) {
+        mode = NOTEPARAGRAPH_MODE_CREATE;
+    }
+    else if(self.editMode) {
+        mode = NOTEPARAGRAPH_MODE_EDIT;
+    }
+    
+    [noteDetailCell setNoteParagraph:noteParagraph sn:sn onMode:mode image:imageSet imageSize:imageSize];
     NS0Log(@"noteparag %zd height : %f", sn, cell.optumizeHeight);
     self.optumizeHeights[indexPath] = @(noteDetailCell.optumizeHeight);
     cell = noteDetailCell;
@@ -544,7 +554,7 @@
     //重用cell中的textview有刷新逻辑设计的问题. 用一个单独的textview用于编辑.
     self.heightFitToKeyboard = self.heightFitToKeyboard < 1 ? 200. : self.heightFitToKeyboard;
     NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
-    self.textViewEditing.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:NO];
+    self.textViewEditing.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn onMode:NOTEPARAGRAPH_MODE_EDIT];
     self.textViewEditing.editable = YES;
     self.textViewEditing.inputAccessoryView = keyboardAccessory;
     [self.contentView bringSubviewToFront:self.textViewEditing];
@@ -745,17 +755,21 @@
     }
     
     if([string isEqualToString:@"删除"]) {
-        NSInteger idxDelete = [self indexPathContentNoteParagraphIndex:indexPath];
-        [self.contentParagraphs removeObjectAtIndex:idxDelete];
-        
-        [self actionUpdateToLocalAfterModifyNoteParagraph:nil];
-        
-        [self.tableNoteParagraphs beginUpdates];
-        [self.tableNoteParagraphs deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-        [self.tableNoteParagraphs endUpdates];
-        
-        [self.tableNoteParagraphs reloadData];
-        
+        if(self.contentParagraphs.count <= 1) {
+            [self showIndicationText:@"最后一个段落, 不能删除."];
+        }
+        else {
+            NSInteger idxDelete = [self indexPathContentNoteParagraphIndex:indexPath];
+            [self.contentParagraphs removeObjectAtIndex:idxDelete];
+            
+            [self actionUpdateToLocalAfterModifyNoteParagraph:nil];
+            
+            [self.tableNoteParagraphs beginUpdates];
+            [self.tableNoteParagraphs deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+            [self.tableNoteParagraphs endUpdates];
+            
+            [self.tableNoteParagraphs reloadData];
+        }
         
         return ;
     }

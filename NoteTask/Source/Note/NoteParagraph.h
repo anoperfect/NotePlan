@@ -30,7 +30,7 @@
 
 - (UIColor*)backgroundColor;
 
-- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn andEditMode:(BOOL)editMode;
+- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn onMode:(NSInteger)mode;
 
 
 @end
@@ -40,5 +40,6 @@
 
 
 
-
-
+#define NOTEPARAGRAPH_MODE_CREATE 0
+#define NOTEPARAGRAPH_MODE_EDIT 1
+#define NOTEPARAGRAPH_MODE_DISPLAY 2

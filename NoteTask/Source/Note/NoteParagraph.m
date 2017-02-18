@@ -318,28 +318,46 @@
     return [UIColor whiteColor];
 }
 
+/*
+mode : CREATE
+        EDIT
+        DISPLAY
+ 
+ 
+ 
+ 
+ */
 
-- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn andEditMode:(BOOL)editMode
+- (NSMutableAttributedString*)attributedTextGeneratedOnSn:(NSInteger)sn onMode:(NSInteger)mode
 {
     NSString *content = @"";
     BOOL textLight = NO;
     if(self.content.length == 0) {
-        if(editMode) {
-            textLight = YES;
-            if(self.isTitle) {
-                content = @"请输入标题.";
-            }
-            else {
-                content = [NSString stringWithFormat:@"第 %zd 段.", sn];
-            }
-        }
-        else {
-            if(sn == 0) {
-                content = @"";
-            }
-            else {
-                content = @"";
-            }
+        switch (mode) {
+            case NOTEPARAGRAPH_MODE_CREATE:
+                textLight = YES;
+                if(sn == 0) {
+                    content = @"请输入标题";
+                }
+                else {
+                    content = [NSString stringWithFormat:@"第 %zd 段.", sn];
+                }
+                break;
+                
+            case NOTEPARAGRAPH_MODE_EDIT:
+                break;
+                
+            case NOTEPARAGRAPH_MODE_DISPLAY:
+                if(sn == 0) {
+                    content = @"无标题";
+                    textLight = YES;
+                }
+                else {
+                    
+                }
+                
+            default:
+                break;
         }
     }
     else {
@@ -347,7 +365,7 @@
     }
     
     if(self.content.length == 0) {
-        NSLog(@"sn: %zd, editMode: %zd, self.content: %@, content: %@", sn, editMode, self.content, content);
+        NSLog(@"sn: %zd, editMode: %zd, self.content: %@, content: %@", sn, mode, self.content, content);
     }
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:content];

@@ -29,7 +29,7 @@
 @property (nonatomic, assign) id<NoteDetailCellDelegate> delegate;
 
 //sn : 0 title. sn > 0 content paragraph.
-- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode image:(UIImage*)image imageSize:(CGSize)imageSize;
+- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onMode:(NSInteger)mode image:(UIImage*)image imageSize:(CGSize)imageSize;
 
 @end
 //同时给NoteDetailViewController使用, 以便使编辑控件的布局尽量跟NoteDetailCell匹配.

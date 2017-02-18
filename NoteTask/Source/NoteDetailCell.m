@@ -16,7 +16,7 @@
 @interface NoteDetailCell () <UITextViewDelegate>
 @property (nonatomic, strong) NoteParagraphModel* noteParagraph;
 @property (nonatomic, assign) NSInteger sn;
-@property (nonatomic, assign) BOOL editMode;
+@property (nonatomic, assign) NSInteger mode;
 
 
 @property (nonatomic, strong) UIView *container;
@@ -106,7 +106,7 @@
     [self.container addSubview:self.noteImageView];
     self.noteImageView.hidden = YES;
     
-//    self.dottedLine = [[UIView alloc] init];
+    self.dottedLine = [[UIView alloc] init];
     [self addSubview:self.dottedLine];
     self.dottedLine.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"DottedLine"]];
 }
@@ -118,11 +118,11 @@
 }
 
 
-- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onEditMode:(BOOL)editMode image:(UIImage*)image imageSize:(CGSize)imageSize
+- (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onMode:(NSInteger)mode image:(UIImage*)image imageSize:(CGSize)imageSize
 {
-    self.noteParagraph = noteParagraph;
-    self.sn = sn;
-    self.editMode = editMode;
+    self.noteParagraph  = noteParagraph;
+    self.sn             = sn;
+    self.mode           = mode;
     
     if(image) {
         NSLog(@"setNoteParagraph %zd, image(%@) : %f x %f, resize to %f x %f .", sn, image, image.size.width, image.size.height, imageSize.width, imageSize.height);
@@ -148,12 +148,14 @@
     
     frameLabel = CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
     
+    NSAttributedString *textAttributedString = [noteParagraph attributedTextGeneratedOnSn:sn onMode:mode];
+    
     if(self.noteParagraphTextView && !self.noteParagraphTextView.hidden) {
         
         edgeLabel = UIEdgeInsetsZero;
         frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
         
-        self.noteParagraphTextView.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:editMode];
+        self.noteParagraphTextView.attributedText = textAttributedString;
         sizeOptumizeLabel = [self.noteParagraphTextView sizeThatFits:frameLabel.size];
         frameLabel.size.height = sizeOptumizeLabel.height;
 
@@ -169,7 +171,7 @@
         edgeLabel = NOTEDETAILCELL_EDGE_LABEL;
         frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
         
-        self.noteParagraphYYLabel.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:editMode];
+        self.noteParagraphYYLabel.attributedText = textAttributedString;
         sizeOptumizeLabel = [self.noteParagraphYYLabel sizeThatFits:frameLabel.size];
         frameLabel.size.height = sizeOptumizeLabel.height;
         self.noteParagraphYYLabel.frame = frameLabel;
@@ -193,7 +195,7 @@
         
         frameLabel = UIEdgeInsetsInsetRect(frameLabel, edgeLabel);
         
-        self.noteParagraphLabel.attributedText = [noteParagraph attributedTextGeneratedOnSn:sn andEditMode:editMode];
+        self.noteParagraphLabel.attributedText = textAttributedString;
         NS0Log(@"sn : %zd, content : %@, text : %@. \n(%@)", sn
               , noteParagraph.content
               , self.noteParagraphLabel.attributedText.string
@@ -224,7 +226,8 @@
     }
     
     //给编辑状态的paragraph标记. 以下为使用UIView加虚线的方式. 已经不适用.
-    if(editMode) {
+    if(mode == NOTEPARAGRAPH_MODE_EDIT || mode == NOTEPARAGRAPH_MODE_CREATE) {
+        NSLog(@"xxxxx---")
         self.dottedLine.hidden = NO;
         self.dottedLine.frame = CGRectMake(20, frame.size.height - 6, frame.size.width - 20 - 20, 0.5);
     }

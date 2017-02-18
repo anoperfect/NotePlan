@@ -467,7 +467,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     NSArray<NSString*> *actionsKeyword = @[
                                            @"TaskActionTicking",
                                            @"TaskActionFinish",
-                                           @"TaskActionRecord",
+                                           /*@"TaskActionRecord",*/
                                            @"TaskActionUserRecord",
                                            @"TaskActionMore"
                                            ];

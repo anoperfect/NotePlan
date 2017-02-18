@@ -367,7 +367,8 @@
     else {
         self.fontSizeValueLabel.text = fontSizeString;
         self.sampleNoteParagraph.styleDictionay[@"font-size"] = fontSizeString;
-        self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGeneratedOnSn:0 andEditMode:NO];
+        /*#  sn .*/
+        self.sampleText.attributedText = [self.sampleNoteParagraph attributedTextGeneratedOnSn:0 onMode:NOTEPARAGRAPH_MODE_DISPLAY];
         if(self.fontSizeUseDefaultSwitch.on) {
             self.fontSizeUseDefaultSwitch.on = NO;
         }
@@ -603,7 +604,7 @@
 - (NSMutableAttributedString*)sampleNoteParagraphAttrbutedString
 {
     NoteParagraphModel *noteParagraph = self.sampleNoteParagraph;
-    return [noteParagraph attributedTextGeneratedOnSn:0 andEditMode:NO];
+    return [noteParagraph attributedTextGeneratedOnSn:0 onMode:NOTEPARAGRAPH_MODE_DISPLAY];
 }
 
 

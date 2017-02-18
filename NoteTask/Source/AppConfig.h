@@ -44,6 +44,7 @@
 - (void)configNoteUpdate:(NoteModel*)note fromSn:(NSString*)sn;
 
 - (void)configNotesUpdateClassification:(NSString*)classification bySns:(NSArray<NSString*>*)sns;
+- (void)configNotesUpdateClassification:(NSString*)classification byPreviousClassification:(NSString*)previousClassification;
 - (void)configNotesUpdateColor:(NSString*)color bySns:(NSArray<NSString*>*)sns;
 
 - (void)configNoteAddPreset;

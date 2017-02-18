@@ -41,6 +41,7 @@
 
 
 
+
 + (AppConfig*)sharedAppConfig
 {
     static dispatch_once_t once;
@@ -117,11 +118,6 @@
     
     
 }
-
-
-
-
-
 
 
 #pragma mark - Classification
@@ -381,8 +377,6 @@
     }
     
     //return result;
-    
-    
 }
 
 
@@ -398,8 +392,6 @@
     }
     
     //return result;
-    
-    
 }
 
 
@@ -487,8 +479,6 @@
 }
 
 
-
-
 - (void)configNotesUpdateClassification:(NSString*)classification bySns:(NSArray<NSString*>*)sns
 {
     NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
@@ -498,6 +488,18 @@
                             toTable:TABLENAME_NOTE
                      withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
                       withInfoQuery:@{@"sn":sns}];
+}
+
+
+- (void)configNotesUpdateClassification:(NSString*)classification byPreviousClassification:(NSString*)previousClassification
+{
+    NSMutableDictionary *updateDict = [[NSMutableDictionary alloc] init];
+    updateDict[@"classification"]   = classification;
+    
+    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
+                            toTable:TABLENAME_NOTE
+                     withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
+                      withInfoQuery:@{@"classification":previousClassification}];
 }
 
 
@@ -511,12 +513,6 @@
                      withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
                       withInfoQuery:@{@"sn":sns}];
 }
-
-
-
-
-
-
 
 
 
@@ -567,12 +563,19 @@ TaskModeDefault
 
 - (void)configSettingSetKey:(NSString*)key toValue:(NSString*)value replace:(BOOL)replace
 {
+    //不强制替换时, 如果已经有kv值, 则不写入value.
     if(!replace) {
         NSString *valuePrevious = [self configSettingQuery:key];
         if(valuePrevious) {
             NSLog(@"configSettingSetKey not performed. key[%@] , previous[%@], set[%@]", key, valuePrevious, value);
             return ;
         }
+    }
+    
+    //value为nil时, 表示删除该kv.
+    if(!value) {
+        [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withQuery:@{@"key":key}];
+        return ;
     }
     
     NSDictionary *infoInsert = @{
@@ -592,14 +595,6 @@ TaskModeDefault
 
     [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withInfo:infoInsert orReplace:replace];
 }
-
-
-
-
-
-
-
-
 
 
 

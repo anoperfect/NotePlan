@@ -204,6 +204,8 @@
         _inputView.layer.borderColor = colorText.CGColor;
         _inputView.layer.borderWidth = 1.5;
         _inputView.layer.cornerRadius = 6;
+        _inputView.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+        _inputView.leftViewMode = UITextFieldViewModeAlways;
         
         _addButton = [[UIButton alloc] init];
         [sectionView addSubview:_addButton];
@@ -354,6 +356,13 @@
     NSLog(@"%@", text);
     
     [[AppConfig sharedAppConfig] configClassificationRemove:text];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationClassificationsUpdated" object:nil userInfo:nil];
+    if([text isEqualToString:[[AppConfig sharedAppConfig] configSettingGet:@"NoteFilterClassification"]]) {
+        [[AppConfig sharedAppConfig] configSettingSetKey:@"NoteFilterClassification" toValue:@"*" replace:YES];
+    }
+    
+    //删除类别后, 原类别的归类到个人笔记.
+    [[AppConfig sharedAppConfig] configNotesUpdateClassification:@"个人笔记" byPreviousClassification:text];
     
     [self.tableView setEditing:NO animated:YES];
     [self dateReloadAll];
@@ -443,7 +452,26 @@
         return ;
     }
     
+    
+    NSArray<NSString*> *forbiddenClassifications = @[
+                                                     @"*",
+                                                     @"所有",
+                                                     @"所有类别",
+                                                     ];
+    
+    if(NSNotFound != [forbiddenClassifications indexOfObject:text]) {
+        [self showIndicationText:@"不合适的类别名, 无法添加"];
+        return ;
+    }
+    
+    //判断是否类别重复.
+    if(NSNotFound != [self.classifications indexOfObject:text]) {
+        [self showIndicationText:@"重复的类别名, 无法添加"];
+        return ;
+    }
+    
     [[AppConfig sharedAppConfig] configClassificationAdd:text];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationClassificationsUpdated" object:nil userInfo:nil];
     [self dateReloadAll];
     [self.tableView reloadData];
 }

@@ -127,6 +127,8 @@
     
     //内容加载.
     //[self loadNotesView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionClassificationsUpdated:) name:@"NotificationClassificationsUpdated" object:nil];
 }
 
 
@@ -996,32 +998,15 @@
 }
 
 
-- (UIView*)mfilterViewBuild
+- (UIView*)mfilterViewBuild //desprated.
 {
-
     //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
     //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, heightNoteFilter)];
     //    [self.view addSubview:self.noteFilter];
     //    self.noteFilter.backgroundColor = [UIColor yellowColor];
     //
     //    [self.view bringSubviewToFront:self.noteFilter];
-    self.filterDataClassifications = [NSMutableArray arrayWithObjects:@"全部类别", nil];
-    NSArray<NSString*> *addedClassifications = [[AppConfig sharedAppConfig] configClassificationGets];
-    if(addedClassifications.count > 0) {
-        [self.filterDataClassifications addObjectsFromArray:addedClassifications];
-    }
-    [self.filterDataClassifications addObjectsFromArray:[NoteModel classificationPreset]];
-    
-    self.filterDataColors = [[NSMutableArray alloc] init];//[NSMutableArray arrayWithObjects:nil];
-    [self.filterDataColors addObjectsFromArray:[NoteModel colorFilterDisplayStrings]];
-    JSDropDownMenu *menu = [[JSDropDownMenu alloc] initWithOrigin:CGPointMake(0, 0) andHeight:self.heightNoteFilter];
-    menu.indicatorColor = [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0];
-    menu.separatorColor = [UIColor colorWithRed:210.0f/255.0f green:210.0f/255.0f blue:210.0f/255.0f alpha:1.0];
-    menu.textColor = [UIColor colorWithRed:83.f/255.0f green:83.f/255.0f blue:83.f/255.0f alpha:1.0f];
-    menu.dataSource = self;
-    menu.delegate = self;
-    
-    return menu;
+    return nil;
 }
 
 
@@ -1056,6 +1041,12 @@
 }
 
 
+- (void)actionClassificationsUpdated:(NSNotification*)notification
+{
+    [self dataFilterRefresh];
+    
+    
+}
 
 
 
