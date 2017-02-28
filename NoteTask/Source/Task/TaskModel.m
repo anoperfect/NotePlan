@@ -307,7 +307,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     }];
 }
 
-
+/* 显示昨天,明天,(今天)x小时前,x分钟前,x秒前. */
 + (NSString*)dateTimeStringForDisplay:(NSString*)at
 {
     NSString *dateTimeString;
@@ -375,7 +375,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
     return dateTimeString;
 }
 
-
+/*显示昨天,今天,明天.*/
 + (NSString*)dateStringForDisplay:(NSString*)dateString
 {
     NSString *dateStringDisplay = dateString;

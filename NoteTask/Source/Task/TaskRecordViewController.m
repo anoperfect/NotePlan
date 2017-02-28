@@ -208,6 +208,7 @@
 {
     TaskRecordCell *recordCell = [tableView dequeueReusableCellWithIdentifier:@"TaskRecordCell" forIndexPath:indexPath];
     recordCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     TaskRecord *taskRecord = [self taskRecordOnIndexPath:indexPath];
     recordCell.taskRecord = taskRecord;
     self.optumizeHeights[indexPath] = @(recordCell.frame.size.height);

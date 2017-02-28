@@ -19,6 +19,7 @@
 
 
 @property (nonatomic, strong) NoteParagraphModel    *sampleNoteParagraph;
+@property (nonatomic, assign) NSInteger sn;
 @property (nonatomic, strong) UILabel       *sampleText;
 
 
@@ -84,6 +85,7 @@
 
 
 
+#pragma mark - init
 - (instancetype)initWithStyleDictionary:(NSDictionary*)styleDictionary
 {
     self = [super init];
@@ -96,11 +98,12 @@
 }
 
 
-- (instancetype)initWithNoteParagraph:(NoteParagraphModel*)noteParagraph
+- (instancetype)initWithNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn
 {
     self = [super init];
     if (self) {
         self.sampleNoteParagraph = [noteParagraph copy];
+        self.sn = sn;
     }
     return self;
 }
@@ -112,6 +115,7 @@
 }
 
 
+#pragma mark - Custom override view.
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -302,7 +306,7 @@
     FrameLayout *f = [[FrameLayout alloc] initWithRootView:self.contentView];
     [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
                   toViews:@[
-                            [FrameLayoutView viewWithName:@"_sampleText" percentage:0.36 edge:UIEdgeInsetsMake(10, 27, 10, 27)],
+                            [FrameLayoutView viewWithName:@"_sampleText" percentage:0.36 edge:UIEdgeInsetsMake(10, 16, 10, 16)],
                             [FrameLayoutView viewWithName:@"fontSizeLinePadding" value:20 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"fontSize" value:40 edge:UIEdgeInsetsZero],
                             [FrameLayoutView viewWithName:@"paddingTextColorLine" value:36 edge:UIEdgeInsetsZero],
@@ -354,6 +358,7 @@
 }
 
 
+#pragma mark - slider and switch
 - (void)sliderChanged:(UISlider*)slider
 {
     CGFloat value        = slider.value;
@@ -524,6 +529,7 @@
 }
 
 
+#pragma mark - action
 - (void)actionFinishCustomise
 {
     NSLog(@"finishCustomise. styple : %@", self.sampleNoteParagraph.styleDictionay);
@@ -591,11 +597,15 @@
 
 - (void)updateSampleText
 {
+    NSLog(@"sampleNoteParagraph : %@", self.sampleNoteParagraph);
     NSLog(@"styple : %@", self.sampleNoteParagraph.styleDictionay);
     self.sampleText.attributedText = [self sampleNoteParagraphAttrbutedString];
     if([self.sampleNoteParagraph.styleDictionay[@"border"] isEqualToString:@"1px solid #000"]) {
         self.sampleText.layer.borderColor = [self.sampleNoteParagraph textColor].CGColor;
         self.sampleText.layer.borderWidth = 1.0f;
+    }
+    else {
+        self.sampleText.layer.borderWidth = 0.0f;
     }
 }
 
@@ -604,7 +614,10 @@
 - (NSMutableAttributedString*)sampleNoteParagraphAttrbutedString
 {
     NoteParagraphModel *noteParagraph = self.sampleNoteParagraph;
-    return [noteParagraph attributedTextGeneratedOnSn:0 onMode:NOTEPARAGRAPH_MODE_DISPLAY];
+    if(noteParagraph.content.length == 0) {
+        noteParagraph.content = @"显示示例文字";
+    }
+    return [noteParagraph attributedTextGeneratedOnSn:self.sn onMode:NOTEPARAGRAPH_MODE_DISPLAY];
 }
 
 

@@ -16,7 +16,7 @@
 @interface NoteParagraphCustmiseViewController : CustomViewController
 
 - (instancetype)initWithStyleDictionary:(NSDictionary*)styleDictionary;
-- (instancetype)initWithNoteParagraph:(NoteParagraphModel*)noteParagraph;
+- (instancetype)initWithNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn;
 
 - (void)setStyleFinishHandle:(void(^)(NSDictionary *styleDictionary))handle;
 

@@ -822,8 +822,6 @@
 }
 
 
-
-
 - (void)actionOnIndexPath:(NSIndexPath*)indexPath byString:(NSString*)actionString
 {
     NSLog(@"action on %zd:%zd with string : %@", indexPath.section, indexPath.row, actionString);
@@ -940,8 +938,8 @@
 - (void)actionDetectTaskUpdate:(NSNotification*)notification
 {
     LOG_POSTION
-    NSDictionary *diffs = notification.object;
-    NSLog(@"%@", diffs);
+
+    NSLog(@"%@", notification.object);
     
     [self dataTasksReload];
     [self actionReloadTasksView];
@@ -951,8 +949,8 @@
 - (void)actionDetectTaskCreate:(NSNotification*)notification
 {
     LOG_POSTION
-    id obj = notification.object;
-    NSLog(@"%@", obj);
+
+    NSLog(@"%@", notification.object);
     
     [self dataTasksReload];
     [self actionReloadTasksView];

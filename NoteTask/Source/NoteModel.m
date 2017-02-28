@@ -243,7 +243,7 @@
     s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title?self.title:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.content" withString:self.content?self.content:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
-    s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?self.createdAt:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?(self.createdAt.length>19?[self.createdAt substringToIndex:19]:self.createdAt):@""];
     
     return s;
 }
@@ -387,13 +387,14 @@
 
 + (NSString*)imageNameNewOnSn:(NSString*)sn format:(NSString*)format
 {
-    NSString *imageName = [NSString stringWithFormat:@"NoteImage%@_%@", [NSString dateTimeStringNow], sn];
+    NSString *imageName = [NSString stringWithFormat:@"NoteImage%@", [NSString dateTimeStringNow]];
     
-    imageName = [imageName stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     imageName = [imageName stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    imageName = [imageName stringByReplacingOccurrencesOfString:@"." withString:@"-"];
     imageName = [imageName stringByReplacingOccurrencesOfString:@":" withString:@""];
     imageName = [imageName stringByReplacingOccurrencesOfString:@" " withString:@""];
     
+    imageName = [imageName stringByAppendingFormat:@"-%@", sn];
     imageName = [imageName stringByAppendingFormat:@".%@", format];
     
     return imageName;
@@ -428,3 +429,7 @@
 
 
 @end
+
+
+
+

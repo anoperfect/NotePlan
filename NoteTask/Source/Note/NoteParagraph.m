@@ -426,7 +426,18 @@ mode : CREATE
 
 - (NSString*)description
 {
-    return [NoteParagraphModel noteParagraphToString:self];
+    NSMutableString *s = [[NSMutableString alloc] init];
+    if(self.isTitle) {
+        [s appendString:@"[T]"];
+    }
+    
+    [s appendFormat:@"[content:%@]", self.content];
+    [s appendFormat:@"[image:%@]", self.image];
+    [s appendFormat:@"[style:%@]", [NoteParagraphModel styleDictionaryToString:self.styleDictionay]];
+    
+    return [NSString stringWithString:s];
+    
+//    return [NoteParagraphModel noteParagraphToString:self];
 }
 
 

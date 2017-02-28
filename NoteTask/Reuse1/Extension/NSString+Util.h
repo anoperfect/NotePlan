@@ -85,5 +85,11 @@
 
 + (NSString*)truncate:(NSString*)s length:(NSInteger)length suffix:(BOOL)suffix;
 
++ (NSString*)stringLogFromDictionary:(NSDictionary *)dic;
+
 @end
+
+
+
+
 

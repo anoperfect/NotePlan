@@ -57,8 +57,6 @@
     
     CGRect frameLabelTicking = CGRectMake(0, 0, VIEW_WIDTH, 100);
     self.labelTicking.frame = frameLabelTicking;
-    
-    
 }
 
 
@@ -72,9 +70,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    
-    
 }
 
 
@@ -94,8 +89,8 @@
     }
     
     NSTimeInterval tickingTotal = [current timeIntervalSinceDate:self.startDate];
-    NSTimeInterval tickingInterval = [current timeIntervalSinceDate:self.prevDate];
-    NSLog(@"%f %f", tickingInterval, tickingTotal);
+
+    NSLog(@"%f %f", [current timeIntervalSinceDate:self.prevDate], tickingTotal);
     
     self.prevDate = current;
     
@@ -111,16 +106,7 @@
     NSInteger second = secs % 60;
     
     self.labelTicking.text = [NSString stringWithFormat:@"%02zd:%02zd:%02zd", hour, minite, second];
-    
-    
-    
-    
 }
-
-
-
-
-
 
 
 - (void)didReceiveMemoryWarning

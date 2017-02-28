@@ -25,6 +25,13 @@
     // Override point for customization after application launch.
     [UIpConfig sharedUIpConfig];
     
+    //UIpConfig的初始化暂时放这边.
+    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"color.json"];
+    NSData *data = [NSData dataWithContentsOfFile:resPath];
+
+    NSArray<ColorItem*> * colorItems = [[UIpConfig sharedUIpConfig] colorItemsParseFromJsonData:data];
+    [[UIpConfig sharedUIpConfig] updateUIpConfigColorItems:colorItems];
+
     [AppConfig sharedAppConfig];
 
     RootViewController *vc = [[RootViewController alloc] init];
@@ -37,7 +44,6 @@
     fpsLabel.backgroundColor = [UIColor blueColor];
     [self.window addSubview:fpsLabel];
     fpsLabel.hidden = YES;
-    
     
     return YES;
 }
@@ -64,5 +70,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+
 
 @end

@@ -906,7 +906,7 @@ TaskProperty
         };
         
         self.optumizeHeights[indexPath] = @(contentCell.frame.size.height);
-        UIEdgeInsets edge = contentCell.separatorInset;
+        UIEdgeInsets edge = contentCell.separatorInset;edge = edge;
         NSLog(@"%f, %f, %f, %f", edge.top, edge.left, edge.bottom, edge.right);
         cell = contentCell;
     }
@@ -924,7 +924,9 @@ TaskProperty
         cell = propertyCell;
         if([title isEqualToString:@"完成情况"]) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
+        }
+        else {
+            cell.accessoryType = UITableViewCellAccessoryNone;
         }
     }
     

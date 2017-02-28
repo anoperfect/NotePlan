@@ -12,6 +12,7 @@
 
 @interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
+@property (nonatomic, assign) CGFloat heightSection;
 @property (nonatomic, strong) UITableView *tableView;
 
 @property (nonatomic, strong) UITextField *inputView;
@@ -40,9 +41,12 @@
 }
 
 
+#pragma mark - Custom override view.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.heightSection = 56;
     
     [self dateReloadAll];
     
@@ -95,54 +99,7 @@
 }
 
 
-- (void)actionMore
-{
-    CGFloat width = 60;
-    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
-    v.layoutMode = TextButtonLineLayoutModeVertical;
-    
-    NSArray<NSString*> *actionStrings = @[/*@"新增类别",*/ @"删除类别"];
-    if(self.tableView.editing) {
-        actionStrings = @[@"取消删除"];
-    }
-    [v setTexts:actionStrings];
-    
-    __weak typeof(self) weakSelf = self;
-    [v setButtonActionByText:^(NSString* actionText) {
-        NSLog(@"action : %@", actionText);
-        [weakSelf dismissPopupView];
-        [weakSelf actionMenuString:actionText];
-        return ;
-    }];
-    
-    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
-}
-
-
-- (void)actionMenuString:(NSString*)actionText
-{
-    if([actionText isEqualToString:@"新增类别"]) {
-     
-        return ;
-    }
-    
-    if([actionText isEqualToString:@"删除类别"]) {
-        if(self.classifications.count <= 2) {
-            [self showIndicationText:@"没有新增的类别以删除"];
-            return ;
-        }
-        
-        [self.tableView setEditing:YES animated:YES];
-        return ;
-    }
-    
-    if([actionText isEqualToString:@"取消删除"]) {
-        [self.tableView setEditing:NO animated:YES];
-        return;
-    }
-}
-
-
+#pragma mark - tableView
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
@@ -157,8 +114,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-#define kheightSection 56.0
-    return kheightSection;
+    return self.heightSection;
 }
 
 
@@ -168,7 +124,7 @@
     UIColor *colorSectionBackground = [UIColor colorWithName:@"NoteCustomSectionBackground"];
     UIFont *fontText                = [UIFont fontWithName:@"NoteCustomSectionHeader"];
     
-    UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, kheightSection)];
+    UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, self.heightSection)];
     sectionView.backgroundColor = colorSectionBackground;
     
     LineBackgroundView *lineBackgroundView = [LineBackgroundView createViewWithFrame:CGRectMake(0, 0, Width, 56) lineWidth:4 lineGap:4
@@ -177,7 +133,7 @@
     
     [sectionView addSubview:lineBackgroundView];
     
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, kheightSection)];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 60, self.heightSection)];
     [sectionView addSubview:titleLabel];
     titleLabel.attributedText = [NSString attributedStringWith:@[@"类别", @"标记"][section]
                                                           font:fontText
@@ -370,6 +326,7 @@
 }
 
 
+#pragma mark - CG line
 - (UIImageView*)imageLineWidth:(CGFloat)width andHeight:(CGFloat)height
 {
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
@@ -392,6 +349,7 @@
 }
 
 
+#pragma mark - textField
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     
     NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
@@ -403,6 +361,55 @@
     }
     
     return YES;
+}
+
+
+#pragma mark - action
+- (void)actionMore
+{
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = @[/*@"新增类别",*/ @"删除类别"];
+    if(self.tableView.editing) {
+        actionStrings = @[@"取消删除"];
+    }
+    [v setTexts:actionStrings];
+    
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [weakSelf dismissPopupView];
+        [weakSelf actionMenuString:actionText];
+        return ;
+    }];
+    
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
+}
+
+
+- (void)actionMenuString:(NSString*)actionText
+{
+    if([actionText isEqualToString:@"新增类别"]) {
+        
+        return ;
+    }
+    
+    if([actionText isEqualToString:@"删除类别"]) {
+        if(self.classifications.count <= 2) {
+            [self showIndicationText:@"没有新增的类别以删除"];
+            return ;
+        }
+        
+        [self.tableView setEditing:YES animated:YES];
+        return ;
+    }
+    
+    if([actionText isEqualToString:@"取消删除"]) {
+        [self.tableView setEditing:NO animated:YES];
+        return;
+    }
 }
 
 
@@ -490,8 +497,7 @@
     self.filterDataColorsCountMap = [[NSMutableDictionary alloc] init];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:@"*"];
-        NSLog(@"count : %zd", count);
+        NSLog(@"count : %zd", [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:@"*"]);
         
         for(NSString *classification in self.classifications) {
             NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:classification andColorString:@"*"];

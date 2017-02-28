@@ -38,15 +38,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    //UIpConfig的初始化暂时放这边.
-    NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"color.json"];
-    NSData *data = [NSData dataWithContentsOfFile:resPath];
-    
-    
-    NSArray<ColorItem*> * colorItems = [[UIpConfig sharedUIpConfig] colorItemsParseFromJsonData:data];
-    [[UIpConfig sharedUIpConfig] updateUIpConfigColorItems:colorItems];
-    
+
     //数据部分.
     [self generateMenus];
     

@@ -60,8 +60,9 @@
 @property (nonatomic, strong) NSMutableArray    *urlStringsDownloadFailed;
 
 //@property (nonatomic, strong) UIWebView *webView;
-
 @end
+
+#define ROW_NUMBER_TITLE    2
 
 @implementation NoteDetailViewController
 
@@ -271,6 +272,7 @@
     return ;
 }
 
+
 #pragma mark - tableView
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -303,7 +305,6 @@
 }
 
 
-#define ROW_NUMBER_TITLE    2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger rows = self.contentParagraphs.count;
@@ -328,7 +329,7 @@
     
     NoteDetailCell *noteDetailCell = [tableView dequeueReusableCellWithIdentifier:@"NoteDetail" forIndexPath:indexPath];
     NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-    NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
+    NSInteger sn = [self dataGetSnOnIndexPath:indexPath];
     
     UIImage *imageSet = nil;
     CGSize imageSize;
@@ -523,6 +524,266 @@
 }
 
 
+#pragma mark - data
+- (NSInteger)dataGetSnOnIndexPath:(NSIndexPath*)indexPath
+{
+    NSInteger sn = (indexPath.row == 0)?0:indexPath.row - 1;
+    return sn;
+}
+
+
+- (BOOL)indexPathIsTitle:(NSIndexPath*)indexPath
+{
+    return indexPath.row == 0;
+}
+
+
+- (BOOL)indexPathIsLast:(NSIndexPath*)indexPath
+{
+    NSInteger noteIndex = [self indexPathContentNoteParagraphIndex:indexPath];
+    return noteIndex == (self.contentParagraphs.count - 1);
+}
+
+
+- (NSInteger)indexPathContentNoteParagraphIndex:(NSIndexPath*)indexPath
+{
+    NSInteger noteIndex = indexPath.row - ROW_NUMBER_TITLE;
+    if(noteIndex >= 0 && noteIndex < self.contentParagraphs.count) {
+        
+    }
+    else {
+        NSLog(@"#error - ");
+        noteIndex = NSNotFound;
+    }
+    
+    return noteIndex;
+}
+
+
+- (NSIndexPath*)indexPathOnNoteParagraphIndex:(NSInteger)noteParagraphIndex
+{
+    return [NSIndexPath indexPathForRow:noteParagraphIndex+ROW_NUMBER_TITLE inSection:0];
+}
+
+
+//返回Content的NoteParagraph.
+- (NoteParagraphModel*)indexPathContentNoteParagraph:(NSIndexPath*)indexPath
+{
+    NSInteger noteParagraphIndex = [self indexPathContentNoteParagraphIndex:indexPath];
+    if(noteParagraphIndex >= 0 && noteParagraphIndex < self.contentParagraphs.count) {
+        return self.contentParagraphs[noteParagraphIndex];
+    }
+    else {
+        NSLog(@"#error - noteParagraphOnIndexPath row %zd, contentParagraphs count %zd.", noteParagraphIndex, self.contentParagraphs.count);
+        return nil;
+    }
+}
+
+
+//返回title或者Content的NoteParagraph.
+- (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
+{
+    if(!indexPath) {
+        NSLog(@"#error - indexPath nil.");
+        return nil;
+    }
+    
+    if([self indexPathIsTitle:indexPath]) {
+        return self.titleParagraph;
+    }
+    
+    return [self indexPathContentNoteParagraph:indexPath];
+}
+
+
+#pragma mark - action
+- (void)actionMore
+{
+    CGFloat width = 60;
+    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
+    v.layoutMode = TextButtonLineLayoutModeVertical;
+    
+    NSArray<NSString*> *actionStrings = nil;
+    actionStrings = @[@"pdf分享", @"电脑查看"];
+    [v setTexts:actionStrings];
+    
+    __weak typeof(self) weakSelf = self;
+    [v setButtonActionByText:^(NSString* actionText) {
+        NSLog(@"action : %@", actionText);
+        [weakSelf dismissPopupView];
+        
+        if([actionText isEqualToString:@"pdf分享"]) {
+            return ;
+        }
+        
+        if([actionText isEqualToString:@"电脑查看"]) {
+            return;
+        }
+        
+        if([actionText isEqualToString:@"恢复预制"]) {
+            return;
+        }
+        
+    }];
+    
+    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
+}
+
+
+- (void)actionShare
+{
+    NoteShareViewController *vc = [[NoteShareViewController alloc] init];
+    vc.noteModel = self.noteModel;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+
+- (void)actionTryReloadSn:(NSInteger)sn
+{
+    BOOL reloaded = NO;
+    for(NoteDetailCell *cell in self.tableNoteParagraphs.visibleCells) {
+        if([cell isKindOfClass:[NoteDetailCell class]]) {
+            if(cell.sn == sn) {
+                [self reloadNoteParagraphAtIndexPath:[NSIndexPath indexPathForRow:sn==0?0:(sn+1) inSection:0] due:@"imageLoad"];
+                reloaded = YES;
+                break;
+            }
+        }
+    }
+    
+    if(reloaded) {
+        NSLog(@"image set.");
+    }
+    else {
+        NSLog(@"image not set");
+    }
+}
+
+
+- (void)action:(NSString*)string OnIndexPath:(NSIndexPath*)indexPath
+{
+    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
+    if(!noteParagraph) {
+        NSLog(@"#error - noteParagraph nil on %zd:%zd", indexPath.section, indexPath.row);
+        return;
+    }
+    
+    if([string isEqualToString:@"复制"]) {
+        if(noteParagraph.content.length > 0) {
+            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+            pasteboard.string = noteParagraph.content;
+            [self showIndicationText:@"已复制到粘贴板"];
+        }
+        return ;
+    }
+    
+    if([string isEqualToString:@"增加图片"]) {
+        [self actionInputImage];
+        return ;
+    }
+    
+    if([string isEqualToString:@"移除图片"]) {
+        [NoteModel imageDataLocalRemoveWithName:noteParagraph.image];
+        noteParagraph.image = nil;
+        [self reloadNoteParagraphAtIndexPath:indexPath due:@"RemoveImage"];
+        [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];
+        
+        return;
+    }
+    
+    if([string isEqualToString:@"编辑"]) {
+        [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
+        return ;
+    }
+    
+    if([string isEqualToString:@"插入"]) {
+        NSInteger idxInsert = [self indexPathContentNoteParagraphIndex:indexPath];
+        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
+        noteParagraphNew.content = @"";
+        [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxInsert];
+        
+        [self.tableNoteParagraphs beginUpdates];
+        [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableNoteParagraphs endUpdates];
+        
+        [self.tableNoteParagraphs reloadData];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self editNoteParagraphAtIndexPath:indexPath due:@"插入"];
+        });
+        
+        return;
+        
+    }
+    
+    if([string isEqualToString:@"增加"]) {
+        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
+        noteParagraphNew.content = @"";
+        
+        NSInteger idxAppend = [self indexPathContentNoteParagraphIndex:indexPath];
+        if(idxAppend == NSNotFound) {
+            NSLog(@"#error - ");
+        }
+        else if(idxAppend == self.contentParagraphs.count - 1) {
+            [self.contentParagraphs addObject:noteParagraphNew];
+        }
+        else {
+            [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxAppend + 1];
+        }
+        
+        NSIndexPath *indexPathAppend = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
+        
+        [self.tableNoteParagraphs beginUpdates];
+        [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPathAppend] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableNoteParagraphs endUpdates];
+        
+        [self.tableNoteParagraphs reloadData];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self editNoteParagraphAtIndexPath:indexPathAppend due:@"增加"];
+        });
+        
+        return;
+        
+    }
+    
+    if([string isEqualToString:@"删除"]) {
+        if(self.contentParagraphs.count <= 1) {
+            [self showIndicationText:@"最后一个段落, 不能删除."];
+        }
+        else {
+            NSInteger idxDelete = [self indexPathContentNoteParagraphIndex:indexPath];
+            [self.contentParagraphs removeObjectAtIndex:idxDelete];
+            
+            [self actionUpdateToLocalAfterModifyNoteParagraph:nil];
+            
+            [self.tableNoteParagraphs beginUpdates];
+            [self.tableNoteParagraphs deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+            [self.tableNoteParagraphs endUpdates];
+            
+            [self.tableNoteParagraphs reloadData];
+        }
+        
+        return ;
+    }
+    
+    if([string isEqualToString:@"样式"]) {
+        NoteParagraphCustmiseViewController *vc =
+        [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph sn:[self dataGetSnOnIndexPath:indexPath]];
+        //通过block的方式将定制的内容传回此ViewController.
+        __weak typeof(self) _self = self;
+        [vc setStyleFinishHandle:^(NSDictionary *styleDictionary) {
+            [_self finishStyleCustmize:styleDictionary];
+        }];
+        [self.navigationController pushViewController:vc animated:YES];
+        
+        return ;
+    }
+    
+    NSLog(@"action not implemented.");
+}
+
+
 - (void)editNoteParagraphAtIndexPath:(NSIndexPath*)indexPath due:(NSString*)dueEditing
 {
     //edit功能只针对title 和 content paragraph.
@@ -538,7 +799,7 @@
     self.dueEditing         = dueEditing;
     
     [self.tableNoteParagraphs scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-//    NoteDetailCell *cell = [self.tableNoteParagraphs cellForRowAtIndexPath:indexPath];
+    //    NoteDetailCell *cell = [self.tableNoteParagraphs cellForRowAtIndexPath:indexPath];
     
     UIToolbar *keyboardAccessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, VIEW_WIDTH, 36)];
     keyboardAccessory.backgroundColor = [UIColor whiteColor];
@@ -643,153 +904,6 @@
 }
 
 
-- (void)actionTryReloadSn:(NSInteger)sn
-{
-    BOOL reloaded = NO;
-    for(NoteDetailCell *cell in self.tableNoteParagraphs.visibleCells) {
-        if([cell isKindOfClass:[NoteDetailCell class]]) {
-            if(cell.sn == sn) {
-                [self reloadNoteParagraphAtIndexPath:[NSIndexPath indexPathForRow:sn==0?0:(sn+1) inSection:0] due:@"imageLoad"];
-                reloaded = YES;
-                break;
-            }
-        }
-    }
-    
-    if(reloaded) {
-        NSLog(@"image set.");
-    }
-    else {
-        NSLog(@"image not set");
-    }
-}
-
-
-
-
-- (void)action:(NSString*)string OnIndexPath:(NSIndexPath*)indexPath
-{
-    NoteParagraphModel *noteParagraph = [self indexPathNoteParagraph:indexPath];
-    if(!noteParagraph) {
-        NSLog(@"#error - noteParagraph nil on %zd:%zd", indexPath.section, indexPath.row);
-        return;
-    }
-    
-    if([string isEqualToString:@"复制"]) {
-        if(noteParagraph.content.length > 0) {
-            UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-            pasteboard.string = noteParagraph.content;
-            [self showIndicationText:@"已复制到粘贴板"];
-        }
-        return ;
-    }
-    
-    if([string isEqualToString:@"增加图片"]) {
-        [self actionInputImage];
-        return ;
-    }
-    
-    if([string isEqualToString:@"移除图片"]) {
-        [NoteModel imageDataLocalRemoveWithName:noteParagraph.image];
-        noteParagraph.image = nil;
-        [self reloadNoteParagraphAtIndexPath:indexPath due:@"RemoveImage"];
-        [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraph];
-        
-        return;
-    }
-    
-    if([string isEqualToString:@"编辑"]) {
-        [self editNoteParagraphAtIndexPath:indexPath due:@"编辑"];
-        return ;
-    }
-
-    if([string isEqualToString:@"插入"]) {
-        NSInteger idxInsert = [self indexPathContentNoteParagraphIndex:indexPath];
-        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
-        noteParagraphNew.content = @"";
-        [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxInsert];
-        
-        [self.tableNoteParagraphs beginUpdates];
-        [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-        [self.tableNoteParagraphs endUpdates];
-        
-        [self.tableNoteParagraphs reloadData];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self editNoteParagraphAtIndexPath:indexPath due:@"插入"];
-        });
-        
-        return;
-        
-    }
-    
-    if([string isEqualToString:@"增加"]) {
-        NoteParagraphModel *noteParagraphNew = [[NoteParagraphModel alloc] init];
-        noteParagraphNew.content = @"";
-    
-        NSInteger idxAppend = [self indexPathContentNoteParagraphIndex:indexPath];
-        if(idxAppend == NSNotFound) {
-            NSLog(@"#error - ");
-        }
-        else if(idxAppend == self.contentParagraphs.count - 1) {
-            [self.contentParagraphs addObject:noteParagraphNew];
-        }
-        else {
-            [self.contentParagraphs insertObject:noteParagraphNew atIndex:idxAppend + 1];
-        }
-        
-        NSIndexPath *indexPathAppend = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-        
-        [self.tableNoteParagraphs beginUpdates];
-        [self.tableNoteParagraphs insertRowsAtIndexPaths:@[indexPathAppend] withRowAnimation:UITableViewRowAnimationTop];
-        [self.tableNoteParagraphs endUpdates];
-        
-        [self.tableNoteParagraphs reloadData];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self editNoteParagraphAtIndexPath:indexPathAppend due:@"增加"];
-        });
-        
-        return;
-        
-    }
-    
-    if([string isEqualToString:@"删除"]) {
-        if(self.contentParagraphs.count <= 1) {
-            [self showIndicationText:@"最后一个段落, 不能删除."];
-        }
-        else {
-            NSInteger idxDelete = [self indexPathContentNoteParagraphIndex:indexPath];
-            [self.contentParagraphs removeObjectAtIndex:idxDelete];
-            
-            [self actionUpdateToLocalAfterModifyNoteParagraph:nil];
-            
-            [self.tableNoteParagraphs beginUpdates];
-            [self.tableNoteParagraphs deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-            [self.tableNoteParagraphs endUpdates];
-            
-            [self.tableNoteParagraphs reloadData];
-        }
-        
-        return ;
-    }
-    
-    if([string isEqualToString:@"样式"]) {
-        NoteParagraphCustmiseViewController *vc = [[NoteParagraphCustmiseViewController alloc] initWithNoteParagraph:noteParagraph];
-        //通过block的方式将定制的内容传回此ViewController.
-        __weak typeof(self) _self = self;
-        [vc setStyleFinishHandle:^(NSDictionary *styleDictionary) {
-            [_self finishStyleCustmize:styleDictionary];
-        }];
-        [self.navigationController pushViewController:vc animated:YES];
-        
-        return ;
-    }
-    
-    NSLog(@"action not implemented.");
-}
-
-
 - (void)finishStyleCustmize:(NSDictionary*)stypleDictionary
 {
     NSLog(@"finishStyleCustmize : %@. ", stypleDictionary);
@@ -805,70 +919,6 @@
     
     [self reloadNoteParagraphAtIndexPath:self.indexPathOnEditing due:@"after custmize"];
     [self actionUpdateToLocalAfterModifyNoteParagraph:noteParagraphOnCustmizing];
-}
-
-
-- (BOOL)indexPathIsTitle:(NSIndexPath*)indexPath
-{
-    return indexPath.row == 0;
-}
-
-
-- (BOOL)indexPathIsLast:(NSIndexPath*)indexPath
-{
-    NSInteger noteIndex = [self indexPathContentNoteParagraphIndex:indexPath];
-    return noteIndex == (self.contentParagraphs.count - 1);
-}
-
-
-- (NSInteger)indexPathContentNoteParagraphIndex:(NSIndexPath*)indexPath
-{
-    NSInteger noteIndex = indexPath.row - ROW_NUMBER_TITLE;
-    if(noteIndex >= 0 && noteIndex < self.contentParagraphs.count) {
-        
-    }
-    else {
-        NSLog(@"#error - ");
-        noteIndex = NSNotFound;
-    }
-    
-    return noteIndex;
-}
-
-
-- (NSIndexPath*)indexPathOnNoteParagraphIndex:(NSInteger)noteParagraphIndex
-{
-    return [NSIndexPath indexPathForRow:noteParagraphIndex+ROW_NUMBER_TITLE inSection:0];
-}
-
-
-//返回Content的NoteParagraph.
-- (NoteParagraphModel*)indexPathContentNoteParagraph:(NSIndexPath*)indexPath
-{
-    NSInteger noteParagraphIndex = [self indexPathContentNoteParagraphIndex:indexPath];
-    if(noteParagraphIndex >= 0 && noteParagraphIndex < self.contentParagraphs.count) {
-        return self.contentParagraphs[noteParagraphIndex];
-    }
-    else {
-        NSLog(@"#error - noteParagraphOnIndexPath row %zd, contentParagraphs count %zd.", noteParagraphIndex, self.contentParagraphs.count);
-        return nil;
-    }
-}
-
-
-//返回title或者Content的NoteParagraph.
-- (NoteParagraphModel*)indexPathNoteParagraph:(NSIndexPath*)indexPath
-{
-    if(!indexPath) {
-        NSLog(@"#error - indexPath nil.");
-        return nil;
-    }
-    
-    if([self indexPathIsTitle:indexPath]) {
-        return self.titleParagraph;
-    }
-    
-    return [self indexPathContentNoteParagraph:indexPath];
 }
 
 
@@ -1283,7 +1333,7 @@
 
 
 
-
+#pragma mark - filter
 //关于筛选.
 - (NSInteger)numberOfColumnsInMenu:(JSDropDownMenu *)menu {
     
@@ -1382,6 +1432,7 @@
 }
 
 
+#pragma mark - keyboardChangeFrame
 - (void)keyboardChangeFrame:(NSNotification*)notification {
     LOG_POSTION
     BOOL onUsing = [self isEqual:self.navigationController.viewControllers.lastObject];
@@ -1411,22 +1462,6 @@
 
 
 
-- (void)openClassificationMenu
-{
-    CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
-        NSLog(@"点击了第%zd个btn",index+1);
-    }];
-    
-    dropMenu.direction = CLDirectionTypeRight;
-    dropMenu.titleList = @[@"添加好友",@"创建群",@"扫一扫"];
-    dropMenu.backgroundColor = [UIColor purpleColor];
-    
-    [self addSubview:dropMenu];
-    
-    NSLog(@"%@", dropMenu);
-}
-
-
 //UItextView for editing delegate.
 -(BOOL) textViewShouldBeginEditing:(UITextView*)textView
 {
@@ -1440,46 +1475,6 @@
     LOG_POSTION
 }
 
-
-- (void)actionMore
-{
-    CGFloat width = 60;
-    TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
-    v.layoutMode = TextButtonLineLayoutModeVertical;
-    
-    NSArray<NSString*> *actionStrings = nil;
-    actionStrings = @[@"pdf分享", @"电脑查看"];
-    [v setTexts:actionStrings];
-    
-    __weak typeof(self) weakSelf = self;
-    [v setButtonActionByText:^(NSString* actionText) {
-        NSLog(@"action : %@", actionText);
-        [weakSelf dismissPopupView];
-        
-        if([actionText isEqualToString:@"pdf分享"]) {
-            return ;
-        }
-        
-        if([actionText isEqualToString:@"电脑查看"]) {
-            return;
-        }
-        
-        if([actionText isEqualToString:@"恢复预制"]) {
-            return;
-        }
-        
-    }];
-    
-    [self showPopupView:v commission:nil clickToDismiss:YES dismiss:nil];
-}
-
-
-- (void)actionShare
-{
-    NoteShareViewController *vc = [[NoteShareViewController alloc] init];
-    vc.noteModel = self.noteModel;
-    [self.navigationController pushViewController:vc animated:YES];
-}
 
 
 - (void)dealloc
@@ -1556,6 +1551,25 @@
         NSLog(@"保存成功！");
     }
 }
+
+
+- (void)openClassificationMenu
+{
+    CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
+        NSLog(@"点击了第%zd个btn",index+1);
+    }];
+    
+    dropMenu.direction = CLDirectionTypeRight;
+    dropMenu.titleList = @[@"添加好友",@"创建群",@"扫一扫"];
+    dropMenu.backgroundColor = [UIColor purpleColor];
+    
+    [self addSubview:dropMenu];
+    
+    NSLog(@"%@", dropMenu);
+}
+
+
+
 
 #endif
 

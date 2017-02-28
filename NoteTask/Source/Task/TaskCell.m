@@ -702,9 +702,9 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 - (void)logRect
 {
-    for(UIView *view in self.subviews) {
-        NSLog(@"\t\t%@", view);
-    }
+//    for(UIView *view in self.subviews) {
+//        NSLog(@"\t\t%@", view);
+//    }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         //[self logRect];

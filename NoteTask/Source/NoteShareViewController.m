@@ -521,8 +521,8 @@
         NSLog(@"---%@", uploadProgress);
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"---upload htm success.%@", responseObject);
-        NSString * s = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-        NSLog(@"%@", s);
+        NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
+        
         self.uploadHtmStatus = 1;
         [self actionUpdateDisplayText];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -547,7 +547,7 @@
     NSURLSessionDataTask *task = [manager POST:stringURL parameters:parameter constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         // 上传文件
         NSData *data = _self.pdfDatas[_self.pdfDatasSectionsUploaded];
-        NSString *fileName = [NSString stringWithFormat:@"%@_%03zd_%03zd", _self.pdfName, _self.pdfDatasSectionsUploaded+1, _self.pdfDatasSections];
+        NSString *fileName = [NSString stringWithFormat:@"%@__%03zd__%03zd", _self.pdfName, _self.pdfDatasSectionsUploaded+1, _self.pdfDatasSections];
         NSLog(@"---[%zd:%zd] length : %zd", _self.pdfDatasSectionsUploaded, _self.pdfDatasSections, data.length);
         [formData appendPartWithFileData:data
                                     name:@"uploadfile"
@@ -682,10 +682,13 @@
         
         self.buttonWANAddressShare.hidden = YES;
         if(self.uploadPdfStatus == 0) {
-            self.labelLANAddress.text = @"...等待上传中";
+            self.labelWANAddress.text = @"...等待上传中";
             LOG_POSTION
             if(self.pdfDatasSections > 0) {
                 double percentage = (double)(self.completedUnitCount * 100) / (double)self.totalUnitCount ;
+                if(percentage > 100) {
+                    percentage = 100;
+                }
                 self.labelWANAddress.text = [NSString stringWithFormat:@"...等待获取地址(上传进度%.1f%%)", percentage];
                 NSLog(@"percentage : %lf, [%lld/%lld]", percentage, self.completedUnitCount, self.totalUnitCount);
             }

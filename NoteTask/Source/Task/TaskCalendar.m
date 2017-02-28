@@ -229,13 +229,16 @@
 // Used to customize the appearance of dayView
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView
 {
+    dayView.hidden = NO;
     if(!self.mutilMode) {
         // Other month
-        if([dayView isFromAnotherMonth]){
+        if(![_calendarManager.dateHelper date:_calendarContentView.date isTheSameMonthThan:dayView.date]){
             dayView.hidden = YES;
+            return ;
         }
+        
         // Today
-        else if([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]){
+        if([_calendarManager.dateHelper date:[NSDate date] isTheSameDayThan:dayView.date]){
             dayView.circleView.hidden = NO;
             dayView.circleView.backgroundColor = [UIColor blueColor];
             dayView.dotView.backgroundColor = [UIColor whiteColor];

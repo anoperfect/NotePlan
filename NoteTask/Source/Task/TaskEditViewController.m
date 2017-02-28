@@ -315,6 +315,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 }
 
 
+#pragma mark - action
 - (void)actionCreate
 {
     NSString *errorMessage = [self updateDataToTaskInfo];
@@ -382,27 +383,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     [self.contentInputView resignFirstResponder];
     self.contentInputView.hidden = YES;
     [self.view setNeedsLayout];
-}
-
-
-- (void)keyboardChangeFrame:(NSNotification*)notification {
-    NSDictionary *info = [notification userInfo];
-    CGRect softKeyboardFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    
-    //判断软键盘是否隐藏.
-    if(!CGRectIntersectsRect(softKeyboardFrame, self.view.frame)) {
-        NSLog(@"soft keypad not shown.");
-        self.heightFitToKeyboard = 0.0;
-        
-    }
-    else {
-        NSLog(@"soft keypad shown.");
-        if(self.heightFitToKeyboard != self.contentView.frame.size.height - softKeyboardFrame.size.height) {
-            self.heightFitToKeyboard = self.contentView.frame.size.height - softKeyboardFrame.size.height;
-        }
-    }
-    
-    self.contentInputView.frame = CGRectMake(10, (10 + 36), VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - (10 + 36));
 }
 
 
@@ -647,15 +627,6 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     [self.taskCalendar.buttonDelete addTarget:self action:@selector(actionTaskCalendarInputDelete) forControlEvents:UIControlEventTouchDown];
     
     [self showPopupView:self.taskCalendar commission:nil clickToDismiss:NO dismiss:nil];
-    
-#if 0
-    __weak typeof(self) _self = self;
-    __weak typeof(taskCalendar) _taskCalendar = taskCalendar;
-    __block BOOL _bMuiltMode = mutilMode;
-    [self showPopupView:taskCalendar containerAlpha:0.9 dismiss:^{
-
-    }];
-#endif
 }
 
 
@@ -697,6 +668,29 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
 }
 
 
+#pragma mark - keyboardChangeFrame
+- (void)keyboardChangeFrame:(NSNotification*)notification {
+    NSDictionary *info = [notification userInfo];
+    CGRect softKeyboardFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    //判断软键盘是否隐藏.
+    if(!CGRectIntersectsRect(softKeyboardFrame, self.view.frame)) {
+        NSLog(@"soft keypad not shown.");
+        self.heightFitToKeyboard = 0.0;
+        
+    }
+    else {
+        NSLog(@"soft keypad shown.");
+        if(self.heightFitToKeyboard != self.contentView.frame.size.height - softKeyboardFrame.size.height) {
+            self.heightFitToKeyboard = self.contentView.frame.size.height - softKeyboardFrame.size.height;
+        }
+    }
+    
+    self.contentInputView.frame = CGRectMake(10, (10 + 36), VIEW_WIDTH - 10 - 10, self.heightFitToKeyboard - (10 + 36));
+}
+
+
+#pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if([keyPath isEqualToString:@"daysType"]) {

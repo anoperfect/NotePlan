@@ -439,7 +439,7 @@
     }
     
     if(updateDict.count > 0) {
-        NSLog(@"//////note update : \n%@", updateDict);
+        NSLog(@"//////note update : \n%@", [NSString stringLogFromDictionary:updateDict]);
         return [NSDictionary dictionaryWithDictionary:updateDict];
     }
     else {
@@ -1276,12 +1276,13 @@ TaskModeDefault
 {
     [self configNoteAddPreset];
     
-    [self configNoteAddTest];
+    //[self configNoteAddTest];
     //[self configTaskAddTest];
-    
+    [self configSettingSetKey:@"NoteFilterClassification" toValue:@"*" replace:NO];
+    [self configSettingSetKey:@"NoteFilterColor" toValue:@"*" replace:NO];
     [self configSettingSetKey:@"NoteTitleFontSizeDefault" toValue:@"18px" replace:NO];
     [self configSettingSetKey:@"NoteParagraphFontSizeDefault" toValue:@"16px" replace:NO];
-//    [self configSettingSetKey:@"TaskModeDefault" toValue:@"1" replace:NO];
+    [self configSettingSetKey:@"TaskModeDefault" toValue:@"安排" replace:NO];
     
     [self test1];
 }
@@ -1290,7 +1291,6 @@ TaskModeDefault
 - (void)test1
 {
 
-    
     
 }
 
