@@ -57,7 +57,7 @@
 
 
 
-#pragma mark - view override
+#pragma mark - Custom override view.
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -262,6 +262,7 @@
         self.notesView.delegate = self;
         self.notesView.backgroundColor = [UIColor colorWithName:@"NotesBackground"];
         self.notesView.separatorColor = [UIColor blueColor];
+        self.notesView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
         UIVibrancyEffect *vibrancyEffect = [UIVibrancyEffect effectForBlurEffect:blurEffect];
@@ -1068,4 +1069,3 @@
 */
 
 @end
-
