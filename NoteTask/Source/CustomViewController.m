@@ -15,7 +15,7 @@
 
 
 
-
+int const ktag_popupView_container = 1000000002;
 
 @interface CustomViewController () <MBProgressHUDDelegate>
 @property (nonatomic, strong) MBProgressHUD *messageIndicationHUD;
@@ -30,10 +30,12 @@
 @property (nonatomic, strong) NSMutableArray<NSNumber*> *viewControllersWillAppear;
 @property (nonatomic, strong) NSMutableArray<NSNumber*> *viewControllersWillDisAppear;
 
+@property (nonatomic, strong) UIView    *contentView;
 @end
 
 @implementation CustomViewController
 
+#define TAG_popupView_container     1000000002
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -234,12 +236,12 @@
        clickToDismiss:(BOOL)clickToDismiss
               dismiss:(void(^)(void))dismiss
 {
-    #define TAG_popupView_container     1000000002
     UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
     containerView.tag = TAG_popupView_container;
     [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
+    [containerView addSubview:view];
     
     if([commission[@"containerBackgroundColor"] isKindOfClass:[UIColor class]]) {
         containerView.backgroundColor = commission[@"containerBackgroundColor"];
@@ -261,7 +263,6 @@
         tapGestureRecognizer.numberOfTapsRequired = 1;
         [containerView addGestureRecognizer:tapGestureRecognizer];
     }
-    [containerView addSubview:view];
     
     self.popupViewDismissBlock = dismiss;
 }
@@ -358,7 +359,13 @@
 }
 
 
-
+- (void)test1
+{
+    
+    
+    
+    
+}
 
 
 

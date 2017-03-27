@@ -627,7 +627,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
                 self.scrollView = [[UIScrollView alloc] init];
             }
             
-            self.scrollView.frame = CGRectMake(0, heightTitle, frameCell.size.width, heightContent);
+            self.scrollView.frame = CGRectMake(0, heightTitle, frameCell.size.width - 20, heightContent);
             self.scrollView.contentSize = sizeFit;
             [self.scrollView addSubview:self.contentLabel];
             

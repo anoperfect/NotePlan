@@ -10,7 +10,6 @@
 		52D32CFEEF63AA37CB17F890 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A940EE0C536659F6F0CDDF7 /* Pods_NoteTask.framework */; };
 		B57FDC321E66FD09005FCBD1 /* note.htm in Resources */ = {isa = PBXBuildFile; fileRef = B57FDC311E66FD09005FCBD1 /* note.htm */; };
 		B57FFE031E65C55F00EA280B /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDD31E65C55F00EA280B /* DBData.m */; };
-		B57FFE041E65C55F00EA280B /* FrameLayout1.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDD61E65C55F00EA280B /* FrameLayout1.m */; };
 		B57FFE051E65C55F00EA280B /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDD81E65C55F00EA280B /* NSObject+Util.m */; };
 		B57FFE061E65C55F00EA280B /* NSString+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDDA1E65C55F00EA280B /* NSString+Util.m */; };
 		B57FFE071E65C55F00EA280B /* NSThread+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDDC1E65C55F00EA280B /* NSThread+Util.m */; };
@@ -98,8 +97,6 @@
 		B57FDC311E66FD09005FCBD1 /* note.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = note.htm; path = Source/note.htm; sourceTree = "<group>"; };
 		B57FFDD21E65C55F00EA280B /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
 		B57FFDD31E65C55F00EA280B /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
-		B57FFDD51E65C55F00EA280B /* FrameLayout1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLayout1.h; sourceTree = "<group>"; };
-		B57FFDD61E65C55F00EA280B /* FrameLayout1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLayout1.m; sourceTree = "<group>"; };
 		B57FFDD71E65C55F00EA280B /* NSObject+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Util.h"; sourceTree = "<group>"; };
 		B57FFDD81E65C55F00EA280B /* NSObject+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Util.m"; sourceTree = "<group>"; };
 		B57FFDD91E65C55F00EA280B /* NSString+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Util.h"; sourceTree = "<group>"; };
@@ -304,8 +301,6 @@
 		B57FFDD41E65C55F00EA280B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				B57FFDD51E65C55F00EA280B /* FrameLayout1.h */,
-				B57FFDD61E65C55F00EA280B /* FrameLayout1.m */,
 				B57FFDD71E65C55F00EA280B /* NSObject+Util.h */,
 				B57FFDD81E65C55F00EA280B /* NSObject+Util.m */,
 				B57FFDD91E65C55F00EA280B /* NSString+Util.h */,
@@ -800,7 +795,6 @@
 				B57FFEE31E65CAF300EA280B /* UIView+AnimationsListViewController.m in Sources */,
 				B57FFE711E65C83A00EA280B /* TaskEditViewController.m in Sources */,
 				B57FFE061E65C55F00EA280B /* NSString+Util.m in Sources */,
-				B57FFE041E65C55F00EA280B /* FrameLayout1.m in Sources */,
 				B57FFEDD1E65CAF300EA280B /* GCDTimer.m in Sources */,
 				B57FFE771E65C83A00EA280B /* TaskTickingViewController.m in Sources */,
 				B57FFEE71E65CAF300EA280B /* UIView+RotateAnimationProtocol.m in Sources */,
@@ -943,13 +937,15 @@
 			baseConfigurationReference = 5754D83ADDC3F9BC926BBCE6 /* Pods-NoteTask.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Bin Zhao (8R4QSLT73X)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -958,7 +954,8 @@
 			baseConfigurationReference = 8DC9CBE05DC8EA27528AF710 /* Pods-NoteTask.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Bin Zhao (8R4QSLT73X)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_TESTABILITY = YES;
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
@@ -966,6 +963,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

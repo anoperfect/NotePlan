@@ -13,7 +13,7 @@
 
 
 @property (nonatomic, assign) BOOL      contentViewScrolled;
-@property (nonatomic, strong) UIView    *contentView;
+@property (nonatomic, strong, readonly) UIView    *contentView;
 
 
 - (void)addSubview:(UIView*)view;
@@ -31,6 +31,8 @@
        clickToDismiss:(BOOL)clickToDismiss
               dismiss:(void(^)(void))dismiss;
 - (void)dismissPopupView;
+
+
 - (void)pushViewControllerByName:(NSString*)name;
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 

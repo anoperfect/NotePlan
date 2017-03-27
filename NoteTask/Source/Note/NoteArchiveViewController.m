@@ -10,13 +10,88 @@
 #import "LineBackgroundView.h"
 
 
+
+
+
+
+
+
+
+@interface FunctionEnterAndExit : NSObject
+
+@end
+
+@interface FunctionEnterAndExit ()
+@property (nonatomic, strong) NSArray *syms;
+@property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) NSString *function;
+@end
+
+@implementation FunctionEnterAndExit
+
+static NSDate *kdateStart;
++ (void)initialize
+{
+    if (self == [FunctionEnterAndExit class]) {
+    }
+}
+
++ (void)load
+{
+    if (self == [FunctionEnterAndExit class]) {
+        kdateStart = [NSDate date];
+    }
+}
+
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _syms = [NSThread  callStackSymbols];
+        if ([_syms count] > 2) {
+//            NSLog(@"<%@ %p> %@ - caller: %@ ", [self class], self, NSStringFromSelector(_cmd),[_syms objectAtIndex:2]);
+            _date = [NSDate date];
+            _function = [_syms objectAtIndex:1];
+            NSLog(@"Enter Function : %@", _function);
+        } else {
+            NSLog(@"<%@ %p> %@", [self class], self, NSStringFromSelector(_cmd));
+        }
+    }
+    return self;
+}
+
+
+- (instancetype)initWithFunction:(NSString*)function
+{
+    self = [super init];
+    if (self) {
+        _date = [NSDate date];
+        _function = function;
+        NSLog(@"Enter Function : %@", _function);
+    }
+    return self;
+}
+
+
+- (void)dealloc
+{
+    NSLog(@"Exit function[%@] timeinterval:%lf, cost:%lf", _function, [[NSDate date] timeIntervalSinceDate:kdateStart], [[NSDate date] timeIntervalSinceDate:_date]);
+}
+
+@end
+
+
+
+
+
 @interface NoteArchiveViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (nonatomic, assign) CGFloat heightSection;
 @property (nonatomic, strong) UITableView *tableView;
 
+
 @property (nonatomic, strong) UITextField *inputView;
-@property (nonatomic, strong) UIButton *addButton;
 
 @property (nonatomic, strong) NSString *from;
 @property (nonatomic, strong) NSArray<NSString*> *sns;
@@ -152,26 +227,26 @@
     
     titleLabel.frame = [f frameLayoutGet:@"_titleLabel"];
     
-    if(section == 0) {
-        _inputView = [[UITextField alloc] init];
-        [sectionView addSubview:_inputView];
-        _inputView.hidden = YES;
-        _inputView.delegate = self;
-        _inputView.layer.borderColor = colorText.CGColor;
-        _inputView.layer.borderWidth = 1.5;
-        _inputView.layer.cornerRadius = 6;
-        _inputView.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-        _inputView.leftViewMode = UITextFieldViewModeAlways;
-        
-        _addButton = [[UIButton alloc] init];
-        [sectionView addSubview:_addButton];
-        [_addButton setTitle:@"增加" forState:UIControlStateNormal];
-        [_addButton setTitleColor:colorText forState:UIControlStateNormal];
-        [_addButton addTarget:self action:@selector(actionAddClassification:) forControlEvents:UIControlEventTouchDown];
-        
-        _inputView.frame     = [f frameLayoutGet:@"_inputView"];
-        _addButton.frame     = [f frameLayoutGet:@"_addButton"];
-    }
+//    if(section == 0) {
+//        _inputView = [[UITextField alloc] init];
+//        [sectionView addSubview:_inputView];
+//        _inputView.hidden = YES;
+//        _inputView.delegate = self;
+//        _inputView.layer.borderColor = colorText.CGColor;
+//        _inputView.layer.borderWidth = 1.5;
+//        _inputView.layer.cornerRadius = 6;
+//        _inputView.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+//        _inputView.leftViewMode = UITextFieldViewModeAlways;
+//        
+//        _addButton = [[UIButton alloc] init];
+//        [sectionView addSubview:_addButton];
+//        [_addButton setTitle:@"增加" forState:UIControlStateNormal];
+//        [_addButton setTitleColor:colorText forState:UIControlStateNormal];
+//        [_addButton addTarget:self action:@selector(actionAddClassification:) forControlEvents:UIControlEventTouchDown];
+//        
+//        _inputView.frame     = [f frameLayoutGet:@"_inputView"];
+//        _addButton.frame     = [f frameLayoutGet:@"_addButton"];
+//    }
     
     return sectionView;
 }
@@ -371,7 +446,7 @@
     TextButtonLine *v = [[TextButtonLine alloc] initWithFrame:CGRectMake(VIEW_WIDTH - width, 64, width, VIEW_HEIGHT - 10 * 2)];
     v.layoutMode = TextButtonLineLayoutModeVertical;
     
-    NSArray<NSString*> *actionStrings = @[/*@"新增类别",*/ @"删除类别"];
+    NSArray<NSString*> *actionStrings = @[@"新增类别", @"删除类别"];
     if(self.tableView.editing) {
         actionStrings = @[@"取消删除"];
     }
@@ -379,8 +454,8 @@
     
     __weak typeof(self) weakSelf = self;
     [v setButtonActionByText:^(NSString* actionText) {
-        NSLog(@"action : %@", actionText);
         [weakSelf dismissPopupView];
+        NSLog(@"action : %@", actionText);
         [weakSelf actionMenuString:actionText];
         return ;
     }];
@@ -392,6 +467,7 @@
 - (void)actionMenuString:(NSString*)actionText
 {
     if([actionText isEqualToString:@"新增类别"]) {
+        [self actionAddClassification];
         
         return ;
     }
@@ -413,28 +489,55 @@
 }
 
 
-- (void)actionAddClassification:(UIButton*)button
-{
-    if([_addButton.titleLabel.text isEqualToString:@"增加"]) {
-        _inputView.hidden = NO;
-        [_inputView becomeFirstResponder];
-        [_addButton setTitle:@"完成" forState:UIControlStateNormal];
-    }
-    else if([_addButton.titleLabel.text isEqualToString:@"完成"]) {
-        _inputView.hidden = YES;
-        [_inputView resignFirstResponder];
-        [self addClassification:_inputView.text];
-        [_addButton setTitle:@"增加" forState:UIControlStateNormal];
-    }
-}
-
-
 - (void)actionAddClassification
 {
-    _inputView.hidden = NO;
-    [_inputView becomeFirstResponder];
+    UIToolbar *inputLineView;
+    UIButton *inputFinishButton;
     
+    if(!inputLineView) {
+        inputLineView = [[UIToolbar alloc] init];
+    }
+    inputLineView.frame = CGRectMake(0, 0, VIEW_WIDTH, 45);
+    
+    if(!_inputView) {
+        _inputView = [[UITextField alloc] init];
+    }
+    _inputView.frame = CGRectMake(0, 0, VIEW_WIDTH-100, 45);
+    _inputView.placeholder = @"请输入类别名, 长度不超过10";
+    _inputView.delegate = self;
+    
+    if(!inputFinishButton) {
+        inputFinishButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 45)];
+        [inputFinishButton setTitle:@"完成" forState:UIControlStateNormal];
+        [inputFinishButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+        [inputFinishButton addTarget:self action:@selector(actionFinishInputClassification) forControlEvents:UIControlEventTouchDown];
+    }
+    inputFinishButton.frame = CGRectMake(0, 0, 60, 45);
+    
+    [inputLineView setItems:@[
+                            [[UIBarButtonItem alloc] initWithCustomView:_inputView],
+                            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                            [[UIBarButtonItem alloc] initWithCustomView:inputFinishButton],
+                            ]
+    ];
+        
+    _inputView.inputAccessoryView = inputLineView;
+        
+    [self showPopupView:inputLineView commission:nil clickToDismiss:YES dismiss:^{
+        [_inputView resignFirstResponder];
+        [_inputView removeFromSuperview];
+    }];
+    
+    [_inputView becomeFirstResponder];
 }
+
+
+- (void)actionFinishInputClassification
+{
+    [self dismissPopupView];
+    [self addClassification:_inputView.text];
+}
+
 
 
 - (void)actionAddClassificationFinish

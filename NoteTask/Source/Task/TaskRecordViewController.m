@@ -88,7 +88,9 @@
     [self.contentTableView registerClass:[TaskRecordCell         class] forCellReuseIdentifier:@"TaskRecordCell"        ];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.contentTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.taskRecords.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        if(self.taskRecords.count > 0) {
+            [self.contentTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.taskRecords.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        }
     });
 }
 
@@ -242,9 +244,6 @@
         self.moveToBottom = YES;
     }
 }
-
-
-
 
 
 

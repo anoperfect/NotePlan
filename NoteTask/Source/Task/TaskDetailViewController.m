@@ -494,7 +494,7 @@ TaskProperty
             NSString *dateTimeNow = [NSString dateTimeStringNow];
             [self taskActionFinishOnDay:finishAt.dayString at:dateTimeNow];
             finishAt.finishedAt = dateTimeNow;
-            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", finishAt.dayString]];
+            [self showIndicationText:[NSString stringWithFormat:@"设置为完成状态\n任务日期(%@)", finishAt.dayString]];
         }
     }
     else {
@@ -531,7 +531,7 @@ TaskProperty
                 [_self dismissMenus];
                 NSString *dateString = menu[@"text"];
                 [_self taskActionFinishOnDay:dateString at:[NSString dateTimeStringNow]];
-                [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为完成状态", dateString]];
+                [_self showIndicationText:[NSString stringWithFormat:@"设置为完成状态\n任务日期(%@)", dateString]];
             }];
         }
     }
@@ -568,7 +568,7 @@ TaskProperty
             NSString *dateTimeNow = [NSString dateTimeStringNow];
             [self taskActionRedoOnDay:finishAt.dayString at:dateTimeNow];
             finishAt.finishedAt = @"";
-            [self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", finishAt.dayString]];
+            [self showIndicationText:[NSString stringWithFormat:@"设置为未完成状态\n任务日期(%@)", finishAt.dayString]];
         }
     }
     else {
@@ -602,7 +602,7 @@ TaskProperty
             [_self dismissMenus];
             NSString *dateString = menu[@"text"];
             [_self taskActionRedoOnDay:dateString at:[NSString dateTimeStringNow]];
-            [_self showIndicationText:[NSString stringWithFormat:@"设置任务日期(%@)为未完成状态", dateString]];
+            [_self showIndicationText:[NSString stringWithFormat:@"设置为未完成状态\n任务日期(%@)", dateString]];
         }];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NotificationTaskUpdate" object:nil userInfo:nil];
@@ -661,10 +661,7 @@ TaskProperty
     NSLog(@"original : %@", self.taskinfo);
     TaskEditViewController *vc = [[TaskEditViewController alloc] initWithTaskInfo:self.taskinfo];
     [self pushViewController:vc animated:YES];
-    
-//    NSMutableArray *vcs = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
-//    [vcs removeObject:self];
-//    self.navigationController.viewControllers = [NSArray arrayWithArray:vcs];
+
 }
 
 
@@ -778,9 +775,10 @@ TaskProperty
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(taskAction:) forControlEvents:UIControlEventTouchDown];
         button.titleLabel.font = FONT_SMALL;
-        CGFloat yImage = 24;
+        CGFloat yImage = 20;
+        yImage = (widthButton - 40) / 2 ;
         button.imageEdgeInsets = UIEdgeInsetsMake(yImage, (widthButton-widthImage)/2, widthButton-widthImage - yImage, (widthButton-widthImage)/2);
-        button.titleEdgeInsets = UIEdgeInsetsMake(40, -widthImage, 0, 0);
+        button.titleEdgeInsets = UIEdgeInsetsMake(yImage + 16, -widthImage, 0, 0);
         [button.titleLabel setContentMode:UIViewContentModeCenter];
         
         CALayer *layer = [CALayer layer];
@@ -808,9 +806,6 @@ TaskProperty
          clickToDismiss:YES
                 dismiss:nil];
     
-    
-    
-    
 }
 
 
@@ -826,8 +821,6 @@ TaskProperty
 - (void)actionReloadTaskContent
 {
     NSLog(@"actionReloadTaskContent");
-    
-    
 }
 
 
@@ -1040,11 +1033,12 @@ TaskProperty
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
-
-
-
 @end
+
+
+
+
+
 
 
 

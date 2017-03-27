@@ -109,7 +109,6 @@
 
 - (void)setLayout1
 {
-#define SUPER_WIDTH(v) v.superView.bounds.size.width
     for (UIView *view in [self.contentView subviews]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
     }

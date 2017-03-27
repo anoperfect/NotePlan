@@ -240,7 +240,10 @@
     NSData *data = [NSData dataWithContentsOfFile:resPath];
     NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.sn" withString:self.sn?self.sn:@""];
-    s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title?self.title:@""];
+    self.title = self.title?self.title:@"";
+    NoteParagraphModel *paragraph = [NoteParagraphModel noteParagraphFromString:self.title];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.title.content" withString:paragraph.content?paragraph.content:@""];
+    s = [s stringByReplacingOccurrencesOfString:@"@@note.title" withString:self.title];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.content" withString:self.content?self.content:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.classification" withString:self.classification?self.classification:@""];
     s = [s stringByReplacingOccurrencesOfString:@"@@note.createdAt" withString:self.createdAt?(self.createdAt.length>19?[self.createdAt substringToIndex:19]:self.createdAt):@""];
@@ -404,21 +407,6 @@
 @end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @interface NoteClassification ()
 
 @end
@@ -429,7 +417,4 @@
 
 
 @end
-
-
-
 
