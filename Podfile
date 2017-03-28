@@ -23,6 +23,10 @@ pod 'pop', '~> 1.0'
 pod "GCDWebServer", "~> 3.0"
 pod 'JTCalendar', '~> 2.0'
 
+pod 'UMengUShare/UI'
+pod 'UMengUShare/Social/ReducedQQ'
+pod 'UMengUShare/Social/ReducedWeChat'
+pod 'UMengUShare/Social/ReducedSina'
 
 end
 

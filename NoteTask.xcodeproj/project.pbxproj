@@ -245,6 +245,8 @@
 		B5D0014F1E65B8F900D435D8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B5D001501E65B8F900D435D8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		B5D0015D1E65B8F900D435D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B5E18C331E88AF0500627F69 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		B5E18C351E88AF1B00627F69 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +264,8 @@
 		227B615034C5C6383C033F53 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B5E18C351E88AF1B00627F69 /* CoreGraphics.framework */,
+				B5E18C331E88AF0500627F69 /* libsqlite3.tbd */,
 				8A940EE0C536659F6F0CDDF7 /* Pods_NoteTask.framework */,
 			);
 			name = Frameworks;
@@ -654,12 +658,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B5D001601E65B8F900D435D8 /* Build configuration list for PBXNativeTarget "NoteTask" */;
 			buildPhases = (
-				A712E1A4220F43260825B930 /* 📦 Check Pods Manifest.lock */,
+				A712E1A4220F43260825B930 /* [CP] Check Pods Manifest.lock */,
 				B5D001451E65B8F900D435D8 /* Sources */,
 				B5D001461E65B8F900D435D8 /* Frameworks */,
 				B5D001471E65B8F900D435D8 /* Resources */,
-				93545686914D1D5F06131112 /* 📦 Embed Pods Frameworks */,
-				0FB2F26369390D30381B916D /* 📦 Copy Pods Resources */,
+				93545686914D1D5F06131112 /* [CP] Embed Pods Frameworks */,
+				0FB2F26369390D30381B916D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -727,14 +731,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0FB2F26369390D30381B916D /* 📦 Copy Pods Resources */ = {
+		0FB2F26369390D30381B916D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -742,14 +746,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		93545686914D1D5F06131112 /* 📦 Embed Pods Frameworks */ = {
+		93545686914D1D5F06131112 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -757,19 +761,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A712E1A4220F43260825B930 /* 📦 Check Pods Manifest.lock */ = {
+		A712E1A4220F43260825B930 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -939,10 +943,52 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDK",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialUI",
+				);
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/QQ",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/Sina",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/WeChat",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDKPlugin",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AFNetworking\"",
+					"-framework",
+					"\"CocoaAsyncSocket\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"GCDWebServer\"",
+					"-framework",
+					"\"JTCalendar\"",
+					"-framework",
+					"\"MBProgressHUD\"",
+					"-framework",
+					"\"MJExtension\"",
+					"-framework",
+					"\"YYCache\"",
+					"-framework",
+					"\"YYImage\"",
+					"-framework",
+					"\"YYModel\"",
+					"-framework",
+					"\"YYText\"",
+					"-framework",
+					"\"YYWebImage\"",
+					"-framework",
+					"\"pop\"",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -957,10 +1003,52 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDK",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialUI",
+				);
 				GCC_PREFIX_HEADER = NoteTask/PrefixHeader.pch;
 				INFOPLIST_FILE = NoteTask/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/QQ",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/Sina",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/WeChat",
+					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDKPlugin",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AFNetworking\"",
+					"-framework",
+					"\"CocoaAsyncSocket\"",
+					"-framework",
+					"\"FMDB\"",
+					"-framework",
+					"\"GCDWebServer\"",
+					"-framework",
+					"\"JTCalendar\"",
+					"-framework",
+					"\"MBProgressHUD\"",
+					"-framework",
+					"\"MJExtension\"",
+					"-framework",
+					"\"YYCache\"",
+					"-framework",
+					"\"YYImage\"",
+					"-framework",
+					"\"YYModel\"",
+					"-framework",
+					"\"YYText\"",
+					"-framework",
+					"\"YYWebImage\"",
+					"-framework",
+					"\"pop\"",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.appben.NoteTask;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

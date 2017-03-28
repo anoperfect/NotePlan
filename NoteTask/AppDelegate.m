@@ -23,15 +23,17 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [UIpConfig sharedUIpConfig];
     
     //UIpConfig的初始化暂时放这边.
+    [UIpConfig sharedUIpConfig];
+    
     NSString *resPath= [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"color.json"];
     NSData *data = [NSData dataWithContentsOfFile:resPath];
 
     NSArray<ColorItem*> * colorItems = [[UIpConfig sharedUIpConfig] colorItemsParseFromJsonData:data];
     [[UIpConfig sharedUIpConfig] updateUIpConfigColorItems:colorItems];
 
+    //AppConfig管理申请.
     [AppConfig sharedAppConfig];
 
     RootViewController *vc = [[RootViewController alloc] init];
@@ -40,6 +42,7 @@
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
+    //fps显示控件.
     YYFPSLabel *fpsLabel = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 100, 60, 18)];
     fpsLabel.backgroundColor = [UIColor blueColor];
     [self.window addSubview:fpsLabel];

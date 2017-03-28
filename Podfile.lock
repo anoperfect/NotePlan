@@ -14,30 +14,35 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - CocoaAsyncSocket (7.4.3):
-    - CocoaAsyncSocket/All (= 7.4.3)
-  - CocoaAsyncSocket/All (7.4.3):
-    - CocoaAsyncSocket/GCD
-    - CocoaAsyncSocket/RunLoop
-  - CocoaAsyncSocket/GCD (7.4.3)
-  - CocoaAsyncSocket/RunLoop (7.4.3)
+  - CocoaAsyncSocket (7.6.0)
   - FMDB (2.6.2):
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
-  - GCDWebServer (3.3.2):
-    - GCDWebServer/Core (= 3.3.2)
-  - GCDWebServer/Core (3.3.2)
-  - JTCalendar (2.1.7)
-  - MBProgressHUD (0.9.2)
-  - MJExtension (3.0.10)
+  - GCDWebServer (3.3.3):
+    - GCDWebServer/Core (= 3.3.3)
+  - GCDWebServer/Core (3.3.3)
+  - JTCalendar (2.1.9)
+  - MBProgressHUD (1.0.0)
+  - MJExtension (3.0.13)
   - pop (1.0.9)
-  - YYCache (1.0.3)
-  - YYImage (1.0.2):
-    - YYImage/Core (= 1.0.2)
-  - YYImage/Core (1.0.2)
+  - UMengUShare/Core (6.4.1):
+    - UMengUShare/Network
+  - UMengUShare/Network (6.4.1)
+  - UMengUShare/Social/ReducedQQ (6.4.1):
+    - UMengUShare/Core
+  - UMengUShare/Social/ReducedSina (6.4.1):
+    - UMengUShare/Core
+  - UMengUShare/Social/ReducedWeChat (6.4.1):
+    - UMengUShare/Core
+  - UMengUShare/UI (6.4.1):
+    - UMengUShare/Core
+  - YYCache (1.0.4)
+  - YYImage (1.0.4):
+    - YYImage/Core (= 1.0.4)
+  - YYImage/Core (1.0.4)
   - YYModel (1.0.4)
-  - YYText (1.0.5)
-  - YYWebImage (1.0.4):
+  - YYText (1.0.7)
+  - YYWebImage (1.0.5):
     - YYCache
     - YYImage
 
@@ -50,6 +55,10 @@ DEPENDENCIES:
   - MBProgressHUD
   - MJExtension
   - pop (~> 1.0)
+  - UMengUShare/Social/ReducedQQ
+  - UMengUShare/Social/ReducedSina
+  - UMengUShare/Social/ReducedWeChat
+  - UMengUShare/UI
   - YYCache
   - YYModel
   - YYText
@@ -57,19 +66,20 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  CocoaAsyncSocket: a18c75dca4b08723628a0bacca6e94803d90be91
+  CocoaAsyncSocket: b9d5589f07baf9de8f34cc25abd4fcba28f13805
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
-  GCDWebServer: 2a375ec42839a41d7187d04e5b688d32fa5c4cd5
-  JTCalendar: bc7f3086a4df02aa2e02ac4d505ef888cc2283a0
-  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
-  MJExtension: d86aacb740c87519d20e3cca55b6fa4be6cc7548
+  GCDWebServer: 1c39a1f0763e4eb492bee021e4270fce097d3555
+  JTCalendar: beb2f4c1b639bf6880f680b4858227acf83a049c
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  MJExtension: 5932755f451458eefa24239358817f8d291240c7
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  YYCache: 282f35b5b0990833d0b7a06d864a87141a021da2
-  YYImage: 2cc79ed49b9549b71c6715cefe7b0f5ab3d33abf
+  UMengUShare: 7756e2e46ceba04e3000fb2c9b1d3f61784ca2ff
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
+  YYImage: 1e1b62a9997399593e4b9c4ecfbbabbf1d3f3b54
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
-  YYText: ac09660c9ccd9b817f409a20caa6f5587444d2ae
-  YYWebImage: 0431ed108e104527669b86f75efd58958425cca2
+  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
+  YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
 
-PODFILE CHECKSUM: d54837b6113b30f7300ef37c52fdd26fd3d9ebe4
+PODFILE CHECKSUM: e19066472553b62719f0eb38f856ab0e726c5648
 
-COCOAPODS: 1.0.0
+COCOAPODS: 1.2.1.beta.1

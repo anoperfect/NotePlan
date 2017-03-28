@@ -175,16 +175,17 @@ int const ktag_popupView_container = 1000000002;
         self.messageIndicationHUD.userInteractionEnabled = NO;
         self.messageIndicationHUD.delegate = self;
         self.messageIndicationHUD.removeFromSuperViewOnHide = NO; //设置这个.
-        self.messageIndicationHUD.yOffset = 100 - VIEW_HEIGHT / 2;
+        CGPoint offset = self.messageIndicationHUD.offset;
+        self.messageIndicationHUD.offset = CGPointMake(offset.x, 100 - VIEW_HEIGHT / 2);
     }
     
-    self.messageIndicationHUD.detailsLabelFont = [UIFont systemFontOfSize:16];
-    self.messageIndicationHUD.detailsLabelText = text;
-    [self.messageIndicationHUD show:YES];
+    self.messageIndicationHUD.detailsLabel.font = [UIFont systemFontOfSize:16];
+    self.messageIndicationHUD.detailsLabel.text = text;
+    [self.messageIndicationHUD showAnimated:YES];
     
     NSTimeInterval secs = self.messageIndicationTime;
     if(secs > 0.0) {
-        [self.messageIndicationHUD hide:YES afterDelay:secs];
+        [self.messageIndicationHUD hideAnimated:YES afterDelay:secs];
     }
 }
 
@@ -192,7 +193,7 @@ int const ktag_popupView_container = 1000000002;
 
 - (void)dismissIndicationText
 {
-    [self.messageIndicationHUD hide:YES];
+    [self.messageIndicationHUD hideAnimated:YES];
 }
 
 ////一直沿用self.messageIndicationHUD可能导致不能显示. 注意设置self.messageIndicationHUD.removeFromSuperViewOnHide = NO;
@@ -216,18 +217,18 @@ int const ktag_popupView_container = 1000000002;
         self.progressHUD.removeFromSuperViewOnHide = NO; //设置这个.
     }
     
-    self.progressHUD.labelText = text;
-    [self.progressHUD show:YES];
+    self.progressHUD.label.text = text;
+    [self.progressHUD showAnimated:YES];
     
     if(secs > 0.0) {
-        [self.progressHUD hide:YES afterDelay:secs];
+        [self.progressHUD hideAnimated:YES afterDelay:secs];
     }
 }
 
 
 - (void)dismissProgressText
 {
-    [self.progressHUD hide:YES];
+    [self.progressHUD hideAnimated:YES];
 }
 
 
