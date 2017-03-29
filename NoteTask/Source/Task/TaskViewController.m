@@ -297,7 +297,7 @@
     }
     else if(number > 0) {
         if(!indicatorLayer) {
-            indicatorLayer = [self createIndicatorWithColor:[UIColor colorWithName:@"TaskSectionHeaderText"] andPosition:CGPointMake(label.frame.size.width - 36, 22.5)];
+            indicatorLayer = [self createIndicatorWithColor:[UIColor colorWithName:@"TaskSectionHeaderText"] position:CGPointMake(label.frame.size.width - 36, 22.5)];
             indicatorLayer.name = @"indicator";
             [label.layer addSublayer:indicatorLayer];
         }
@@ -313,7 +313,7 @@
 
 
 
-- (CAShapeLayer *)createIndicatorWithColor:(UIColor *)color andPosition:(CGPoint)point {
+- (CAShapeLayer *)createIndicatorWithColor:(UIColor *)color position:(CGPoint)point {
     CAShapeLayer *layer = [CAShapeLayer new];
     
     UIBezierPath *path = [UIBezierPath new];
@@ -754,7 +754,7 @@
 }
 
 
-- (void)actionFinishOnIndexPath:(NSIndexPath*)indexPath andTaskInfo:(TaskInfo*)taskinfo onArrangeName:(NSString*)name onDays:(NSArray*)days
+- (void)actionFinishOnIndexPath:(NSIndexPath*)indexPath taskInfo:(TaskInfo*)taskinfo arrangeName:(NSString*)name days:(NSArray*)days
 {
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
@@ -777,7 +777,7 @@
 }
 
 
-- (void)actionRedoOnIndexPath:(NSIndexPath*)indexPath andTaskInfo:(TaskInfo*)taskinfo onArrangeName:(NSString*)name onDays:(NSArray*)days
+- (void)actionRedoOnIndexPath:(NSIndexPath*)indexPath taskInfo:(TaskInfo*)taskinfo arrangeName:(NSString*)name days:(NSArray*)days
 {
     NSLog(@"finish %@, arrange name %@, days %@", taskinfo.sn, name, days);
     if([name isEqualToString:@"今天"] || [name isEqualToString:@"明天"]) {
@@ -828,12 +828,12 @@
     TaskArrangeGroup *taskArrangeGroup = self.taskInfoManager.taskArrangeGroups[indexPath.section];
     TaskInfoArrange *taskInfoArrange = [self dataTaskInfoArrangeOnIndexPath:indexPath];
     if([actionString isEqualToString:@"finish"]) {
-        [self actionFinishOnIndexPath:indexPath andTaskInfo:taskInfoArrange.taskinfo onArrangeName:taskArrangeGroup.arrangeName onDays:taskInfoArrange.arrangeDays];
+        [self actionFinishOnIndexPath:indexPath taskInfo:taskInfoArrange.taskinfo arrangeName:taskArrangeGroup.arrangeName days:taskInfoArrange.arrangeDays];
         return ;
     }
 
     if([actionString isEqualToString:@"redo"]) {
-        [self actionRedoOnIndexPath:indexPath andTaskInfo:taskInfoArrange.taskinfo onArrangeName:taskArrangeGroup.arrangeName onDays:taskInfoArrange.arrangeDays];
+        [self actionRedoOnIndexPath:indexPath taskInfo:taskInfoArrange.taskinfo arrangeName:taskArrangeGroup.arrangeName days:taskInfoArrange.arrangeDays];
         return ;
     }
 }

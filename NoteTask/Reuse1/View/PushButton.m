@@ -193,8 +193,8 @@
 
 
 - (void)horizonLayoutViews:(NSArray<UIView *> *)subviews
-                  withEdge:(UIEdgeInsets)edge
-            andSubViewEdge:(UIEdgeInsets)subviewEdge
+                      edge:(UIEdgeInsets)edge
+               subViewEdge:(UIEdgeInsets)subviewEdge
 {
     
     
@@ -205,8 +205,8 @@
 
 
 - (void)verticalLayoutViews:(NSArray<UIView*>*) subviews
-                   withEdge:(UIEdgeInsets)edge
-             andSubViewEdge:(UIEdgeInsets)subviewEdge
+                       edge:(UIEdgeInsets)edge
+                subViewEdge:(UIEdgeInsets)subviewEdge
 {
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     

@@ -332,27 +332,42 @@
                             ]];
     
     [f frameLayoutVertical:@"fontSizeUseDefault"
-                  toViews:@[
-                            [FrameLayoutView viewWithName:@"_fontSizeUseDefaultLabel" value:80 edge:UIEdgeInsetsZero],
-                            [FrameLayoutView viewWithName:@"_fontSizeUseDefaultSwitch" value:1 edge:UIEdgeInsetsZero],
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_fontSizeUseDefaultLabel" value:80 edge:UIEdgeInsetsZero],
+                             [FrameLayoutView viewWithName:@"_fontSizeUseDefaultSwitch" value:1 edge:UIEdgeInsetsZero],
                             ]];
     
+    [f frameLayoutVertical:@"fontSizeLabel"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_fontSizeNameLabel" percentage:0.5],
+                             [FrameLayoutView viewWithName:@"fontSizePadding" percentage:0.0],
+                             [FrameLayoutView viewWithName:@"_fontSizeValueLabel" percentage:0.5],
+                            ]];
     
-    [f      frameLayout:@"fontSizeLabel"
-             toVertical:@[@"_fontSizeNameLabel", @"fontSizePadding", @"_fontSizeValueLabel"]
-        withPercentages:@[@0.5, @0.0, @0.5]];
+    [f frameLayoutVertical:@"textColorLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_textColorLabel" percentage:.20],
+                             [FrameLayoutView viewWithName:@"_textColorInput" percentage:.40],
+                             [FrameLayoutView viewWithName:@"_textColorButton" percentage:.20],
+                             ]];
     
-    [f      frameLayout:@"textColorLine"
-             toVertical:@[@"_textColorLabel", @"_textColorInput", @"_textColorButton"]
-        withPercentages:@[@(.20), @(.40), @(.20)]];
+    [f frameLayoutVertical:@"switchLine1"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_italicLable" percentage:0.12],
+                             [FrameLayoutView viewWithName:@"_italicSwitch" percentage:0.16],
+                             [FrameLayoutView viewWithName:@"switchLine1Padding" percentage:0.22],
+                             [FrameLayoutView viewWithName:@"_underlineLable" percentage:0.12],
+                             [FrameLayoutView viewWithName:@"_underlineSwitch" percentage:0.16],
+                             ]];
     
-    [f      frameLayout:@"switchLine1"
-             toVertical:@[@"_italicLable", @"_italicSwitch", @"switchLine1Padding", @"_underlineLable", @"_underlineSwitch"]
-        withPercentages:@[@0.12, @0.16, @0.22, @0.12, @0.16]];
-    
-    [f      frameLayout:@"switchLine2"
-             toVertical:@[@"_borderLable", @"_borderSwitch", @"switchLine2Padding", @"_boldLable", @"_boldSwitch"]
-        withPercentages:@[@0.12, @0.16, @0.22, @0.12, @0.16]];
+    [f frameLayoutVertical:@"switchLine2"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_borderLable" percentage:0.12],
+                             [FrameLayoutView viewWithName:@"_borderSwitch" percentage:0.16],
+                             [FrameLayoutView viewWithName:@"switchLine2Padding" percentage:0.22],
+                             [FrameLayoutView viewWithName:@"_boldLable" percentage:0.12],
+                             [FrameLayoutView viewWithName:@"_boldSwitch" percentage:0.16],
+                             ]];
     
     [self memberViewSetFrameWith:[f nameAndFrames]];
 }
@@ -559,7 +574,7 @@
                                                      colorPresets:@[]
                                                       isTextColor:YES
                                                      selectHandle:^(NSString* selectedColorString, NSString *selectedColorText) {
-                                                         [_self selectedColorString:selectedColorString andColorText:selectedColorText];
+                                                         [_self selectedColorString:selectedColorString colorText:selectedColorText];
                                                      }];
     [self.contentView addSubview:self.textColorSelector];
     
@@ -571,7 +586,7 @@
 }
 
 
-- (void)selectedColorString:(NSString*)selectedColorString andColorText:(NSString *)selectedColorText
+- (void)selectedColorString:(NSString*)selectedColorString colorText:(NSString *)selectedColorText
 {
     NSLog(@"selectedTextColorString : %@, %@", selectedColorText, selectedColorString);
     

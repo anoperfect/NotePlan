@@ -209,7 +209,7 @@ TaskProperty
     }
     
     if([title isEqualToString:@"任务时间"]) {
-        return [self.taskinfo scheduleDateAtrributedStringWithIndent:20.0 andTextColor:[UIColor colorWithName:@"TaskDetailText"]];
+        return [self.taskinfo scheduleDateAtrributedStringWithIndent:20.0 textColor:[UIColor colorWithName:@"TaskDetailText"]];
     }
     
     if([title isEqualToString:@"提交时间"]) {

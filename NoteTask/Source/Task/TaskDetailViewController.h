@@ -10,9 +10,6 @@
 #import "CustomViewController.h"
 #import "TaskInfoManager.h"
 @interface TaskDetailViewController : CustomViewController
-
-
-
 - (instancetype)initWithArrangeMode:(TaskInfo*)taskinfo arrange:(TaskInfoArrange*)arrange;
 - (instancetype)initWithDayMode:(TaskInfo*)taskinfo day:(NSString*)dayString;
 - (instancetype)initWithListMode:(TaskInfo*)taskinfo;

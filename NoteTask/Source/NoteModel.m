@@ -47,7 +47,7 @@
 
 + (NSArray<NSString*> *)colorFilterDisplayStrings
 {
-    return @[@"所有", @"◉红色", @"未标记", @"◉黄色", @"已标记", @"◉蓝色"];
+    return @[@"所有", @"◉红色", @"未标记", @"◉黄色", @"已标记", @"◉蓝色"]; 
 }
 
 

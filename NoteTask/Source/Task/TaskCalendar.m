@@ -141,7 +141,7 @@
 }
 
 
-- (instancetype)initWithFrame:(CGRect)frame andDayString:(NSString*)dayString
+- (instancetype)initWithFrame:(CGRect)frame dayString:(NSString*)dayString
 {
     LOG_POSTION
     self = [self initWithFrame:frame];
@@ -163,7 +163,7 @@
 }
 
 
-- (instancetype)initWithFrame:(CGRect)frame andDayStrings:(NSArray<NSString*>*)dayStrings
+- (instancetype)initWithFrame:(CGRect)frame dayStrings:(NSArray<NSString*>*)dayStrings
 {
     LOG_POSTION
     self = [self initWithFrame:frame];

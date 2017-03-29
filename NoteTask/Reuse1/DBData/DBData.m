@@ -270,7 +270,7 @@
 
 
 
-- (void)DBDataExecuteLog:(NSString*)queryString withArgumentsInArray:(NSArray*)arguments
+- (void)DBDataExecuteLog:(NSString*)queryString arguments:(NSArray*)arguments
 {
     NSMutableString *s = [NSMutableString stringWithFormat:@"execute[%@] with arguments [%zd][", queryString, arguments.count];
     NSInteger idx = 0;
@@ -299,7 +299,7 @@
 
 
 //增
-- (NSInteger)DBDataInsert:(FMDatabase*)db toTable:(DBTableAttribute*)tableAttribute withInfo:(NSDictionary*)infoInsert orReplace:(BOOL)replace orIgnore:(BOOL)ignore
+- (NSInteger)DBDataInsert:(FMDatabase*)db table:(DBTableAttribute*)tableAttribute info:(NSDictionary*)infoInsert orReplace:(BOOL)replace orIgnore:(BOOL)ignore
 {
     //检查infoInsert.
     //检查columnNames.
@@ -421,7 +421,7 @@
         if(addJoiner) {
             [insert appendString:@", "];
         }
-        [insert appendFormat:@"(%@)", [self.class stringPaste:@"?" onTimes:columnNames.count withConnector:@","]];
+        [insert appendFormat:@"(%@)", [self.class stringPaste:@"?" onTimes:columnNames.count connector:@","]];
         
         //?对应的参数.
         [infoInsertValuesM addObjectsFromArray:value];
@@ -429,7 +429,7 @@
         addJoiner = YES;
     }
     
-    [self DBDataExecuteLog:insert withArgumentsInArray:infoInsertValuesM];
+    [self DBDataExecuteLog:insert arguments:infoInsertValuesM];
     BOOL executeResult = [db executeUpdate:insert withArgumentsInArray:infoInsertValuesM];
     if(executeResult) {
         NS0Log(@"insert table %@ [%zd] OK.", tableAttribute.tableName, values.count);
@@ -445,7 +445,7 @@
 
 
 //增
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     
@@ -462,11 +462,11 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataInsert:db toTable:tableAttribute withInfo:infoInsert orReplace:NO orIgnore:NO];
+    return [self DBDataInsert:db table:tableAttribute info:infoInsert orReplace:NO orIgnore:NO];
 }
 
 
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert orReplace:(BOOL)replace
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orReplace:(BOOL)replace
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     
@@ -483,11 +483,11 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataInsert:db toTable:tableAttribute withInfo:infoInsert orReplace:YES orIgnore:NO];
+    return [self DBDataInsert:db table:tableAttribute info:infoInsert orReplace:YES orIgnore:NO];
 }
 
 
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert orIgnore:(BOOL)ignore
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orIgnore:(BOOL)ignore
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     
@@ -504,7 +504,7 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataInsert:db toTable:tableAttribute withInfo:infoInsert orReplace:NO orIgnore:ignore];
+    return [self DBDataInsert:db table:tableAttribute info:infoInsert orReplace:NO orIgnore:ignore];
 }
 
 
@@ -515,7 +515,7 @@
 
 
 //删
-- (NSInteger)DBDataDelete:(FMDatabase*)db toTable:(DBTableAttribute*)tableAttribute withQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataDelete:(FMDatabase*)db table:(DBTableAttribute*)tableAttribute query:(NSDictionary*)infoQuery
 {
     
     BOOL executeResult ;
@@ -534,7 +534,7 @@
         for(NSInteger index = 1; index < count; index ++) {
             [deletem appendFormat:@" and %@ = ?", infoDeleteKeys[index]];
         }
-        executeResult = [db executeUpdate:[NSString stringWithString:deletem] withArgumentsInArray:infoDeleteValues];
+        executeResult = [db executeUpdate:[NSString stringWithString:deletem] arguments:infoDeleteValues];
         
         NSLog(@"%@", deletem);
         NSLog(@"%@", infoDeleteValues);
@@ -542,10 +542,10 @@
 #endif
     
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
     NSString *deleteString = [NSString stringWithFormat:@"DELETE FROM %@ %@", tableAttribute.tableName, queryString];
     
-    [self DBDataExecuteLog:deleteString withArgumentsInArray:arguments];
+    [self DBDataExecuteLog:deleteString arguments:arguments];
     executeResult = [db executeUpdate:deleteString withArgumentsInArray:arguments];
     
     if(executeResult) {
@@ -561,7 +561,7 @@
 
 
 //删
-- (NSInteger)DBDataDeleteDBName:(NSString*)databaseName toTable:(NSString*)tableName withQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataDeleteDBName:(NSString*)databaseName table:(NSString*)tableName query:(NSDictionary*)infoQuery
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     FMDatabase *db = [self getDataBaseByName:databaseName];
@@ -576,11 +576,11 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataDelete:db toTable:tableAttribute withQuery:infoQuery];
+    return [self DBDataDelete:db table:tableAttribute query:infoQuery];
 }
 
 
-- (NSString*)DBDataGenerateQueryString:(NSDictionary*)infoQuery andArgumentsInArray:(NSMutableArray*)argumentsM
+- (NSString*)DBDataGenerateQueryString:(NSDictionary*)infoQuery arguments:(NSMutableArray*)argumentsM
 {
     NSMutableString *strm ;
     
@@ -602,7 +602,7 @@
                 NSArray *columnValues = infoQueryValues[index];
                 [strm appendFormat:@" %@ IN (%@)",
                  infoQueryKeys[index],
-                 [self.class stringPaste:@"?" onTimes:columnValues.count withConnector:@","]];
+                 [self.class stringPaste:@"?" onTimes:columnValues.count connector:@","]];
                 [argumentsM addObjectsFromArray:columnValues];
             }
             else {
@@ -632,10 +632,10 @@
  infoLimit : 支持 DBDATA_STRING_ORDER:"ORDER BY ... DESC"
  */
 - (NSDictionary*)DBDataQuery:(FMDatabase*)db
-                     toTable:(DBTableAttribute*)tableAttribute
+                       table:(DBTableAttribute*)tableAttribute
                  columnNames:(NSArray*)columnNames
-                   withQuery:(NSDictionary*)infoQuery
-                   withLimit:(NSDictionary*)infoLimit
+                       query:(NSDictionary*)infoQuery
+                       limit:(NSDictionary*)infoLimit
 {
     NSLogSqlite(@"DBDataQuery : table:%@, columnNames:%@, infoQuery:%@, infoLimit:%@",
                 tableAttribute.tableName,
@@ -667,7 +667,7 @@
     }
     
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
     
     querym = [NSMutableString stringWithFormat:@"SELECT %@ FROM %@ %@",
               [NSString arrayDescriptionConbine:columnNames seprator:@","],
@@ -678,7 +678,7 @@
         [querym appendFormat:@" %@", [infoLimit objectForKey:DBDATA_STRING_ORDER]];
     }
     
-    [self DBDataExecuteLog:querym withArgumentsInArray:arguments];
+    [self DBDataExecuteLog:querym arguments:arguments];
     FMResultSet *rs = [db executeQuery:[NSString stringWithString:querym] withArgumentsInArray:arguments];
     
     for(NSString *columnName in queryColumnsNamesM) {
@@ -816,10 +816,10 @@
 
 //查
 - (NSDictionary*)DBDataQueryDBName:(NSString*)databaseName
-                           toTable:(NSString*)tableName
+                             table:(NSString*)tableName
                        columnNames:(NSArray*)columnNames
-                         withQuery:(NSDictionary*)infoQuery
-                         withLimit:(NSDictionary*)infoLimit
+                             query:(NSDictionary*)infoQuery
+                             limit:(NSDictionary*)infoLimit
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     
@@ -835,12 +835,12 @@
         return nil;
     }
     
-    return [self DBDataQuery:db toTable:tableAttribute columnNames:columnNames withQuery:infoQuery withLimit:infoLimit];
+    return [self DBDataQuery:db table:tableAttribute columnNames:columnNames query:infoQuery     limit:infoLimit];
 }
 
 
 //改. 暂时不实现.
-- (NSInteger)DBDataUpdate:(FMDatabase*)db toTable:(DBTableAttribute*)tableAttribute withInfoUpdate:(NSDictionary*)infoUpdate withInfoQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataUpdate:(FMDatabase*)db table:(DBTableAttribute*)tableAttribute infoUpdate:(NSDictionary*)infoUpdate infoQuery:(NSDictionary*)infoQuery
 {
     NSMutableString *updatem = nil;
     BOOL retFMDB;
@@ -861,10 +861,10 @@
         [arguments addObject:infoUpdateValues[index]];
     }
     
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
     [updatem appendString:queryString];
     
-    [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
+    [self DBDataExecuteLog:updatem arguments:arguments];
     retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
     if(retFMDB) {
         
@@ -878,7 +878,7 @@
 }
 
 
-- (NSInteger)DBDataUpdateDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfoUpdate:(NSDictionary*)infoUpdate withInfoQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataUpdateDBName:(NSString*)databaseName table:(NSString*)tableName infoUpdate:(NSDictionary*)infoUpdate infoQuery:(NSDictionary*)infoQuery
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     FMDatabase *db = [self getDataBaseByName:databaseName];
@@ -893,12 +893,12 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataUpdate:db toTable:tableAttribute withInfoUpdate:infoUpdate withInfoQuery:infoQuery];
+    return [self DBDataUpdate:db table:tableAttribute infoUpdate:infoUpdate infoQuery:infoQuery];
 }
 
 
 //改. 暂时不实现.
-- (NSInteger)DBDataUpdates:(FMDatabase*)db toTable:(DBTableAttribute*)tableAttribute withInfosUpdate:(NSArray<NSDictionary*> *)infosUpdate withInfosQuery:(NSArray<NSDictionary*> *)infosQuery
+- (NSInteger)DBDataUpdates:(FMDatabase*)db table:(DBTableAttribute*)tableAttribute infosUpdate:(NSArray<NSDictionary*> *)infosUpdate infosQuery:(NSArray<NSDictionary*> *)infosQuery
 {
     NSInteger ret = DB_EXECUTE_OK;
     NSMutableString *updatem = nil;
@@ -931,10 +931,10 @@
             [arguments addObject:infoUpdateValues[index]];
         }
         
-        NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+        NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
         [updatem appendString:queryString];
         
-        [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
+        [self DBDataExecuteLog:updatem arguments:arguments];
         retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
         if(retFMDB) {
             
@@ -952,7 +952,7 @@
 
 
 //使用事物提供批量改.
-- (NSInteger)DBDataUpdatesDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfosUpdate:(NSArray<NSDictionary*> *)infosUpdate withInfosQuery:(NSArray<NSDictionary*> *)infosQuery;
+- (NSInteger)DBDataUpdatesDBName:(NSString*)databaseName table:(NSString*)tableName infosUpdate:(NSArray<NSDictionary*> *)infosUpdate infosQuery:(NSArray<NSDictionary*> *)infosQuery;
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     FMDatabase *db = [self getDataBaseByName:databaseName];
@@ -967,13 +967,13 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataUpdates:db toTable:tableAttribute withInfosUpdate:infosUpdate withInfosQuery:infosQuery];
+    return [self DBDataUpdates:db table:tableAttribute infosUpdate:infosUpdate infosQuery:infosQuery];
 }
 
 
 
 
-- (NSInteger)DBDataUpdateAdd1:(FMDatabase*)db toTable:(DBTableAttribute*)tableAttribute withColumnName:(NSString*)columnName withInfoQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataUpdateAdd1:(FMDatabase*)db table:(DBTableAttribute*)tableAttribute withColumnName:(NSString*)columnName infoQuery:(NSDictionary*)infoQuery
 {
     NSMutableString *updatem = nil;
     BOOL retFMDB;
@@ -981,10 +981,10 @@
     updatem = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ = %@+1 ", tableAttribute.tableName, columnName, columnName];
     
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
     [updatem appendString:queryString];
     
-    [self DBDataExecuteLog:updatem withArgumentsInArray:arguments];
+    [self DBDataExecuteLog:updatem arguments:arguments];
     retFMDB = [db executeUpdate:updatem withArgumentsInArray:arguments];
     if(retFMDB) {
         
@@ -998,7 +998,7 @@
 }
 
 
-- (NSInteger)DBDataUpdateAdd1DBName:(NSString*)databaseName toTable:(NSString*)tableName withColumnName:(NSString*)columnName withInfoQuery:(NSDictionary*)infoQuery
+- (NSInteger)DBDataUpdateAdd1DBName:(NSString*)databaseName table:(NSString*)tableName columnName:(NSString*)columnName infoQuery:(NSDictionary*)infoQuery
 {
     FMDatabase *db = [self getDataBaseByName:databaseName];
     if(!db) {
@@ -1012,7 +1012,7 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataUpdateAdd1:db toTable:tableAttribute withColumnName:columnName withInfoQuery:infoQuery];
+    return [self DBDataUpdateAdd1:db table:tableAttribute withColumnName:columnName infoQuery:infoQuery];
 }
 
 
@@ -1399,7 +1399,7 @@
                 NSLog(@"[%@ : %@] insert presets.", databaseName, tableAttribute.tableName);
                 
                 //根据primary判断是否重复.
-                NSInteger retInsert = [self DBDataInsert:db toTable:tableAttribute withInfo:contents orReplace:YES orIgnore:NO];
+                NSInteger retInsert = [self DBDataInsert:db table:tableAttribute info:contents orReplace:YES orIgnore:NO];
                 if(DB_EXECUTE_OK != retInsert) {
                     NSLog(@"#error- [%@ : %@] insert preset FAILED. <%@>", databaseName, tableAttribute.tableName, contents);
                 }
@@ -1543,8 +1543,8 @@
 
 
 - (NSDictionary*)DBDataQuery:(FMDatabase*)db
-               withSqlString:(NSString*)sqlString
-         andArgumentsInArray:(NSArray*)arguments
+                   sqlString:(NSString*)sqlString
+                   arguments:(NSArray*)arguments
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@>", sqlString);}
     
@@ -1616,8 +1616,8 @@
 
 //直接的sql语句执行表查询. 暂时只用于测试.
 - (NSDictionary*)DBDataQueryDBName:(NSString*)databaseName
-                     withSqlString:(NSString*)sqlString
-               andArgumentsInArray:(NSArray*)arguments
+                         sqlString:(NSString*)sqlString
+                         arguments:(NSArray*)arguments
 {
     FMDatabase *db = [self getDataBaseByName:databaseName];
     if(!db) {
@@ -1625,13 +1625,13 @@
         return nil;
     }
     
-    return [self DBDataQuery:db withSqlString:sqlString andArgumentsInArray:arguments];
+    return [self DBDataQuery:db sqlString:sqlString arguments:arguments];
 }
 
 
 - (NSInteger)DBDataUpdate:(FMDatabase*)db
-            withSqlString:(NSString*)sqlString
-      andArgumentsInArray:(NSArray*)arguments
+                sqlString:(NSString*)sqlString
+                arguments:(NSArray*)arguments
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread.");}
     
@@ -1658,8 +1658,8 @@
 
 //直接的sql语句执行表增删改. 暂时只用于测试.
 - (NSInteger)DBDataUpdateDBName:(NSString*)databaseName
-                  withSqlString:(NSString*)sqlString
-            andArgumentsInArray:(NSArray*)arguments
+                      sqlString:(NSString*)sqlString
+                      arguments:(NSArray*)arguments
 {
     FMDatabase *db = [self getDataBaseByName:databaseName];
     if(!db) {
@@ -1667,13 +1667,13 @@
         return DB_EXECUTE_ERROR_NOT_FOUND;
     }
     
-    return [self DBDataUpdate:db withSqlString:sqlString andArgumentsInArray:arguments];
+    return [self DBDataUpdate:db sqlString:sqlString arguments:arguments];
 }
 
 
 - (NSInteger)DBDataQueryCount:(FMDatabase*)db
-                      toTable:(DBTableAttribute*)tableAttribute
-                    withQuery:(NSDictionary*)infoQuery
+                      table:(DBTableAttribute*)tableAttribute
+                    query:(NSDictionary*)infoQuery
 {
     NSLogSqlite(@"DBDataQueryCount : table:%@, infoQuery:%@", tableAttribute.tableName, infoQuery);
     NSInteger count = 0;
@@ -1683,10 +1683,10 @@
     NSMutableArray *queryColumnsNamesM = [[NSMutableArray alloc] init];
     
     NSMutableArray *arguments = [[NSMutableArray alloc] init];
-    NSString *queryString = [self DBDataGenerateQueryString:infoQuery andArgumentsInArray:arguments];
+    NSString *queryString = [self DBDataGenerateQueryString:infoQuery arguments:arguments];
     querym = [NSMutableString stringWithFormat:@"SELECT COUNT(*) FROM %@ %@", tableAttribute.tableName, queryString];
     
-    [self DBDataExecuteLog:querym withArgumentsInArray:arguments];
+    [self DBDataExecuteLog:querym arguments:arguments];
     FMResultSet *rs = [db executeQuery:[NSString stringWithString:querym] withArgumentsInArray:arguments];
     
     for(NSString *columnName in queryColumnsNamesM) {
@@ -1714,8 +1714,8 @@
 
 
 - (NSInteger)DBDataQueryCountDBName:(NSString*)databaseName
-                            toTable:(NSString*)tableName
-                          withQuery:(NSDictionary*)infoQuery
+                              table:(NSString*)tableName
+                              query:(NSDictionary*)infoQuery
 {
     if(![NSThread isMainThread]) {NSLog(@"#error - should excute db in MainThread. <%@:%@>", databaseName, tableName);}
     
@@ -1731,11 +1731,11 @@
         return 0;
     }
     
-    return [self DBDataQueryCount:db toTable:tableAttribute withQuery:infoQuery];
+    return [self DBDataQueryCount:db table:tableAttribute query:infoQuery];
 }
 
 
-+ (NSString*)stringPaste:(NSString*)string onTimes:(NSInteger)times withConnector:(NSString*)stringConnector
++ (NSString*)stringPaste:(NSString*)string onTimes:(NSInteger)times connector:(NSString*)stringConnector
 {
     NSInteger count = times;
     if(count > 0) {

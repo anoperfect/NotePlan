@@ -140,14 +140,19 @@
                             ]
      ];
     
-    [f      frameLayout:@"titleFontSizeLine"
-             toVertical:@[@"_titleFontSizeNameLabel", @"titleFontSizePadding", @"_titleFontSizeValueLabel"]
-        withPercentages:@[@0.36, @0.46, @0.16]];
+    [f frameLayoutVertical:@"titleFontSizeLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_titleFontSizeNameLabel" percentage:0.36],
+                             [FrameLayoutView viewWithName:@"titleFontSizePadding" percentage:0.46],
+                             [FrameLayoutView viewWithName:@"_titleFontSizeValueLabel" percentage:0.16],
+                            ]];
     
-    [f      frameLayout:@"paragraphFontSizeLine"
-             toVertical:@[@"_paragraphFontSizeNameLabel", @"paragraphFontSizePadding", @"_paragraphFontSizeValueLabel"]
-        withPercentages:@[@0.36, @0.46, @0.16]];
-    
+    [f frameLayoutVertical:@"paragraphFontSizeLine"
+                   toViews:@[
+                             [FrameLayoutView viewWithName:@"_paragraphFontSizeNameLabel" percentage:0.36],
+                             [FrameLayoutView viewWithName:@"paragraphFontSizePadding" percentage:0.46],
+                             [FrameLayoutView viewWithName:@"_paragraphFontSizeValueLabel" percentage:0.16],
+                            ]];
     
     [self memberViewSetFrameWith:[f nameAndFrames]];
 }

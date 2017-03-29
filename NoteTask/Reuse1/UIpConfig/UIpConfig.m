@@ -299,8 +299,8 @@
         }
         
         [self.dbData DBDataInsertDBName:DBNAME_UIPCONFIG
-                                toTable:TABLENAME_COLOR
-                               withInfo:@{
+                                  table:TABLENAME_COLOR
+                                   info:@{
                                           DBDATA_STRING_COLUMNS:@[@"name", @"title", @"enableCustmize", @"colorstringDefault", @"colornightstringDefault"],
                                           DBDATA_STRING_VALUES :values
                                           }
@@ -359,9 +359,9 @@
     BOOL result = YES;
     
     NSInteger retDBData = [self.dbData DBDataUpdateDBName:DBNAME_UIPCONFIG
-                                                  toTable:@"color"
-                                           withInfoUpdate:[colorItem toDictionary]
-                                            withInfoQuery:@{@"name":colorItem.name}];
+                                                    table:@"color"
+                                               infoUpdate:[colorItem toDictionary]
+                                                infoQuery:@{@"name":colorItem.name}];
     result = (retDBData == DB_EXECUTE_OK);
     return result;
 }
@@ -405,10 +405,10 @@
 - (void)getUIpConfigColorsFromDB
 {
     NSDictionary *dict = [self.dbData DBDataQueryDBName:DBNAME_UIPCONFIG
-                                                toTable:TABLENAME_COLOR
+                                                  table:TABLENAME_COLOR
                                             columnNames:nil
-                                              withQuery:nil
-                                              withLimit:nil];
+                                                  query:nil
+                                                  limit:nil];
     
     NSArray<NSDictionary*> *dicts = [self.dbData queryResultDictionaryToArray:dict];
     

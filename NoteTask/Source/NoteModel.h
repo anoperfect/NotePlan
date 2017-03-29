@@ -39,7 +39,7 @@
 @property (nonatomic, strong) NSString *source;
 
 
-@property (nonatomic, strong) NSString  *synchronize;
+@property (nonatomic, strong) NSString  *synchronize; //记录同步时间.
 @property (nonatomic, assign) NSInteger countCollect;
 @property (nonatomic, assign) NSInteger countLike;
 @property (nonatomic, assign) NSInteger countDislike;

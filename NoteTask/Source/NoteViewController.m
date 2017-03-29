@@ -377,7 +377,7 @@
 - (void)dataNotesReload
 {
     _notes = [[NSMutableArray alloc] init];
-    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGetsByClassification:self.currentClassification andColorString:self.currentColorString]];
+    [_notes addObjectsFromArray:[[AppConfig sharedAppConfig] configNoteGetsByClassification:self.currentClassification colorString:self.currentColorString]];
     
     NSLog(@"notesLoad finish.");
     return ;
@@ -982,7 +982,7 @@
 #endif
         
         NoteArchiveViewController *vc = [[NoteArchiveViewController alloc] init];
-        [vc setFrom:@"NotesArchiveChange" andSns:[self dataNotesSnOnIndexPaths:indexPathsSelected]];
+        [vc setFrom:@"NotesArchiveChange" sns:[self dataNotesSnOnIndexPaths:indexPathsSelected]];
         [self pushViewController:vc animated:YES];
         
         return;

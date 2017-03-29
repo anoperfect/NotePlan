@@ -27,8 +27,8 @@
 - (void)configClassificationRemove:(NSString*)classification;
 
 
-- (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString;
-- (NSInteger)configNoteCountByClassification:(NSString*)classification andColorString:(NSString*)colorString;
+- (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification colorString:(NSString*)colorString;
+- (NSInteger)configNoteCountByClassification:(NSString*)classification colorString:(NSString*)colorString;
 - (NoteModel*)configNoteGetBySn:(NSString*)sn;
 
 

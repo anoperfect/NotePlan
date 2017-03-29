@@ -25,5 +25,4 @@
 @property (nonatomic, strong) NoteModel *note;
 @property (nonatomic, assign) CGFloat optumizeHeight;
  
-
 @end

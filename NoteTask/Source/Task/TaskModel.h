@@ -105,7 +105,7 @@ typedef NS_ENUM(NSInteger, TaskInfoScheduleType) {
 
 - (void)generateDaysOnTask;
 
-- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent andTextColor:(UIColor*)textColor;
+- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent textColor:(UIColor*)textColor;
 
 - (NSString*)summaryDescription;
 

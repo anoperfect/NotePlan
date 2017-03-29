@@ -109,7 +109,7 @@ static NSDate *kdateStart;
 @implementation NoteArchiveViewController
 
 
-- (void)setFrom:(NSString*)from andSns:(NSArray<NSString*>*)sns
+- (void)setFrom:(NSString*)from sns:(NSArray<NSString*>*)sns
 {
     self.from = from;
     self.sns = sns;
@@ -320,7 +320,7 @@ static NSDate *kdateStart;
         }
     }
     
-    UIImageView *imageView = [self imageLineWidth:cell.frame.size.width andHeight:0.5];
+    UIImageView *imageView = [self imageLineWidth:cell.frame.size.width height:0.5];
     imageView.frame = CGRectMake(0, 54, VIEW_WIDTH, 0.5);
     [cell addSubview:imageView];
     
@@ -402,7 +402,7 @@ static NSDate *kdateStart;
 
 
 #pragma mark - CG line
-- (UIImageView*)imageLineWidth:(CGFloat)width andHeight:(CGFloat)height
+- (UIImageView*)imageLineWidth:(CGFloat)width height:(CGFloat)height
 {
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
     
@@ -600,15 +600,15 @@ static NSDate *kdateStart;
     self.filterDataColorsCountMap = [[NSMutableDictionary alloc] init];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSLog(@"count : %zd", [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:@"*"]);
+        NSLog(@"count : %zd", [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" colorString:@"*"]);
         
         for(NSString *classification in self.classifications) {
-            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:classification andColorString:@"*"];
+            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:classification colorString:@"*"];
             self.classificationsCountMap[classification] = @(count);
         }
         
         for(NSString *color in self.filterDataColors) {
-            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" andColorString:[NoteModel colorDisplayStringToColorString:color]];
+            NSInteger count = [[AppConfig sharedAppConfig] configNoteCountByClassification:@"*" colorString:[NoteModel colorDisplayStringToColorString:color]];
             self.filterDataColorsCountMap[color] = @(count);
         }
         

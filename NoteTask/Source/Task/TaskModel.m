@@ -401,7 +401,7 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 }
 
 
-- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent andTextColor:(UIColor*)textColor
+- (NSMutableAttributedString*)scheduleDateAtrributedStringWithIndent:(CGFloat)indent textColor:(UIColor*)textColor
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     switch (self.scheduleType) {

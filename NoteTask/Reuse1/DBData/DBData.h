@@ -156,33 +156,33 @@ typedef NS_ENUM(NSInteger, DBDataColumnType) {
  }
  */
 //增
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert;
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert orReplace:(BOOL)replace;
-- (NSInteger)DBDataInsertDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfo:(NSDictionary*)infoInsert orIgnore:(BOOL)ignore;
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert;
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orReplace:(BOOL)replace;
+- (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orIgnore:(BOOL)ignore;
 
 
 //删
-- (NSInteger)DBDataDeleteDBName:(NSString*)databaseName toTable:(NSString*)tableName withQuery:(NSDictionary*)infoQuery;
+- (NSInteger)DBDataDeleteDBName:(NSString*)databaseName table:(NSString*)tableName query:(NSDictionary*)infoQuery;
 
 
 //查
 - (NSDictionary*)DBDataQueryDBName:(NSString*)databaseName
-                           toTable:(NSString*)tableName
+                             table:(NSString*)tableName
                        columnNames:(NSArray*)columnNames
-                         withQuery:(NSDictionary*)infoQuery
-                         withLimit:(NSDictionary*)infoLimit;
+                             query:(NSDictionary*)infoQuery
+                             limit:(NSDictionary*)infoLimit;
 
 
 //改. 暂时不实现.
-- (NSInteger)DBDataUpdateDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfoUpdate:(NSDictionary*)infoUpdate withInfoQuery:(NSDictionary*)infoQuery;
+- (NSInteger)DBDataUpdateDBName:(NSString*)databaseName table:(NSString*)tableName infoUpdate:(NSDictionary*)infoUpdate infoQuery:(NSDictionary*)infoQuery;
 
 
 //使用事物提供批量改.
-- (NSInteger)DBDataUpdatesDBName:(NSString*)databaseName toTable:(NSString*)tableName withInfosUpdate:(NSArray<NSDictionary*> *)infosUpdate withInfosQuery:(NSArray<NSDictionary*> *)infosQuery;
+- (NSInteger)DBDataUpdatesDBName:(NSString*)databaseName table:(NSString*)tableName infosUpdate:(NSArray<NSDictionary*> *)infosUpdate infosQuery:(NSArray<NSDictionary*> *)infosQuery;
 
 
 //+1
-- (NSInteger)DBDataUpdateAdd1DBName:(NSString*)databaseName toTable:(NSString*)tableName withColumnName:(NSString*)columnName withInfoQuery:(NSDictionary*)infoQuery;
+- (NSInteger)DBDataUpdateAdd1DBName:(NSString*)databaseName table:(NSString*)tableName columnName:(NSString*)columnName infoQuery:(NSDictionary*)infoQuery;
 
 
 //查询出的NSDictionary数据转为NSArray<NSDictionary*>*, 方便单个NSDictionary转model.
@@ -201,22 +201,22 @@ typedef NS_ENUM(NSInteger, DBDataColumnType) {
 
 //直接的sql语句执行表查询. 暂时只用于测试.
 - (NSDictionary*)DBDataQueryDBName:(NSString*)databaseName
-                     withSqlString:(NSString*)sqlString
-               andArgumentsInArray:(NSArray*)arguments;
+                         sqlString:(NSString*)sqlString
+                         arguments:(NSArray*)arguments;
 
 
 //直接的sql语句执行表增删改. 暂时只用于测试.
 - (NSInteger)DBDataUpdateDBName:(NSString*)databaseName
-                  withSqlString:(NSString*)sqlString
-            andArgumentsInArray:(NSArray*)arguments;
+                      sqlString:(NSString*)sqlString
+                      arguments:(NSArray*)arguments;
 
 
 
 
 //查询条数.
 - (NSInteger)DBDataQueryCountDBName:(NSString*)databaseName
-                            toTable:(NSString*)tableName
-                          withQuery:(NSDictionary*)infoQuery;
+                              table:(NSString*)tableName
+                              query:(NSDictionary*)infoQuery;
 
 
 //清除数据库. 需仅适用于开发者环境.

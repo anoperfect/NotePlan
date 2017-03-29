@@ -349,7 +349,7 @@
 
 
 
-+ (NSString*)randomStringWithLength:(NSInteger)length andType:(NSInteger)type
++ (NSString*)randomStringWithLength:(NSInteger)length type:(NSInteger)type
 {
     //暂不实现多种type. 仅仅支持0-9, a-z.
     NSMutableString *s = [[NSMutableString alloc] init];

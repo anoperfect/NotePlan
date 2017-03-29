@@ -19,8 +19,8 @@
 @property (nonatomic, strong, readonly) UIButton *buttonOK;
 @property (nonatomic, strong, readonly) UIButton *buttonDelete;
 
-- (instancetype)initWithFrame:(CGRect)frame andDayString:(NSString*)dayString;
-- (instancetype)initWithFrame:(CGRect)frame andDayStrings:(NSArray<NSString*>*)dayStrings;
+- (instancetype)initWithFrame:(CGRect)frame dayString:(NSString*)dayString;
+- (instancetype)initWithFrame:(CGRect)frame dayStrings:(NSArray<NSString*>*)dayStrings;
 
 @end
 

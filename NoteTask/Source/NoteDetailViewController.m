@@ -941,7 +941,7 @@
 {
     if([self.noteModel.sn hasPrefix:@"preset-"] && self.noteModel.sn.length == 9) {
         NSString *sn = self.noteModel.sn;
-        self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 andType:36]];
+        self.noteModel.sn = [NSString stringWithFormat:@"%@-%@", sn, [NSString randomStringWithLength:3 type:36]];
         [[AppConfig sharedAppConfig] configNoteUpdate:self.noteModel fromSn:sn];
     }
     else {
@@ -1013,7 +1013,6 @@
     LOG_POSTION
     for(NSInteger idx = 0; idx < 1; idx ++) {
         imageResize = [self scaleToSize:image size:sizeResize];
-//        imageResize = [self fixOrientation:image andResizeTo:sizeResize];
     }
     LOG_POSTION
     

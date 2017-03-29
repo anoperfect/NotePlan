@@ -32,7 +32,13 @@
 - (void)setNoteParagraph:(NoteParagraphModel*)noteParagraph sn:(NSInteger)sn onMode:(NSInteger)mode image:(UIImage*)image imageSize:(CGSize)imageSize;
 
 @end
+
 //同时给NoteDetailViewController使用, 以便使编辑控件的布局尽量跟NoteDetailCell匹配.
+
 #define NOTEDETAILCELL_EDGE_CONTAINER   UIEdgeInsetsMake(10, 10, 10, 10)
 #define NOTEDETAILCELL_EDGE_TEXTVIEW    UIEdgeInsertMake(0, 0, 0, 0)
 #define NOTEDETAILCELL_EDGE_LABEL       UIEdgeInsetsMake(6, 6, 6, 6)
+
+
+
+

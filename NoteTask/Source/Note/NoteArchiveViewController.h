@@ -8,5 +8,5 @@
 
 #import "CustomViewController.h"
 @interface NoteArchiveViewController  : CustomViewController
-- (void)setFrom:(NSString*)from andSns:(NSArray<NSString*>*)sns;
+- (void)setFrom:(NSString*)from sns:(NSArray<NSString*>*)sns;
 @end

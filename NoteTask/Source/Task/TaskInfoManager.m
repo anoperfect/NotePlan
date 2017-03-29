@@ -285,7 +285,7 @@
     [[AppConfig sharedAppConfig] configTaskInfoAdd:taskinfo];
     
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
-    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
     taskRecord.snTaskInfo = taskinfo.sn;
     taskRecord.dayString = @"";
     taskRecord.type = TaskRecordTypeCreate;
@@ -309,7 +309,7 @@
     
     if(updateDetail.length > 0) {
         TaskRecord *taskRecord = [[TaskRecord alloc] init];
-        taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+        taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
         taskRecord.snTaskInfo = taskinfo.sn;
         taskRecord.dayString = @"";
         taskRecord.type = TaskRecordTypeUserModify;

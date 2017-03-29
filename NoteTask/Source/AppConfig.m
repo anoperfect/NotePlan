@@ -125,10 +125,10 @@
 - (NSArray<NSString*> *)configClassificationGets
 {
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_CLASSIFICATION
+                                                         table:TABLENAME_CLASSIFICATION
                                                    columnNames:nil
-                                                     withQuery:nil
-                                                     withLimit:nil];
+                                                         query:nil
+                                                         limit:nil];
     NSInteger count = [self.dbData DBDataCheckRowsInDictionary:queryResult];
     if(count > 0) {
         NSArray *classificationNameArray                    = queryResult[@"classificationName"];
@@ -154,7 +154,7 @@
                                  DBDATA_STRING_COLUMNS:@[@"classificationName", @"createdAt"],
                                  DBDATA_STRING_VALUES:@[@[noteClassification.classificationName,noteClassification.createdAt]]
                                  };
-    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_CLASSIFICATION withInfo:infoInsert orReplace:YES];
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_CLASSIFICATION     info:infoInsert orReplace:YES];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -168,7 +168,7 @@
 {
     BOOL result = YES;
     
-    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_CLASSIFICATION withQuery:@{@"classificationName":classification}];
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_CLASSIFICATION     query:@{@"classificationName":classification}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -186,10 +186,10 @@
     
     //默认降序.
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_NOTE
+                                                         table:TABLENAME_NOTE
                                                    columnNames:nil
-                                                     withQuery:query
-                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
+                                                         query:query
+                                                         limit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
@@ -216,7 +216,7 @@
  ""无标记
  查找所有则classification填*, colorString填*.
  */
-- (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification andColorString:(NSString*)colorString
+- (NSArray<NoteModel*> *)configNoteGetsByClassification:(NSString*)classification colorString:(NSString*)colorString
 {
     NSLog(@"configNoteGetsByClassification : [%@], color : [%@]", classification, colorString);
     
@@ -244,7 +244,7 @@
 }
 
 
-- (NSInteger)configNoteCountByClassification:(NSString*)classification andColorString:(NSString*)colorString
+- (NSInteger)configNoteCountByClassification:(NSString*)classification colorString:(NSString*)colorString
 {
     NSLog(@"configNoteCountByClassification : [%@], color : [%@]", classification, colorString);
     
@@ -269,7 +269,7 @@
     
     query[@"deletedAt"] = @"";
     
-    return [self.dbData DBDataQueryCountDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withQuery:query];
+    return [self.dbData DBDataQueryCountDBName:DBNAME_CONFIG table:TABLENAME_NOTE query:query];
 }
 
 
@@ -278,10 +278,10 @@
     NoteModel *noteResult = nil;
     NSDictionary *query = @{@"sn" : sn};
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_NOTE
+                                                         table:TABLENAME_NOTE
                                                    columnNames:nil
-                                                     withQuery:query
-                                                     withLimit:nil];
+                                                         query:query
+                                                         limit:nil];
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         NSDictionary *dict = dicts[0];
@@ -298,7 +298,7 @@
 - (BOOL)configNoteAdd:(NoteModel*)note
 {
     if(note.sn.length == 0) {
-        note.sn = [NSString randomStringWithLength:6 andType:36];
+        note.sn = [NSString randomStringWithLength:6 type:36];
     }
     
     BOOL result = YES;
@@ -353,7 +353,7 @@
                                     ]
                                  };
     
-    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withInfo:infoInsert];
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_NOTE     info:infoInsert];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -370,7 +370,7 @@
 {
     BOOL result = YES;
     
-    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withQuery:@{@"sn":sn}];
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_NOTE     query:@{@"sn":sn}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -385,7 +385,7 @@
 {
     BOOL result = YES;
     
-    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_NOTE withQuery:@{@"sn":sns}];
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_NOTE     query:@{@"sn":sns}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -401,9 +401,9 @@
     BOOL result = YES;
     
     NSInteger retDBData = [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                                                  toTable:TABLENAME_NOTE
-                                           withInfoUpdate:@{@"deletedAt":[NSString dateTimeStringNow]}
-                                            withInfoQuery:@{@"sn":sns}];
+                                                    table:TABLENAME_NOTE
+                                               infoUpdate:@{@"deletedAt":[NSString dateTimeStringNow]}
+                                                infoQuery:@{@"sn":sns}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -454,9 +454,9 @@
     NSDictionary *updateDict = [self configNoteUpdateDetect:note fromSn:note.sn];
     if(updateDict.count > 0) {
         [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                                toTable:TABLENAME_NOTE
-                         withInfoUpdate:updateDict
-                          withInfoQuery:@{@"sn":note.sn}];
+                                  table:TABLENAME_NOTE
+                             infoUpdate:updateDict
+                              infoQuery:@{@"sn":note.sn}];
     }
     else {
         NSLog(@"configNoteUpdate : nothing to update.");
@@ -469,9 +469,9 @@
     NSDictionary *updateDict = [self configNoteUpdateDetect:note fromSn:sn];
     if(updateDict.count > 0) {
         [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                                toTable:TABLENAME_NOTE
-                         withInfoUpdate:updateDict
-                          withInfoQuery:@{@"sn":sn}];
+                                  table:TABLENAME_NOTE
+                             infoUpdate:updateDict
+                              infoQuery:@{@"sn":sn}];
     }
     else {
         NSLog(@"configNoteUpdate : nothing to update.");
@@ -485,9 +485,9 @@
     updateDict[@"classification"]   = classification;
     
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                            toTable:TABLENAME_NOTE
-                     withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
-                      withInfoQuery:@{@"sn":sns}];
+                              table:TABLENAME_NOTE
+                         infoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
+                          infoQuery:@{@"sn":sns}];
 }
 
 
@@ -497,9 +497,9 @@
     updateDict[@"classification"]   = classification;
     
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                            toTable:TABLENAME_NOTE
-                     withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
-                      withInfoQuery:@{@"classification":previousClassification}];
+                              table:TABLENAME_NOTE
+                         infoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
+                          infoQuery:@{@"classification":previousClassification}];
 }
 
 
@@ -509,9 +509,9 @@
     updateDict[@"color"]   = color;
     
     [self.dbData DBDataUpdateDBName:DBNAME_CONFIG
-                            toTable:TABLENAME_NOTE
-                     withInfoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
-                      withInfoQuery:@{@"sn":sns}];
+                              table:TABLENAME_NOTE
+                         infoUpdate:[NSDictionary dictionaryWithDictionary:updateDict]
+                          infoQuery:@{@"sn":sns}];
 }
 
 
@@ -537,7 +537,7 @@ TaskModeDefault
 {
     NSString *value = nil;
     
-    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING columnNames:@[@"value"] withQuery:@{@"key":key} withLimit:nil];
+    NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG   table:TABLENAME_SETTING columnNames:@[@"value"]     query:@{@"key":key}     limit:nil];
     if([queryResult[@"value"] isKindOfClass:[NSArray class]] && ((NSArray*)(queryResult[@"value"])).count == 1 ) {
         value = ((NSArray*)(queryResult[@"value"]))[0];
     }
@@ -574,7 +574,7 @@ TaskModeDefault
     
     //value为nil时, 表示删除该kv.
     if(!value) {
-        [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withQuery:@{@"key":key}];
+        [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_SETTING     query:@{@"key":key}];
         return ;
     }
     
@@ -593,7 +593,7 @@ TaskModeDefault
                                          ]
                                  };
 
-    [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_SETTING withInfo:infoInsert orReplace:replace];
+    [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_SETTING     info:infoInsert orReplace:replace];
 }
 
 
@@ -627,10 +627,10 @@ TaskModeDefault
     
     //默认降序.
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_TASKINFO
+                                                         table:TABLENAME_TASKINFO
                                                    columnNames:nil
-                                                     withQuery:nil
-                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
+                                                         query:nil
+                                                         limit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
@@ -662,7 +662,7 @@ TaskModeDefault
                                  DBDATA_STRING_VALUES: @[[NSArray arrayWithArray:columnValues]]
                                  };
     
-    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfo:infoInsert];
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_TASKINFO     info:infoInsert];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -679,7 +679,7 @@ TaskModeDefault
 - (void)configTaskInfoRemoveBySn:(NSArray<NSString*>*)sn
 {
     BOOL result = YES;
-    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withQuery:@{@"sn":sn}];
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_TASKINFO     query:@{@"sn":sn}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -690,7 +690,7 @@ TaskModeDefault
 - (void)configTaskInfoUpdate:(TaskInfo*)taskinfo
 {
     NSDictionary *updateDict = [taskinfo toDictionary];
-    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKINFO withInfoUpdate:updateDict withInfoQuery:@{@"sn":taskinfo.sn}];
+    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG   table:TABLENAME_TASKINFO     infoUpdate:updateDict     infoQuery:@{@"sn":taskinfo.sn}];
 }
 
 
@@ -701,10 +701,10 @@ TaskModeDefault
     
     //默认降序.
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_TASKRECORD
+                                                         table:TABLENAME_TASKRECORD
                                                    columnNames:nil
-                                                     withQuery:nil
-                                                     withLimit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
+                                                         query:nil
+                                                         limit:@{DBDATA_STRING_ORDER:@"ORDER BY modifiedAt DESC"}];
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
@@ -750,7 +750,7 @@ TaskModeDefault
                                          ]
                                  };
     
-    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfo:infoInsert];
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_TASKRECORD     info:infoInsert];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -767,7 +767,7 @@ TaskModeDefault
 - (void)configTaskRecordRemoveBySn:(NSArray<NSString*>*)sn
 {
     BOOL result = YES;
-    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withQuery:@{@"snTaskRecord":sn}];
+    NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG   table:TABLENAME_TASKRECORD     query:@{@"snTaskRecord":sn}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -787,7 +787,7 @@ TaskModeDefault
                                  @"modifiedAt":taskRecord.modifiedAt,
                                  @"deprecatedAt":taskRecord.deprecatedAt,
                                  };
-    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG toTable:TABLENAME_TASKRECORD withInfoUpdate:updateDict withInfoQuery:@{@"snTaskRecord":taskRecord.snTaskRecord}];
+    [self.dbData DBDataUpdateDBName:DBNAME_CONFIG   table:TABLENAME_TASKRECORD     infoUpdate:updateDict     infoQuery:@{@"snTaskRecord":taskRecord.snTaskRecord}];
 }
 
 
@@ -798,10 +798,10 @@ TaskModeDefault
     
     //默认降序.
     NSDictionary *queryResult = [self.dbData DBDataQueryDBName:DBNAME_CONFIG
-                                                       toTable:TABLENAME_TASKFINISHAT
+                                                         table:TABLENAME_TASKFINISHAT
                                                    columnNames:nil
-                                                     withQuery:nil
-                                                     withLimit:nil];
+                                                         query:nil
+                                                         limit:nil];
     NSArray<NSDictionary* >* dicts = [self.dbData queryResultDictionaryToArray:queryResult];
     if(dicts.count > 0) {
         for(NSDictionary *dict in dicts) {
@@ -837,7 +837,7 @@ TaskModeDefault
                                          ]
                                  };
     
-    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG toTable:TABLENAME_TASKFINISHAT withInfo:infoInsert];
+    NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_TASKFINISHAT     info:infoInsert];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -852,8 +852,8 @@ TaskModeDefault
 {
     BOOL result = YES;
     NSInteger retDBData = [self.dbData DBDataDeleteDBName:DBNAME_CONFIG
-                                                  toTable:TABLENAME_TASKFINISHAT
-                                                withQuery:@{@"snTaskInfo":taskFinishAt.snTaskInfo,@"dayString":taskFinishAt.dayString}];
+                                                    table:TABLENAME_TASKFINISHAT
+                                                    query:@{@"snTaskInfo":taskFinishAt.snTaskInfo,@"dayString":taskFinishAt.dayString}];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
         result = NO;
@@ -1232,7 +1232,7 @@ TaskModeDefault
         else {
             NSLog(@"Note test add.");
             if(note.sn.length == 0) {
-                note.sn = [NSString randomStringWithLength:6 andType:36];
+                note.sn = [NSString randomStringWithLength:6 type:36];
             }
             [self configNoteAdd:note];
         }

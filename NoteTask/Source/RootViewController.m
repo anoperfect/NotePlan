@@ -77,104 +77,6 @@
 }
 
 
-- (void)viewWillLayoutSubviews1
-{
-    CGSize size = VIEW_SIZE;
-    
-    FrameLayout *f = [[FrameLayout alloc] initWithSize:size];
-    [f frameLayout:FRAMELAYOUT_NAME_MAIN
-                to:@[@"summary", @"menus", @"settings"]
-   withPercentages:@[@(0.36), @(0.54), @(0.1)]];
-    
-    _summary.frame =[f frameLayoutGet:@"summary"];
-    
-    [f frameLayoutEqual:@"menus" to:@[@"menusLine1", @"menusLine2", @"menusLine3"]];
-    
-    [f frameLayoutEqual:@"menusLine1" toVertical:@[@"button1", @"button2", @"button3"]];
-    [f frameLayoutEqual:@"menusLine2" toVertical:@[@"button4", @"button5", @"button6"]];
-    [f frameLayoutEqual:@"menusLine3" toVertical:@[@"button7", @"button8", @"button9"]];
-    
-    for(UIButton *button in _buttons) {
-        NSString *name = [NSString stringWithFormat:@"button%zd", button.tag - 100 + 1];
-        button.frame = [f frameLayoutGet:name];
-    }
-    
-    _settingView.frame = [f frameLayoutGet:@"settings"];
-    
-//    NSLog(@"f : \n%@", f);
-    
-    NSMutableArray *layers = [[NSMutableArray alloc] init];
-    
-    for(CALayer *layer in self.view.layer.sublayers) {
-        if([layer valueForKey:@"menuButtonLayer"]) {
-            [layers addObject:layer];
-        }
-    }
-    
-    [layers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
-    
-    UIColor *layerColor = [UIColor whiteColor];
-    CGFloat layerWidth = 0.5;
-    
-    //add menuButtons border line.
-    CGRect frameLayer ;
-    CALayer * line;
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menusLine1"];
-    frameLayer.size.height = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menusLine2"];
-    frameLayer.size.height = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menusLine3"];
-    frameLayer.size.height = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menusLine3"];
-    frameLayer.origin.y += frameLayer.size.height;
-    frameLayer.size.height = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menus"];
-    frameLayer.origin.x = frameLayer.size.width / 3;
-    frameLayer.size.width = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-    
-    line = [CALayer layer];
-    [line setValue:@100 forKey:@"menuButtonLayer"];
-    line.backgroundColor = layerColor.CGColor;
-    frameLayer = [f frameLayoutGet:@"menus"];
-    frameLayer.origin.x = frameLayer.size.width / 3 * 2;
-    frameLayer.size.width = layerWidth;
-    line.frame = frameLayer;
-    [self.view.layer addSublayer:line];
-
-}
-
-
-
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -182,11 +84,15 @@
     CGSize size = VIEW_SIZE;
     
     FrameLayout *f = [[FrameLayout alloc] initWithSize:size];
-    [f frameLayout:FRAMELAYOUT_NAME_MAIN
-                to:@[@"summary", @"menus", @"settings"]
-   withPercentages:@[@(0.62), @(0.18), @(0.2)]];
     
-    _summary.frame =[f frameLayoutGet:@"summary"];
+    [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
+                  toViews:@[
+                            [FrameLayoutView viewWithName:@"_summary" percentage:0.62],
+                            [FrameLayoutView viewWithName:@"menus" percentage:0.18],
+                            [FrameLayoutView viewWithName:@"_settings" percentage:0.2],
+                            ]];
+    
+    _summary.frame =[f frameLayoutGet:@"_summary"];
     
     [f frameLayoutEqual:@"menus" to:@[@"menusLine1"]];
     
@@ -197,7 +103,7 @@
         button.frame = [f frameLayoutGet:name];
     }
     
-    _settingView.frame = [f frameLayoutGet:@"settings"];
+    _settingView.frame = [f frameLayoutGet:@"_settings"];
     
     //    NSLog(@"f : \n%@", f);
     
@@ -317,8 +223,6 @@
         [_buttons addObject:button];
         
         [button setMenuButtonData:_menus[idx]];
-        
-//        NSLog(@"add button %zd", button.tag);
     }
     
 }

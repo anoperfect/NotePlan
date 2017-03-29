@@ -97,8 +97,8 @@
 + (TaskRecord*)taskRecordWithUserRecordOn:(NSString*)snTaskInfo text:(NSString*)text on:(NSString*)dayString committedAt:(NSString*)committedAt
 {
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
-    //    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
-    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    //    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
     taskRecord.type = TaskRecordTypeUserRecord;
@@ -115,8 +115,8 @@
 + (TaskRecord*)taskRecordWithFinishTaskInfo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt
 {
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
-//    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
-    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+//    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
     taskRecord.type = TaskRecordTypeFinish;
@@ -132,7 +132,7 @@
 + (TaskRecord*)taskRecordWithRedoTaskInfo:(NSString*)snTaskInfo on:(NSString*)dayString committedAt:(NSString*)committedAt
 {
     TaskRecord *taskRecord = [[TaskRecord alloc] init];
-    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 andType:36];
+    taskRecord.snTaskRecord = [NSString randomStringWithLength:6 type:36];
     taskRecord.snTaskInfo = snTaskInfo;
     taskRecord.dayString = dayString;
     taskRecord.type = TaskRecordTypeRedo;

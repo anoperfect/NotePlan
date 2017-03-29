@@ -75,7 +75,7 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     self = [super init];
     if (self) {
         self.taskinfoEdit = [TaskInfo taskinfo];
-        self.taskinfoEdit.sn = [NSString randomStringWithLength:7 andType:0];
+        self.taskinfoEdit.sn = [NSString randomStringWithLength:7 type:0];
         self.taskinfo = self.taskinfoEdit;
         self.isCreate = YES;
     }
@@ -604,21 +604,21 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     self.taskCalendarName = name;
     
     if(mutilMode) {
-        self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayStrings:self.dayStrings];
+        self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS dayStrings:self.dayStrings];
     }
     else {
         if([name isEqualToString:@"ButtonA"]) {
             if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeDay) {
-                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayString];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS dayString:self.dayString];
             }
             else if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringFrom];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS dayString:self.dayStringFrom];
             }
             
         }
         else if([name isEqualToString:@"ButtonB"]) {
             if([TaskInfo scheduleTypeFromString:self.daysType] == TaskInfoScheduleTypeContinues) {
-                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS andDayString:self.dayStringTo];
+                self.taskCalendar = [[TaskCalendar alloc] initWithFrame:SCREEN_BOUNDS dayString:self.dayStringTo];
             }
         }
     }

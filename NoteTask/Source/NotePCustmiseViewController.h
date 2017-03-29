@@ -9,10 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "CustomViewController.h"
 @class NoteParagraphModel;
-
-
-
-
 @interface NoteParagraphCustmiseViewController : CustomViewController
 
 - (instancetype)initWithStyleDictionary:(NSDictionary*)styleDictionary;
@@ -21,8 +17,6 @@
 - (void)setStyleFinishHandle:(void(^)(NSDictionary *styleDictionary))handle;
 
 @end
-
-
 
 
 

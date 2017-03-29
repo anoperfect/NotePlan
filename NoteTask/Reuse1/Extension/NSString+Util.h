@@ -47,7 +47,7 @@
 
 
 @interface NSString (Random)
-+ (NSString*)randomStringWithLength:(NSInteger)length andType:(NSInteger)type;
++ (NSString*)randomStringWithLength:(NSInteger)length type:(NSInteger)type;
 @end
 
 
