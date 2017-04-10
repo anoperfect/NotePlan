@@ -46,7 +46,8 @@ typedef NS_ENUM(NSInteger, DaysCompare) {
 + (instancetype)taskinfoFromDictionary:(NSDictionary*)dict
 {
     TaskInfo *taskinfo = [[TaskInfo alloc] init];
-    taskinfo = [TaskInfo mj_objectWithKeyValues:dict];
+//    taskinfo = [TaskInfo mj_objectWithKeyValues:dict];
+    [taskinfo yy_modelSetWithJSON:dict];
     [taskinfo generateDaysOnTask];
     
     NSLog(@"%@", taskinfo);

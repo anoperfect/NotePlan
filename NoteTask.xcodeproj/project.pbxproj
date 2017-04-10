@@ -86,6 +86,7 @@
 		B57FFEF41E65CB7A00EA280B /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFEF11E65CB7A00EA280B /* YYFPSLabel.m */; };
 		B57FFEF51E65CB7A00EA280B /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFEF31E65CB7A00EA280B /* YYWeakProxy.m */; };
 		B57FFEF91E65E1E600EA280B /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B57FFEF81E65E1E600EA280B /* LaunchScreen.Storyboard */; };
+		B58F8E9A1E9B3E7900EB279A /* Calculate in Resources */ = {isa = PBXBuildFile; fileRef = B58F8E991E9B3E7900EB279A /* Calculate */; };
 		B5D0014E1E65B8F900D435D8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D0014D1E65B8F900D435D8 /* main.m */; };
 		B5D001511E65B8F900D435D8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D001501E65B8F900D435D8 /* AppDelegate.m */; };
 /* End PBXBuildFile section */
@@ -240,6 +241,7 @@
 		B57FFEF21E65CB7A00EA280B /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YYWeakProxy.h; path = Vandor/YYKit/YYWeakProxy.h; sourceTree = "<group>"; };
 		B57FFEF31E65CB7A00EA280B /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YYWeakProxy.m; path = Vandor/YYKit/YYWeakProxy.m; sourceTree = "<group>"; };
 		B57FFEF81E65E1E600EA280B /* LaunchScreen.Storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.Storyboard; path = Resources/LaunchScreen.Storyboard; sourceTree = "<group>"; };
+		B58F8E991E9B3E7900EB279A /* Calculate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Calculate; sourceTree = "<group>"; };
 		B5D001491E65B8F900D435D8 /* NoteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D0014D1E65B8F900D435D8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B5D0014F1E65B8F900D435D8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				B57FFDE01E65C55F00EA280B /* NSLogn */,
 				B57FFDE31E65C55F00EA280B /* UIpConfig */,
 				B57FFDE71E65C55F00EA280B /* View */,
+				B58F8E981E9B3E7900EB279A /* Calculate */,
 			);
 			name = Reuse1;
 			path = NoteTask/Reuse1;
@@ -599,6 +602,14 @@
 			path = "Vandor/YouXianMing-Animations/View";
 			sourceTree = "<group>";
 		};
+		B58F8E981E9B3E7900EB279A /* Calculate */ = {
+			isa = PBXGroup;
+			children = (
+				B58F8E991E9B3E7900EB279A /* Calculate */,
+			);
+			path = Calculate;
+			sourceTree = "<group>";
+		};
 		B5D001401E65B8F900D435D8 = {
 			isa = PBXGroup;
 			children = (
@@ -725,6 +736,7 @@
 				B57FFE0B1E65C55F00EA280B /* UIpConfigDB.json in Resources */,
 				B57FFE941E65C9D400EA280B /* PictureCacheError.png in Resources */,
 				B57FFE191E65C6F200EA280B /* db.json in Resources */,
+				B58F8E9A1E9B3E7900EB279A /* Calculate in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -943,6 +955,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDK",
@@ -959,6 +972,7 @@
 					"$(PROJECT_DIR)/NoteTask/UMSocial/SocialLibraries/WeChat",
 					"$(PROJECT_DIR)/NoteTask/UMSocial/UMSocialSDKPlugin",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -976,15 +990,7 @@
 					"-framework",
 					"\"MJExtension\"",
 					"-framework",
-					"\"YYCache\"",
-					"-framework",
-					"\"YYImage\"",
-					"-framework",
 					"\"YYModel\"",
-					"-framework",
-					"\"YYText\"",
-					"-framework",
-					"\"YYWebImage\"",
 					"-framework",
 					"\"pop\"",
 					"-ObjC",
@@ -1002,6 +1008,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1036,15 +1043,7 @@
 					"-framework",
 					"\"MJExtension\"",
 					"-framework",
-					"\"YYCache\"",
-					"-framework",
-					"\"YYImage\"",
-					"-framework",
 					"\"YYModel\"",
-					"-framework",
-					"\"YYText\"",
-					"-framework",
-					"\"YYWebImage\"",
 					"-framework",
 					"\"pop\"",
 					"-ObjC",

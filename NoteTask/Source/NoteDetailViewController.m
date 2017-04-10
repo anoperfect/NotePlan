@@ -8,7 +8,6 @@
 
 #import "NoteDetailViewController.h"
 #import "NotePropertyView.h"
-#import "YYText.h"
 #import "AppDelegate.h"
 #import "PopupViewController.h"
 #import "TextButtonLine.h"
@@ -22,7 +21,6 @@
                                         UITextViewDelegate,
                                         UINavigationControllerDelegate,
                                         UIImagePickerControllerDelegate,
-                                        YYTextViewDelegate,
                                         JSDropDownMenuDataSource,JSDropDownMenuDelegate>
 
 @property (nonatomic, strong) NoteModel                *noteModel;

@@ -302,9 +302,9 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     
     //模拟一个立体效果.
     self.container.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.container.layer.shadowOffset = CGSizeMake(1, 1);
-    self.container.layer.shadowOpacity = 0.8;
-    self.container.layer.shadowRadius = 1;
+    self.container.layer.shadowOffset = CGSizeMake(0.5, 0.5);
+    self.container.layer.shadowOpacity = 0.6;
+    self.container.layer.shadowRadius = 0.36;
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
@@ -555,7 +555,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 @interface TaskDetailPropertyCell ()
 
 @property (nonatomic, strong) UILabel    *titleLabel;
-@property (nonatomic, strong) YYLabel    *contentLabel;
+@property (nonatomic, strong) UILabel    *contentLabel;
 @property (nonatomic, strong) UIScrollView *scrollView;
 
 @property (nonatomic, strong) NSAttributedString *titleAttributedString;
@@ -575,7 +575,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.titleLabel = [[UILabel alloc] init];
-        self.contentLabel = [[YYLabel alloc] init];
+        self.contentLabel = [[UILabel alloc] init];
         [self addSubview:self.titleLabel];
         [self addSubview:self.contentLabel];
     }
@@ -670,8 +670,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 @property (nonatomic, strong) UIView     *container;
 @property (nonatomic, strong) UILabel    *committedAtLabel;
-@property (nonatomic, strong) YYLabel    *typeLabel;
-@property (nonatomic, strong) YYLabel    *contentLabel;
+@property (nonatomic, strong) UILabel    *typeLabel;
+@property (nonatomic, strong) UILabel    *contentLabel;
 
 @end
 
@@ -688,8 +688,8 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     if (self) {
         self.container = [[UIView alloc] init];
         self.committedAtLabel = [[UILabel alloc] init];
-        self.typeLabel = [[YYLabel alloc] init];
-        self.contentLabel = [[YYLabel alloc] init];
+        self.typeLabel = [[UILabel alloc] init];
+        self.contentLabel = [[UILabel alloc] init];
         
         [self.contentView addSubview:self.container];
         [self.container addSubview:self.committedAtLabel];

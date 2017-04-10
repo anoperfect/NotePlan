@@ -63,6 +63,84 @@
 }
 
 
++ (instancetype)viewWithJson:(id)json
+{
+    FrameLayoutView *frameLayoutView = [[FrameLayoutView alloc] init];
+    frameLayoutView.name = @"nan";
+    frameLayoutView.value = 0.0;
+    frameLayoutView.percentage = 0;
+    frameLayoutView.edge = UIEdgeInsetsZero;
+    
+    NSDictionary *dict = nil;
+    
+    if (!json || json == (id)kCFNull) {
+        NSLog(@"#error - invalid data.");
+        return frameLayoutView;
+    }
+    
+    NSData *jsonData = nil;
+    if ([json isKindOfClass:[NSDictionary class]]) {
+        dict = json;
+    } else if ([json isKindOfClass:[NSString class]]) {
+        jsonData = [(NSString *)json dataUsingEncoding : NSUTF8StringEncoding];
+    } else if ([json isKindOfClass:[NSData class]]) {
+        jsonData = json;
+    }
+    if (jsonData) {
+        dict = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+        if (![dict isKindOfClass:[NSDictionary class]]) {
+            NSLog(@"#error - invalid data.");
+            return frameLayoutView;
+        }
+    }
+    
+    NSArray *edgeValue = nil;
+    if((edgeValue = dict[@"edge"]) != nil
+       && [edgeValue isKindOfClass:[NSArray class]]
+       && edgeValue.count == 4
+       && [edgeValue[0] isKindOfClass:[NSNumber class]]
+       && [edgeValue[1] isKindOfClass:[NSNumber class]]
+       && [edgeValue[2] isKindOfClass:[NSNumber class]]
+       && [edgeValue[3] isKindOfClass:[NSNumber class]]) {
+        frameLayoutView.edge = UIEdgeInsetsMake(
+                                                [edgeValue[0] floatValue],
+                                                [edgeValue[1] floatValue],
+                                                [edgeValue[2] floatValue],
+                                                [edgeValue[3] floatValue]);
+    }
+    
+    NSMutableArray *allKeys = [NSMutableArray arrayWithArray:dict.allKeys];
+    [allKeys removeObject:@"edge"];
+    
+    if(allKeys.count == 1) {
+        if([allKeys[0] isKindOfClass:[NSString class]]) {
+            frameLayoutView.name = [allKeys[0] copy];
+            
+            id value = dict[allKeys[0]];
+            if([value isKindOfClass:[NSNumber class]]) {
+                frameLayoutView.value = [dict[allKeys[0]] floatValue];
+            }
+            else if([value isKindOfClass:[NSString class]]) {
+                NSString *svalue = value;
+                if([svalue hasSuffix:@"%"]) {
+                    frameLayoutView.percentage = [svalue floatValue] / 100;
+                }
+                else {
+                    //复杂表达式.
+                }
+            }
+        }
+    }
+    else {
+        NSLog(@"#error - invalid data.");
+    }
+
+    return frameLayoutView;
+}
+
+
+
+
 
 @end
 
@@ -233,6 +311,10 @@
     CGFloat heightValues = 0;
     for(NSInteger idx = 0; idx < nameCount ; idx ++) {
         FrameLayoutView *view = views[idx];
+        if(![view isKindOfClass:[FrameLayoutView class]]) {
+            view = [FrameLayoutView viewWithJson:view];
+        }
+        
         if(view.value > 0.0) {
             heightValues += view.value;
         }
@@ -242,6 +324,10 @@
     
     for(NSInteger idx = 0; idx < nameCount ; idx ++) {
         FrameLayoutView *view = views[idx];
+        if(![view isKindOfClass:[FrameLayoutView class]]) {
+            view = [FrameLayoutView viewWithJson:view];
+        }
+        
         if(view.value > 0.0) {
             height = view.value;
         }
@@ -269,6 +355,10 @@
     CGFloat widthValues = 0;
     for(NSInteger idx = 0; idx < nameCount ; idx ++) {
         FrameLayoutView *view = views[idx];
+        if(![view isKindOfClass:[FrameLayoutView class]]) {
+            view = [FrameLayoutView viewWithJson:view];
+        }
+        
         if(view.value > 0.0) {
             widthValues += view.value;
         }
@@ -278,6 +368,10 @@
     
     for(NSInteger idx = 0; idx < nameCount ; idx ++) {
         FrameLayoutView *view = views[idx];
+        if(![view isKindOfClass:[FrameLayoutView class]]) {
+            view = [FrameLayoutView viewWithJson:view];
+        }
+        
         if(view.value > 0.0) {
             width = view.value;
         }

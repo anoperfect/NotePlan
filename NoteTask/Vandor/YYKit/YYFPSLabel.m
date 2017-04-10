@@ -67,14 +67,14 @@
     float fps = _count / delta;
     _count = 0;
     
-    CGFloat progress = fps / 60.0;
-    UIColor *color = [UIColor colorWithHue:0.27 * (progress - 0.2) saturation:1 brightness:0.9 alpha:1];
+//    CGFloat progress = fps / 60.0;
+//    UIColor *color = [UIColor colorWithHue:0.27 * (progress - 0.2) saturation:1 brightness:0.9 alpha:1];
     
     NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%d FPS",(int)round(fps)]];
-    [text yy_setColor:color range:NSMakeRange(0, text.length - 3)];
-    [text yy_setColor:[UIColor whiteColor] range:NSMakeRange(text.length - 3, 3)];
-    [text yy_setFont:_font range:NSMakeRange(0, text.length)];
-    [text yy_setFont:_subFont range:NSMakeRange(text.length - 4, 1)];
+//    [text yy_setColor:color range:NSMakeRange(0, text.length - 3)];
+//    [text yy_setColor:[UIColor whiteColor] range:NSMakeRange(text.length - 3, 3)];
+//    [text yy_setFont:_font range:NSMakeRange(0, text.length)];
+//    [text yy_setFont:_subFont range:NSMakeRange(text.length - 4, 1)];
     
     self.attributedText = text;
 }

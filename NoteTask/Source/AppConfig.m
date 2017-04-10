@@ -1213,8 +1213,6 @@ TaskModeDefault
     taskRecord.snTaskRecord = @"t1r6_6";
     [self configTaskRecordAdd:taskRecord];
     
-    
-    
 }
 
 
@@ -1222,10 +1220,7 @@ TaskModeDefault
 {
     for(NoteModel *note in noteTests) {
         //使用modifiedAt标记是否存在修改. 有修改才重新增加预制.
-        NSArray<NoteModel*> *notesQuery = [self configNoteGetsWithQuery:@{
-                                                                          @"title":note.title,
-                                                                          @"modifiedAt":note.modifiedAt,
-                                                                          }];
+        NSArray<NoteModel*> *notesQuery = [self configNoteGetsWithQuery:@{ @"title":note.title, @"modifiedAt":note.modifiedAt, }];
         if(notesQuery.count > 0) {
             NSLog(@"Note test already added.");
         }
@@ -1265,6 +1260,7 @@ TaskModeDefault
 
 - (void)testBeforeBuild
 {
+    [self test0];
 #if DEBUG
     [self.dbData removeDBName:@"config"];
 #endif
@@ -1274,7 +1270,6 @@ TaskModeDefault
 - (void)testAfterBuild
 {
     [self configNoteAddPreset];
-    
 #if DEBUG
     [self configNoteAddTest];
     [self configTaskAddTest];
@@ -1288,11 +1283,13 @@ TaskModeDefault
     [self test1];
 }
 
+- (void)test0
+{
+
+}
 
 - (void)test1
 {
     
 }
-
 @end
-

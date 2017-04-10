@@ -87,9 +87,9 @@
     
     [f frameLayoutHerizon:FRAMELAYOUT_NAME_MAIN
                   toViews:@[
-                            [FrameLayoutView viewWithName:@"_summary" percentage:0.62],
-                            [FrameLayoutView viewWithName:@"menus" percentage:0.18],
-                            [FrameLayoutView viewWithName:@"_settings" percentage:0.2],
+                            @{@"_summary":@"62%"},
+                            @{@"menus":@"18%"},
+                            @{@"_settings":@"20%"},
                             ]];
     
     _summary.frame =[f frameLayoutGet:@"_summary"];
@@ -325,3 +325,11 @@
 */
 
 @end
+
+
+
+
+
+
+
+

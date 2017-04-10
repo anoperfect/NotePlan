@@ -408,7 +408,7 @@ mode : CREATE
     if(borderPx.length > 0 && [borderPx hasSuffix:@"px"] && (px = [borderPx integerValue]) > 0) {
         NSLog(@"attributedString add : border");
         //[attributedString addAttribute:NSUnderlineStyleAttributeName value:@1 range:rangeAll];
-        
+#ifdef NOTEPARAGRAPH_USE_YYTEXT
         YYTextBorder *border = [YYTextBorder new];
         border.strokeColor = color;//[UIColor colorWithRed:1.000 green:0.029 blue:0.651 alpha:1.000];
         border.strokeWidth = 1;
@@ -416,6 +416,7 @@ mode : CREATE
         border.cornerRadius = 0;
         border.insets = UIEdgeInsetsMake(1, 1, 1, 1);
         attributedString.yy_textBackgroundBorder = border;
+#endif
     }
     
     NS0Log(@"%@", attributedString);

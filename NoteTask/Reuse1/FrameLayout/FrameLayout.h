@@ -26,6 +26,7 @@
 + (instancetype)viewWithName:(NSString*)name percentage:(CGFloat)percentage;
 + (instancetype)viewWithName:(NSString*)name percentage:(CGFloat)percentage edge:(UIEdgeInsets)edge;
 
++ (instancetype)viewWithJson:(id)json;
 
 @end
 

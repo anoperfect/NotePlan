@@ -20,7 +20,7 @@
 
 
 @property (nonatomic, strong) UIView *container;
-@property (nonatomic, strong) YYLabel *noteParagraphYYLabel;
+@property (nonatomic, strong) /*YYLabel*/ UILabel *noteParagraphYYLabel;
 @property (nonatomic, strong) UILabel *noteParagraphLabel;
 @property (nonatomic, strong) UITextView *noteParagraphTextView;
 

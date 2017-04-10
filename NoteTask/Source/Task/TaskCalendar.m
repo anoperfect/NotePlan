@@ -18,7 +18,7 @@
     //多选模式.
     NSMutableArray *_datesSelected;
     BOOL _selectionMode;
-    YYLabel *_datesDisplay;
+    UILabel *_datesDisplay;
     UIScrollView *_scrollView;
 }
 
@@ -67,7 +67,7 @@
         _textInput.layer.cornerRadius = _textInput.frame.size.height / 2;
         
         _scrollView = [[UIScrollView alloc] init];
-        _datesDisplay = [[YYLabel alloc] init];
+        _datesDisplay = [[UILabel alloc] init];
         _datesDisplay.numberOfLines = 0;
         CGFloat fontSize = (SCREEN_WIDTH/22.0);
         UIFont *font = FONT_MTSIZE(fontSize);

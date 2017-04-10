@@ -130,7 +130,8 @@
 {
     NS0Log(@"noteFromDictionary : %@", dict);
     NoteModel *note = [[NoteModel alloc] init];
-    note = [NoteModel mj_objectWithKeyValues:dict];
+//    note = [NoteModel mj_objectWithKeyValues:dict];
+    note = [NoteModel yy_modelWithJSON:dict];
 
     return note;
 }
@@ -179,7 +180,8 @@
     noteDict[@"countEdit"]        = @(self.countEdit);
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:noteDict];
     
-    dict = [NSDictionary dictionaryWithDictionary:[self mj_keyValues]];
+//    dict = [NSDictionary dictionaryWithDictionary:[self mj_keyValues]];
+    dict = [NSDictionary dictionaryWithDictionary:[self yy_modelToJSONObject]];
     return dict;
 }
 
