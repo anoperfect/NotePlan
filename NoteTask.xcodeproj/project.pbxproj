@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		52D32CFEEF63AA37CB17F890 /* Pods_NoteTask.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A940EE0C536659F6F0CDDF7 /* Pods_NoteTask.framework */; };
+		B549A11E1E9DDEB500CBCDB4 /* ViewContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = B549A11D1E9DDEB500CBCDB4 /* ViewContainer.m */; };
 		B57FDC321E66FD09005FCBD1 /* note.htm in Resources */ = {isa = PBXBuildFile; fileRef = B57FDC311E66FD09005FCBD1 /* note.htm */; };
 		B57FFE031E65C55F00EA280B /* DBData.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDD31E65C55F00EA280B /* DBData.m */; };
 		B57FFE051E65C55F00EA280B /* NSObject+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDD81E65C55F00EA280B /* NSObject+Util.m */; };
@@ -17,7 +18,6 @@
 		B57FFE091E65C55F00EA280B /* NSLogn.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDE21E65C55F00EA280B /* NSLogn.m */; };
 		B57FFE0A1E65C55F00EA280B /* UIpConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDE51E65C55F00EA280B /* UIpConfig.m */; };
 		B57FFE0B1E65C55F00EA280B /* UIpConfigDB.json in Resources */ = {isa = PBXBuildFile; fileRef = B57FFDE61E65C55F00EA280B /* UIpConfigDB.json */; };
-		B57FFE0C1E65C55F00EA280B /* ButtonData.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDE91E65C55F00EA280B /* ButtonData.m */; };
 		B57FFE0D1E65C55F00EA280B /* PushButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDEB1E65C55F00EA280B /* PushButton.m */; };
 		B57FFE0E1E65C55F00EA280B /* TextButtonLine.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFDED1E65C55F00EA280B /* TextButtonLine.m */; };
 		B57FFE181E65C6F200EA280B /* AppConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFE161E65C6F200EA280B /* AppConfig.m */; };
@@ -86,7 +86,6 @@
 		B57FFEF41E65CB7A00EA280B /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFEF11E65CB7A00EA280B /* YYFPSLabel.m */; };
 		B57FFEF51E65CB7A00EA280B /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = B57FFEF31E65CB7A00EA280B /* YYWeakProxy.m */; };
 		B57FFEF91E65E1E600EA280B /* LaunchScreen.Storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B57FFEF81E65E1E600EA280B /* LaunchScreen.Storyboard */; };
-		B58F8E9A1E9B3E7900EB279A /* Calculate in Resources */ = {isa = PBXBuildFile; fileRef = B58F8E991E9B3E7900EB279A /* Calculate */; };
 		B5D0014E1E65B8F900D435D8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D0014D1E65B8F900D435D8 /* main.m */; };
 		B5D001511E65B8F900D435D8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D001501E65B8F900D435D8 /* AppDelegate.m */; };
 /* End PBXBuildFile section */
@@ -95,6 +94,9 @@
 		5754D83ADDC3F9BC926BBCE6 /* Pods-NoteTask.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteTask.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask.debug.xcconfig"; sourceTree = "<group>"; };
 		8A940EE0C536659F6F0CDDF7 /* Pods_NoteTask.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteTask.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DC9CBE05DC8EA27528AF710 /* Pods-NoteTask.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteTask.release.xcconfig"; path = "Pods/Target Support Files/Pods-NoteTask/Pods-NoteTask.release.xcconfig"; sourceTree = "<group>"; };
+		B549A11A1E9DD3B100CBCDB4 /* Calculate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Calculate.m; sourceTree = "<group>"; };
+		B549A11C1E9DDEB500CBCDB4 /* ViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewContainer.h; sourceTree = "<group>"; };
+		B549A11D1E9DDEB500CBCDB4 /* ViewContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewContainer.m; sourceTree = "<group>"; };
 		B57FDC311E66FD09005FCBD1 /* note.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = note.htm; path = Source/note.htm; sourceTree = "<group>"; };
 		B57FFDD21E65C55F00EA280B /* DBData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBData.h; sourceTree = "<group>"; };
 		B57FFDD31E65C55F00EA280B /* DBData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBData.m; sourceTree = "<group>"; };
@@ -111,8 +113,6 @@
 		B57FFDE41E65C55F00EA280B /* UIpConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIpConfig.h; sourceTree = "<group>"; };
 		B57FFDE51E65C55F00EA280B /* UIpConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIpConfig.m; sourceTree = "<group>"; };
 		B57FFDE61E65C55F00EA280B /* UIpConfigDB.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UIpConfigDB.json; sourceTree = "<group>"; };
-		B57FFDE81E65C55F00EA280B /* ButtonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonData.h; sourceTree = "<group>"; };
-		B57FFDE91E65C55F00EA280B /* ButtonData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonData.m; sourceTree = "<group>"; };
 		B57FFDEA1E65C55F00EA280B /* PushButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushButton.h; sourceTree = "<group>"; };
 		B57FFDEB1E65C55F00EA280B /* PushButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushButton.m; sourceTree = "<group>"; };
 		B57FFDEC1E65C55F00EA280B /* TextButtonLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextButtonLine.h; sourceTree = "<group>"; };
@@ -241,7 +241,6 @@
 		B57FFEF21E65CB7A00EA280B /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YYWeakProxy.h; path = Vandor/YYKit/YYWeakProxy.h; sourceTree = "<group>"; };
 		B57FFEF31E65CB7A00EA280B /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YYWeakProxy.m; path = Vandor/YYKit/YYWeakProxy.m; sourceTree = "<group>"; };
 		B57FFEF81E65E1E600EA280B /* LaunchScreen.Storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.Storyboard; path = Resources/LaunchScreen.Storyboard; sourceTree = "<group>"; };
-		B58F8E991E9B3E7900EB279A /* Calculate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Calculate; sourceTree = "<group>"; };
 		B5D001491E65B8F900D435D8 /* NoteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D0014D1E65B8F900D435D8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B5D0014F1E65B8F900D435D8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -349,8 +348,8 @@
 		B57FFDE71E65C55F00EA280B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				B57FFDE81E65C55F00EA280B /* ButtonData.h */,
-				B57FFDE91E65C55F00EA280B /* ButtonData.m */,
+				B549A11C1E9DDEB500CBCDB4 /* ViewContainer.h */,
+				B549A11D1E9DDEB500CBCDB4 /* ViewContainer.m */,
 				B57FFDEA1E65C55F00EA280B /* PushButton.h */,
 				B57FFDEB1E65C55F00EA280B /* PushButton.m */,
 				B57FFDEC1E65C55F00EA280B /* TextButtonLine.h */,
@@ -605,7 +604,7 @@
 		B58F8E981E9B3E7900EB279A /* Calculate */ = {
 			isa = PBXGroup;
 			children = (
-				B58F8E991E9B3E7900EB279A /* Calculate */,
+				B549A11A1E9DD3B100CBCDB4 /* Calculate.m */,
 			);
 			path = Calculate;
 			sourceTree = "<group>";
@@ -736,7 +735,6 @@
 				B57FFE0B1E65C55F00EA280B /* UIpConfigDB.json in Resources */,
 				B57FFE941E65C9D400EA280B /* PictureCacheError.png in Resources */,
 				B57FFE191E65C6F200EA280B /* db.json in Resources */,
-				B58F8E9A1E9B3E7900EB279A /* Calculate in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,6 +834,7 @@
 				B57FFE821E65C8C400EA280B /* SettingAppDetailViewController.m in Sources */,
 				B57FFE091E65C55F00EA280B /* NSLogn.m in Sources */,
 				B57FFE841E65C8C500EA280B /* SettingTaskModeViewController.m in Sources */,
+				B549A11E1E9DDEB500CBCDB4 /* ViewContainer.m in Sources */,
 				B57FFE251E65C73100EA280B /* CustomViewController.m in Sources */,
 				B57FFEDB1E65CAF300EA280B /* GCDQueue.m in Sources */,
 				B57FFEF41E65CB7A00EA280B /* YYFPSLabel.m in Sources */,
@@ -855,7 +854,6 @@
 				B57FFE271E65C73100EA280B /* RootViewController.m in Sources */,
 				B57FFE6F1E65C83A00EA280B /* TaskEditSubTaskViewController.m in Sources */,
 				B57FFE421E65C79800EA280B /* NoteViewController.m in Sources */,
-				B57FFE0C1E65C55F00EA280B /* ButtonData.m in Sources */,
 				B57FFEDA1E65CAF300EA280B /* GCDGroup.m in Sources */,
 				B57FFE3C1E65C79800EA280B /* NoteDetailViewController.m in Sources */,
 				B57FFE031E65C55F00EA280B /* DBData.m in Sources */,

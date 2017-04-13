@@ -169,26 +169,17 @@
 - (void)navigationItemRightInit
 {
     PushButtonData *buttonDataChecked = [[PushButtonData alloc] init];
-    buttonDataChecked.actionString = @"settingChecked";
     buttonDataChecked.imageName = @"SettingChecked";
     PushButton *buttonChecked = [[PushButton alloc] init];
     buttonChecked.frame = CGRectMake(0, 0, 44, 44);
-    buttonChecked.actionData = buttonDataChecked;
+    buttonChecked.buttonData = buttonDataChecked;
     buttonChecked.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
-    [buttonChecked setImage:[UIImage imageNamed:buttonDataChecked.imageName] forState:UIControlStateNormal];
     [buttonChecked addTarget:self action:@selector(settingChecked) forControlEvents:UIControlEventTouchDown];
+    
     UIBarButtonItem *itemChecked = [[UIBarButtonItem alloc] initWithCustomView:buttonChecked];
-    
-    NSLog(@"%@", [UIImage imageNamed:buttonDataChecked.imageName]);
-
-    
     self.navigationItem.rightBarButtonItems = @[
                                                 itemChecked,
                                                 ];
-    
-    
-    
-    
 }
 
 

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ButtonData.h"
+
 
 
 
@@ -16,8 +16,31 @@
 @interface PushButtonData : NSObject
 
 @property (nonatomic, strong) NSString              *actionString;
+@property (nonatomic, unsafe_unretained)            id target;
+
+
+//@property (nonatomic, strong) NSString              *title;
+
+
+
+//@property (nonatomic, assign) NSInteger     typeLayout;     //图文类型. 单图. 单文. 左图右文. 左文右图. 上图下文. 上文下图.
+//@property (nonatomic, assign) UIEdgeInsets  edgeImage;      //根据类型, 只取部分参数.
+//@property (nonatomic, assign) UIEdgeInsets  edgeTitleLabel; //根据类型, 只取部分参数.
+//@property (nonatomic, assign) NSDictionary          *additonalInfo;
+
+
+
+//Normal.
 @property (nonatomic, strong) NSString              *title;
+@property (nonatomic, strong) UIColor               *titleColor;
+@property (nonatomic, strong) NSString              *titleShadowColor;
 @property (nonatomic, strong) NSString              *imageName;
+@property (nonatomic, strong) NSString              *backgroundImageName;
+@property (nonatomic, strong) NSAttributedString    *attributedTitle;
+
+
+
+
 
 
 @end
@@ -32,14 +55,11 @@
 
 
 
-@property (nonatomic, strong) PushButtonData*   actionData;
+@property (nonatomic, strong) PushButtonData*   buttonData;
 
 
 
-@property (nonatomic, assign) NSInteger     typeLayout;     //图文类型. 单图. 单文. 左图右文. 左文右图. 上图下文. 上文下图.
-@property (nonatomic, assign) UIEdgeInsets  edgeImage;      //根据类型, 只取部分参数.
-@property (nonatomic, assign) UIEdgeInsets  edgeTitleLabel; //根据类型, 只取部分参数.
-@property (nonatomic, assign) NSDictionary          *additonalInfo;
+
 
 
 @end
@@ -50,21 +70,7 @@
 
 
 
-@interface ViewContainer : UIView
 
-- (void)horizonLayoutViews:(NSArray<UIView*>*) subviews
-                      edge:(UIEdgeInsets)edge
-               subViewEdge:(UIEdgeInsets)subviewEdge;
-
-- (void)verticalLayoutViews:(NSArray<UIView*>*) subviews
-                       edge:(UIEdgeInsets)edge
-                subViewEdge:(UIEdgeInsets)subviewEdge;
-
-
-
-
-
-@end
 
 
 @interface UIButton (UIButtonImageWithLable)

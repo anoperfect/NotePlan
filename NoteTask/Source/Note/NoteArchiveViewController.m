@@ -159,15 +159,13 @@ static NSDate *kdateStart;
 {
     PushButtonData *dataMore = [[PushButtonData alloc] init];
     dataMore.imageName = @"more";
-    dataMore.actionString = @"more";
     PushButton *buttonMore = [[PushButton alloc] init];
     buttonMore.frame = CGRectMake(0, 0, 44, 44);
-    buttonMore.actionData = dataMore;
+    buttonMore.buttonData = dataMore;
     buttonMore.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
-    [buttonMore setImage:[UIImage imageNamed:buttonMore.actionData.imageName] forState:UIControlStateNormal];
     [buttonMore addTarget:self action:@selector(actionMore) forControlEvents:UIControlEventTouchDown];
-    UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
     
+    UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
     self.navigationItem.rightBarButtonItems = @[
                                                 itemMore,
                                                 ];

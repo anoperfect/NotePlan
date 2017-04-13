@@ -97,143 +97,13 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 }
 
 
-#if 0
-- (void)setTaskInfoArrange:(TaskInfoArrange*)taskInfoArrange
-{
-    _data = taskInfoArrange;
-    _taskinfo = taskInfoArrange.taskinfo;
-    
-    CGRect frameCell = self.frame;
-    UIEdgeInsets edgeContainer = UIEdgeInsetsMake(10, 10, 0, 10);
-    UIEdgeInsets edgeSummary = UIEdgeInsetsMake(10, 10, 10, 10);
-
-    CGRect frameContainer = self.bounds;
-    frameContainer = UIEdgeInsetsInsetRect(frameContainer, edgeContainer);
-    CGRect frameSummary = UIEdgeInsetsInsetRect(CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height), edgeSummary);
-    
-    CGRect frameActions;
-    self.summayView.numberOfLines = 0;
-    if(self.detailedMode) {
-        self.summayView.numberOfLines = 0;
-        frameSummary.size.height = 100;
-    }
-    
-    NSUInteger length = [_taskinfo.content length];
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_taskinfo.content];
-    UIColor *textColor = [UIColor blackColor];
-    UIColor *textFinishColor = [UIColor grayColor];
-    UIFont *textFont = [UIFont systemFontOfSize:14.5];
-    UIFont *textFinishFont = [UIFont systemFontOfSize:14.6];
-    
-    if(_taskinfo.finishedAt.length == 0) {
-        [attributedString addAttribute:NSFontAttributeName value:textFont range:NSMakeRange(0, attributedString.length)];
-        [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:NSMakeRange(0, attributedString.length)];
-        [attributedString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, attributedString.length)];
-    }
-    else {
-        [attributedString addAttribute:NSFontAttributeName value:textFinishFont range:NSMakeRange(0, attributedString.length)];
-        [attributedString addAttribute:(id)kCTForegroundColorAttributeName value:(id)textFinishColor.CGColor range:NSMakeRange(0, attributedString.length)];
-        [attributedString addAttribute:NSForegroundColorAttributeName value:textFinishColor range:NSMakeRange(0, attributedString.length)];
-        
-        //删除线.
-        [attributedString addAttribute:NSStrikethroughStyleAttributeName value:@(NSUnderlinePatternSolid | NSUnderlineStyleSingle) range:NSMakeRange(0, length)];
-        [attributedString addAttribute:NSStrikethroughColorAttributeName value:(id)textFinishColor range:NSMakeRange(0, length)];
-    }
-    
-    self.summayView.attributedText = attributedString;
-    
-    
-    CGSize size = [self.summayView sizeThatFits:frameSummary.size];
-    frameSummary.size.height = size.height;
-    self.summayView.frame = frameSummary;
-    
-    NSLog(@"fit --- %lf, %lf", size.width, size.height);
-    self.actionsMenu.hidden = YES;
-    self.actionsContainer.hidden = YES;
-    
-    if(self.detailedMode) {
-//        self.actionsMenu.hidden = NO;
-        frameActions = CGRectMake(0, frameSummary.origin.y + frameSummary.size.height + 10, frameContainer.size.width, 36);
-        self.actionsMenu.frame = frameActions;
-        NSArray<NSString*> *actionsKeyword = @[@"TaskActionSignIn", @"TaskActionTicking", @"TaskActionEdit", @"TaskActionFinish", @"TaskActionRedo", @"TaskActionMore"];
-        NSInteger count = actionsKeyword.count;
-        NSLog(@"actions count : %zd", count);
-        
-        CGFloat heightActions = 36;
-        CGFloat heightAction = 18;
-        CGFloat padding = (frameActions.size.width - actionsKeyword.count * heightAction) / (actionsKeyword.count + 1);
-        CGFloat edgeTop = (heightActions - heightAction) / 2 ;
-        CGFloat edgeLeft = (frameActions.size.width / actionsKeyword.count - heightAction ) / 2;
-        
-        frameActions.size.height = 0;
-        self.actionsContainer.frame = frameActions;
-        self.actionsContainer.hidden = NO;
-        
-        [self.actionsContainer.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        for(NSInteger idx = 0; idx < count; idx++) {
-            NSString *s = actionsKeyword[idx];
-            
-            PushButtonData *pushButtonData = [[PushButtonData alloc] init];
-            pushButtonData.actionString = s;
-            
-            PushButton *button = [[PushButton alloc] init];
-            button.actionData = pushButtonData;
-            [self.actionsContainer addSubview:button];
-            [button setImage:[UIImage imageNamed:s] forState:UIControlStateNormal];
-            button.frame = CGRectMake(padding + idx * (padding + heightAction), (heightActions - heightAction) / 2, heightAction, heightAction);
-            [button setImageEdgeInsets:UIEdgeInsetsMake(edgeTop, edgeLeft, edgeTop, edgeLeft)];
-            button.frame = CGRectMake(idx * frameActions.size.width / actionsKeyword.count, 0, frameActions.size.width / actionsKeyword.count, heightActions);
-            LOG_RECT(button.frame, @"button")
-            NSLog(@"%lf, %lf", edgeTop, edgeLeft);
-            
-            
-            [button addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchDown];
-        }
-        
-        frameContainer.size.height = frameActions.origin.y + frameActions.size.height;
-        
-        self.actionsMenu.backgroundColor = [UIColor whiteColor];
-    }
-    else {
-        self.actionsMenu.hidden = YES;
-        frameContainer.size.height = frameSummary.size.height + edgeSummary.top + edgeSummary.bottom;
-        frameCell.size.height = frameContainer.size.height + edgeContainer.top + edgeContainer.bottom;
-    }
-    
-#if 0
-    CAGradientLayer *newShadow = [[CAGradientLayer alloc] init];
-    CGRect newShadowFrame =   CGRectMake(0, 0, frameContainer.size.width, frameContainer.size.height);
-    newShadow.frame = newShadowFrame;
-    CGColorRef darkColor = [UIColor blackColor].CGColor;
-    CGColorRef lightColor =    [UIColor whiteColor].CGColor;
-    newShadow.colors = [NSArray arrayWithObjects:(__bridge id _Nonnull)(lightColor),darkColor,nil];
-    [self.container.layer insertSublayer:newShadow atIndex:0];
-#endif
-    
-    
-    frameCell.size.height = frameContainer.size.height + edgeContainer.top + edgeContainer.bottom;
-    NSLog(@"--- cell height : %lf", frameCell.size.height);
-    self.frame = frameCell;
-    self.container.frame = frameContainer;
-    self.container.backgroundColor = [UIColor whiteColor];
-    
-    //模拟一个立体效果.
-    self.container.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.container.layer.shadowOffset = CGSizeMake(0, 0);
-    self.container.layer.shadowOpacity = 0.8;
-    self.container.layer.shadowRadius = 1;
-    
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
-}
-#endif
-
 - (void)buttonClick:(id)sender
 {
     PushButton *button = sender;
-    NSLog(@"---%@", button.actionData.actionString);
+    NSLog(@"---%@", button.buttonData.actionString);
     
     if(self.actionOn) {
-        self.actionOn(button.actionData.actionString);
+        self.actionOn(button.buttonData.actionString);
     }
     
 }
@@ -487,7 +357,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
         pushButtonData.actionString = s;
         
         PushButton *button = [[PushButton alloc] init];
-        button.actionData = pushButtonData;
+        button.buttonData = pushButtonData;
         [actionsContainer addSubview:button];
         [button setImage:[UIImage imageNamed:s] forState:UIControlStateNormal];
         [button setImageEdgeInsets:UIEdgeInsetsMake(edgeTop, edgeLeft, edgeTop, edgeLeft)];
@@ -501,10 +371,10 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 - (void)buttonClick:(id)sender
 {
     PushButton *button = sender;
-    NSLog(@"---%@", button.actionData.actionString);
+    NSLog(@"---%@", button.buttonData.actionString);
     
     if(self.actionOn) {
-        self.actionOn(button.actionData.actionString);
+        self.actionOn(button.buttonData.actionString);
     }
     
 }

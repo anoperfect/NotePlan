@@ -205,23 +205,19 @@
     
     PushButtonData *dataCreate = [[PushButtonData alloc] init];
     dataCreate.imageName = @"NoteAdd";
-    dataCreate.actionString = @"NoteAdd";
     PushButton *buttonCreate = [[PushButton alloc] init];
     buttonCreate.frame = CGRectMake(0, 0, 44, 44);
-    buttonCreate.actionData = dataCreate;
+    buttonCreate.buttonData = dataCreate;
     buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
-    [buttonCreate setImage:[UIImage imageNamed:buttonCreate.actionData.imageName] forState:UIControlStateNormal];
     [buttonCreate addTarget:self action:@selector(actionCreateNote) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemCreate = [[UIBarButtonItem alloc] initWithCustomView:buttonCreate];
     
     PushButtonData *dataMore = [[PushButtonData alloc] init];
     dataMore.imageName = @"more";
-    dataMore.actionString = @"more";
     PushButton *buttonMore = [[PushButton alloc] init];
     buttonMore.frame = CGRectMake(0, 0, 44, 44);
-    buttonMore.actionData = dataMore;
+    buttonMore.buttonData = dataMore;
     buttonMore.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
-    [buttonMore setImage:[UIImage imageNamed:buttonMore.actionData.imageName] forState:UIControlStateNormal];
     [buttonMore addTarget:self action:@selector(actionMore) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
     
@@ -855,7 +851,7 @@
         NSLog(@"index : %zd, %@ %@", index, data.actionString, data.imageName);
         
         PushButton *button = [[PushButton alloc] init];
-        button.actionData = data;
+        button.buttonData = data;
         [button addTarget:self action:@selector(actionMuiltSelectOnPushButton:) forControlEvents:UIControlEventTouchDown];
         [button setFrame:CGRectMake(0, 0, 60, 60)];
 
@@ -1014,7 +1010,7 @@
 
 - (void)actionMuiltSelectOnPushButton:(PushButton*)button
 {
-    [self actionMuiltSelectOnKeyword:button.actionData.actionString];
+    [self actionMuiltSelectOnKeyword:button.buttonData.actionString];
 }
 
 

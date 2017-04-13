@@ -128,9 +128,8 @@
     buttonDataCreate.imageName = @"TaskAdd";
     PushButton *buttonCreate = [[PushButton alloc] init];
     buttonCreate.frame = CGRectMake(0, 0, 44, 44);
-    buttonCreate.actionData = buttonDataCreate;
+    buttonCreate.buttonData = buttonDataCreate;
     buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
-    [buttonCreate setImage:[UIImage imageNamed:buttonDataCreate.imageName] forState:UIControlStateNormal];
     [buttonCreate addTarget:self action:@selector(actionCreate) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemCreate = [[UIBarButtonItem alloc] initWithCustomView:buttonCreate];
     
@@ -140,9 +139,8 @@
     buttonDataMore.imageName = @"more";
     PushButton *buttonMore = [[PushButton alloc] init];
     buttonMore.frame = CGRectMake(0, 0, 44, 44);
-    buttonMore.actionData = buttonDataMore;
+    buttonMore.buttonData = buttonDataMore;
     buttonMore.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
-    [buttonMore setImage:[UIImage imageNamed:buttonDataMore.imageName] forState:UIControlStateNormal];
     [buttonMore addTarget:self action:@selector(actionMore) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemMore = [[UIBarButtonItem alloc] initWithCustomView:buttonMore];
     

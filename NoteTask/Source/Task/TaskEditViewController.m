@@ -286,9 +286,8 @@ static NSString *kStringStepScheduleDay = @"2.执行日期";
     buttonDataCreate.imageName = @"TaskEditDone";
     PushButton *buttonCreate = [[PushButton alloc] init];
     buttonCreate.frame = CGRectMake(0, 0, 44, 44);
-    buttonCreate.actionData = buttonDataCreate;
+    buttonCreate.buttonData = buttonDataCreate;
     buttonCreate.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    [buttonCreate setImage:[UIImage imageNamed:buttonDataCreate.imageName] forState:UIControlStateNormal];
     [buttonCreate addTarget:self action:@selector(actionCreate) forControlEvents:UIControlEventTouchDown];
     UIBarButtonItem *itemCreate = [[UIBarButtonItem alloc] initWithCustomView:buttonCreate];
     
