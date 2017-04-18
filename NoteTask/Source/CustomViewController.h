@@ -95,3 +95,24 @@
 #define SCREEN_SIZE       [UIScreen mainScreen].bounds.size
 #define SCREEN_BOUNDS     [UIScreen mainScreen].bounds
 
+
+
+
+
+@protocol ActionMenuDeleage <NSObject>
+
+- (void)actionMenuSelected:(NSInteger)idx data:(NSDictionary*)data;
+- (void)actionMenuDismiss;
+
+
+
+@end
+
+
+@interface ActionMenuViewController : UIViewController
+
+@property (nonatomic, weak) id<ActionMenuDeleage> delegate;
+
++ (ActionMenuViewController*)actionMenuViewControllerWithDatas:(NSArray<NSDictionary*>*)datas;
+
+@end

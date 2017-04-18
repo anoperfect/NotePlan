@@ -7,8 +7,8 @@
 //
 
 #import "NoteShareViewController.h"
-#import "NoteModel.h"
 #import "NoteDetailViewController.h"
+
 @interface NoteShareViewController () <UIWebViewDelegate>
 
 

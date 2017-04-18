@@ -68,6 +68,8 @@
 
 #import "AFNetworking.h"
 
+#import "NoteModel.h"
+#import "TaskModel.h"
 #import "AppConfig.h"
 
 #import "TextButtonLine.h"

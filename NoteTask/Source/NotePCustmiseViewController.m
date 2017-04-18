@@ -7,8 +7,8 @@
 //
 
 #import "NotePCustmiseViewController.h"
-#import "NoteModel.h"
 #import "ColorSelector.h"
+
 
 
 

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "NotePropertyView.h"
-#import "NoteModel.h"
+
 
 
 

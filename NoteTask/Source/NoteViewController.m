@@ -7,7 +7,6 @@
 //
 
 #import "NoteViewController.h"
-#import "NoteModel.h"
 #import "NoteCell.h"
 #import "NoteFilter.h"
 #import "JSDropDownMenu.h"
@@ -1065,3 +1064,4 @@
 */
 
 @end
+

@@ -7,15 +7,11 @@
 //
 
 #import "CustomViewController.h"
-#import "MBProgressHUD.h"
 
 
 
 
 
-
-
-int const ktag_popupView_container = 1000000002;
 
 @interface CustomViewController () <MBProgressHUDDelegate>
 @property (nonatomic, strong) MBProgressHUD *messageIndicationHUD;
@@ -35,7 +31,7 @@ int const ktag_popupView_container = 1000000002;
 
 @implementation CustomViewController
 
-#define TAG_popupView_container     1000000002
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -119,22 +115,6 @@ int const ktag_popupView_container = 1000000002;
     for(UIViewController *vc in self.navigationController.viewControllers) {
         [_viewControllersWillDisAppear addObject:[NSNumber numberWithUnsignedLongLong:(unsigned long long)vc]];
     }
-//    
-//    NSInteger countVcs = _viewControllersWillDisAppear.count;
-//    
-//    if(countVcs >= 2 && [_viewControllersWillDisAppear[countVcs-2] unsignedLongLongValue] == (unsigned long long)self) {
-//        NSLog(@"****** [%@]detectDisAppearByPushNew ", self.class);
-//    }
-//    
-//    NSNumber *selfAddrNumber = [NSNumber numberWithUnsignedLongLong:(unsigned long long)self];
-//    if(_viewControllersWillAppear.count > 0
-//       && [_viewControllersWillAppear indexOfObject:selfAddrNumber] == _viewControllersWillAppear.count - 1
-//       && NSNotFound == [_viewControllersWillDisAppear indexOfObject:selfAddrNumber]) {
-//        NSLog(@"****** [%@]detectDisAppearByPopped", self.class);
-//    }
-//    
-//    
-//    
 }
 
 
@@ -190,19 +170,10 @@ int const ktag_popupView_container = 1000000002;
 }
 
 
-
 - (void)dismissIndicationText
 {
     [self.messageIndicationHUD hideAnimated:YES];
 }
-
-////一直沿用self.messageIndicationHUD可能导致不能显示. 注意设置self.messageIndicationHUD.removeFromSuperViewOnHide = NO;
-//- (void)hudWasHidden:(MBProgressHUD *)hud
-//{return ;
-//    self.messageIndicationHUD = nil;
-//}
-
-
 
 
 - (void)showProgressText:(NSString*)text inTime:(NSTimeInterval)secs
@@ -232,6 +203,23 @@ int const ktag_popupView_container = 1000000002;
 }
 
 
+const NSInteger kActionButtonTag = 6000;
+
+/*
+ actionMenu dictionary:
+ string:
+ image:
+ */
+- (void)showActionMenus:(NSArray<NSDictionary*>*)actionMenus
+         selectedHandle:(void(^)(NSInteger idx, NSDictionary* menuData))select
+                dismiss:(void(^)(void))dismiss
+{
+    ActionMenuViewController *vc = [ActionMenuViewController actionMenuViewControllerWithDatas:actionMenus];
+    [self presentViewController:vc animated:YES completion:nil];
+}
+
+NSInteger const ktagPopupViewContainer = 1000000002;
+
 - (void)showPopupView:(UIView*)view
            commission:(NSDictionary*)commission
        clickToDismiss:(BOOL)clickToDismiss
@@ -240,7 +228,7 @@ int const ktag_popupView_container = 1000000002;
     UIView *containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
-    containerView.tag = TAG_popupView_container;
+    containerView.tag = ktagPopupViewContainer;
     [[[UIApplication sharedApplication] keyWindow] addSubview:containerView];
     [containerView addSubview:view];
     
@@ -277,15 +265,62 @@ int const ktag_popupView_container = 1000000002;
         self.popupViewDismissBlock();
     }
     
-//    UIView *containerView = [self.view viewWithTag:TAG_popupView_container];
-    UIView *containerView = [[[UIApplication sharedApplication] keyWindow] viewWithTag:TAG_popupView_container];
+    UIView *containerView = [[[UIApplication sharedApplication] keyWindow] viewWithTag:ktagPopupViewContainer];
     for(id obj in containerView.subviews) {
-        //        [obj removeObserver:self forKeyPath:@"frame"];
         [obj removeFromSuperview];
     }
     
     [containerView removeFromSuperview];
     containerView = nil;
+}
+
+
+- (void)showPopupView1:(UIView*)view
+           commission:(NSDictionary*)commission
+       clickToDismiss:(BOOL)clickToDismiss
+              dismiss:(void(^)(void))dismiss
+{
+    UIViewController *vc = [[UIViewController alloc] init];
+    UIView *containerView = vc.view;
+    
+    containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
+    containerView.alpha = 0.9;
+    containerView.tag = ktagPopupViewContainer;
+    [containerView addSubview:view];
+    
+    if([commission[@"containerBackgroundColor"] isKindOfClass:[UIColor class]]) {
+        containerView.backgroundColor = commission[@"containerBackgroundColor"];
+    }
+    
+    if([commission[@"popAnimation"] isKindOfClass:[NSNumber class]]) {
+        CGRect frameView = view.frame;
+        frameView.origin.y = containerView.frame.size.height;
+        view.frame = frameView;
+        [UIView animateWithDuration:0.5 animations:^{
+            CGRect frameView = view.frame;
+            frameView.origin.y = containerView.frame.size.height - frameView.size.height;
+            view.frame = frameView;
+        }];
+    }
+    
+    if(clickToDismiss) {
+        UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopupView)];
+        tapGestureRecognizer.numberOfTapsRequired = 1;
+        [containerView addGestureRecognizer:tapGestureRecognizer];
+    }
+    
+    self.popupViewDismissBlock = dismiss;
+    
+    vc.modalPresentationStyle = UIModalPresentationCustom;
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    
+    [self presentViewController:vc animated:NO completion:nil];
+}
+
+
+- (void)dismissPopupView1
+{
+    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 
@@ -358,40 +393,6 @@ int const ktag_popupView_container = 1000000002;
 {
     NSLog(@"[%@] customViewWillAppearByPopBack", self.class);
 }
-
-
-- (void)test1
-{
-    
-    
-    
-    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 - (void)didReceiveMemoryWarning {
@@ -557,6 +558,140 @@ int const ktag_popupView_container = 1000000002;
     }
 }
 
+
+
+@end
+
+
+
+@interface ActionMenuViewController ()
+
+@property (nonatomic, strong) NSArray<NSDictionary*>* datas;
+
+@property (nonatomic, strong) NSMutableArray<NSString*> *buttonTexts;
+@end
+
+
+@implementation ActionMenuViewController
+
++ (ActionMenuViewController*)actionMenuViewControllerWithDatas:(NSArray<NSDictionary*>*)datas
+{
+    ActionMenuViewController *vc = [[ActionMenuViewController alloc] init];
+    vc.datas = datas;
+    [vc displayMenus];
+    
+    return vc;
+}
+
+
+- (void)displayMenus
+{
+    NSInteger idx = 0;
+    CGFloat buttonWidth = 60;
+    
+    _buttonTexts = [[NSMutableArray alloc] init];
+    for(NSDictionary *d in self.datas) {
+        if([d[@"string"] isKindOfClass:[NSString class]]) {
+            [_buttonTexts addObject:d[@"string"]];
+        }
+    }
+    
+    NSInteger count = _buttonTexts.count;
+    for(NSString *text in _buttonTexts) {
+        UIButton *button = [[UIButton alloc] init];
+        button.frame = CGRectMake(0, 0, buttonWidth, buttonWidth);
+        [button setTitle:text forState:UIControlStateNormal];
+        button.center = CGPointMake(self.view.frame.size.width - buttonWidth + buttonWidth / 2, buttonWidth / 2);
+        
+        button.tag = idx + kActionButtonTag;
+        button.backgroundColor = [UIColor clearColor];
+        [button addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchDown];
+        
+        CALayer *borderLayer = [CALayer layer];
+        CGFloat padding = buttonWidth * 0.125;
+        borderLayer.frame = CGRectMake(padding, padding, buttonWidth - 2 * padding, buttonWidth - 2 * padding);
+        borderLayer.borderColor = [UIColor blackColor].CGColor;
+        borderLayer.borderWidth = 1;
+        borderLayer.cornerRadius = borderLayer.frame.size.width / 2;
+        borderLayer.name = @"round";
+        [button.layer addSublayer:borderLayer];
+        
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        button.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        button.titleLabel.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
+        button.contentEdgeInsets = UIEdgeInsetsMake(0, 17, 0, 17);//测试经验值.
+        button.hidden = YES;
+        
+        [self.view addSubview:button];
+        
+        idx ++;
+    }
+    
+    [UIView animateWithDuration:0.6
+                     animations:^{
+                         for(NSInteger idx = 0; idx < count ; idx ++) {
+                             UIView *view = [self.view viewWithTag:idx+kActionButtonTag];
+                             view.center = CGPointMake(self.view.frame.size.width - buttonWidth + buttonWidth / 2, (idx * buttonWidth + buttonWidth / 2) * 1.1);
+                             view.hidden = NO;
+                         }
+                     }
+     
+                     completion:^(BOOL finished) {
+                         [UIView animateWithDuration:0.2
+                                          animations:^{
+                                              for(NSInteger idx = 0; idx < count ; idx ++) {
+                                                  UIView *view = [self.view viewWithTag:idx+kActionButtonTag];
+                                                  view.center = CGPointMake(self.view.frame.size.width - buttonWidth + buttonWidth / 2, (idx * buttonWidth + buttonWidth / 2) * 1.0);
+                                              }
+                                          }
+                          
+                                          completion:^(BOOL finished) {
+                                              
+                                              
+                                              
+                                          }
+                          ];
+                         
+                         
+                         
+                     }
+     ];
+}
+
+
+- (void)buttonClick:(UIButton*)button
+{
+    NSInteger index = button.tag - kActionButtonTag;
+    if(index >= 0 && index < self.datas.count) {
+        [UIView animateWithDuration:0.6
+                         animations:^{
+                             for(CALayer *layer in button.layer.sublayers) {
+                                 if([layer.name isEqualToString:@"round"]) {
+                                     layer.borderWidth = 3.6;
+                                     //                             button.layer.backgroundColor = [UIColor purpleColor].CGColor;
+                                     
+                                     layer.shadowColor = [UIColor blackColor].CGColor;//shadowColor阴影颜色
+                                     layer.shadowOffset = CGSizeMake(4,4);//shadowOffset阴影偏移,x向右偏移4，y向下偏移4，默认(0, -3),这个跟shadowRadius配合使用
+                                     layer.shadowOpacity = 0.8;//阴影透明度，默认0
+                                     layer.shadowRadius = 4;//阴影半径，默认3
+                                     
+                                     break;
+                                 }
+                             }
+                         }
+                         completion:^(BOOL finished) {
+                             //                             button.layer.borderWidth = 1.7;
+                             
+                         }
+         ];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if(self.delegate && [self.delegate respondsToSelector:@selector(actionMenuSelected:data:)]) {
+                [self.delegate actionMenuSelected:index data:self.datas[index]];
+            }
+        });
+    }
+}
 
 
 @end

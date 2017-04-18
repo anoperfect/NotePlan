@@ -82,21 +82,7 @@
 - (NSArray<ColorItem*> *)colorItemsParseFromJsonData:(NSData*)jsonData;
 - (void)updateUIpConfigColorItems:(NSArray<ColorItem*> *)colorItems;
 
-#if 0
-- (BOOL)addUIpConfigColorItems:(NSArray<ColorItem*> *)colorItems;
-- (BOOL)updateUIpConfigColor:(ColorItem*)colorItem;
-- (UIColor*)getUIpConfigColorByName:(NSString*)name;
 
-
-- (NSMutableArray*)getUIpConfigFonts;
-- (BOOL)updateUIpConfigFontstring:(NSString*)fontstring toName:(NSString*)name;
-- (UIColor*)getUIpConfigFontByName:(NSString*)name;
-
-
-- (NSMutableArray*)getUIpConfigBackgroundViews;
-- (BOOL)updateUIpConfigBackgroundViewData:(NSData*)backgroundViewData toName:(NSString*)name;
-- (UIColor*)getUIpConfigBackgroundViewDataByName:(NSString*)name;
-#endif
 
 @property (nonatomic, assign) BOOL nightmode;
 
@@ -110,10 +96,14 @@
 
 #define FONT_SYSTEM     [UIFont systemFontOfSize:[UIFont systemFontSize]]
 
-
 #define FONT_MT                 [UIFont fontWithName:@"Menlo-Bold"]
 #define FONT_MTSIZE(fontSize)   [UIFont fontWithName:@"Menlo-Bold" size:fontSize];
+
+
+
+
+
+
+//等宽字体
 //@"TimesNewRomanPS-BoldMT"
-//        UIFont *font = [UIFont fontWithName:@"TimesNewRomanPS-BoldMT" size:fontSize];
-//    UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:20];
-//    UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:20];
+//@"CourierNewPS-BoldMT"

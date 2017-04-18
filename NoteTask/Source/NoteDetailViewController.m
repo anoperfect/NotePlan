@@ -13,7 +13,6 @@
 #import "TextButtonLine.h"
 #import "CLDropDownMenu.h"
 #import "NotePCustmiseViewController.h"
-#import "NoteModel.h"
 #import "NoteDetailCell.h"
 #import "NoteShareViewController.h"
 @interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
@@ -506,19 +505,6 @@
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
-#if 0
-    if(self.indexPathOnEditing) {
-        if([indexPath isEqual:self.indexPathOnEditing]) {
-            return YES;
-        }
-        else {
-            return NO;
-        }
-    }
-    else {
-        return YES;
-    }
-#endif
 }
 
 
@@ -1646,4 +1632,5 @@
     _generatingPdf = NO;
     return pdfData;
 }
+
 @end

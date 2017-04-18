@@ -49,7 +49,7 @@
     dict[@"colornightstring"]           = self.colornightstring;
     dict[@"colornightstringDefault"]    = self.colornightstringDefault;
     
-    return dict;
+    return [NSDictionary dictionaryWithDictionary:dict];
 }
 
 
@@ -814,3 +814,6 @@ else { v = -1; }
 
 
 @end
+
+
+
