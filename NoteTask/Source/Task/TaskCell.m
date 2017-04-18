@@ -191,6 +191,7 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
     // Configure the view for the selected state
 }
 
+
 @end
 
 
@@ -713,8 +714,6 @@ static CGFunctionRef myGetFunction (CGColorSpaceRef colorspace)
 
 
 @end
-
-
 
 
 

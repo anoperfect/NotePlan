@@ -98,7 +98,7 @@
 
 
 
-
+//当前未使用.
 @protocol ActionMenuDeleage <NSObject>
 
 - (void)actionMenuSelected:(NSInteger)idx data:(NSDictionary*)data;

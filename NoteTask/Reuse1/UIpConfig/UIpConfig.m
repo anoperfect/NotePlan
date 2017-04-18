@@ -284,15 +284,6 @@
         
         
         for(ColorItem *colorItem in updates) {
-//            [infosUpdate addObject:@{
-//                                     @"name"                       : colorItem.name,
-//                                     @"title"                      : colorItem.title,
-//                                     @"enableCustmize"             : [NSNumber numberWithBool:colorItem.enableCustmize],
-//                                     @"colorstringDefault"         : colorItem.colorstringDefault,
-//                                     @"colornightstringDefault"    : colorItem.colornightstringDefault
-//                                     }];
-//            [infosQuery addObject:@{@"name":colorItem.name}];
-            
             NSArray *array = @[colorItem.name,colorItem.title,[NSNumber numberWithBool:colorItem.enableCustmize],colorItem.colorstringDefault,colorItem.colornightstringDefault];
             
             [values addObject:array];
@@ -460,7 +451,7 @@
         item.font = [UIFont fontFromString:item.fontstring];
         if(!item.font) {
             NSLog(@"#error - font null from [%@]", item.fontstring);
-            item.font = FONT_SMALL;
+            item.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
         }
     }
     
@@ -549,7 +540,7 @@
     font.font = [UIFont fontFromString:font.fontstring];
     if(!font.font) {
         NSLog(@"#error - font null from [%@]", font.fontstring);
-        font.font = FONT_SMALL;
+        font.font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     }
     
     BOOL result = [[AppConfig sharedConfigDB] configDBFontUpdate:font];
@@ -738,7 +729,7 @@ else { v = -1; }
 
 + (UIFont*)fontFromString:(NSString*)string
 {
-    UIFont *font = FONT_SMALL;
+    UIFont *font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     CGFloat size = [UIFont smallSystemFontSize];
     
     if([string hasPrefix:@"wp"]) {
@@ -791,13 +782,13 @@ else { v = -1; }
     NSString *fontString = nameAndFont[name];
     if(!fontString) {
         NSLog(@"fontWithName not assign (%@).", name);
-        font = FONT_SMALL;
+        font = [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
     }
     else {
         font = [UIFont fontFromString:fontString];
     }
     
-    NS0Log(@"FONT [%@] : %@", name, font);
+    NS0Log(@"Font [%@] : %@", name, font);
     return font;
     
 #if 0
@@ -808,10 +799,9 @@ else { v = -1; }
     }
     
     NSLog(@"#error - fontWithName [%@] not found.", name);
-    return FONT_SMALL;
+    return [UIFont systemFontOfSize:[UIFont smallSystemFontSize]];
 #endif
 }
-
 
 @end
 

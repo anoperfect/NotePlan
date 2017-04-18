@@ -1285,11 +1285,11 @@ TaskModeDefault
 
 - (void)test0
 {
-    
+
 }
 
 - (void)test1
 {
-    
+
 }
 @end

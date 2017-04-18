@@ -14,8 +14,8 @@
 
 
 @class NoteDetailCell;
-@protocol NoteDetailCellDelegate <NSObject>
 
+@protocol NoteDetailCellDelegate <NSObject>
 
 @end
 

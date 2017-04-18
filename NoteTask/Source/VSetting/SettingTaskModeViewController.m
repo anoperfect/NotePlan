@@ -86,8 +86,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.title = @"设置-任务";
+//    self.title = @"设置-任务";
     
+    self.navigationItem.title = @"设置-任务";
     
 }
 
@@ -101,4 +102,7 @@
 }
 
 
+
 @end
+
+

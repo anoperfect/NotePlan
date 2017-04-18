@@ -50,6 +50,7 @@
 
 
 
+
 @property (nonatomic, strong) UILabel  *italicLable;
 @property (nonatomic, strong) UISwitch *italicSwitch;
 
@@ -74,7 +75,6 @@
 @property (nonatomic, strong) ColorSelector *textColorSelector;
 
 @property (nonatomic, strong) void(^finishHandle)(NSDictionary *styleDictionary);
-
 
 
 

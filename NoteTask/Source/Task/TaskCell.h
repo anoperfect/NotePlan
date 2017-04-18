@@ -14,7 +14,10 @@
 
 
 @interface TaskCell : UITableViewCell
-- (void)setTaskInfo:(TaskInfo*)taskinfo finishedAts:(NSArray<TaskFinishAt*>*)finishedAts; //arrange mode使用此接口赋值.
+
+//arrange mode使用此接口赋值.
+- (void)setTaskInfo:(TaskInfo*)taskinfo finishedAts:(NSArray<TaskFinishAt*>*)finishedAts;
+
 @end
 
 
@@ -36,9 +39,6 @@
 @interface TaskRecordCell : UITableViewCell
 @property (nonatomic, strong) TaskRecord *taskRecord;
 @end
-
-
-
 
 
 

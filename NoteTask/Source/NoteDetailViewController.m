@@ -1302,7 +1302,7 @@
 {
     NSIndexPath *indexPathProperty = [self indexPathProperty];
     if([[self.tableNoteParagraphs indexPathsForVisibleRows] indexOfObject:indexPathProperty] != NSNotFound) {
-        //        [self.tableNoteParagraphs reloadData];
+
         [self reloadNoteParagraphAtIndexPath:indexPathProperty due:@"updateNotePropertyDisplay"];
     }
 }

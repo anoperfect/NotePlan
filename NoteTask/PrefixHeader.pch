@@ -20,12 +20,8 @@
 
 #endif
 
-#import "NSlogn.h"
-#import "FrameLayout.h"
-#import "UIpConfig.h"
-#import "DBData.h"
-#import "NSObject+Util.h"
-#import "NSString+Util.h"
+//pod
+#import "YYModel.h"
 #import "CoreText/CTStringAttributes.h"
 //#import "YYText/YYText.h"
 //#import <YYText/YYLabel.h>
@@ -48,7 +44,6 @@
 //#import <YYText/YYTextMagnifier.h>
 //#import <YYText/YYTextEffectWindow.h>
 //#import <YYText/YYTextKeyboardManager.h>
-#import "YYModel.h"
 #import "YYFPSLabel.h"
 #import "POP.h"
 #import "GCDWebServer.h"
@@ -60,25 +55,41 @@
 #import "JSDropDownMenu.h"
 #import "MBProgressHUD.h"
 
-
 #import "MJExtension.h"
-
-#import "RangeValueView.h"
-#import "UIView+SetRect.h"
-
+#import "JTCalendar/JTCalendar.h"
 #import "AFNetworking.h"
 
-#import "NoteModel.h"
-#import "TaskModel.h"
-#import "AppConfig.h"
+
+//Reuse1
+#import "NSlogn.h"
+#import "FrameLayout.h"
+#import "UIpConfig.h"
+#import "DBData.h"
+#import "NSObject+Util.h"
+#import "NSString+Util.h"
 
 #import "TextButtonLine.h"
 #import "ViewContainer.h"
 #import "PushButton.h"
 
+//Vandor
+#import "RangeValueView.h"
+#import "UIView+SetRect.h"
 
-#import <JTCalendar/JTCalendar.h>
+
+//Public
+#import "NoteModel.h"
+#import "TaskModel.h"
+#import "AppConfig.h"
+
+
 
 #import "CustomViewController.h"
 
+
 #endif /* PrefixHeader_pch */
+
+
+
+
+

@@ -25,7 +25,7 @@
 @property (nonatomic, strong) NSString *htmPath;
 @property (nonatomic, strong) NSString *pdfName;
 @property (nonatomic, strong) NSString *pdfPath;
-//@property (nonatomic, strong) NSData *pdfData;
+
 
 
 @property (nonatomic, strong) NSMutableArray<NSData*> *pdfDatas;
@@ -254,11 +254,6 @@
     self.buttonAirDrop.layer.cornerRadius = self.buttonAirDrop.frame.size.width / 2;
     self.buttonLANAddressShare.layer.cornerRadius = self.buttonLANAddressShare.frame.size.width / 2;
     self.buttonWANAddressShare.layer.cornerRadius = self.buttonWANAddressShare.frame.size.width / 2;
-    
-    
-    
-    
-    
     
 }
 

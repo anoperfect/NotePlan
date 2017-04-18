@@ -994,16 +994,17 @@
 }
 
 
-- (UIView*)mfilterViewBuild //desprated.
-{
-    //使用NoteFilter包裹JSDropDownMenu的时候,获取不到点击事件. 暂时使用JSDropDownMenu demo中的方式.
-    //    self.noteFilter = [[NoteFilter alloc] initWithFrame:CGRectMake(0, 64, VIEW_WIDTH, heightNoteFilter)];
-    //    [self.view addSubview:self.noteFilter];
-    //    self.noteFilter.backgroundColor = [UIColor yellowColor];
-    //
-    //    [self.view bringSubviewToFront:self.noteFilter];
-    return nil;
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
