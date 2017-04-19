@@ -504,13 +504,13 @@ TaskProperty
         }
         else {
             NSLog(@"show days menu.");
+            
+            NSMutableString *text = [[NSMutableString alloc] init];
+            
             NSMutableArray *menus = [[NSMutableArray alloc] init];
             
             if(self.mode == TASKINFO_MODE_ARRANGE) {
-                [menus addObject:@{
-                                   @"text" : self.arrange.arrangeName,
-                                   @"disableSelction" : @1
-                                   }];
+                [text appendFormat:@"安排模式:%@\n", self.arrange.arrangeName];
             }
             
             for(TaskFinishAt *status in self.finishedAts) {
@@ -525,8 +525,12 @@ TaskProperty
                 [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
             }
             
+            [text appendString:@"已经完成的任务显示对勾和完成时间"];
+            [text appendString:@"\n可点击未完成日期标记为完成"];
+            
+            
             __weak typeof(self) _self = self;
-            [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
+            [self showMenus:menus text:text selectAction:^(NSInteger idx, NSDictionary *menu) {
                 NSLog(@"select %@", menu);
                 [_self dismissMenus];
                 NSString *dateString = menu[@"text"];
@@ -575,11 +579,9 @@ TaskProperty
         NSLog(@"show days menu.");
         NSMutableArray *menus = [[NSMutableArray alloc] init];
         
+        NSMutableString *text = [[NSMutableString alloc] init];
         if(self.mode == TASKINFO_MODE_ARRANGE) {
-            [menus addObject:@{
-                               @"text" : self.arrange.arrangeName,
-                               @"disableSelction" : @1
-                               }];
+            [text appendFormat:@"安排模式:%@\n", self.arrange.arrangeName];
         }
         
         for(TaskFinishAt *status in self.finishedAts) {
@@ -596,8 +598,11 @@ TaskProperty
             [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
         }
         
+        [text appendString:@"已经完成的任务显示对勾和完成时间"];
+        [text appendString:@"\n可点击已完成日期标记为重新开始"];
+        
         __weak typeof(self) _self = self;
-        [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
+        [self showMenus:menus text:text selectAction:^(NSInteger idx, NSDictionary *menu) {
             NSLog(@"select %@", menu);
             [_self dismissMenus];
             NSString *dateString = menu[@"text"];
@@ -613,25 +618,25 @@ TaskProperty
 
 - (void)taskActionShowScheduleDaysFinishStatus
 {
+    LOG_POSTION
     NSMutableArray *menus = [[NSMutableArray alloc] init];
     for(TaskFinishAt *status in self.finishedAtsAll) {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         dict[@"text"] = status.dayString;
+        dict[@"disableSelction"] = @1;
         if(status.finishedAt.length > 0) {
             dict[@"detailText"] = [NSString stringWithFormat:@"%@", [TaskInfo dateTimeStringForDisplay:status.finishedAt]];
             dict[@"accessoryType"] = @(UITableViewCellAccessoryCheckmark);
-            dict[@"disableSelction"] = @1;
         }
         else {
-            dict[@"disableSelction"] = @1;
+            
         }
         
         [menus addObject:[NSDictionary dictionaryWithDictionary:dict]];
     }
     
-    [self showMenus:menus selectAction:^(NSInteger idx, NSDictionary *menu) {
-
-    }];
+    NSString *text = @"显示任务所有日期的完成情况";
+    [self showMenus:menus text:text selectAction:^(NSInteger idx, NSDictionary *menu) {}];
 }
 
 

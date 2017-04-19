@@ -43,6 +43,14 @@
 - (void)setTexts:(NSArray<NSString*>*)texts
 {
     _buttonTexts = texts;
+//    [self startDisplay];
+}
+
+
+- (void)layoutSubviews
+{
+    LOG_POSTION
+    [super layoutSubviews];
     [self startDisplay];
 }
 

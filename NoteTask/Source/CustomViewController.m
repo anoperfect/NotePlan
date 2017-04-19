@@ -272,6 +272,10 @@ NSInteger const ktagPopupViewContainer = 1000000002;
     
     [containerView removeFromSuperview];
     containerView = nil;
+    
+    if(self.presentedViewController) {
+        [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 
@@ -280,13 +284,15 @@ NSInteger const ktagPopupViewContainer = 1000000002;
        clickToDismiss:(BOOL)clickToDismiss
               dismiss:(void(^)(void))dismiss
 {
-    UIViewController *vc = [[UIViewController alloc] init];
+    PopViewController *vc = [[PopViewController alloc] init];
     UIView *containerView = vc.view;
     
     containerView.backgroundColor = [UIColor colorWithName:@"PopupContainerBackground"];
     containerView.alpha = 0.9;
     containerView.tag = ktagPopupViewContainer;
-    [containerView addSubview:view];
+//    [containerView addSubview:view];
+    vc.popupView = view;
+//    self.popupView_w = view;
     
     if([commission[@"containerBackgroundColor"] isKindOfClass:[UIColor class]]) {
         containerView.backgroundColor = commission[@"containerBackgroundColor"];
@@ -311,8 +317,7 @@ NSInteger const ktagPopupViewContainer = 1000000002;
     
     self.popupViewDismissBlock = dismiss;
     
-    vc.modalPresentationStyle = UIModalPresentationCustom;
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+
     
     [self presentViewController:vc animated:NO completion:nil];
 }
@@ -336,12 +341,25 @@ NSInteger const ktagPopupViewContainer = 1000000002;
 }
 
 
-- (void)showMenus:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
+- (void)showMenus:(NSArray<NSDictionary*>*)menus
+             text:(id)text
+     selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
 {
     CustomTableView *customTableView = [[CustomTableView alloc] initWithFrame:CGRectMake(VIEW_WIDTH, 0, VIEW_WIDTH, VIEW_HEIGHT)];
     customTableView.tag = 100045;
     [self addSubview:customTableView];
-    [customTableView setMenuDatas:menus selectAction:selectAction];
+    
+    if([text isKindOfClass:[NSAttributedString class]]) {
+        customTableView.sectionAttributedText = [[NSAttributedString alloc] initWithAttributedString:text];
+    }
+    else if([text isKindOfClass:[NSString class]]) {
+        customTableView.sectionText = [NSString stringWithString:text];
+    }
+    customTableView.menus = menus;
+    customTableView.selectAction = selectAction;
+    
+    
+//    [customTableView setMenuDatas:menus selectAction:selectAction];
 //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissMenus1:)];
 //    [customTableView addGestureRecognizer:tap];
     
@@ -419,20 +437,12 @@ NSInteger const ktagPopupViewContainer = 1000000002;
 @interface CustomTableView ()<UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *menuTableView;
-@property (nonatomic, strong) NSArray<NSDictionary*>* menus;
-@property (nonatomic, strong) void(^selectAction)(NSInteger idx, NSDictionary* menu);
-
+@property (nonatomic, assign) CGFloat sectionHeight;
 
 @end
 
 
 @implementation CustomTableView
-
-- (void)setMenuDatas:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction
-{
-    _menus = menus;
-    _selectAction = selectAction;
-}
 
 
 - (void)layoutSubviews
@@ -446,12 +456,11 @@ NSInteger const ktagPopupViewContainer = 1000000002;
     BOOL reload = YES;
     if(!_menuTableView) {
         
-        _menuTableView = [[UITableView alloc] initWithFrame:frameTableView style:UITableViewStyleGrouped];
+        _menuTableView = [[UITableView alloc] initWithFrame:frameTableView];
         [self addSubview:_menuTableView];
         _menuTableView.tag = 100045;
         _menuTableView.dataSource = self;
         _menuTableView.delegate = self;
-        _menuTableView.rowHeight = 45;
     }
     else {
         CGRect framePrev = _menuTableView.frame;
@@ -480,9 +489,57 @@ NSInteger const ktagPopupViewContainer = 1000000002;
 }
 
 
+- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if(!self.sectionText && self.sectionAttributedText) return nil;
+    
+    CGRect frame = tableView.bounds;
+    UIEdgeInsets edge = UIEdgeInsetsMake(10, 10, 10, 10);
+    frame = UIEdgeInsetsInsetRect(frame, edge);
+    
+    UILabel *lable = [[UILabel alloc] initWithFrame:frame];
+    lable.numberOfLines = 0;
+    if(self.sectionAttributedText) {
+        lable.attributedText = self.sectionAttributedText;
+    }
+    else {
+        lable.text = self.sectionText;
+    }
+    
+    CGSize size = [lable sizeThatFits:frame.size];
+    frame.size.height = size.height;
+    lable.frame = frame;
+    
+    self.sectionHeight = size.height + edge.top + edge.bottom;
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, self.sectionHeight)];
+    [view addSubview:lable];
+    
+    return view;
+}
+
+
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 1;
+    if(!self.sectionText && self.sectionAttributedText) return 1;
+    
+    CGRect frame = tableView.bounds;
+    frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(10, 10, 10, 10));
+    
+    UILabel *lable = [[UILabel alloc] initWithFrame:frame];
+    lable.numberOfLines = 0;
+    if(self.sectionAttributedText) {
+        lable.attributedText = self.sectionAttributedText;
+    }
+    else {
+        lable.text = self.sectionText;
+    }
+    
+    CGSize size = [lable sizeThatFits:frame.size];
+    frame.size.height = size.height;
+    lable.frame = frame;
+    
+    self.sectionHeight = size.height;
+    return self.sectionHeight + 20;
 }
 
 
@@ -545,6 +602,12 @@ NSInteger const ktagPopupViewContainer = 1000000002;
 {
     NSDictionary *menu = self.menus[indexPath.row];
     NSLog(@"menu : %@", menu);
+    
+    if([menu[@"disableSelction"] boolValue]) {
+        NSLog(@"disableSelction");
+        return ;
+    }
+    
     if([menu[@"deselectRow"] boolValue]) {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
     }
@@ -692,6 +755,87 @@ NSInteger const ktagPopupViewContainer = 1000000002;
         });
     }
 }
+
+
+@end
+
+
+
+
+@implementation PopViewController
+
+- (void)viewDidLoad
+{
+    LOG_POSTION
+    [super viewDidLoad];
+    
+    self.modalPresentationStyle = UIModalPresentationCustom;
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+}
+
+
+- (void)viewWillLayoutSubviews
+{
+    LOG_POSTION
+    [super viewWillLayoutSubviews];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    LOG_POSTION
+    [super viewWillAppear:animated];
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    LOG_POSTION
+    [super viewWillDisappear:animated];
+}
+
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    LOG_POSTION
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    LOG_POSTION
+    [super viewDidAppear:animated];
+    
+    if(self.popupView) {
+        [self.view addSubview:self.popupView];
+    }
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    LOG_POSTION
+    [super viewDidDisappear:animated];
+}
+
+
+- (void)viewDidLayoutSubviews
+{
+    LOG_POSTION
+    [super viewDidLayoutSubviews];
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 @end

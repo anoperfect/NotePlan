@@ -162,6 +162,59 @@
     [super viewWillDisappear:animated];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    NSLog(@"------");
+    [super viewDidAppear:animated];
+}
+
+- (void)viewDidAppear1:(BOOL)animated
+{
+    NSLog(@"------");
+    [super viewDidAppear:animated];
+    
+    static NSInteger kt = 0;
+    if(kt > 0) {
+        return ;
+    }
+    kt ++;
+    
+    PopViewController *vc = [[PopViewController alloc] init];
+    vc.view.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.2];
+    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    
+//    UIModalPresentationFullScreen /* 完全盖住原页面, 不显示透明. 原VC disappear. */
+//    UIModalPresentationPageSheet /* 完全盖住原页面, 不显示透明. 原VC disappear.*/
+//    UIModalPresentationFormSheet /* 完全盖住原页面, 不显示透明. 原VC disappear.*/
+//    UIModalPresentationCurrentContext /* 完全盖住原页面, 不显示透明. 原VC disappear.*/
+//    UIModalPresentationCustom /* 半透明. 原VC无动作.*/
+//    UIModalPresentationOverFullScreen /* 半透明. 原VC无动作.*/
+//    UIModalPresentationOverCurrentContext /* 半透明. 原VC无动作.*/
+//    UIModalPresentationPopover /* 完全盖住原页面, 不显示透明. 原VC disappear.*/
+//    UIModalPresentationNone /* 程序崩溃. */
+    
+    ;
+    
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self presentViewController:vc animated:YES completion:nil];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [vc dismissViewControllerAnimated:YES completion:nil];
+        });
+    });
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    NSLog(@"------");
+    [super viewDidDisappear:animated];
+}
+
 
 #pragma mark - navigation item
 - (void)navigationTitleRefresh

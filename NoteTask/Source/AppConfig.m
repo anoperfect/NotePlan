@@ -32,6 +32,7 @@
 
 @property (nonatomic, strong) AFHTTPSessionManager *session;
 
+
 @end
 
 
@@ -1282,6 +1283,7 @@ TaskModeDefault
     
     [self test1];
 }
+
 
 - (void)test0
 {

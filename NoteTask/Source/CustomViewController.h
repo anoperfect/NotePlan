@@ -37,7 +37,10 @@
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
 
-- (void)showMenus:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction;
+- (void)showMenus:(NSArray<NSDictionary*>*)menus
+             text:(id)text
+     selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction;
+
 - (void)dismissMenus;
 
 //override.
@@ -67,18 +70,23 @@
 
 
 
-@interface CustomTableView : UIView
+@protocol CustomTableViewDelegate <NSObject>
 
-- (void)setMenuDatas:(NSArray<NSDictionary*>*)menus selectAction:(void(^)(NSInteger idx, NSDictionary* menu))selectAction;
+- (void)customTableViewCellSelected:(NSInteger)idx menuData:(NSDictionary*)menuData;
+- (void)customTableViewCellCustomize:(UITableViewCell*)cell;
+
 
 @end
 
 
+@interface CustomTableView : UIView
 
+@property (nonatomic, strong) NSString                  *sectionText;
+@property (nonatomic, strong) NSAttributedString        *sectionAttributedText;
+@property (nonatomic, strong) NSArray<NSDictionary*>    *menus;
+@property (nonatomic, strong) void(^selectAction)(NSInteger idx, NSDictionary* menuData);
 
-
-
-
+@end
 
 
 
@@ -100,19 +108,20 @@
 
 //当前未使用.
 @protocol ActionMenuDeleage <NSObject>
-
 - (void)actionMenuSelected:(NSInteger)idx data:(NSDictionary*)data;
 - (void)actionMenuDismiss;
-
-
 
 @end
 
 
 @interface ActionMenuViewController : UIViewController
-
 @property (nonatomic, weak) id<ActionMenuDeleage> delegate;
-
 + (ActionMenuViewController*)actionMenuViewControllerWithDatas:(NSArray<NSDictionary*>*)datas;
+@end
+
+
+@interface PopViewController : UIViewController
+
+@property (nonatomic, strong) UIView    *popupView;
 
 @end
