@@ -154,11 +154,15 @@ typedef NS_ENUM(NSInteger, DBDataColumnType) {
  DBDATA_STRING_COLUMNS:["column1", "column2"],
  DBDATA_STRING_VALUES :[["stringvalue1", 1234numbervalue1], ["stringvalue2", 1234numbervalue2]]
  }
+ 可自行组织, 或者通过 将NSArray<NSDictionary*>*转为此结构.
  */
 //增
 - (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert;
 - (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orReplace:(BOOL)replace;
 - (NSInteger)DBDataInsertDBName:(NSString*)databaseName table:(NSString*)tableName info:(NSDictionary*)infoInsert orIgnore:(BOOL)ignore;
+
+
++ (NSDictionary*)DBDataGenerateInsertDictionaryFromArray:(NSArray<NSDictionary*>*)dicts;
 
 
 //删

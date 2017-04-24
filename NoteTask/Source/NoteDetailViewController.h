@@ -15,6 +15,7 @@
 
 - (instancetype)initWithNoteModel:(NoteModel*)noteModel;
 - (instancetype)initWithCreateNoteModel;
++ (instancetype)noteViewControllerCachedWithSn:(NSString*)sn;
 
 
 @end

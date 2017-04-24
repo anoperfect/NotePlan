@@ -1754,12 +1754,34 @@
 }
 
 
-
-
-
-
-
-
++ (NSDictionary*)DBDataGenerateInsertDictionaryFromArray:(NSArray<NSDictionary*>*)dicts
+{
+    NSArray *keys = dicts[0].allKeys;
+    
+    NSMutableArray *values = [[NSMutableArray alloc] init];
+    
+    for(NSDictionary *d in dicts) {
+        NSMutableArray *value = [[NSMutableArray alloc] init];
+        
+        for(NSString *key in keys) {
+            if(d[key]) {
+                [value addObject:d[key]];
+            }
+            else {
+                NSLog(@"#error - ");
+                [value addObject:[NSNull null]];
+            }
+        }
+        
+        [values addObject:[NSArray arrayWithArray:value]];
+    }
+    
+    NSDictionary *infoInsert = @{
+                                 DBDATA_STRING_COLUMNS:[NSArray arrayWithArray:keys],
+                                 DBDATA_STRING_VALUES:[NSArray arrayWithArray:values]
+                                 };
+    return infoInsert;
+}
 
 
 

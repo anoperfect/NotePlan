@@ -3,6 +3,305 @@
 
 
 
+#define PRINTF(x...) //printf("[%d] -",__LINE__);printf(x)
+
+
+
+
+
+
+
+
+
+static BOOL keable_kmdescripe = NO;
+
+#define USE_MEMORY_CHECK    1
+#define USE_MEMORY_POOL     1
+
+#if USE_MEMORY_POOL
+
+typedef struct  {
+    
+    long offset;
+    long length;
+    BOOL isFree;
+    
+}MemorySeg;
+
+
+
+static MemorySeg ksegs[100];
+static int ksegs_count = 0;
+static void *kmv = NULL;
+
+
+void kminit()
+{
+    if(!kmv) {
+        size_t size = 1024*1024;
+        kmv = malloc(size);
+        ksegs[0].offset = 0;
+        ksegs[0].length = size;
+        ksegs[0].isFree = YES;
+        ksegs_count = 1;
+    }
+}
+
+void kmdescripe(const char *es)
+{
+    if(!keable_kmdescripe) return;
+    
+    PRINTF("------%s\n", es);
+
+    PRINTF("\n\n");
+}
+
+void *malloc_d(size_t size, const char *function, int line)
+{
+    kminit();
+    
+    if(keable_kmdescripe) {
+        PRINTF("alloc : %lld\n", pv);
+    }
+    
+    void *p = NULL;
+    
+    for(NSInteger idx = 0; idx < ksegs_count; idx ++) {
+        MemorySeg *seg = &ksegs[idx];
+        if(seg->isFree && seg->length >= size) {
+            p = kmv + seg->offset;
+            if(seg->length == size) {
+                seg->isFree = NO;
+            }
+            else {
+                for(int idxMove = ksegs_count-1; idxMove>idx; idxMove--) {
+                    ksegs[idxMove+1] = ksegs[idxMove];
+                }
+                ksegs[idx+1].offset = ksegs[idx].offset + size;
+                ksegs[idx+1].length = ksegs[idx].length - size;
+                ksegs[idx+1].isFree = YES;
+                
+                ksegs[idx].length = size;
+                ksegs[idx].isFree = NO;
+                
+                ksegs_count ++;
+            }
+            
+            break;
+        }
+    }
+    
+    assert(p);
+    
+    kmdescripe("after alloc");
+    
+    return p;
+}
+
+
+void free_d(void *p, const char *function, int line)
+{//return;
+    kmdescripe("\n\nbefore free");
+    
+    NSInteger idxFree = NSNotFound;
+    for(NSInteger idx = 0; idx < ksegs_count; idx ++) {
+        MemorySeg *seg = &ksegs[idx];
+        if((kmv+seg->offset) == p && !seg->isFree) {
+            idxFree = idx;
+            break;
+        }
+    }
+    
+    assert(idxFree != NSNotFound);
+    
+    BOOL assemblePrev = (idxFree>0 && ksegs[idxFree-1].isFree);
+    BOOL assembleNext = (idxFree < (ksegs_count-1) && ksegs[idxFree+1].isFree) ;
+    if(assemblePrev && assembleNext) {
+        ksegs[idxFree-1].length += (ksegs[idxFree].length + ksegs[idxFree+1].length);
+        for(long idx=idxFree+2; idx<ksegs_count; idx++) {
+            ksegs[idx-2] = ksegs[idx];
+        }
+        ksegs_count -= 2;
+    }
+    else if(assemblePrev) {
+        ksegs[idxFree-1].length += (ksegs[idxFree].length);
+        for(long idx=idxFree+1; idx<ksegs_count; idx++) {
+            ksegs[idx-1] = ksegs[idx];
+        }
+        ksegs_count -= 1;
+        
+    }
+    else if(assembleNext) {
+        ksegs[idxFree].length += ksegs[idxFree+1].length;
+        ksegs[idxFree].isFree = YES;
+        for(long idx=idxFree+2; idx<ksegs_count; idx++) {
+            ksegs[idx-1] = ksegs[idx];
+        }
+        ksegs_count -= 1;
+    }
+    else {
+        ksegs[idxFree].isFree = YES;
+    }
+    
+    kmdescripe("after free");
+}
+
+
+void kmcheck()
+{
+    
+}
+
+#else
+NSMutableDictionary *kMemory = nil;
+
+
+void kminit()
+{
+    if(!kMemory) {
+        kMemory = [@{} mutableCopy];
+    }
+}
+
+void kmdescripe(const char *es)
+{
+    if(!keable_kmdescripe) return;
+    
+    PRINTF("------%s\n", es);
+    for(NSNumber *number in kMemory.allKeys) {
+        unsigned long long pvtmp = [number unsignedLongLongValue];pvtmp=pvtmp;
+        //        char *ptmp = (char*)pvtmp;
+        PRINTF("%s", [NSString stringWithFormat:@"-       %lld : %s   %@\n", pvtmp, (char*)pvtmp, kMemory[number]].UTF8String);
+    }
+    PRINTF("\n\n");
+}
+
+void *malloc_d(size_t size, const char *function, int line)
+{
+    kminit();
+    void *p = malloc (size);
+    unsigned long long pv = (unsigned long long)p;
+    if(keable_kmdescripe) {
+        PRINTF("alloc : %lld\n", pv);
+    }
+    assert(kMemory[@(pv)] == nil);
+    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, pv];
+    //    kMemory[@(pv)] = @"1";
+    
+    kmdescripe("after alloc");
+    
+    return p;
+}
+
+
+void free_d(void *p, const char *function, int line)
+{
+    kmdescripe("\n\nbefore free");
+    unsigned long long pv = (unsigned long long)p;
+    NSString *s = kMemory[@(pv)];
+    if([s isKindOfClass:[NSString class]]) {
+        [kMemory removeObjectForKey:@(pv)];
+    }
+    else {
+        if(keable_kmdescripe) {
+            PRINTF("free %lld on %s <%d>.(%s)\n", pv, function, line, (char*)p);
+        }
+        NSLog(@"%@", kMemory);
+        assert(0);
+    }
+    
+    kmdescripe("after free");
+    
+    free (p);
+}
+
+
+void kmcheck()
+{//return ;
+    if(kMemory.count) {
+        NSLog(@"%@", kMemory);
+        NSArray *a = kMemory.allKeys;
+        for(NSNumber *n in a) {
+            NSString *s = kMemory[n];
+            printf("///--- : %s\n", s.UTF8String);
+            //            NSLog(@"%@", v[2]);
+            unsigned long long pv = [n integerValue];
+            char *p = (char*)pv;
+            printf("%s\n", p);
+        }
+        
+        assert(0);
+    }
+}
+
+
+
+#endif
+
+
+char *strdup_d(const char *s, const char *function, int line)
+{
+    kminit();
+    size_t len = strlen(s);
+    char *r = malloc_d(len+1, function, line);
+    strcpy(r, s);
+    
+    //    char *r = strdup(s);
+    //    unsigned long long pv = (unsigned long long)r;
+    //    printf("\n\nalloc : %lld\n", pv);
+    //    assert(kMemory[@(pv)] == nil);
+    //    //    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, (unsigned long long)r];
+    //    kMemory[@(pv)] = @"1";
+    //
+    //    kmdescripe("after strdup");
+    
+    return r;
+}
+
+
+char *strndup_d(const char *s, size_t n, const char *function, int line)
+{
+    kminit();
+    //    char *r = strndup (s, n);
+    //    unsigned long long pv = (unsigned long long)r;
+    //    assert(kMemory[@(pv)] == nil);
+    //    //    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, (unsigned long long)r];
+    //    kMemory[@(pv)] = @"1";
+    //
+    //    printf("\n\nalloc : %lld\n", pv);
+    //    kmdescripe("after strndup");
+    
+    size_t len = MIN(n, strlen(s));
+    char *r = malloc_d(len+1, function, line);
+    strncpy(r, s, len);
+    r[len] = '\0';
+    
+    return r;
+}
+
+
+
+#if USE_MEMORY_CHECK
+
+#define malloc_r(size) malloc_d(size, __FUNCTION__, __LINE__)
+#define free_r(p) free_d(p, __FUNCTION__, __LINE__)
+#define strdup_r(s) strdup_d(s, __FUNCTION__, __LINE__)
+#define strndup_r(s, n) strndup_d(s, n, __FUNCTION__, __LINE__)
+
+#else
+
+#define malloc_r(size) malloc(size)
+#define free_r(p) free(p)
+#define strdup_r(s) strdup(s)
+#define strndup_r(s, n) strndup(s, n)
+
+
+#endif
+
+
+
+
+
 
 
 
@@ -44,7 +343,6 @@ typedef struct {
 StringNumber;
 
 
-StringNumber stringNumberOperate(StringNumber *n1, StringNumber *n2, char op);
 
 
 
@@ -63,144 +361,13 @@ StringNumber stringNumberOperate(StringNumber *n1, StringNumber *n2, char op);
 
 
 
-#define PRINTF(x...)
-NSMutableDictionary *kMemory = nil;
 
 
-void kmdescripe(const char *es)
-{//return;
-    printf("------%s\n", es);
-    for(NSNumber *number in kMemory.allKeys) {
-        unsigned long long pvtmp = [number unsignedLongLongValue];
-        char *ptmp = (char*)pvtmp;
-        NSString * s = [NSString stringWithFormat:@"-       %lld : %s   %@\n", pvtmp, ptmp, kMemory[number]];
-        printf("%s", s.UTF8String);
-    }
-    printf("\n\n");
-}
-
-void *malloc_d(size_t size, const char *function, int line)
-{
-    if(!kMemory) {
-        kMemory = [@{} mutableCopy];
-    }
-    
-    void *p = malloc (size);
-    unsigned long long pv = (unsigned long long)p;
-    printf("\n\nalloc : %lld\n", pv);
-    assert(kMemory[@(pv)] == nil);
-    //    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, pv];
-    kMemory[@(pv)] = @"1";
-    
-    //    kmdescripe("after alloc");
-    
-    
-    
-    return p;
-}
 
 
-void free_d(void *p, const char *function, int line)
-{
-    //    kmdescripe("\n\nbefore free");
-    unsigned long long pv = (unsigned long long)p;
-    NSString *s = kMemory[@(pv)];
-    if([s isKindOfClass:[NSString class]]) {
-        [kMemory removeObjectForKey:@(pv)];
-    }
-    else {
-        printf("free %lld on %s <%d>.(%s)\n", pv, function, line, (char*)p);
-        NSLog(@"%@", kMemory);
-        assert(0);
-    }
-    
-    //    kmdescripe("after free");
-    
-    free (p);
-}
 
 
-char *strdup_d(const char *s, const char *function, int line)
-{
-    if(!kMemory) {
-        kMemory = [@{} mutableCopy];
-    }
-    
-    size_t len = strlen(s);
-    char *r = malloc_d(len+1, function, line);
-    strcpy(r, s);
-    
-    //    char *r = strdup(s);
-    //    unsigned long long pv = (unsigned long long)r;
-    //    printf("\n\nalloc : %lld\n", pv);
-    //    assert(kMemory[@(pv)] == nil);
-    //    //    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, (unsigned long long)r];
-    //    kMemory[@(pv)] = @"1";
-    //
-    //    kmdescripe("after strdup");
-    
-    return r;
-}
 
-
-char *strndup_d(const char *s, size_t n, const char *function, int line)
-{
-    if(!kMemory) {
-        kMemory = [@{} mutableCopy];
-    }
-    
-    //    char *r = strndup (s, n);
-    //    unsigned long long pv = (unsigned long long)r;
-    //    assert(kMemory[@(pv)] == nil);
-    //    //    kMemory[@(pv)] = [NSString stringWithFormat:@"%s %d %llu", function, line, (unsigned long long)r];
-    //    kMemory[@(pv)] = @"1";
-    //
-    //    printf("\n\nalloc : %lld\n", pv);
-    //    kmdescripe("after strndup");
-    
-    size_t len = MIN(n, strlen(s));
-    char *r = malloc_d(len+1, function, line);
-    strncpy(r, s, len);
-    r[len] = '\0';
-    
-    return r;
-}
-
-
-void kmcheck()
-{//return ;
-    if(kMemory.count) {
-        NSLog(@"%@", kMemory);
-        NSArray *a = kMemory.allKeys;
-        for(NSNumber *n in a) {
-            NSString *s = kMemory[n];
-            printf("///--- : %s\n", s.UTF8String);
-            //            NSLog(@"%@", v[2]);
-            unsigned long long pv = [n integerValue];
-            char *p = (char*)pv;
-            printf("%s\n", p);
-        }
-        
-        assert(0);
-    }
-}
-
-#if 1
-
-#define malloc_r(size) malloc_d(size, __FUNCTION__, __LINE__)
-#define free_r(p) free_d(p, __FUNCTION__, __LINE__)
-#define strdup_r(s) strdup_d(s, __FUNCTION__, __LINE__)
-#define strndup_r(s, n) strndup_d(s, n, __FUNCTION__, __LINE__)
-
-#else
-
-#define malloc_r(size) malloc(size)
-#define free_r(p) free(p)
-#define strdup_r(s) strdup(s)
-#define strndup_r(s, n) strndup(s, n)
-
-
-#endif
 
 
 
@@ -332,6 +499,56 @@ void stringDigitReuseAddInteger(char *a, const char *b)
         }
     }
 }
+
+
+
+void stringDigitReuseIntegerAdd(char **ppa, const char *b)
+{
+    char *a = *ppa;
+    long len_a = strlen(a);
+    long len_b = strlen(b);
+    
+    if(len_a < len_b) {
+        *ppa = malloc_r(len_b + 1);
+        memset(*ppa, '0', len_b - len_a);
+        strcpy((*ppa)+len_b-len_a, a);
+        
+        free_r(a);
+        a = *ppa;
+        len_a = len_b;
+    }
+    
+    assert(len_a >= len_b);
+    
+    long diff = len_a - len_b;
+    long idx ;
+    BOOL carry = 0;
+    for(idx = len_a - 1; idx >= 0; idx --) {
+        long idx_b = idx - diff;
+        
+        if(idx_b >= 0) {
+            a[idx] += (b[idx_b] - '0');
+        }
+        
+        if(a[idx] > '9') {
+            a[idx] -= 10;
+            if(idx > 0) {
+                a[idx-1] += 1;
+            }
+            else {
+                carry = 1;
+            }
+        }
+    }
+    
+    if(carry) {
+        *ppa = malloc_r(len_a+2);
+        *ppa[0] = '1';
+        strcpy(*ppa+1, a);
+        free_r(a);
+    }
+}
+
 
 
 void stringDigitReuseMuiltiply10n(char *a, size_t size, long n)
@@ -501,20 +718,160 @@ void stringDigitReuseDividSimplify(char *x, char *y)
 }
 
 
+char* stringNumberDescription(const StringNumber *n)
+{
+    char *s = nil;
+    char *scopy = "";
+    
+    //    PRINTF("stringNumberDescription : integer : %p, idx : %ld\n", n->integer, n->idx);
+    
+    if(n->type == StringNumberTypeInteger) {
+        size_t len = strlen(n->integer);
+        size_t len_decimal = n->extend.vfloat.decimal!=nil?strlen(n->extend.vfloat.decimal):0;
+        if(n->minus) {
+            s = malloc_r(len+1 + 1 + len_decimal + 1);
+            s[0] = '-';
+            scopy = s + 1;
+        }
+        else {
+            s = malloc_r(len + 1 + len_decimal +1);
+            scopy = s;
+        }
+        
+        memcpy(scopy, n->integer, len+1);
+        scopy += len;
+        
+        if(len_decimal>0) {
+            scopy[0] = '.';
+            scopy ++;
+            memcpy(scopy, n->extend.vfloat.decimal, len_decimal);
+            scopy += len_decimal;
+        }
+        
+        scopy[0] = '\0';
+    }
+    else if(n->type == StringNumberTypeDivid){
+        size_t len = 1 + strlen(n->integer) + 1 + strlen(n->extend.vdivid.x) + 1 + strlen(n->extend.vdivid.y);
+        size_t size = len + 1;
+        s = malloc_r(len + 1);
+        if(0 == strcmp(n->integer, "0")) {
+            snprintf(s, size, "%s%s/%s", n->minus?"-":"", n->extend.vdivid.x, n->extend.vdivid.y);
+        }
+        else {
+            snprintf(s, size, "%s%s&%s/%s", n->minus?"-":"", n->integer, n->extend.vdivid.x, n->extend.vdivid.y);
+        }
+    }
+    else if(n->type == StringNumberTypeNull){
+        s = strdup_r("null");
+    }
+    
+    if(!s) {
+        s = strdup_r("invalid");
+    }
+    return s;
+}
+
+
+char* stringNumberDebugDescription(const StringNumber *n)
+{
+    static char *ss[3] = {nil};
+    if(!ss[0]) {
+        ss[0] = malloc(1000000);
+        ss[1] = malloc(1000000);
+        ss[2] = malloc(1000000);
+        
+        static int idx = 0;
+        idx ++;
+        
+        assert(idx == 1);
+    }
+    static int nss = 0;
+    
+    char *s = ss[nss];
+    nss = (nss + 1)%3;
+    char *scopy = s;
+    
+    //    PRINTF("stringNumberDescription : integer : %p, idx : %ld\n", n->integer, n->idx);
+    
+    if(n->type == StringNumberTypeInteger) {
+        size_t len = strlen(n->integer);
+        size_t len_decimal = n->extend.vfloat.decimal!=nil?strlen(n->extend.vfloat.decimal):0;
+        if(n->minus) {
+            s[0] = '-';
+            scopy = s + 1;
+        }
+        else {
+            scopy = s;
+        }
+        
+        memcpy(scopy, n->integer, len+1);
+        scopy += len;
+        
+        if(len_decimal>0) {
+            scopy[0] = '.';
+            scopy ++;
+            memcpy(scopy, n->extend.vfloat.decimal, len_decimal);
+            scopy += len_decimal;
+        }
+        
+        scopy[0] = '\0';
+    }
+    else if(n->type == StringNumberTypeDivid){
+        size_t len = 1 + strlen(n->integer) + 1 + strlen(n->extend.vdivid.x) + 1 + strlen(n->extend.vdivid.y);
+        size_t size = len + 1;
+        if(0 == strcmp(n->integer, "0")) {
+            snprintf(s, size, "%s%s/%s", n->minus?"-":"", n->extend.vdivid.x, n->extend.vdivid.y);
+        }
+        else {
+            snprintf(s, size, "%s%s&%s/%s", n->minus?"-":"", n->integer, n->extend.vdivid.x, n->extend.vdivid.y);
+        }
+    }
+    else if(n->type == StringNumberTypeNull){
+        strcpy(s, "null");
+    }
+    
+    if(!s) {
+        strcpy(s, "invalid");
+    }
+    return s;
+}
+
+
+void stringNumberIntegerToDivid(const StringNumber *nInteger, StringNumber *nDivid)
+{
+    
+    nDivid->type = StringNumberTypeDivid;
+    nDivid->minus = nInteger->minus;
+    nDivid->integer = strdup_r(nInteger->integer);
+    
+    if(nInteger->extend.vfloat.decimal) {
+        nDivid->extend.vdivid.x = strdup_r(nInteger->extend.vfloat.decimal);
+        nDivid->extend.vdivid.y = stringDigitMuiltiply10n("1", strlen(nInteger->extend.vfloat.decimal));
+    }
+    else {
+        nDivid->extend.vdivid.x = strdup_r("0");
+        nDivid->extend.vdivid.y = strdup_r("1");
+    }
+}
+
+
 void stringNumberReuseIntegerToDivid(StringNumber *n)
 {
+    PRINTF("stringNumberReuseIntegerToDivid (%s)\n", stringNumberDebugDescription(n));
     assert(n->type == StringNumberTypeInteger);
     if(n->extend.vfloat.decimal) {
-        char *decimal = n->extend.vfloat.decimal;
-        n->extend.vdivid.x = strdup_r(n->extend.vfloat.decimal);
+        char *x = strdup_r(n->extend.vfloat.decimal);
         n->extend.vdivid.y = stringDigitMuiltiply10n("1", strlen(n->extend.vdivid.x));
-        free_r(decimal);
+        free_r(n->extend.vfloat.decimal);
+        n->extend.vfloat.decimal = NULL;
+        n->extend.vdivid.x = x;
     }
     else {
         n->extend.vdivid.x = strdup_r("0");
         n->extend.vdivid.y = strdup_r("1");
     }
     n->type = StringNumberTypeDivid;
+    PRINTF("stringNumberReuseIntegerToDivid (%s)\n", stringNumberDebugDescription(n));
 }
 
 
@@ -775,27 +1132,28 @@ BOOL _stringCharIsOp(char ch)
 }
 
 
-int StringNumberCompareIngoreMinus(StringNumber *n1, StringNumber *n2)
+int StringNumberCompareIngoreMinus(const StringNumber *const n1, const StringNumber *const n2)
 {
     int ret = 0;
     
-    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
-        int cmpInteger = stringDigitCompareInteger(n1->integer, strlen(n1->integer), n2->integer, strlen(n2->integer));
-        if(cmpInteger > 0) {
-            ret = 1;
-        }
-        else if(cmpInteger < 0) {
-            ret = -1;
-        }
-        else {
-            int cmpDecimal = stringDigitCompareDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal);
-            ret = cmpDecimal;
-        }
+    int cmpInteger = stringDigitCompareInteger(n1->integer, strlen(n1->integer), n2->integer, strlen(n2->integer));
+    if(cmpInteger > 0) {
+        ret = 1;
+    }
+    else if(cmpInteger < 0) {
+        ret = -1;
     }
     else {
-        assert(0);
+        //整数部分相同.
+        if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+            ret = stringDigitCompareDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal);
+            
+        }
+        else {
+            assert(0);
+        }
     }
-    
+
     return ret;
 }
 
@@ -932,123 +1290,7 @@ char *stringDigitSubDecimal(const char* s1, const char* s2, BOOL *subInteger)
 
 
 
-char* stringNumberDescription(StringNumber *n)
-{
-    char *s = nil;
-    char *scopy = "";
-    
-    //    PRINTF("stringNumberDescription : integer : %p, idx : %ld\n", n->integer, n->idx);
-    
-    if(n->type == StringNumberTypeInteger) {
-        size_t len = strlen(n->integer);
-        size_t len_decimal = n->extend.vfloat.decimal!=nil?strlen(n->extend.vfloat.decimal):0;
-        if(n->minus) {
-            s = malloc_r(len+1 + 1 + len_decimal + 1);
-            s[0] = '-';
-            scopy = s + 1;
-        }
-        else {
-            s = malloc_r(len + 1 + len_decimal +1);
-            scopy = s;
-        }
-        
-        memcpy(scopy, n->integer, len+1);
-        scopy += len;
-        
-        if(len_decimal>0) {
-            scopy[0] = '.';
-            scopy ++;
-            memcpy(scopy, n->extend.vfloat.decimal, len_decimal);
-            scopy += len_decimal;
-        }
-        
-        scopy[0] = '\0';
-    }
-    else if(n->type == StringNumberTypeDivid){
-        size_t len = 1 + strlen(n->integer) + 1 + strlen(n->extend.vdivid.x) + 1 + strlen(n->extend.vdivid.y);
-        size_t size = len + 1;
-        s = malloc_r(len + 1);
-        if(0 == strcmp(n->integer, "0")) {
-            snprintf(s, size, "%s%s/%s", n->minus?"-":"", n->extend.vdivid.x, n->extend.vdivid.y);
-        }
-        else {
-            snprintf(s, size, "%s%s&%s/%s", n->minus?"-":"", n->integer, n->extend.vdivid.x, n->extend.vdivid.y);
-        }
-    }
-    else if(n->type == StringNumberTypeNull){
-        s = strdup_r("null");
-    }
-    
-    if(!s) {
-        s = strdup_r("invalid");
-    }
-    return s;
-}
 
-
-char* stringNumberDebugDescription(StringNumber *n)
-{
-    static char *ss[3] = {nil};
-    if(!ss[0]) {
-        ss[0] = malloc(1000000);
-        ss[1] = malloc(1000000);
-        ss[2] = malloc(1000000);
-        
-        static int idx = 0;
-        idx ++;
-        
-        assert(idx == 1);
-    }
-    static int nss = 0;
-    
-    char *s = ss[nss];
-    nss = (nss + 1)%3;
-    char *scopy = s;
-    
-    //    PRINTF("stringNumberDescription : integer : %p, idx : %ld\n", n->integer, n->idx);
-    
-    if(n->type == StringNumberTypeInteger) {
-        size_t len = strlen(n->integer);
-        size_t len_decimal = n->extend.vfloat.decimal!=nil?strlen(n->extend.vfloat.decimal):0;
-        if(n->minus) {
-            s[0] = '-';
-            scopy = s + 1;
-        }
-        else {
-            scopy = s;
-        }
-        
-        memcpy(scopy, n->integer, len+1);
-        scopy += len;
-        
-        if(len_decimal>0) {
-            scopy[0] = '.';
-            scopy ++;
-            memcpy(scopy, n->extend.vfloat.decimal, len_decimal);
-            scopy += len_decimal;
-        }
-        
-        scopy[0] = '\0';
-    }
-    else if(n->type == StringNumberTypeDivid){
-        size_t len = 1 + strlen(n->integer) + 1 + strlen(n->extend.vdivid.x) + 1 + strlen(n->extend.vdivid.y);
-        size_t size = len + 1;
-        if(0 == strcmp(n->integer, "0")) {
-            snprintf(s, size, "%s%s/%s", n->minus?"-":"", n->extend.vdivid.x, n->extend.vdivid.y);
-        }
-        else {
-            snprintf(s, size, "%s%s&%s/%s", n->minus?"-":"", n->integer, n->extend.vdivid.x, n->extend.vdivid.y);
-        }
-    }
-    else if(n->type == StringNumberTypeNull){
-        strcpy(s, "null");
-    }
-    
-    if(!s) {
-        strcpy(s, "invalid");
-    }
-    return s;
-}
 
 
 void stringNumberSimplify(StringNumber *n)
@@ -1142,6 +1384,20 @@ void stringNumberFree(StringNumber *n)
 }
 
 
+void stringNumberClear(StringNumber *n)
+{
+    memset(n, 0, sizeof(StringNumber));
+}
+
+
+void stringNumberAssignNewValue(StringNumber *n, StringNumber *new)
+{
+    stringNumberFree(n);
+    *n = *new;
+    stringNumberClear(new);
+}
+
+
 void _stringNumberAssginFromInteger(StringNumber *n, long long int integer)
 {
     n->type = StringNumberTypeInteger;
@@ -1183,6 +1439,8 @@ void stringDigitDividAdd(const char *x1, const char *y1, const char *x2, const c
     
     *ppx = x;
     *ppy = y;
+    
+    PRINTF("%s/%s + %s/%s = %s/%s\n", x1, y1, x2, y2, *ppx, *ppy);
 }
 
 
@@ -1219,30 +1477,21 @@ void stringDigitDividSub(const char *x1, const char *y1, const char *x2, const c
 
 
 
-void stringNumberFloatToDivid(StringNumber *nFloat, StringNumber *nDivid)
-{
-    assert(nFloat->type == StringNumberTypeInteger && nFloat->extend.vfloat.decimal);
-    
-    nDivid->type = StringNumberTypeDivid;
-    nDivid->minus = nFloat->minus;
-    nDivid->integer = strdup_r(nFloat->integer);
-    
-    long lenDecimal = strlen(nFloat->extend.vfloat.decimal);
-    nDivid->extend.vdivid.x = strdup_r(nFloat->extend.vfloat.decimal);
-    nDivid->extend.vdivid.y = stringDigitMuiltiply10n("1", lenDecimal);
-}
 
 
-void _stringNumberDebug(StringNumber* n1)
+
+
+
+void _stringNumberDebug(const StringNumber* n1)
 {//return;
     PRINTF("---stringNumberDebug---%p\n", n1);
     switch (n1->type) {
         case StringNumberTypeInteger:
-            PRINTF("%s integer: %p [%s], decimal : %p [%s]\n", n1->minus?"-":" ", n1->integer, n1->integer, n1->extend.vfloat.decimal, n1->extend.vfloat.decimal);
+            PRINTF("%s integer: %lld [%s], decimal : %p [%s]\n", n1->minus?"-":" ", (unsigned long long)(n1->integer), n1->integer, n1->extend.vfloat.decimal, n1->extend.vfloat.decimal);
             break;
             
         case StringNumberTypeDivid:
-            PRINTF("%s integer: %p [%s], x : %p [%s], y : %p [%s]\n", n1->minus?"-":" ", n1->integer, n1->integer, n1->extend.vdivid.x, n1->extend.vdivid.x, n1->extend.vdivid.y, n1->extend.vdivid.y);
+            PRINTF("%s integer: %lld [%s], x : %p [%s], y : %p [%s]\n", n1->minus?"-":" ", (unsigned long long)(n1->integer), n1->integer, n1->extend.vdivid.x, n1->extend.vdivid.x, n1->extend.vdivid.y, n1->extend.vdivid.y);
             break;
             
         default:
@@ -1254,262 +1503,47 @@ void _stringNumberDebug(StringNumber* n1)
 
 
 
-StringNumber _stringNumberAdd(StringNumber* n1, StringNumber* n2)
+
+
+
+int _stringNumberDeepCopy(StringNumber *dest, StringNumber *src)
 {
-    assert(!n1->minus);
-    assert(!n2->minus);
+    int ret = 0;
     
-    _stringNumberDebug(n1);
-    _stringNumberDebug(n2);
+    dest->type = src->type;
+    dest->minus = src->minus;
+    dest->integer = strdup_r(src->integer);
+    dest->extend.vfloat.decimal = NULL;
+    dest->extend.vdivid.x = NULL;
+    dest->extend.vdivid.y = NULL;
     
-    StringNumber n;
-    n.type = StringNumberTypeInvalid;
-    
-    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
-        n.type = StringNumberTypeInteger;
-        n.integer = stringDigitAddInteger(n1->integer, n2->integer);
-        BOOL carry = NO;
-        n.extend.vfloat.decimal = stringDigitAddDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &carry);
-        if(carry) {
-            char *t = stringDigitAddInteger(n.integer, "1");
-            free_r(n.integer);
-            n.integer = t;
-        }
+    if(src->type == StringNumberTypeInteger) {
+        dest->extend.vfloat.decimal = src->extend.vfloat.decimal?strdup_r(src->extend.vfloat.decimal):NULL;
     }
-    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
-        if(n1->extend.vfloat.decimal == NULL) {
-            n.type = StringNumberTypeDivid;
-            n.integer = stringDigitAddInteger(n1->integer, n2->integer);
-            n.extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
-            n.extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
-        }
-        else {
-            StringNumber n1ToDivid;
-            stringNumberFloatToDivid(n1, &n1ToDivid);
-            n = _stringNumberAdd(&n1ToDivid, n2);
-            stringNumberFree(&n1ToDivid);
-        }
-    }
-    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
-        n = _stringNumberAdd(n2, n1);
-    }
-    else {
-        n.type = StringNumberTypeDivid;
-        
-        n.integer = stringDigitAddInteger(n1->integer, n2->integer);
-        BOOL carry = 0;
-        stringDigitDividAdd(n1->extend.vdivid.x, n1->extend.vdivid.y, n2->extend.vdivid.x, n2->extend.vdivid.y, &n.extend.vdivid.x, &n.extend.vdivid.y, &carry);
-        if(carry) {
-            char *tmp = stringDigitAddInteger(n.integer, "1");
-            free_r(n.integer);
-            n.integer = tmp;
-        }
+    else if(src->type == StringNumberTypeDivid) {
+        dest->extend.vdivid.x = src->extend.vdivid.x?strdup_r(src->extend.vdivid.x):NULL;
+        dest->extend.vdivid.y = src->extend.vdivid.y?strdup_r(src->extend.vdivid.y):NULL;
     }
     
-    assert(n.type != StringNumberTypeInvalid);
-    
-    stringNumberSimplify(&n);
-    
-    return n;
+    return ret;
 }
 
 
-StringNumber _stringNumberSub(StringNumber *n1, StringNumber *n2)
-{
-    assert(!n1->minus);
-    assert(!n2->minus);
-    
-    StringNumber n;
-    n.type = StringNumberTypeInvalid;
-    n.minus = NO;
-    
-    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
-        n.type = StringNumberTypeInteger;
-        /* 比较. */
-        int cmp = StringNumberCompareIngoreMinus(n1, n2);
-        if(0 == cmp) {
-            n.minus = 0;
-            n.integer = strdup_r("0");
-            n.extend.vfloat.decimal = NULL;
-        }
-        else if(cmp > 0) {
-            BOOL minus = 0;
-            n.integer = stringDigitSubInteger(n1->integer, n2->integer, &minus);
-            BOOL subInteger = 0;
-            n.extend.vfloat.decimal = stringDigitSubDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &subInteger);
-            if(subInteger) {
-                char *tmp = stringDigitSubInteger(n.integer, "1", &minus);
-                free_r(n.integer);
-                n.integer = tmp;
-            }
-        }
-        else {
-            n.minus = 1;
-            BOOL minus = 0;
-            n.integer = stringDigitSubInteger(n2->integer, n1->integer, &minus);
-            BOOL subInteger = 0;
-            n.extend.vfloat.decimal = stringDigitSubDecimal(n2->extend.vfloat.decimal, n1->extend.vfloat.decimal, &subInteger);
-            if(subInteger) {
-                char *tmp = stringDigitSubInteger(n.integer, "1", &minus);
-                free_r(n.integer);
-                n.integer = tmp;
-            }
-        }
-    }
-    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
-        if(NULL == n1->extend.vfloat.decimal) {
-            BOOL minus = 0;
-            char *integer = stringDigitSubInteger(n1->integer, n2->integer, &minus);
-            if(!minus) {
-                if(0 == strcmp(integer, "0")) {
-                    n.type = StringNumberTypeDivid;
-                    n.minus = 1;
-                    n.integer = strdup_r("0");
-                    n.extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
-                    n.extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
-                    free_r(integer);
-                }
-                else {
-                    stringDigitReuseSubInteger(integer, "1");
-                    n.type = StringNumberTypeDivid;
-                    n.minus = 0;
-                    n.integer = integer;
-                    n.extend.vdivid.x = stringDigitSubInteger(n2->extend.vdivid.y, n2->extend.vdivid.x, NULL);
-                    n.extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
-                }
-            }
-            else {
-                n.type = StringNumberTypeDivid;
-                n.minus = 1;
-                n.integer = integer;
-                n.extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
-                n.extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
-            }
-        }
-        else {
-            StringNumber n1ToDivid;
-            stringNumberFloatToDivid(n1, &n1ToDivid);
-            n = _stringNumberSub(&n1ToDivid, n2);
-            stringNumberFree(&n1ToDivid);
-        }
-    }
-    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
-        n = _stringNumberSub(n2, n1);
-        n.minus = !n.minus;
-    }
-    else {
-        n.type = StringNumberTypeDivid;
-        
-        const char *integer1;
-        const char *x1;
-        const char *y1;
-        
-        const char *integer2;
-        const char *x2;
-        const char *y2;
-        
-        integer1 = n1->integer;
-        x1 = n1->extend.vdivid.x;
-        y1 = n1->extend.vdivid.y;
-        
-        integer2 = n2->integer;
-        x2 = n2->extend.vdivid.x;
-        y2 = n2->extend.vdivid.y;
-        
-        BOOL integerMinus;
-        char *integer = stringDigitSubInteger(integer1, integer2, &integerMinus);
-        
-        char *x;
-        char *y;
-        BOOL dividMinus;
-        
-        stringDigitDividSub(x1, y1, x2, y2, &x, &y, &dividMinus);
-        
-        if(integerMinus == dividMinus) {
-            
-            n.minus = integerMinus;
-            n.integer = integer;
-            n.extend.vdivid.x = x;
-            n.extend.vdivid.y = y;
-            
-            PRINTF("ccc : %d\n", __LINE__);
-        }
-        else if(dividMinus) {
-            if(0 == strcmp(integer, "0")) {
-                PRINTF("ccc : %d\n", __LINE__);
-                n.minus = 1;
-                n.integer = integer;
-                n.extend.vdivid.x = x;
-                n.extend.vdivid.y = y;
-            }
-            else {
-                PRINTF("ccc : %d\n", __LINE__);
-                n.minus = 0;
-                stringDigitReuseSubInteger(integer, "1");
-                n.integer = integer;
-                BOOL minus;
-                n.extend.vdivid.x = stringDigitSubInteger(y, x, &minus);
-                free_r(x);
-                n.extend.vdivid.y = y;
-            }
-        }
-        else {
-            n.minus = 1;
-            stringDigitReuseSubInteger(integer, "1");
-            n.integer = integer;
-            BOOL minus;
-            n.extend.vdivid.x = stringDigitSubInteger(y, x, &minus);
-            free_r(x);
-            n.extend.vdivid.y = y;
-            PRINTF("ccc : %d\n", __LINE__);
-        }
-    }
-    
-    PRINTF("ccc : %s\n", stringNumberDebugDescription(&n));
-    
-    stringNumberSimplify(&n);
-    
-    PRINTF("ccc : %s\n", stringNumberDebugDescription(&n));
-    
-    return n;
-}
 
 
-StringNumber stringNumberAdd(StringNumber* n1, StringNumber* n2)
+int _stringNumberReuseSub(StringNumber* n1, StringNumber* n2) {return 0;}
+int _stringNumberReuseMultiply(StringNumber* n1, StringNumber* n2) {return 0;}
+int _stringNumberReuseDivid(StringNumber* n1, StringNumber* n2) {return 0;}
+
+int _stringNumberReuseSwap(StringNumber* n1, StringNumber* n2)
 {
-    _stringNumberDebug(n1);
-    _stringNumberDebug(n2);
+    int ret = 0;
     
+    StringNumber nTmp = *n1;
+    *n1 = *n2;
+    *n2 = nTmp;
     
-    
-    
-    StringNumber n;
-    StringNumber n1copy = *n1;
-    StringNumber n2copy = *n2;
-    
-    if((!n1->minus && !n2->minus)) {
-        n = _stringNumberAdd(n1, n2);
-        n.minus = 0;
-    }
-    else if(n1->minus && n2->minus) {
-        n1copy.minus = 0;
-        n2copy.minus = 0;
-        n = _stringNumberAdd(&n1copy, &n2copy);
-        n.minus = 1;
-    }
-    else if(!n1->minus && n2->minus) {
-        n2copy.minus = 0;
-        n = _stringNumberSub(n1, &n2copy);
-    }
-    else if(n1->minus && !n2->minus) {
-        n1copy.minus = 0;
-        n = _stringNumberSub(n2, &n1copy);
-    }
-    else {
-        assert(0);
-    }
-    
-    return n;
+    return ret;
 }
 
 
@@ -1529,195 +1563,18 @@ StringNumber stringNumberAdd(StringNumber* n1, StringNumber* n2)
 
 
 
-StringNumber stringNumberSub(StringNumber *n1, StringNumber *n2)
-{
-    StringNumber n2copy = *n2;
-    n2copy.minus = n2->minus?0:1;
-    
-    return stringNumberAdd(n1, &n2copy);
-}
 
 
 
-StringNumber stringNumberMultiply(StringNumber *n1, StringNumber *n2)
-{
-    StringNumber n;
-    n.type = StringNumberTypeInvalid;
-    
-    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
-        n.type = StringNumberTypeInteger;
-        if((!n1->minus && !n2->minus)
-           || (n1->minus && n2->minus)) {
-            n.minus = 0;
-        }
-        else {
-            n.minus = 1;
-        }
-        
-        if(NULL == n1->extend.vfloat.decimal && NULL == n2->extend.vfloat.decimal) {
-            n.integer = stringDigitMultiply(n1->integer, n2->integer);
-            n.extend.vfloat.decimal = NULL;
-        }
-        else {
-            long lenDecimal = 0;
-            if(n1->extend.vfloat.decimal) {
-                lenDecimal += strlen(n1->extend.vfloat.decimal);
-            }
-            if(n2->extend.vfloat.decimal) {
-                lenDecimal += strlen(n2->extend.vfloat.decimal);
-            }
-            
-            char *s1connect = stringDigitConnect(n1->integer, n1->extend.vfloat.decimal);
-            char *s2connect = stringDigitConnect(n2->integer, n2->extend.vfloat.decimal);
-            
-            char *resultBeforeDecimal = stringDigitMultiply(s1connect, s2connect);
-            stringDigitSplitForDecimal(resultBeforeDecimal, lenDecimal, &n.integer, &n.extend.vfloat.decimal);
-            long lenDecimalRe = strlen(n.extend.vfloat.decimal);
-            stringDigitClearDecimalRight(&n.extend.vfloat.decimal, &lenDecimalRe);
-            
-            free_r(s1connect);
-            free_r(s2connect);
-            free_r(resultBeforeDecimal);
-        }
-    }
-    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid){
-        stringNumberReuseIntegerToDivid(n1);
-        return stringNumberMultiply(n1, n2);
-    }
-    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger){
-        return stringNumberMultiply(n2, n1);
-    }
-    else {
-        /* divid * divid. */
-        n.type = StringNumberTypeDivid;
-        n.minus = (n1->minus != n2->minus);
-        
-        char *a1y1 = stringDigitMultiply(n1->integer, n1->extend.vdivid.y);
-        char *a1y1_x1 = stringDigitAddInteger(a1y1, n1->extend.vdivid.x);
-        
-        char *a2y2 = stringDigitMultiply(n2->integer, n2->extend.vdivid.y);
-        char *a2y2_x2 = stringDigitAddInteger(a2y2, n2->extend.vdivid.x);
-        
-        char *x = stringDigitMultiply(a1y1_x1, a2y2_x2);
-        char *y = stringDigitMultiply(n1->extend.vdivid.y, n2->extend.vdivid.y);
-        
-        n.integer = stringDigitReuseDividGetInteger(x, y);
-        
-        free_r(a1y1);
-        free_r(a1y1_x1);
-        free_r(a2y2);
-        free_r(a2y2_x2);
-        
-        n.extend.vdivid.x = x;
-        n.extend.vdivid.y = y;
-    }
-    
-    stringNumberSimplify(&n);
-    return n;
-}
 
 
-StringNumber stringNumberDivid(StringNumber *n1, StringNumber *n2)
-{
-    StringNumber n;
-    n.type = StringNumberTypeInvalid;
-    
-    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
-        n.type = StringNumberTypeInteger;
-        if((!n1->minus && !n2->minus)
-           || (n1->minus && n2->minus)) {
-            n.minus = 0;
-        }
-        else {
-            n.minus = 1;
-        }
-        
-        long lenDecimal = 0;
-        long lenDecimal1 = n1->extend.vfloat.decimal?strlen(n1->extend.vfloat.decimal):0;
-        long lenDecimal2 = n2->extend.vfloat.decimal?strlen(n2->extend.vfloat.decimal):0;
-        
-        if(n1->extend.vfloat.decimal) {
-            lenDecimal += lenDecimal1;
-        }
-        if(n2->extend.vfloat.decimal) {
-            lenDecimal += lenDecimal2;
-        }
-        
-        char *s1connect = stringDigitConnect(n1->integer, n1->extend.vfloat.decimal);
-        char *s2connect = stringDigitConnect(n2->integer, n2->extend.vfloat.decimal);
-        
-        if(lenDecimal1 == lenDecimal2) {
-            
-            
-        }
-        else if(lenDecimal1>lenDecimal2) {
-            char *tmp = stringDigitMuiltiply10n(s2connect, lenDecimal1-lenDecimal2);
-            free_r(s2connect);
-            s2connect = tmp;
-        }
-        else {
-            char *tmp = stringDigitMuiltiply10n(s1connect, lenDecimal2-lenDecimal1);
-            free_r(s1connect);
-            s1connect = tmp;
-        }
-        
-        char *s1counting = strdup_r(s1connect);
-        char *integer = stringDigitReuseDividGetInteger(s1counting, s2connect);
-        if(0 == strcmp(s1counting, "0")) {
-            n.type = StringNumberTypeInteger;
-            n.integer = integer;
-            n.extend.vfloat.decimal = NULL;
-        }
-        else {
-            n.type = StringNumberTypeDivid;
-            n.integer = integer;
-            n.extend.vdivid.x = strdup_r(s1counting);
-            n.extend.vdivid.y = strdup_r(s2connect);
-        }
-        
-        free_r(s1counting);
-        free_r(s1connect);
-        free_r(s2connect);
-    }
-    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid){
-        stringNumberReuseIntegerToDivid(n1);
-        return stringNumberDivid(n1, n2);
-    }
-    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger){
-        stringNumberReuseIntegerToDivid(n2);
-        return stringNumberDivid(n1, n2);
-    }
-    else {
-        /* divid / divid. */
-        n.type = StringNumberTypeDivid;
-        n.minus = (n1->minus != n2->minus);
-        
-        char *a1y1 = stringDigitMultiply(n1->integer, n1->extend.vdivid.y);
-        char *a1y1_x1 = stringDigitAddInteger(a1y1, n1->extend.vdivid.x);
-        
-        char *a2y2 = stringDigitMultiply(n2->integer, n2->extend.vdivid.y);
-        char *a2y2_x2 = stringDigitAddInteger(a2y2, n2->extend.vdivid.x);
-        
-        char *x = stringDigitMultiply(a1y1_x1, n2->extend.vdivid.y);
-        char *y = stringDigitMultiply(n1->extend.vdivid.y, a2y2_x2);
-        
-        n.integer = stringDigitReuseDividGetInteger(x, y);
-        
-        free_r(a1y1);
-        free_r(a1y1_x1);
-        free_r(a2y2);
-        free_r(a2y2_x2);
-        
-        n.extend.vdivid.x = x;
-        n.extend.vdivid.y = y;
-        
-        PRINTF("x=%s, y=%s\n", x, y);
-        
-    }
-    
-    stringNumberSimplify(&n);
-    return n;
-}
+
+
+
+
+
+
+
 
 
 
@@ -1753,6 +1610,583 @@ int stringDigitQuotient(const char *a, const char *b, char *tmp)
     
     return retn;
 }
+
+
+
+
+
+
+
+
+int _stringNumberNoneMinusAdd(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    
+    n->type = StringNumberTypeInvalid;
+    n->minus = NO;
+    
+    _stringNumberDebug(n1);
+    _stringNumberDebug(n2);
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        n->type = StringNumberTypeInteger;
+        n->integer = stringDigitAddInteger(n1->integer, n2->integer);
+        BOOL carry = NO;
+        n->extend.vfloat.decimal = stringDigitAddDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &carry);
+        if(carry) {
+            char *t = stringDigitAddInteger(n->integer, "1");
+            free_r(n->integer);
+            n->integer = t;
+        }
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
+        if(n1->extend.vfloat.decimal == NULL) {
+            n->type = StringNumberTypeDivid;
+            n->integer = stringDigitAddInteger(n1->integer, n2->integer);
+            n->extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
+            n->extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+        }
+        else {
+            StringNumber n1ToDivid;
+            stringNumberIntegerToDivid(n1, &n1ToDivid);
+            ret = _stringNumberNoneMinusAdd(&n1ToDivid, n2, n);
+            stringNumberFree(&n1ToDivid);
+        }
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
+        ret = _stringNumberNoneMinusAdd(n2, n1, n);
+    }
+    else {
+        n->type = StringNumberTypeDivid;
+        
+        n->integer = stringDigitAddInteger(n1->integer, n2->integer);
+        BOOL carry = 0;
+        stringDigitDividAdd(n1->extend.vdivid.x, n1->extend.vdivid.y, n2->extend.vdivid.x, n2->extend.vdivid.y, &n->extend.vdivid.x, &n->extend.vdivid.y, &carry);
+        if(carry) {
+            char *tmp = stringDigitAddInteger(n->integer, "1");
+            free_r(n->integer);
+            n->integer = tmp;
+        }
+    }
+    
+    assert(n->type != StringNumberTypeInvalid);
+    
+    stringNumberSimplify(n);
+    
+    return ret;
+}
+
+
+int _stringNumberNoneMinusReuseAdd(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    
+    _stringNumberDebug(n1);
+    _stringNumberDebug(n2);
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        stringDigitReuseIntegerAdd(&n1->integer, n2->integer);
+        BOOL carry = NO;
+        
+        char *decimal = stringDigitAddDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &carry);
+        if(n1->extend.vfloat.decimal) {
+            free_r(n1->extend.vfloat.decimal);
+        }
+        n1->extend.vfloat.decimal = decimal;
+        
+        if(carry) {
+            stringDigitReuseIntegerAdd(&n1->integer, "1");
+        }
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
+        if(n1->extend.vfloat.decimal == NULL) {
+            n1->type = StringNumberTypeDivid;
+            stringDigitReuseIntegerAdd(&n1->integer, n2->integer);
+            n1->extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
+            n1->extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+        }
+        else {
+            stringNumberReuseIntegerToDivid(n1);
+            ret = _stringNumberNoneMinusReuseAdd(n1, n2);
+        }
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
+        if(n2->extend.vfloat.decimal == NULL) {
+            stringDigitReuseIntegerAdd(&n1->integer, n2->integer);
+        }
+        else {
+            stringNumberReuseIntegerToDivid(n2);
+            ret = _stringNumberNoneMinusReuseAdd(n1, n2);
+        }
+    }
+    else {
+        n1->type = StringNumberTypeDivid;
+        stringDigitReuseIntegerAdd(&n1->integer, n2->integer);
+        
+        BOOL carry = 0;
+        char *x ;
+        char *y ;
+        
+        stringDigitDividAdd(n1->extend.vdivid.x, n1->extend.vdivid.y, n2->extend.vdivid.x, n2->extend.vdivid.y, &x, &y, &carry);
+        if(carry) {
+            stringDigitReuseIntegerAdd(&n1->integer, "1");
+        }
+        
+        PRINTF("x=%s, y=%s\n", x, y);
+        
+        PRINTF("x=%s, y=%s\n", n1->extend.vdivid.x, n1->extend.vdivid.y);
+        
+        free_r(n1->extend.vdivid.x);
+        free_r(n1->extend.vdivid.y);
+        n1->extend.vdivid.x = x;
+        n1->extend.vdivid.y = y;
+        
+        PRINTF("x=%s, y=%s\n", n1->extend.vdivid.x, n1->extend.vdivid.y);
+        
+        
+        PRINTF("[%s]\n", stringNumberDebugDescription(n1));
+    }
+    
+    assert(n1->type != StringNumberTypeInvalid);
+    stringNumberSimplify(n1);
+    
+    if(n2->type != StringNumberTypeNull) {
+        stringNumberFree(n2);
+    }
+    
+    return ret;
+}
+
+
+int stringNumberNoneMinusAdd(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    return _stringNumberNoneMinusAdd(n1, n2, n);
+}
+
+
+int stringNumberNoneMinusReuseAdd(StringNumber *n1, StringNumber *n2)
+{
+    return _stringNumberNoneMinusReuseAdd(n1, n2);
+}
+
+
+int _stringNumberNoneMinusSub(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    
+    n->type = StringNumberTypeInvalid;
+    n->minus = NO;
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        n->type = StringNumberTypeInteger;
+        /* 比较. */
+        int cmp = StringNumberCompareIngoreMinus(n1, n2);
+        if(0 == cmp) {
+            n->minus = 0;
+            n->integer = strdup_r("0");
+            n->extend.vfloat.decimal = NULL;
+        }
+        else if(cmp > 0) {
+            BOOL minus = 0;
+            n->integer = stringDigitSubInteger(n1->integer, n2->integer, &minus);
+            BOOL subInteger = 0;
+            n->extend.vfloat.decimal = stringDigitSubDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &subInteger);
+            if(subInteger) {
+                char *tmp = stringDigitSubInteger(n->integer, "1", &minus);
+                free_r(n->integer);
+                n->integer = tmp;
+            }
+        }
+        else {
+            n->minus = 1;
+            BOOL minus = 0;
+            n->integer = stringDigitSubInteger(n2->integer, n1->integer, &minus);
+            BOOL subInteger = 0;
+            n->extend.vfloat.decimal = stringDigitSubDecimal(n2->extend.vfloat.decimal, n1->extend.vfloat.decimal, &subInteger);
+            if(subInteger) {
+                char *tmp = stringDigitSubInteger(n->integer, "1", &minus);
+                free_r(n->integer);
+                n->integer = tmp;
+            }
+        }
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
+        if(NULL == n1->extend.vfloat.decimal) {
+            BOOL minus = 0;
+            char *integer = stringDigitSubInteger(n1->integer, n2->integer, &minus);
+            if(!minus) {
+                if(0 == strcmp(integer, "0")) {
+                    n->type = StringNumberTypeDivid;
+                    n->minus = 1;
+                    n->integer = strdup_r("0");
+                    n->extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
+                    n->extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+                    free_r(integer);
+                }
+                else {
+                    stringDigitReuseSubInteger(integer, "1");
+                    n->type = StringNumberTypeDivid;
+                    n->minus = 0;
+                    n->integer = integer;
+                    n->extend.vdivid.x = stringDigitSubInteger(n2->extend.vdivid.y, n2->extend.vdivid.x, NULL);
+                    n->extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+                }
+            }
+            else {
+                n->type = StringNumberTypeDivid;
+                n->minus = 1;
+                n->integer = integer;
+                n->extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
+                n->extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+            }
+        }
+        else {
+            StringNumber n1ToDivid;
+            stringNumberIntegerToDivid(n1, &n1ToDivid);
+            ret = _stringNumberNoneMinusSub(&n1ToDivid, n2, n);
+            stringNumberFree(&n1ToDivid);
+        }
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
+        StringNumber n2ToDivid;
+        stringNumberIntegerToDivid(n2, &n2ToDivid);
+        ret = _stringNumberNoneMinusSub(n1, &n2ToDivid, n);
+        stringNumberFree(&n2ToDivid);
+    }
+    else {
+        n->type = StringNumberTypeDivid;
+        
+        const char *integer1;
+        const char *x1;
+        const char *y1;
+        
+        const char *integer2;
+        const char *x2;
+        const char *y2;
+        
+        integer1 = n1->integer;
+        x1 = n1->extend.vdivid.x;
+        y1 = n1->extend.vdivid.y;
+        
+        integer2 = n2->integer;
+        x2 = n2->extend.vdivid.x;
+        y2 = n2->extend.vdivid.y;
+        
+        BOOL integerMinus;
+        char *integer = stringDigitSubInteger(integer1, integer2, &integerMinus);
+        
+        char *x;
+        char *y;
+        BOOL dividMinus;
+        
+        stringDigitDividSub(x1, y1, x2, y2, &x, &y, &dividMinus);
+        
+        if(integerMinus == dividMinus) {
+            
+            n->minus = integerMinus;
+            n->integer = integer;
+            n->extend.vdivid.x = x;
+            n->extend.vdivid.y = y;
+            
+            PRINTF("ccc : %d\n", __LINE__);
+        }
+        else if(dividMinus) {
+            if(0 == strcmp(integer, "0")) {
+                PRINTF("ccc : %d\n", __LINE__);
+                n->minus = 1;
+                n->integer = integer;
+                n->extend.vdivid.x = x;
+                n->extend.vdivid.y = y;
+            }
+            else {
+                PRINTF("ccc : %d\n", __LINE__);
+                n->minus = 0;
+                stringDigitReuseSubInteger(integer, "1");
+                n->integer = integer;
+                BOOL minus;
+                n->extend.vdivid.x = stringDigitSubInteger(y, x, &minus);
+                free_r(x);
+                n->extend.vdivid.y = y;
+            }
+        }
+        else {
+            n->minus = 1;
+            stringDigitReuseSubInteger(integer, "1");
+            n->integer = integer;
+            BOOL minus;
+            n->extend.vdivid.x = stringDigitSubInteger(y, x, &minus);
+            free_r(x);
+            n->extend.vdivid.y = y;
+            PRINTF("ccc : %d\n", __LINE__);
+        }
+    }
+    
+    PRINTF("ccc : %s\n", stringNumberDebugDescription(&n));
+    
+    stringNumberSimplify(n);
+    
+    PRINTF("ccc : %s\n", stringNumberDebugDescription(&n));
+    
+    return ret;
+}
+
+
+int _stringNumberNoneMinusReuseSub(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    
+    StringNumber n;
+    ret = _stringNumberNoneMinusSub(n1, n2, &n);
+    stringNumberFree(n2);
+    stringNumberAssignNewValue(n1, &n);
+    
+    return ret;
+}
+
+
+int stringNumberNoneMinusSub(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    return _stringNumberNoneMinusSub(n1, n2, n);
+}
+
+
+int stringNumberNoneMinusReuseSub(StringNumber *n1, StringNumber *n2)
+{
+    return _stringNumberNoneMinusReuseSub(n1, n2);
+}
+
+
+int _stringNumberNoneMinusMultiply(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    
+    n->type = StringNumberTypeInvalid;
+    n->minus = NO;
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        n->type = StringNumberTypeInteger;
+
+        
+        if(NULL == n1->extend.vfloat.decimal && NULL == n2->extend.vfloat.decimal) {
+            n->integer = stringDigitMultiply(n1->integer, n2->integer);
+            n->extend.vfloat.decimal = NULL;
+        }
+        else {
+            long lenDecimal = 0;
+            if(n1->extend.vfloat.decimal) {
+                lenDecimal += strlen(n1->extend.vfloat.decimal);
+            }
+            if(n2->extend.vfloat.decimal) {
+                lenDecimal += strlen(n2->extend.vfloat.decimal);
+            }
+            
+            char *s1connect = stringDigitConnect(n1->integer, n1->extend.vfloat.decimal);
+            char *s2connect = stringDigitConnect(n2->integer, n2->extend.vfloat.decimal);
+            
+            char *resultBeforeDecimal = stringDigitMultiply(s1connect, s2connect);
+            stringDigitSplitForDecimal(resultBeforeDecimal, lenDecimal, &n->integer, &n->extend.vfloat.decimal);
+            long lenDecimalRe = strlen(n->extend.vfloat.decimal);
+            stringDigitClearDecimalRight(&n->extend.vfloat.decimal, &lenDecimalRe);
+            
+            free_r(s1connect);
+            free_r(s2connect);
+            free_r(resultBeforeDecimal);
+        }
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid){
+        StringNumber nDivid;
+        stringNumberIntegerToDivid(n1, &nDivid);
+        ret = _stringNumberNoneMinusMultiply(&nDivid, n2, n);
+        stringNumberFree(&nDivid);
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger){
+        ret = _stringNumberNoneMinusMultiply(n2, n1, n);
+    }
+    else {
+        /* divid * divid. */
+        n->type = StringNumberTypeDivid;
+        
+        char *a1y1 = stringDigitMultiply(n1->integer, n1->extend.vdivid.y);
+        char *a1y1_x1 = stringDigitAddInteger(a1y1, n1->extend.vdivid.x);
+        
+        char *a2y2 = stringDigitMultiply(n2->integer, n2->extend.vdivid.y);
+        char *a2y2_x2 = stringDigitAddInteger(a2y2, n2->extend.vdivid.x);
+        
+        char *x = stringDigitMultiply(a1y1_x1, a2y2_x2);
+        char *y = stringDigitMultiply(n1->extend.vdivid.y, n2->extend.vdivid.y);
+        
+        n->integer = stringDigitReuseDividGetInteger(x, y);
+        
+        free_r(a1y1);
+        free_r(a1y1_x1);
+        free_r(a2y2);
+        free_r(a2y2_x2);
+        
+        n->extend.vdivid.x = x;
+        n->extend.vdivid.y = y;
+    }
+    
+    stringNumberSimplify(n);
+    return ret;
+}
+
+
+int _stringNumberNoneMinusReuseMultiply(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    
+    StringNumber n;
+    ret = _stringNumberNoneMinusMultiply(n1, n2, &n);
+    stringNumberFree(n2);
+    stringNumberAssignNewValue(n1, &n);
+    
+    return ret;
+}
+
+
+int stringNumberNoneMinusMultiply(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    return _stringNumberNoneMinusMultiply(n1, n2, n);
+}
+
+
+int stringNumberNoneMinusReuseMultiply(StringNumber *n1, StringNumber *n2)
+{
+    return _stringNumberNoneMinusReuseMultiply(n1, n2);
+}
+
+
+int _stringNumberNoneMinusDivid(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    
+    n->type = StringNumberTypeInvalid;
+    n->minus = NO;
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        n->type = StringNumberTypeInteger;
+        
+        long lenDecimal = 0;
+        long lenDecimal1 = n1->extend.vfloat.decimal?strlen(n1->extend.vfloat.decimal):0;
+        long lenDecimal2 = n2->extend.vfloat.decimal?strlen(n2->extend.vfloat.decimal):0;
+        
+        if(n1->extend.vfloat.decimal) {
+            lenDecimal += lenDecimal1;
+        }
+        if(n2->extend.vfloat.decimal) {
+            lenDecimal += lenDecimal2;
+        }
+        
+        char *s1connect = stringDigitConnect(n1->integer, n1->extend.vfloat.decimal);
+        char *s2connect = stringDigitConnect(n2->integer, n2->extend.vfloat.decimal);
+        
+        if(lenDecimal1 == lenDecimal2) {
+            
+            
+        }
+        else if(lenDecimal1>lenDecimal2) {
+            char *tmp = stringDigitMuiltiply10n(s2connect, lenDecimal1-lenDecimal2);
+            free_r(s2connect);
+            s2connect = tmp;
+        }
+        else {
+            char *tmp = stringDigitMuiltiply10n(s1connect, lenDecimal2-lenDecimal1);
+            free_r(s1connect);
+            s1connect = tmp;
+        }
+        
+        char *s1counting = strdup_r(s1connect);
+        char *integer = stringDigitReuseDividGetInteger(s1counting, s2connect);
+        if(0 == strcmp(s1counting, "0")) {
+            n->type = StringNumberTypeInteger;
+            n->integer = integer;
+            n->extend.vfloat.decimal = NULL;
+        }
+        else {
+            n->type = StringNumberTypeDivid;
+            n->integer = integer;
+            n->extend.vdivid.x = strdup_r(s1counting);
+            n->extend.vdivid.y = strdup_r(s2connect);
+        }
+        
+        free_r(s1counting);
+        free_r(s1connect);
+        free_r(s2connect);
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid){
+        StringNumber nDivid;
+        stringNumberIntegerToDivid(n1, &nDivid);
+        ret = _stringNumberNoneMinusDivid(&nDivid, n2, n);
+        stringNumberFree(&nDivid);
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger){
+        StringNumber nDivid;
+        stringNumberIntegerToDivid(n2, &nDivid);
+        ret = _stringNumberNoneMinusDivid(n1, &nDivid, n);
+        stringNumberFree(&nDivid);
+    }
+    else {
+        /* divid / divid. */
+        n->type = StringNumberTypeDivid;
+        
+        char *a1y1 = stringDigitMultiply(n1->integer, n1->extend.vdivid.y);
+        char *a1y1_x1 = stringDigitAddInteger(a1y1, n1->extend.vdivid.x);
+        
+        char *a2y2 = stringDigitMultiply(n2->integer, n2->extend.vdivid.y);
+        char *a2y2_x2 = stringDigitAddInteger(a2y2, n2->extend.vdivid.x);
+        
+        char *x = stringDigitMultiply(a1y1_x1, n2->extend.vdivid.y);
+        char *y = stringDigitMultiply(n1->extend.vdivid.y, a2y2_x2);
+        
+        n->integer = stringDigitReuseDividGetInteger(x, y);
+        
+        free_r(a1y1);
+        free_r(a1y1_x1);
+        free_r(a2y2);
+        free_r(a2y2_x2);
+        
+        n->extend.vdivid.x = x;
+        n->extend.vdivid.y = y;
+        
+        PRINTF("x=%s, y=%s\n", x, y);
+        
+    }
+    
+    stringNumberSimplify(n);
+    return ret;
+}
+
+
+int _stringNumberNoneMinusReuseDivid(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    
+    StringNumber n;
+    ret = _stringNumberNoneMinusDivid(n1, n2, &n);
+    stringNumberFree(n2);
+    stringNumberAssignNewValue(n1, &n);
+    
+    return ret;
+}
+
+
+int stringNumberNoneMinusDivid(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    return _stringNumberNoneMinusDivid(n1, n2, n);
+}
+
+
+int stringNumberNoneMinusReuseDivid(StringNumber *n1, StringNumber *n2)
+{
+    return _stringNumberNoneMinusReuseDivid(n1, n2);
+}
+
+
+
+
+
+
+
 
 
 void stringDigitDividToQuotient(const char *a, const char *b, char *result, size_t size)
@@ -1813,61 +2247,241 @@ void stringDigitDividToQuotient(const char *a, const char *b, char *result, size
 }
 
 
+#define PPNN \
+BOOL PP = (!n1->minus && !n2->minus);\
+BOOL PN = (!n1->minus &&  n2->minus);\
+BOOL NP = (n1->minus  && !n2->minus);\
+BOOL NN = (n1->minus  &&  n2->minus);
 
 
+#define DEFINE_PP BOOL PP = (!n1->minus && !n2->minus);
+#define DEFINE_PN BOOL PN = (!n1->minus &&  n2->minus);
+#define DEFINE_NP BOOL NP = (n1->minus  && !n2->minus);
+#define DEFINE_NN BOOL NN = (n1->minus  &&  n2->minus);
 
-
-
-
-
-
-StringNumber stringNumberOperate(StringNumber *n1, StringNumber *n2, char op)
+int stringNumberOperateAdd(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
 {
+    int ret = 0;
+    PPNN
+    
+    if(PP || NN) {
+        ret = stringNumberNoneMinusAdd(n1, n2, n);
+        if(NN) {
+            n->minus = YES;
+        }
+    }
+    else if(PN) {
+        ret = stringNumberNoneMinusSub(n1, n2, n);
+    }
+    else if(NP) {
+        ret = stringNumberNoneMinusSub(n2, n1, n);
+    }
+    
+    return ret;
+}
+
+
+int stringNumberOperateSub(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    PPNN
+    
+    if(PP) {
+        ret = stringNumberNoneMinusSub(n1, n2, n);
+    }
+    else if(PN) {
+        ret = stringNumberNoneMinusAdd(n1, n2, n);
+    }
+    else if(NP) {
+        ret = stringNumberNoneMinusAdd(n1, n2, n);
+        n->minus = YES;
+    }
+    else if(NN) {
+        ret = stringNumberNoneMinusSub(n2, n1, n);
+    }
+    
+    return ret;
+}
+
+
+int stringNumberOperateMultiply(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    DEFINE_PN
+    DEFINE_NP
+    
+    ret = stringNumberNoneMinusMultiply(n1, n2, n);
+    n->minus = (PN || NP);
+    
+    return ret;
+}
+
+
+int stringNumberOperateDivid(const StringNumber *n1, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
+    DEFINE_PN
+    DEFINE_NP
+    
+    ret = stringNumberNoneMinusDivid(n1, n2, n);
+    n->minus = (PN || NP);
+    
+    return ret;
+}
+
+
+
+
+
+
+
+
+
+
+
+int stringNumberOperate(const StringNumber *n1, char op, const StringNumber *n2, StringNumber *n)
+{
+    int ret = 0;
     PRINTF("before %s %c %s\n", stringNumberDebugDescription(n1), op, stringNumberDebugDescription(n2));
     char tmp[1000];
     snprintf(tmp, 1000, "before %s %c %s\n", stringNumberDebugDescription(n1), op, stringNumberDebugDescription(n2));
     kmdescripe(tmp);
     
-    StringNumber n;
-    
     switch (op) {
         case '+':
-            n = stringNumberAdd(n1, n2);
+            ret = stringNumberOperateAdd(n1, n2, n);
             break;
             
         case '-':
-            n = stringNumberSub(n1, n2);
+            ret = stringNumberOperateSub(n1, n2, n);
             break;
             
         case '*':
-            n = stringNumberMultiply(n1, n2);
+            ret = stringNumberOperateMultiply(n1, n2, n);
             break;
             
         case '/':
-            n = stringNumberDivid(n1, n2);
+            ret = stringNumberOperateDivid(n1, n2, n);
             break;
-            
             
         default:
             break;
     }
     
     
-    snprintf(tmp, 1000, "after %s %c %s = %s\n", stringNumberDebugDescription(n1), op, stringNumberDebugDescription(n2), stringNumberDebugDescription(&n));
+    snprintf(tmp, 1000, "after %s %c %s = %s\n", stringNumberDebugDescription(n1), op, stringNumberDebugDescription(n2), stringNumberDebugDescription(n));
     kmdescripe(tmp);
     
-    return n;
+    return ret;
 }
+
+
+
+
+int stringNumberReuseOperateAdd(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    PPNN
+    
+    if(PP || NN) {
+        ret = stringNumberNoneMinusReuseAdd(n1, n2);
+        if(NN) {
+            n1->minus = YES;
+        }
+    }
+    else if(PN) {
+        ret = stringNumberNoneMinusReuseSub(n1, n2);
+    }
+    else if(NP) {
+        _stringNumberReuseSwap(n1, n2);
+        ret = stringNumberNoneMinusReuseSub(n1, n2);
+    }
+    
+    return ret;
+}
+
+
+int stringNumberReuseOperateSub(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    PPNN
+    
+    if(PP) {
+        ret = stringNumberNoneMinusReuseSub(n1, n2);
+    }
+    else if(PN) {
+        ret = stringNumberNoneMinusReuseAdd(n1, n2);
+        n1->minus = NO;
+    }
+    else if(NP) {
+        ret = stringNumberNoneMinusReuseAdd(n1, n2);
+        n1->minus = YES;
+    }
+    else if(NN) {
+        _stringNumberReuseSwap(n1, n2);
+        ret = stringNumberNoneMinusReuseSub(n1, n2);
+    }
+    
+    return ret;
+}
+
+
+int stringNumberReuseOperateMultiply(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    DEFINE_PN
+    DEFINE_NP
+    
+    ret = stringNumberNoneMinusReuseMultiply(n1, n2);
+    n1->minus = (PN || NP);
+    
+    return ret;
+}
+
+
+int stringNumberReuseOperateDivid(StringNumber *n1, StringNumber *n2)
+{
+    int ret = 0;
+    DEFINE_PN
+    DEFINE_NP
+    
+    ret = stringNumberNoneMinusReuseDivid(n1, n2);
+    n1->minus = (PN || NP);
+    
+    return ret;
+}
+
+
+
 
 
 int stringNumberReuseOperate(StringNumber *n1, StringNumber *n2, char op)
 {
     int ret = 0;
     
-    StringNumber n = stringNumberOperate(n1, n2, op);
-    stringNumberFree(n1);
-    *n1 = n;
+    PRINTF("stringNumberReuseOperate : [%s] %c [%s]\n", stringNumberDebugDescription(n1), op, stringNumberDebugDescription(n2));
     
+    switch (op) {
+        case '+':
+            ret = stringNumberReuseOperateAdd(n1, n2);
+            break;
+            
+        case '-':
+            ret = stringNumberReuseOperateSub(n1, n2);
+            break;
+            
+        case '*':
+            ret = stringNumberReuseOperateMultiply(n1, n2);
+            break;
+            
+        case '/':
+            ret = stringNumberReuseOperateDivid(n1, n2);
+            break;
+            
+        default:
+            break;
+    }
+
     return ret;
 }
 
@@ -2001,47 +2615,6 @@ void stringNumberCalcDebug(StringNumber *parsedNumber, char *parsedOp, long coun
 }
 
 
-void _stringNumberMultiplyContinously(StringNumber *parsedNumber,
-                                      char *parsedOp,
-                                      long *pcount,
-                                      long rangeLoc,
-                                      long rangeLength)
-{
-    if(rangeLength == 1) {
-        return;
-    }
-    
-    StringNumber t1;
-    StringNumber t2;
-    
-    long count = *pcount;
-    
-    t1 = stringNumberMultiply(parsedNumber+rangeLoc, parsedNumber+rangeLoc+1);
-    stringNumberFree(parsedNumber+rangeLoc);
-    stringNumberFree(parsedNumber+rangeLoc+1);
-    
-    long idx;
-    for(idx = rangeLoc + 2; idx<rangeLoc+rangeLength;idx++) {
-        t2 = stringNumberMultiply(&t1, parsedNumber+idx);
-        stringNumberFree(&t1);
-        t1 = t2;
-    }
-    
-    for(idx=rangeLoc; idx<rangeLoc+rangeLength;idx++) {
-        stringNumberFree(parsedNumber+idx);
-    }
-    
-    parsedNumber[rangeLoc] = t1;
-    
-    long idxMove = rangeLoc+1;
-    for(;idxMove+(rangeLength-1)<count; idxMove++) {
-        parsedOp[idxMove] = parsedOp[idxMove+(rangeLength-1)];
-        parsedNumber[idxMove] = parsedNumber[idxMove+(rangeLength-1)];
-    }
-    count -= (rangeLength-1);
-    *pcount = count;
-}
-
 
 typedef struct {
     StringNumber *numberArray;
@@ -2056,15 +2629,7 @@ void stringNumberArrayDebug(StringNumberAndOpList *a, const char *s)
     long idx;
     PRINTF("----------------------------\n%s [%ld]\n", s, a->count);
     for(idx = 0; idx <a->count; idx++) {
-        char op = a->opArray[idx];
-        if(op == '(' || op == ')') {
-            PRINTF("%c \n", op);
-        }
-        else {
-            PRINTF("%c %s \n", op, stringNumberDebugDescription(a->numberArray+idx));
-        }
-        
-        //        _stringNumberDebug(parsedNumber+idx);
+        PRINTF("[%ld] %c %s\n", idx, a->opArray[idx], stringNumberDebugDescription(a->numberArray+idx));
     }
     PRINTF("\n----------------------------\n\n");
 }
@@ -2154,6 +2719,21 @@ void stringNumberArrayPushNumber(StringNumberAndOpList *a, StringNumber *n)
 }
 
 
+char stringNumberArrayLastOp(StringNumberAndOpList *a)
+{
+    assert(a->count > 0);
+    return a->opArray[a->count-1];
+}
+
+
+StringNumber * stringNumberArrayLastNumber(StringNumberAndOpList *a)
+{
+    assert(a->count > 0);
+    return &a->numberArray[a->count-1];
+}
+
+
+
 
 
 
@@ -2176,14 +2756,14 @@ int stringNumberArrayReadParentheses(StringNumberAndOpList *a, long *left, long 
         if(a->opArray[idx] == ')') {
             if(locLeft >= 0) {
                 locRight = idx;
-                if((locRight-locLeft) == 1) {
-                    ret = -1;
-                    break;
-                }
-                else {
+//                if((locRight-locLeft) == 1) {
+//                    ret = -1;
+//                    break;
+//                }
+//                else {
                     ret = 1;
                     break;
-                }
+//                }
             }
             else {
                 ret = -1;
@@ -2202,6 +2782,15 @@ int stringNumberArrayReadParentheses(StringNumberAndOpList *a, long *left, long 
 
 
 /* 计算. */
+void stringNumberArrayInit(StringNumberAndOpList *a)
+{
+    a->total = 100;
+    a->numberArray = malloc(sizeof(*a->numberArray) * 100);
+    a->opArray = malloc(sizeof(*a->opArray)*100);
+    a->count = 0;
+}
+
+
 void stringNumberArrayFree(StringNumberAndOpList *a)
 {
     long idx;
@@ -2209,8 +2798,8 @@ void stringNumberArrayFree(StringNumberAndOpList *a)
         stringNumberFree(a->numberArray+idx);
     }
     
-    free_r(a->numberArray);
-    free_r(a->opArray);
+    free(a->numberArray);
+    free(a->opArray);
     
     a->numberArray = NULL;
     a->opArray = NULL;
@@ -2288,7 +2877,6 @@ int stringNumberArrayCalc(StringNumberAndOpList *a, long left, long right)
         
         if(op == '*' || op == '/') {
             stringNumberReuseOperate(parsedNumber+locCounting, parsedNumber+idx, op);
-            stringNumberFree(parsedNumber+idx);
             lenCounting ++;
         }
         else {
@@ -2321,7 +2909,6 @@ int stringNumberArrayCalc(StringNumberAndOpList *a, long left, long right)
         PRINTF("op = %c, number = %s\n", op, stringNumberDebugDescription(parsedNumber+idx));
         if(op == '+' || op == '-') {
             stringNumberReuseOperate(parsedNumber+locCounting, parsedNumber+idx, op);
-            stringNumberFree(parsedNumber+idx);
             lenCounting ++;
         }
         else {
@@ -2338,6 +2925,29 @@ int stringNumberArrayCalc(StringNumberAndOpList *a, long left, long right)
 }
 
 
+int stringNumberArrayClearParenthesesAt(StringNumberAndOpList *a, long left)
+{
+    int ret = 0;
+    
+    assert(a->opArray[left] == '('
+           && (a->numberArray[left].type == StringNumberTypeInteger || a->numberArray[left].type == StringNumberTypeDivid)
+           && a->opArray[left+1] == ')'
+           && a->numberArray[left+1].type == StringNumberTypeNull
+           );
+    
+    if(left == 0) {
+        a->opArray[0] = ' ';
+        stringNumberArrayClear(a, 1, 1);
+    }
+    else {
+        assert(a->numberArray[left-1].type == StringNumberTypeNull);
+        a->numberArray[left-1] = a->numberArray[left];
+        
+        stringNumberArrayClear(a, left, 2);
+    }
+    
+    return ret;
+}
 
 
 
@@ -2404,6 +3014,85 @@ char *stringNumberCalcStepParenthesesRangeString(const char *s, StringRange rang
     assert(range.loc >= 0 && range.loc<len && range.loc + range.length <= len);
     return strndup_r(s+range.loc+1, range.length-2);
 }
+
+
+/* None blank. */
+int stringNumberArrayReadFromString(StringNumberAndOpList *a, const char *s)
+{
+    int ret = 0;
+    
+    /* 区别－为减或者操作符. */
+    a->count = 0;
+    
+    const char *sCounting = s;
+    if(sCounting[0] == '(') {
+        stringNumberArrayPushOp(a, '(');
+        sCounting ++;
+    }
+    else {
+        stringNumberArrayPushOp(a, ' ');
+    }
+    
+    int parsedOK = 1;
+    
+    while (1 == parsedOK) {
+        if(sCounting[0] == '\0') {
+            PRINTF("Read finish.\n");
+            break;
+        }
+        
+        if(stringNumberArrayLastNumber(a)->type == StringNumberTypeNull) {
+            if(')' == stringNumberArrayLastOp(a)) {
+                if((*sCounting == ')') || _stringCharIsOp(*sCounting)) {
+                    stringNumberArrayPushOp(a, *sCounting);
+                    sCounting ++;
+                }
+                else {
+                    PRINTF("Read error ( ')' next should be ')' or op <%s>).\n", sCounting);
+                    parsedOK = 0;
+                    break;
+                }
+                
+            }
+            else {
+                if(*sCounting == '(') {
+                    stringNumberArrayPushOp(a, *sCounting);
+                    sCounting ++;
+                }
+                else {
+                    StringNumber n;
+                    int retn = stringNumberRead(&n, sCounting);
+                    if(retn > 0) {
+                        stringNumberArrayPushNumber(a, &n);
+                        sCounting += retn;
+                    }
+                    else {
+                        PRINTF("Read error ( read number error <%s>).\n", sCounting);
+                        parsedOK = 0;
+                        break;
+                    }
+                }
+            }
+        }
+        else {//数据已经读取到.
+            if((*sCounting == ')') || _stringCharIsOp(*sCounting)) {
+                stringNumberArrayPushOp(a, *sCounting);
+                sCounting ++;
+            }
+            else {
+                PRINTF("Read error ( after number error <%s>).\n", sCounting);
+                parsedOK = 0;
+                break;
+            }
+        }
+    }
+    
+    ret = parsedOK?0:-1;
+    return ret;
+}
+
+
+
 
 
 /* NoneParentheses, None blank. */
@@ -2505,7 +3194,7 @@ int stringNumberCalcNoneParentheses(const char *s, StringNumber *n)
 
 
 
-char *stringNumberCalc(const char *s)
+char *stringNumberCalc0(const char *s)
 {
     char *r = nil;
     
@@ -2651,11 +3340,73 @@ char *stringNumberCalc(const char *s)
 }
 
 
+char *stringNumberCalc(const char *s)
+{
+    char *r = nil;
+    int ret = 0;
+    
+    char *ss = strdup(s);
+    //清除空格.
+    stringNumberCalcStepClearBlank(ss);
+    
+    StringNumber nResult;
+    
+    StringNumberAndOpList a;
+    stringNumberArrayInit(&a);
+    
+    int retRead = stringNumberArrayReadFromString(&a, ss);
+    assert(retRead == 0);
+    
+    while (1) {
+        
+        if(a.count == 1) {
+            nResult = a.numberArray[0];
+            a.count = 0;
+            break;
+        }
+        
+        //读取()匹配.
+        long left;
+        long right;
+        int nReadParentheses = stringNumberArrayReadParentheses(&a, &left, &right);
+        if(nReadParentheses > 0) {
+            stringNumberArrayCalc(&a, left, right-1);
+            stringNumberArrayClearParenthesesAt(&a, left);
+        }
+        else if(nReadParentheses == 0) {
+            stringNumberArrayCalc(&a, 0, a.count-1);
+        }
+        else {
+            stringNumberArrayDebug(&a, NULL);
+            
+            assert(0);
+        }
+        
+    }
+
+    if(ret == 0) {
+        r = stringNumberDescription(&nResult);
+        stringNumberFree(&nResult);
+        PRINTF("--- : finish calc. result [%s]\n", r);
+    }
+    else {
+        PRINTF("--- : calc error.\n");
+        r = strdup_r("invalid");
+    }
+    
+    stringNumberArrayFree(&a);
+    
+    free(ss);
+    
+    
+    return r;
+}
 
 
 
 
-u_int32_t stringNumberTestRandomInteger()
+
+u_int32_t stringNumberTestGenerateRandomInteger()
 {
     return arc4random();
 }
@@ -2717,6 +3468,7 @@ void stringNumberTestPrimeNumber()
 
 extern const char *kStringsReadNumber[];
 extern const char *ktestArray[];
+extern const char *ktestCalcAdd[];
 
 const char *calcStrings[] = {
     
@@ -2802,9 +3554,9 @@ void stringNumberTestRandomOp()
         snprintf(n2.extend.vfloat.decimal, kSize, "%u", 54);
         
         StringNumber n ;
-        n = stringNumberOperate(&n1, &n2, '+');
+        stringNumberOperate(&n1, '+', &n2, &n);
         
-        PRINTF("%s + %s = %s\n", stringNumberDebugDescription(&n1), stringNumberDebugDescription(&n2), stringNumberDebugDescription(&ns));
+        PRINTF("%s + %s = %s\n", stringNumberDebugDescription(&n1), stringNumberDebugDescription(&n2), stringNumberDebugDescription(&n));
     }
     
     
@@ -2813,8 +3565,8 @@ void stringNumberTestRandomOp()
     count = 0;
     date0 = [NSDate date];
     while (count < timevalTimes * times) {//break;
-        u_int32_t a = stringNumberTestRandomInteger();
-        u_int32_t b = stringNumberTestRandomInteger();
+        u_int32_t a = stringNumberTestGenerateRandomInteger();
+        u_int32_t b = stringNumberTestGenerateRandomInteger();
         //a = 111119;
         //b = 97;
         //        u_int32_t a = 999999;
@@ -2840,7 +3592,7 @@ void stringNumberTestRandomOp()
         n2.extend.vfloat.decimal = NULL;
         
         StringNumber n ;
-        n = stringNumberOperate(&n1, &n2, '+');
+        stringNumberOperate(&n1, '+', &n2, &n);
         char *ns = stringNumberDescription(&n);
         
         if(n.type == StringNumberTypeInteger
@@ -2881,8 +3633,8 @@ void stringNumberTestRandomOp()
     count = 0;
     date0 = [NSDate date];
     while (count < timevalTimes * times) {//break;
-        u_int32_t a = stringNumberTestRandomInteger();
-        u_int32_t b = stringNumberTestRandomInteger();
+        u_int32_t a = stringNumberTestGenerateRandomInteger();
+        u_int32_t b = stringNumberTestGenerateRandomInteger();
         //a = 111119;
         //b = 97;
         //        u_int32_t a = 999999;
@@ -2909,7 +3661,7 @@ void stringNumberTestRandomOp()
         n2.extend.vfloat.decimal = nil;
         
         StringNumber n ;
-        n = stringNumberOperate(&n1, &n2, '-');
+        stringNumberOperate(&n1, '-', &n2, &n);
         char *ns = stringNumberDescription(&n);
         
         if(n.type == StringNumberTypeInteger
@@ -2975,23 +3727,23 @@ void stringNumberTestRandomOp()
     date0 = [NSDate date];
     while (count < timevalTimes * times) {//break;
         /* simulate random double. */
-        u_int32_t a = stringNumberTestRandomInteger();
-        u_int32_t devide10a = stringNumberTestRandomInteger() % 12;
+        u_int32_t a = stringNumberTestGenerateRandomInteger();
+        u_int32_t devide10a = stringNumberTestGenerateRandomInteger() % 12;
         double v1 = (double)a/(double)k10s[devide10a];
-        u_int32_t minusa = stringNumberTestRandomInteger() % 2;
+        u_int32_t minusa = stringNumberTestGenerateRandomInteger() % 2;
         if(minusa) {
             v1 = 0 - v1;
         }
         
-        u_int32_t b = stringNumberTestRandomInteger();
-        u_int32_t devide10b = stringNumberTestRandomInteger() % 12;
+        u_int32_t b = stringNumberTestGenerateRandomInteger();
+        u_int32_t devide10b = stringNumberTestGenerateRandomInteger() % 12;
         double v2 = (double)b/(double)k10s[devide10b];
-        u_int32_t minusb = stringNumberTestRandomInteger() % 2;
+        u_int32_t minusb = stringNumberTestGenerateRandomInteger() % 2;
         if(minusb) {
             v2 = 0 - v2;
         }
         
-        u_int32_t opv = stringNumberTestRandomInteger() % 2;
+        u_int32_t opv = stringNumberTestGenerateRandomInteger() % 2;
         char op = opv?'+':'-';
         
         char s[100];
@@ -3032,7 +3784,8 @@ void stringNumberTestRandomOp()
                 break;
             }
             
-            StringNumber n = stringNumberOperate(&n1, &n2, op);
+            StringNumber n ;
+            stringNumberOperate(&n1, op, &n2, &n);
             char *d1 = stringNumberDescription(&n1);
             char *d2 = stringNumberDescription(&n2);
             char *d = stringNumberDescription(&n);
@@ -3101,8 +3854,8 @@ void stringNumberTestRandomOp()
     count = 0;
     date0 = [NSDate date];
     while (count < timevalTimes * times) {//break;
-        u_int32_t a = stringNumberTestRandomInteger();
-        u_int32_t b = stringNumberTestRandomInteger();
+        u_int32_t a = stringNumberTestGenerateRandomInteger();
+        u_int32_t b = stringNumberTestGenerateRandomInteger();
         a /= 10;
         //a = 111119;
         //b = 97;
@@ -3130,7 +3883,7 @@ void stringNumberTestRandomOp()
         n2.extend.vfloat.decimal = nil;
         
         StringNumber n ;
-        n = stringNumberOperate(&n1, &n2, '*');
+        stringNumberOperate(&n1, '*', &n2, &n);
         char *ns = stringNumberDescription(&n);
         
         if(n.type == StringNumberTypeInteger
@@ -3189,29 +3942,36 @@ void stringNumberTestQuotient()
 
 void stringNumberTestCalc()
 {
+    printf("[%d] start [%s]\n", __LINE__, __FUNCTION__);
     long checkCount = 0;
     
-    const char **pps = ktestArray;
+    NSDate *d0 = [NSDate date];
+    
+//    const char **pps = ktestArray;
+    const char **pps = ktestCalcAdd;
     while (*pps != nil) {
-        char *calc = strdup_r(*pps);
+        @autoreleasepool {
+        char *calc = strdup(*pps);
         char *tmp = strchr(calc, '=');
         assert(tmp);
         
         tmp[0] = '\0';
-        char *expected = strdup_r(tmp+1);
+        char *expected = strdup(tmp+1);
+        
+//        printf("<%ld>------ calculate : %s \n", checkCount, calc);
         char *r = stringNumberCalc(calc);
         
-        PRINTF("------ calculate : %s \n", calc);
         if(strcmp(expected, r) == 0) {
-            printf("[%ld]expected : %s. checked.----------------------------------------------------\n\n", checkCount, expected);
+//            printf("[%ld]expected : %s. checked.----------------------------------------------------\n\n", checkCount, expected);
+//            printf("[%ld]\n", checkCount);
         }
         else {
             printf("[%ld]expected : %s. error : %s.----------------------------------------------------\\n\n", checkCount, expected, r);
             assert(0);
         }
         
-        free_r(calc);
-        free_r(expected);
+        free(calc);
+        free(expected);
         free_r(r);
         
         kmcheck();
@@ -3222,9 +3982,16 @@ void stringNumberTestCalc()
         if(*pps == NULL) {
             pps = ktestArray;
         }
+            
+            if(checkCount % 100000 == 0) {
+                NSDate *d1 = [NSDate date];
+                printf("[%ld] - %lf\n", checkCount, [d1 timeIntervalSinceDate:d0]);
+                d0 = d1;
+            }
         
-        if(checkCount >= 20000) {
+        if(checkCount >= 20000000) {
             break;
+        }
         }
     }
 }
@@ -3240,7 +4007,7 @@ void stringNumberTestAlloc()
     size_t size = 0;
     long idx = 0;
     for (idx=0; idx<10000000; idx++) {
-        size = stringNumberTestRandomInteger() % 100 + 1;
+        size = stringNumberTestGenerateRandomInteger() % 100 + 1;
         void *p = malloc(size);
         if(!p) {
             printf("alloc failed.\n");
@@ -3256,9 +4023,154 @@ void stringNumberTestAlloc()
 }
 
 
+void testAlloc()
+{
+    char *s = strdup("1");
+    
+    NSDate *d0 = [NSDate date];
+    
+    while (1) {
+        break;
+//        int a = 0;
+//        sscanf(s, "%d", &a);
+////        printf("---a=%d\n", a);
+//        
+//        if(a >= 1000000) break;
+//        
+//        a ++;
+//        
+//        size_t size = arc4random() % 10000000 + 16;
+//        
+//        char *t = malloc(size);
+//        snprintf(t, size, "%d", a);
+//        
+//        free(s);
+//        s = t;
+    }
+    
+    free(s);
+    
+    printf("------%lf\n", [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    
+    
+}
+
+
+void testAlloc1()
+{
+    char s[100] = "1";
+    
+    NSDate *d0 = [NSDate date];
+    
+    while (1) {
+        int a = 0;
+        sscanf(s, "%d", &a);
+        //        printf("---a=%d\n", a);
+        
+        if(a >= 10000000) break;
+        
+        a ++;
+        
+//        size_t size = arc4random() % 10 + 16;
+//        size = 0;
+        
+        snprintf(s, 100, "%d", a);
+    }
+    
+    
+    printf("------%lf\n", [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    
+    
+}
+
+
+void testAlloc2()
+{
+    sleep(6);
+    
+    NSDate *d0;
+    int t;
+    size_t size = 1;
+    
+while (1) {
+    
+    d0 = [NSDate date];
+    t = 1000000;
+    
+    while (t--) {
+        char ss[100];
+        strcpy(ss, "1234567890");
+    }
+    
+    printf("------[%10zd] %lf\n", size, [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    d0 = [NSDate date];
+    t = 1000000;
+    
+    while (t--) {
+        char *ss = malloc(100);
+        strcpy(ss, "1234567890");
+        free(ss);
+    }
+    
+    printf("------[%10zd] %lf\n", size, [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    
+    
+    
+    d0 = [NSDate date];
+    t = 1000000;
+    size *= 2;
+    
+    while (t--) {
+        char *s = malloc(size);
+        s[size-1] = 0;
+        
+        free(s);
+    }
+    
+    printf("------[%10zd] %lf\n", size, [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    
+    d0 = [NSDate date];
+    t = 1000000;
+    
+    while (t--) {
+        char ss[100];
+        //        int sum = 0;
+        for(int idx = 0; idx<30; idx++) {
+            ss[idx] = idx;
+        }
+    }
+    printf("------             %lf\n", [[NSDate date] timeIntervalSinceDate:d0]);
+    
+    d0 = [NSDate date];
+    t = 1000000;
+    
+    int sum = 0;
+    while (t--) {
+        if(t > 0) {
+            sum = 1;
+        }
+    }
+    printf("------             %lf\n", [[NSDate date] timeIntervalSinceDate:d0]);
+}
+    
+}
+
+
+
+
 void stringNumberTest()
 {
+    sleep(2);
     //    stringNumberTestAlloc(); sleep(100); assert(0);
+    
+    
+//    testAlloc2();
+//    testAlloc1();sleep(100);
     
     stringNumberTestCalc(); sleep(100);
     
@@ -3529,13 +4441,40 @@ const char *kStringsReadNumber[] = {
 };
 
 
+const char *ktestCalcAdd[] = {
+    "23+6=29",
+    "23+-6=17",
+    "-23+6=-17",
+    "-23+-6=-29",
+    
+    "23+1000=1023",
+    "23+-1000=-977",
+    "-23+1000=977",
+    "-23+-1000=-1023",
+    
+    "99999999999999999999999999999.999999+11.1234569=100000000000000000000000000011.1234559",
+    "99999999999999999999999999999.999999+-11.1234569=99999999999999999999999999988.8765421",
+    "-99999999999999999999999999999.999999+11.1234569=-99999999999999999999999999988.8765421",
+    "-99999999999999999999999999999.999999+-11.1234569=-100000000000000000000000000011.1234559",
+    
+    
+    
+    
+    
+    
+    
+    nil
+};
+
+
 
 
 const char *ktestArray[] = {
+    "1=1",
     "0+1=1",
     "99+1=100",
     "1+99=100",
-    "0+0=0",
+    "1+0=1",
     "99999999999999999999999999999999+10000000=100000000000000000000000009999999",
     "124456+111=124567",
     "123+987654321111=987654321234",
@@ -3598,7 +4537,7 @@ const char *ktestArray[] = {
     "1.23456789*9.876543210=12.1932631112635269",
     "1*2*3*4/0.5/2=24",
     "2345678910111213141516171819/2345678910111213141516171819678*12345678967/2345678910111213141516171819=12345678967/2345678910111213141516171819678",
-    /*"(123456/5)/(123456/10)=2",*/
+    "(123456/5)/(123456/10)=2",
     "0*0=0",
     "1.21*0=0",
     "1*0.123456=0.123456",
@@ -3630,7 +4569,7 @@ const char *ktestArray[] = {
     "-1/3+1/6=-1/6",
     "-1/3-1/6=-1/2",
     "(2-(-1))*(0.25+(3/4))+(((2)))*((21/8.4)/(1/4))=23",
-    
+
     
     
     
@@ -3639,257 +4578,6 @@ const char *ktestArray[] = {
     
     nil
 };
-
-
-
-
-/* 计算. */
-int stringNumberArrayCalcPrevious(StringNumberAndOpList *a, long left, long right)
-{
-    int ret = 0;
-    
-    char srange[100];
-    snprintf(srange, 100, "calc %ld to %ld", left, right);
-    
-    assert(left<=right);
-    
-    
-    stringNumberArrayDebug(a, srange);
-    
-    StringNumber *parsedNumber = a->numberArray+left;
-    char *parsedOp = a->opArray+left;
-    long count = right - left + 1;
-    stringNumberCalcDebug(parsedNumber, parsedOp, count);
-    
-    long idx;
-    
-    //连乘除.
-    long locCounting = 0;
-    long lenCounting = 0;
-    PRINTF("[%d] count = %ld\n", __LINE__, a->count);
-    for(idx = 1; idx <count; idx++) {
-        char op = parsedOp[idx];
-        char *tmp = stringNumberDescription(parsedNumber+idx);
-        PRINTF("[%ld]op = %c, number = %s\n", idx, op, tmp);
-        free_r(tmp);
-        
-        if(op == '*' || op == '/') {
-            stringNumberReuseOperate(parsedNumber+locCounting, parsedNumber+idx, op);
-            stringNumberFree(parsedNumber+idx);
-            lenCounting ++;
-        }
-        else {
-            assert(op == '+' || op == '-');
-            
-            if(lenCounting > 0) {
-                stringNumberArrayClear(a, left + locCounting + 1, lenCounting);
-                idx -= lenCounting;
-                count -= lenCounting;
-            }
-            
-            locCounting = idx;
-            lenCounting = 0;
-        }
-    }
-    
-    if(lenCounting > 0) {
-        stringNumberArrayClear(a, left + locCounting + 1, lenCounting);
-        count -= lenCounting;
-    }
-    
-    PRINTF("calc +-\n");
-    stringNumberArrayDebug(a, "111");
-    
-    //连加减.
-    locCounting = 0;
-    lenCounting = 0;
-    for(idx = 1; idx <count; idx++) {
-        char op = parsedOp[idx];
-        char *tmp = stringNumberDescription(parsedNumber+idx);
-        PRINTF("op = %c, number = %s\n", op, tmp);
-        free_r(tmp);
-        if(op == '+' || op == '-') {
-            stringNumberReuseOperate(parsedNumber+locCounting, parsedNumber+idx, op);
-            stringNumberFree(parsedNumber+idx);
-            lenCounting ++;
-        }
-        else {
-            PRINTF("op=%c, %ld\n", op, parsedNumber[idx].idx);
-            assert(0);
-        }
-    }
-    
-    if(lenCounting > 0) {
-        stringNumberArrayClear(a, left + locCounting + 1, lenCounting);
-    }
-    
-#if 0
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /* 乘除divid类型的转换为 float类型的乘除. */
-    for(idx = 0; idx <count; idx++) {
-        char op = parsedOp[idx+left];
-        if((op == '*' || op == '/') && parsedNumber[idx+left].type == StringNumberTypeDivid) {
-            StringNumber n1;
-            n1.type = StringNumberTypeInteger;
-            n1.minus = parsedNumber[idx].minus;
-            
-            char *t1 = stringDigitMultiply(parsedNumber[idx].integer, parsedNumber[idx].extend.vdivid.y);
-            char *t2 = stringDigitAddInteger(t1, parsedNumber[idx].extend.vdivid.x);
-            free_r(t1);
-            n1.integer = t2;
-            n1.extend.vfloat.decimal = NULL;
-            
-            StringNumber n2;
-            n2.type = StringNumberTypeInteger;
-            n2.minus = 0;
-            n2.integer = strdup_r(parsedNumber[idx].extend.vdivid.y);
-            n2.extend.vfloat.decimal = NULL;
-            
-            stringNumberFree(parsedNumber+idx);
-            parsedNumber[idx] = n1;
-            
-            char op2;
-            if(op == '*') {
-                op2 = '/';
-            }
-            else {
-                op2 = '*';
-            }
-            
-            stringNumberArrayInsertAfter(a, &n2, op2, idx+left);
-            
-            idx ++;
-            count++;
-            
-            stringNumberArrayDebug(a, "after expand divid.");
-        }
-    }
-    
-    /* 计算完成所有的乘法. */
-    for(idx = 0; idx <count; idx++) {
-        char op = parsedOp[idx];
-        if(op == '*') {
-            long idxMultiplier = idx - 1;
-            for (; idxMultiplier >= 0; idxMultiplier--) {
-                if(parsedOp[idxMultiplier] == '/') {
-                    continue;
-                }
-                else {
-                    break;
-                }
-            }
-            
-            stringNumberReuseOperate(parsedNumber+idxMultiplier, parsedNumber+idx, '*');
-            stringNumberFree(parsedNumber+idx);
-            
-            stringNumberArrayClear(a, idx+left, 1);
-            
-            idx --;
-            count --;
-            
-            stringNumberArrayDebug(a, "after calc multiply.");
-        }
-    }
-    
-    /* 连除转换为连乘. */
-    long rangeLocDivid = -1;
-    long rangeLengthDivid = 0;
-    for(idx = 0; idx <count; idx++) {
-        char op = parsedOp[idx];
-        if(op == '/') {
-            if(rangeLocDivid == -1) {
-                rangeLocDivid = idx;
-                rangeLengthDivid = 1;
-            }
-            else {
-                rangeLengthDivid ++;
-            }
-        }
-        else {
-            if(rangeLocDivid == -1) {
-                continue;
-            }
-            
-            /* 根据range计算连乘. */
-            _stringNumberMultiplyContinously(parsedNumber, parsedOp, &count, rangeLocDivid, rangeLengthDivid);
-            
-            idx = rangeLocDivid ;
-            rangeLocDivid = -1;
-            rangeLengthDivid = 0;
-            
-            stringNumberCalcDebug(parsedNumber, parsedOp, count);
-            
-            continue;
-        }
-    }
-    
-    if(rangeLengthDivid > 1) {
-        _stringNumberMultiplyContinously(parsedNumber, parsedOp, &count, rangeLocDivid, rangeLengthDivid);
-        rangeLocDivid = -1;
-        rangeLengthDivid = 0;
-    }
-    
-    stringNumberCalcDebug(parsedNumber, parsedOp, count);
-    
-    /* 剩下除法和加减法. */
-    /* 计算除法. */
-    for(idx = 1; idx <count; idx++) {
-        char op = parsedOp[idx];
-        if(op == '/') {
-            StringNumber n = stringNumberDivid(parsedNumber+idx-1, parsedNumber+idx);
-            stringNumberFree(parsedNumber+idx-1);
-            stringNumberFree(parsedNumber+idx);
-            parsedNumber[idx-1] = n;
-            long idxMove;
-            for (idxMove=idx; idxMove<count-1; idxMove++) {
-                parsedNumber[idxMove] = parsedNumber[idxMove+1];
-                parsedOp[idxMove] = parsedOp[idxMove+1];
-            }
-            
-            idx --;
-            count--;
-            
-            stringNumberCalcDebug(parsedNumber, parsedOp, count);
-            
-            
-        }
-    }
-    stringNumberCalcDebug(parsedNumber, parsedOp, count);
-    
-    /* 剩下加减法. */
-    /* 计算float类型. */
-    for(idx = 1; idx <count; idx++) {
-        StringNumber *np = &parsedNumber[idx];
-        char op = parsedOp[idx];
-        assert(op == '+' || op == '-');
-        
-        stringNumberReuseOperate(parsedNumber, np, op);
-        stringNumberFree(np);
-    }
-    
-    count = 1;
-    stringNumberArrayClear(a, left+1, right-left);
-#endif
-    
-    return ret;
-}
-
-
-
-
-
-
-
 
 
 
@@ -4796,4 +5484,729 @@ void tst()
         n += 2;
     }
 }
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+#if USE_MEMORY_POOL
+
+@interface MemorySeg : NSObject
+
+@property (nonatomic, assign) long offset;
+@property (nonatomic, assign) long length;
+@property (nonatomic, assign) BOOL isFree;
+
++ (MemorySeg*)memorySegWith:(long)offset length:(long)length isFree:(BOOL)isFree;
+
+@end
+
+
+@implementation MemorySeg
++ (MemorySeg*)memorySegWith:(long)offset length:(long)length isFree:(BOOL)isFree
+{
+    MemorySeg *seg = [[MemorySeg alloc] init];
+    seg.offset = offset;
+    seg.length = length;
+    seg.isFree = isFree;
+    
+    return seg;
+}
+
+
+
+@end
+
+static NSMutableArray<MemorySeg*> *ksegs = nil;
+static void *kmv = NULL;
+
+
+void kminit()
+{
+    if(!kmv) {
+        size_t size = 1024*1024;
+        kmv = malloc(size);
+        ksegs = [[NSMutableArray alloc] init];
+        [ksegs addObject:[MemorySeg memorySegWith:0 length:size isFree:YES]];
+    }
+}
+
+void kmdescripe(const char *es)
+{
+    if(!keable_kmdescripe) return;
+    
+    PRINTF("------%s\n", es);
+    for(MemorySeg *seg in ksegs) {
+        seg.offset = seg.offset;
+    }
+    PRINTF("\n\n");
+}
+
+void *malloc_d(size_t size, const char *function, int line)
+{
+    kminit();
+    
+    if(keable_kmdescripe) {
+        PRINTF("alloc : %lld\n", pv);
+    }
+    
+    void *p = NULL;
+    
+    for(NSInteger idx = 0; idx < ksegs.count; idx ++) {
+        MemorySeg *seg = ksegs[idx];
+        if(seg.isFree && seg.length >= size) {
+            p = kmv + seg.offset;
+            if(seg.length == size) {
+                seg.isFree = NO;
+            }
+            else {
+                MemorySeg *allocedSeg = [MemorySeg memorySegWith:seg.offset length:size isFree:NO];
+                seg.offset += size;
+                seg.length -= size;
+                [ksegs insertObject:allocedSeg atIndex:idx];
+            }
+            
+            break;
+        }
+    }
+    
+    kmdescripe("after alloc");
+    
+    return p;
+}
+
+
+void free_d(void *p, const char *function, int line)
+{
+    kmdescripe("\n\nbefore free");
+    
+    NSInteger idxFree = NSNotFound;
+    for(NSInteger idx = 0; idx < ksegs.count; idx ++) {
+        MemorySeg *seg = ksegs[idx];
+        if((kmv+seg.offset) == p && !seg.isFree) {
+            idxFree = idx;
+            break;
+        }
+    }
+    
+    assert(idxFree != NSNotFound);
+    
+    BOOL assemblePrev = (idxFree>0 && ksegs[idxFree-1].isFree);
+    BOOL assembleNext = (idxFree < (ksegs.count-1) && ksegs[idxFree+1].isFree) ;
+    if(assemblePrev && assembleNext) {
+        ksegs[idxFree-1].length += (ksegs[idxFree].length + ksegs[idxFree+1].length);
+        [ksegs removeObjectsInRange:NSMakeRange(idxFree, 2)];
+    }
+    else if(assemblePrev) {
+        ksegs[idxFree-1].length += (ksegs[idxFree].length);
+        [ksegs removeObjectAtIndex:idxFree];
+    }
+    else if(assembleNext) {
+        ksegs[idxFree].length += ksegs[idxFree+1].length;
+        ksegs[idxFree].isFree = YES;
+        [ksegs removeObjectAtIndex:idxFree+1];
+    }
+    else {
+        ksegs[idxFree].isFree = YES;
+    }
+    
+    kmdescripe("after free");
+}
+
+
+void kmcheck()
+{
+    
+}
+
+#endif
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+StringNumber _stringNumberAdd(StringNumber* n1, StringNumber* n2)
+{
+    assert(!n1->minus);
+    assert(!n2->minus);
+    
+    _stringNumberDebug(n1);
+    _stringNumberDebug(n2);
+    
+    StringNumber n;
+    n.type = StringNumberTypeInvalid;
+    
+    if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeInteger) {
+        n.type = StringNumberTypeInteger;
+        n.integer = stringDigitAddInteger(n1->integer, n2->integer);
+        BOOL carry = NO;
+        n.extend.vfloat.decimal = stringDigitAddDecimal(n1->extend.vfloat.decimal, n2->extend.vfloat.decimal, &carry);
+        if(carry) {
+            char *t = stringDigitAddInteger(n.integer, "1");
+            free_r(n.integer);
+            n.integer = t;
+        }
+    }
+    else if(n1->type == StringNumberTypeInteger && n2->type == StringNumberTypeDivid) {
+        if(n1->extend.vfloat.decimal == NULL) {
+            n.type = StringNumberTypeDivid;
+            n.integer = stringDigitAddInteger(n1->integer, n2->integer);
+            n.extend.vdivid.x = strdup_r(n2->extend.vdivid.x);
+            n.extend.vdivid.y = strdup_r(n2->extend.vdivid.y);
+        }
+        else {
+            StringNumber n1ToDivid;
+            stringNumberIntegerToDivid(n1, &n1ToDivid);
+            n = _stringNumberAdd(&n1ToDivid, n2);
+            stringNumberFree(&n1ToDivid);
+        }
+    }
+    else if(n1->type == StringNumberTypeDivid && n2->type == StringNumberTypeInteger) {
+        n = _stringNumberAdd(n2, n1);
+    }
+    else {
+        n.type = StringNumberTypeDivid;
+        
+        n.integer = stringDigitAddInteger(n1->integer, n2->integer);
+        BOOL carry = 0;
+        stringDigitDividAdd(n1->extend.vdivid.x, n1->extend.vdivid.y, n2->extend.vdivid.x, n2->extend.vdivid.y, &n.extend.vdivid.x, &n.extend.vdivid.y, &carry);
+        if(carry) {
+            char *tmp = stringDigitAddInteger(n.integer, "1");
+            free_r(n.integer);
+            n.integer = tmp;
+        }
+    }
+    
+    assert(n.type != StringNumberTypeInvalid);
+    
+    stringNumberSimplify(&n);
+    
+    return n;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

@@ -416,7 +416,10 @@
 
 @implementation NoteClassification
 
-
+- (NSDictionary*)dictionaryOfDB
+{
+    return [self yy_modelToJSONObject];
+}
 
 @end
 

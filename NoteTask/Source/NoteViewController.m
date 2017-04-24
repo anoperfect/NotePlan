@@ -629,7 +629,10 @@
         note.browseredAt = [NSString dateTimeStringNow];
         [[AppConfig sharedAppConfig] configNoteUpdate:note];
     });
-    NoteDetailViewController *vc = [[NoteDetailViewController alloc] initWithNoteModel:note];
+    NoteDetailViewController *vc = [NoteDetailViewController noteViewControllerCachedWithSn:note.sn];
+    if(!vc) {
+        vc = [[NoteDetailViewController alloc] initWithNoteModel:note];
+    }
     [self.navigationController pushViewController:vc animated:YES];
 }
 

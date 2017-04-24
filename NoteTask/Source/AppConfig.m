@@ -151,10 +151,8 @@
     noteClassification.createdAt = [NSString dateTimeStringNow];
     
     //#如果更新的话, 则click会刷新到0.
-    NSDictionary *infoInsert = @{
-                                 DBDATA_STRING_COLUMNS:@[@"classificationName", @"createdAt"],
-                                 DBDATA_STRING_VALUES:@[@[noteClassification.classificationName,noteClassification.createdAt]]
-                                 };
+    NSDictionary *infoInsert =
+    [DBData DBDataGenerateInsertDictionaryFromArray:@[[noteClassification dictionaryOfDB]]];
     NSInteger retDBData = [self.dbData DBDataInsertDBName:DBNAME_CONFIG   table:TABLENAME_CLASSIFICATION     info:infoInsert orReplace:YES];
     if(DB_EXECUTE_OK != retDBData) {
         NSLog(@"#error - ");
@@ -1263,7 +1261,7 @@ TaskModeDefault
 {
     [self test0];
 #if DEBUG
-    [self.dbData removeDBName:@"config"];
+//    [self.dbData removeDBName:@"config"];
 #endif
 }
 

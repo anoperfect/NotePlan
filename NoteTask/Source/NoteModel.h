@@ -97,5 +97,6 @@
 @property (nonatomic, strong) NSString *classificationName;
 @property (nonatomic, strong) NSString *createdAt;
 
+- (NSDictionary*)dictionaryOfDB;
 
 @end

@@ -11,10 +11,11 @@
 #import "AppDelegate.h"
 #import "PopupViewController.h"
 #import "TextButtonLine.h"
-#import "CLDropDownMenu.h"
 #import "NotePCustmiseViewController.h"
 #import "NoteDetailCell.h"
 #import "NoteShareViewController.h"
+static NSMutableArray    *knoteDetailControllerCached;
+
 @interface NoteDetailViewController () <UITableViewDataSource, UITableViewDelegate,
                                         UITextFieldDelegate,
                                         UITextViewDelegate,
@@ -77,10 +78,20 @@
         self.optumizeHeights = [[NSMutableDictionary alloc] init];
         
         self.editMode = NO;
+        
+        if(!knoteDetailControllerCached) {
+            knoteDetailControllerCached = [[NSMutableArray alloc] init];
+        }
+        
+        if(knoteDetailControllerCached.count >= 30) {
+            [knoteDetailControllerCached removeObjectsInRange:NSMakeRange(0, 10)];
+        }
+        
+        [knoteDetailControllerCached addObject:self];
+        
     }
     return self;
 }
-
 
 
 //新建跟编辑的流程类似.
@@ -131,6 +142,20 @@
     
     return self;
 }
+
+
++ (instancetype)noteViewControllerCachedWithSn:(NSString*)sn
+{
+    NSLog(@"cached number : %zd", knoteDetailControllerCached.count);
+    for(NoteDetailViewController *vc in knoteDetailControllerCached) {
+        if([vc.noteModel.sn isEqualToString:sn]) {
+            return vc;
+        }
+    }
+    
+    return nil;
+}
+
 
 #pragma mark - Custom override view.
 - (void)viewDidLoad {
@@ -208,6 +233,39 @@
     [super viewWillAppear:animated];
     self.title = !self.createMode? @"笔记详情":@"新笔记";
     [self navigationItemRightInit];
+////        self.navigationController.navigationBar.backgroundColor = [UIColor blueColor];
+//    self.navigationController.navigationBar.barTintColor = [UIColor colorWithName:@"NavigationBarBackground"];
+//    self.navigationController.navigationBar.barTintColor = [[UIColor cyanColor] colorWithAlphaComponent:0.1];
+//    self.navigationController.navigationBar.barTintColor = [UIColor clearColor];
+//    self.navigationController.navigationBar.translucent = YES;
+//    
+//    
+//    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+//    
+//    CGRect rect = CGRectMake(0, 0, 1, 1);
+//    
+//    UIColor *color = [UIColor clearColor];
+//    // create a 1 by 1 pixel context
+//    UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
+//    [color setFill];
+//    UIRectFill(rect);
+//    
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    // 5、设置导航栏背景图片
+//    [self.navigationController.navigationBar setBackgroundImage:image forBarPosition:UIBarPositionTop barMetrics:UIBarMetricsDefault];
+//    
+//    // 6、设置导航栏阴影图片
+//    self.navigationController.navigationBar.shadowImage = image;
+//    
+//    self.tableNoteParagraphs.backgroundColor = [UIColor blueColor];
+//    NSLog(@"contentInset : %lf %lf %lf %lf\n",
+//    self.tableNoteParagraphs.contentInset.top,
+//    self.tableNoteParagraphs.contentInset.left,
+//    self.tableNoteParagraphs.contentInset.bottom,
+//    self.tableNoteParagraphs.contentInset.right
+//          );
 }
 
 
@@ -1536,26 +1594,12 @@
 }
 
 
-- (void)openClassificationMenu
-{
-    CLDropDownMenu *dropMenu = [[CLDropDownMenu alloc] initWithBtnPressedByWindowFrame:CGRectMake(100, 100, 100, 100)  Pressed:^(NSInteger index) {
-        NSLog(@"点击了第%zd个btn",index+1);
-    }];
-    
-    dropMenu.direction = CLDirectionTypeRight;
-    dropMenu.titleList = @[@"添加好友",@"创建群",@"扫一扫"];
-    dropMenu.backgroundColor = [UIColor purpleColor];
-    
-    [self addSubview:dropMenu];
-    
-    NSLog(@"%@", dropMenu);
-}
+
 
 
 
 
 #endif
-
 
 
 
